@@ -699,7 +699,8 @@ const SERVICES = [
 ];
 
 let selected = new Set();
-let webAppUrl = localStorage.getItem('zapWebApp') || '';
+const WEB_APP = 'https://script.google.com/macros/s/AKfycbxF-N_vR6ArO_SGPdk6hj_usDYxYoR5q-9jIK2UTUcpYcLwLv3tHKcShWdcx17z2c64Zg/exec';
+let webAppUrl = localStorage.getItem('zapWebApp') || WEB_APP;
 let lancamentos = [];
 
 // ── INIT ──
@@ -767,24 +768,22 @@ async function salvar() {
   const svcs = [...selected].map(i => SERVICES[i].name).join('|');
   const vals = [...selected].map(i => SERVICES[i].price).join('|');
 
-  // Salvar offline no localStorage
+  // Salvar no Google Sheets via Web App
+  try {
+    const url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
+    await fetch(url, { mode: 'no-cors' });
+  } catch(e) {}
+
+  // Salvar também no localStorage como backup
   const agora = new Date();
   const data = agora.toLocaleDateString('pt-BR');
   const hora = agora.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
   [...selected].forEach(i => {
     lancamentos.unshift({ svc: SERVICES[i].name, data, hora, qtd: 1, val: SERVICES[i].price });
   });
-  localStorage.setItem('zapLanc', JSON.stringify(lancamentos.slice(0, 200)));
+  localStorage.setItem('zapLanc', JSON.stringify(lancamentos.slice(0, 500)));
 
-  // Tentar enviar ao Web App
-  if (webAppUrl) {
-    try {
-      const url = `${webAppUrl}?action=salvar&svcs=${encodeURIComponent(svcs)}&vals=${encodeURIComponent(vals)}`;
-      await fetch(url, { method: 'GET', mode: 'no-cors' });
-    } catch(e) { /* salvo localmente */ }
-  }
-
-  showToast('✅ ' + selected.size + ' serviço(s) registrado(s)!');
+  showToast('✅ ' + selected.size + ' serviço(s) salvo(s) na planilha!');
   selected.clear();
   renderServices();
   updateTotal();
@@ -793,17 +792,29 @@ async function salvar() {
 }
 
 // ── LANÇAMENTOS ──
-function carregarLancamentos() {
-  const saved = localStorage.getItem('zapLanc');
-  lancamentos = saved ? JSON.parse(saved) : [];
+async function carregarLancamentos() {
   const list = document.getElementById('lancList');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div> Carregando da planilha...</div>';
+
+  try {
+    const url = webAppUrl + '?action=listar';
+    const resp = await fetch(url);
+    const json = await resp.json();
+    if (json.ok && json.items) {
+      lancamentos = json.items;
+      localStorage.setItem('zapLanc', JSON.stringify(lancamentos));
+    }
+  } catch(e) {
+    const saved = localStorage.getItem('zapLanc');
+    lancamentos = saved ? JSON.parse(saved) : [];
+  }
 
   if (lancamentos.length === 0) {
     list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.<br>Registre seu primeiro serviço!</div></div>`;
     return;
   }
 
-  list.innerHTML = lancamentos.slice(0, 50).map(l => `
+  list.innerHTML = lancamentos.slice(0, 100).map(l => `
     <div class="lanc-item">
       <div class="lanc-dot"></div>
       <div class="lanc-info">
