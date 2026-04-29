@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ZapClin">
+<meta name="theme-color" content="#0a0a0f">
+<title>ZapClin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0a0f;
+    --surface:   #111118;
+    --card:      #16161f;
+    --border:    #2a2a3a;
+    --cyan:      #00e5ff;
+    --green:     #00e676;
+    --yellow:    #ffea00;
+    --red:       #ff4444;
+    --blue:      #448aff;
+    --text:      #e8eaf6;
+    --muted:     #6b6b8a;
+    --radius:    18px;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 90px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0d0d1a 0%, #111124 100%);
+    padding: 52px 20px 24px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,229,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px rgba(0,229,255,0.3);
+  }
+  .logo-text {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .date-badge {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 20px;
+  }
+  .header-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── NAV TABS ── */
+  .nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(17,17,24,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 4px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .nav-btn.active { color: var(--cyan); }
+  .nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: var(--cyan);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 0 10px var(--cyan);
+  }
+  .nav-icon { font-size: 22px; line-height: 1; }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 20px; }
+  .page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    margin-top: 24px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* ── SERVICE CARDS ── */
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .service-card.selected {
+    border-color: var(--cyan);
+    background: rgba(0,229,255,0.06);
+    box-shadow: 0 0 20px rgba(0,229,255,0.1);
+  }
+  .service-card.selected::before { opacity: 1; }
+  .service-card:active { transform: scale(0.98); }
+
+  .svc-icon {
+    font-size: 28px;
+    width: 48px; height: 48px;
+    background: var(--surface);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .service-card.selected .svc-icon {
+    background: rgba(0,229,255,0.1);
+    border-color: rgba(0,229,255,0.3);
+  }
+  .svc-info { flex: 1; min-width: 0; }
+  .svc-name {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .svc-cat {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .svc-price {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+  .svc-check {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .service-card.selected .svc-check {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0,229,255,0.4);
+  }
+  .check-icon { display: none; font-size: 13px; }
+  .service-card.selected .check-icon { display: block; }
+
+  /* ── TOTAL BAR ── */
+  .total-bar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .total-label { font-size: 13px; color: var(--muted); }
+  .total-count {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .total-value {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(0,229,255,0.3);
+  }
+
+  /* ── SAVE BUTTON ── */
+  .save-btn {
+    width: 100%;
+    padding: 18px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--green), #00c853);
+    border: none;
+    border-radius: var(--radius);
+    color: #000;
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 24px rgba(0,230,118,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    -webkit-user-select: none;
+  }
+  .save-btn:active { transform: scale(0.97); box-shadow: 0 2px 12px rgba(0,230,118,0.2); }
+  .save-btn:disabled {
+    background: var(--card);
+    color: var(--muted);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi-card.cyan::after { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+  .kpi-card.green::after { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .kpi-card.yellow::after { background: var(--yellow); }
+  .kpi-card.blue::after { background: var(--blue); }
+
+  .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .kpi-value { font-family: var(--font-head); font-size: 22px; font-weight: 800; color: var(--text); line-height: 1; }
+  .kpi-value.cyan { color: var(--cyan); }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.yellow { color: var(--yellow); }
+  .kpi-value.blue { color: var(--blue); }
+  .kpi-sub { font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+  /* ── LANÇAMENTOS LIST ── */
+  .lanc-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lanc-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  .lanc-info { flex: 1; min-width: 0; }
+  .lanc-svc {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lanc-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .lanc-val {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* ── RANKING ── */
+  .rank-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .rank-num {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--muted);
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .rank-num.gold { color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+  .rank-num.silver { color: #c0c0c0; }
+  .rank-num.bronze { color: #cd7f32; }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .rank-bar-wrap { margin-top: 6px; background: var(--surface); border-radius: 4px; height: 4px; overflow: hidden; }
+  .rank-bar { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--blue)); border-radius: 4px; transition: width 1s ease; }
+  .rank-stats { text-align: right; flex-shrink: 0; }
+  .rank-val { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--green); }
+  .rank-qtd { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-text { font-size: 14px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    top: 60px; left: 20px; right: 20px;
+    background: var(--green);
+    color: #000;
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(0,230,118,0.4);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.error { background: var(--red); box-shadow: 0 8px 32px rgba(255,68,68,0.4); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── LOADING ── */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--cyan);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── CONFIG ── */
+  .config-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .config-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .config-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .config-input:focus { border-color: var(--cyan); }
+  .config-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--blue), #1565c0);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+  .config-btn:active { transform: scale(0.97); }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--muted); }
+  .info-val { color: var(--text); font-weight: 600; }
+  .info-val.green { color: var(--green); }
+
+  .pico-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .pico-item:last-child { border-bottom: none; }
+  .pico-hora { color: var(--cyan); font-weight: 600; width: 70px; flex-shrink: 0; }
+  .pico-bar-wrap { flex: 1; background: var(--surface); border-radius: 4px; height: 6px; }
+  .pico-bar { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--blue)); border-radius: 4px; }
+  .pico-qtd { color: var(--muted); font-size: 11px; width: 50px; text-align: right; }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">ZapClin</span>
+    </div>
+    <div class="date-badge" id="dateBadge"></div>
+  </div>
+  <div class="header-subtitle">Sistema de Gerenciamento de Serviços</div>
+</div>
+
+<!-- PAGE: REGISTRAR -->
+<div class="page active" id="page-registrar">
+  <div class="section-title">Selecionar Serviços</div>
+
+  <div id="serviceList"></div>
+
+  <div class="total-bar">
+    <div>
+      <div class="total-label">💰 Total Selecionado</div>
+      <div class="total-count" id="selectedCount">0 serviço(s)</div>
+    </div>
+    <div class="total-value" id="totalValue">R$ 0,00</div>
+  </div>
+
+  <button class="save-btn" id="saveBtn" onclick="salvar()">
+    ▶ SALVAR REGISTRO
+  </button>
+</div>
+
+<!-- PAGE: LANÇAMENTOS -->
+<div class="page" id="page-lancamentos">
+  <div class="section-title">Últimos Registros</div>
+  <div id="lancList"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+</div>
+
+<!-- PAGE: DASHBOARD -->
+<div class="page" id="page-dashboard">
+  <div class="section-title">Resumo Geral</div>
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card cyan"><div class="kpi-label">Hoje</div><div class="kpi-value cyan" id="kpiHoje">—</div><div class="kpi-sub">faturamento</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Este Mês</div><div class="kpi-value green" id="kpiMes">—</div><div class="kpi-sub">faturamento</div></div>
+    <div class="kpi-card yellow"><div class="kpi-label">Atendimentos</div><div class="kpi-value yellow" id="kpiTotal">—</div><div class="kpi-sub">total</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Ticket Médio</div><div class="kpi-value blue" id="kpiTicket">—</div><div class="kpi-sub">por serviço</div></div>
+  </div>
+
+  <div class="section-title">🏆 Ranking de Serviços</div>
+  <div id="rankingList"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+
+  <div class="section-title">🕐 Horários de Pico</div>
+  <div class="config-card" id="picoList"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- PAGE: CONFIG -->
+<div class="page" id="page-config">
+  <div class="section-title">Configuração</div>
+  <div class="config-card">
+    <div class="config-label">ID da Planilha Google</div>
+    <input class="config-input" id="sheetId" placeholder="Cole o ID aqui..." type="text">
+    <div class="config-label" style="margin-top:14px">URL do Web App (Apps Script)</div>
+    <input class="config-input" id="webAppUrl" placeholder="https://script.google.com/macros/s/..." type="text">
+    <button class="config-btn" onclick="salvarConfig()">💾 Salvar Configuração</button>
+  </div>
+
+  <div class="section-title">Sobre o Sistema</div>
+  <div class="config-card">
+    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">1.0.0</span></div>
+    <div class="info-row"><span class="info-key">Empresa</span><span class="info-val">ZapClin</span></div>
+    <div class="info-row"><span class="info-key">Serviços</span><span class="info-val">7 tipos</span></div>
+    <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="statusConexao">Verificando...</span></div>
+  </div>
+
+  <div class="section-title">Instruções de Instalação</div>
+  <div class="config-card" style="font-size:13px; color:var(--muted); line-height:1.7;">
+    <strong style="color:var(--cyan);">1.</strong> No Apps Script, adicione o código do Web App abaixo.<br>
+    <strong style="color:var(--cyan);">2.</strong> Clique em Implantar → Novo Implantação → Web App.<br>
+    <strong style="color:var(--cyan);">3.</strong> Acesso: "Qualquer pessoa". Copie a URL gerada.<br>
+    <strong style="color:var(--cyan);">4.</strong> Cole a URL acima e salve.<br>
+    <strong style="color:var(--cyan);">5.</strong> No Safari do iPhone: Compartilhar → Adicionar à Tela de Início.
+  </div>
+
+  <div class="section-title">Código do Web App (Apps Script)</div>
+  <div class="config-card" style="background:#0d0d1a;">
+    <pre style="font-size:10px; color:#00e676; overflow-x:auto; white-space:pre-wrap; line-height:1.6;">function doGet(e) {
+  return doPost(e);
+}
+
+function doPost(e) {
+  var ss = SpreadsheetApp.openById(
+    '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug'
+  );
+  var p = e ? e.parameter : {};
+  var action = p.action || 'ping';
+  var result = {};
+
+  if (action === 'ping') {
+    result = { ok: true };
+
+  } else if (action === 'salvar') {
+    var lanc = ss.getSheets()[1];
+    var svcs = (p.svcs || '').split('|');
+    var vals = (p.vals || '').split('|');
+    var agora = new Date();
+    for (var i = 0; i < svcs.length; i++) {
+      if (!svcs[i]) continue;
+      var dados = lanc.getRange('C10:C2000').getValues();
+      var linha = 10;
+      for (var j = 0; j < dados.length; j++) {
+        if (dados[j][0] !== '') linha = 10 + j + 1;
+        else break;
+      }
+      lanc.getRange(linha,3).setValue(svcs[i]);
+      lanc.getRange(linha,4).setValue(Utilities.formatDate(
+        agora,'America/Sao_Paulo','dd/MM/yyyy'));
+      lanc.getRange(linha,5).setValue(Utilities.formatDate(
+        agora,'America/Sao_Paulo','HH:mm'));
+      lanc.getRange(linha,6).setValue(1);
+      lanc.getRange(linha,7).setValue(parseFloat(vals[i]||0));
+    }
+    result = { ok: true, saved: svcs.length };
+
+  } else if (action === 'listar') {
+    var lanc = ss.getSheets()[1];
+    var rows = lanc.getRange('C10:G500').getValues();
+    var items = [];
+    for (var i = 0; i < rows.length; i++) {
+      if (!rows[i][0]) break;
+      items.push({
+        svc: rows[i][0],
+        data: rows[i][1],
+        hora: rows[i][2],
+        qtd: rows[i][3],
+        val: rows[i][4]
+      });
+    }
+    result = { ok: true, items: items.reverse().slice(0,50) };
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="goTo('registrar',this)">
+    <span class="nav-icon">📋</span>Registrar
+  </button>
+  <button class="nav-btn" onclick="goTo('lancamentos',this)">
+    <span class="nav-icon">📊</span>Lançamentos
+  </button>
+  <button class="nav-btn" onclick="goTo('dashboard',this)">
+    <span class="nav-icon">📈</span>Dashboard
+  </button>
+  <button class="nav-btn" onclick="goTo('config',this)">
+    <span class="nav-icon">⚙️</span>Config
+  </button>
+</nav>
+
+<script>
+const SERVICES = [
+  { name: 'Higienização Rápida',      price: 15, icon: '🧹', cat: 'Higienização' },
+  { name: 'Higienização Essencial',   price: 18, icon: '🧴', cat: 'Higienização' },
+  { name: 'Higienização Profunda',    price: 23, icon: '💎', cat: 'Higienização' },
+  { name: 'Limpeza + Hig. Rápida',   price: 18, icon: '🔵', cat: 'Limpeza + Higienização' },
+  { name: 'Limpeza + Hig. Essencial', price: 21, icon: '🟣', cat: 'Limpeza + Higienização' },
+  { name: 'Limpeza + Hig. Profunda',  price: 30, icon: '⭐', cat: 'Limpeza + Higienização' },
+  { name: 'Revitalização',            price: 70, icon: '✨', cat: 'Premium' },
+];
+
+let selected = new Set();
+let webAppUrl = localStorage.getItem('zapWebApp') || '';
+let lancamentos = [];
+
+// ── INIT ──
+function init() {
+  // Date
+  const now = new Date();
+  document.getElementById('dateBadge').textContent =
+    now.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+
+  // Load config
+  document.getElementById('sheetId').value = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
+  document.getElementById('webAppUrl').value = webAppUrl;
+
+  // Render services
+  renderServices();
+  updateTotal();
+  checkConexao();
+}
+
+function renderServices() {
+  const list = document.getElementById('serviceList');
+  list.innerHTML = SERVICES.map((s, i) => `
+    <div class="service-card" id="svc${i}" onclick="toggle(${i})">
+      <div class="svc-icon">${s.icon}</div>
+      <div class="svc-info">
+        <div class="svc-name">${s.name}</div>
+        <div class="svc-cat">${s.cat}</div>
+      </div>
+      <div class="svc-price">R$&nbsp;${s.price.toFixed(2).replace('.',',')}</div>
+      <div class="svc-check"><span class="check-icon">✓</span></div>
+    </div>
+  `).join('');
+}
+
+function toggle(i) {
+  const card = document.getElementById('svc' + i);
+  if (selected.has(i)) {
+    selected.delete(i);
+    card.classList.remove('selected');
+  } else {
+    selected.add(i);
+    card.classList.add('selected');
+  }
+  updateTotal();
+}
+
+function updateTotal() {
+  let total = 0;
+  selected.forEach(i => total += SERVICES[i].price);
+  document.getElementById('totalValue').textContent =
+    'R$ ' + total.toFixed(2).replace('.', ',');
+  document.getElementById('selectedCount').textContent =
+    selected.size + ' serviço(s) selecionado(s)';
+  document.getElementById('saveBtn').disabled = selected.size === 0;
+}
+
+// ── SALVAR ──
+async function salvar() {
+  if (selected.size === 0) { showToast('Selecione ao menos um serviço', true); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Salvando...';
+
+  const svcs = [...selected].map(i => SERVICES[i].name).join('|');
+  const vals = [...selected].map(i => SERVICES[i].price).join('|');
+
+  // Salvar offline no localStorage
+  const agora = new Date();
+  const data = agora.toLocaleDateString('pt-BR');
+  const hora = agora.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  [...selected].forEach(i => {
+    lancamentos.unshift({ svc: SERVICES[i].name, data, hora, qtd: 1, val: SERVICES[i].price });
+  });
+  localStorage.setItem('zapLanc', JSON.stringify(lancamentos.slice(0, 200)));
+
+  // Tentar enviar ao Web App
+  if (webAppUrl) {
+    try {
+      const url = `${webAppUrl}?action=salvar&svcs=${encodeURIComponent(svcs)}&vals=${encodeURIComponent(vals)}`;
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+    } catch(e) { /* salvo localmente */ }
+  }
+
+  showToast('✅ ' + selected.size + ' serviço(s) registrado(s)!');
+  selected.clear();
+  renderServices();
+  updateTotal();
+  btn.disabled = false;
+  btn.textContent = '▶ SALVAR REGISTRO';
+}
+
+// ── LANÇAMENTOS ──
+function carregarLancamentos() {
+  const saved = localStorage.getItem('zapLanc');
+  lancamentos = saved ? JSON.parse(saved) : [];
+  const list = document.getElementById('lancList');
+
+  if (lancamentos.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.<br>Registre seu primeiro serviço!</div></div>`;
+    return;
+  }
+
+  list.innerHTML = lancamentos.slice(0, 50).map(l => `
+    <div class="lanc-item">
+      <div class="lanc-dot"></div>
+      <div class="lanc-info">
+        <div class="lanc-svc">${l.svc}</div>
+        <div class="lanc-meta">${l.data} · ${l.hora}</div>
+      </div>
+      <div class="lanc-val">R$&nbsp;${parseFloat(l.val).toFixed(2).replace('.',',')}</div>
+    </div>
+  `).join('');
+}
+
+// ── DASHBOARD ──
+function carregarDashboard() {
+  const saved = localStorage.getItem('zapLanc');
+  lancamentos = saved ? JSON.parse(saved) : [];
+
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const mesAtual = new Date().toLocaleDateString('pt-BR', { month:'2-digit', year:'numeric' });
+
+  const totalHoje = lancamentos.filter(l => l.data === hoje).reduce((s,l) => s + parseFloat(l.val), 0);
+  const totalMes  = lancamentos.filter(l => l.data && l.data.slice(3) === mesAtual).reduce((s,l) => s + parseFloat(l.val), 0);
+  const totalGeral = lancamentos.reduce((s,l) => s + parseFloat(l.val), 0);
+  const ticket = lancamentos.length ? (totalGeral / lancamentos.length) : 0;
+
+  document.getElementById('kpiHoje').textContent   = 'R$\u00a0' + totalHoje.toFixed(2).replace('.',',');
+  document.getElementById('kpiMes').textContent    = 'R$\u00a0' + totalMes.toFixed(2).replace('.',',');
+  document.getElementById('kpiTotal').textContent  = lancamentos.length;
+  document.getElementById('kpiTicket').textContent = 'R$\u00a0' + ticket.toFixed(2).replace('.',',');
+
+  // Ranking
+  const rank = {};
+  SERVICES.forEach(s => { rank[s.name] = { qtd: 0, val: 0 }; });
+  lancamentos.forEach(l => {
+    if (rank[l.svc]) { rank[l.svc].qtd++; rank[l.svc].val += parseFloat(l.val); }
+  });
+  const sorted = SERVICES.map((s,i) => ({ ...s, ...rank[s.name] }))
+    .sort((a,b) => b.val - a.val);
+  const maxVal = sorted[0]?.val || 1;
+
+  const rankEl = document.getElementById('rankingList');
+  if (sorted.every(s => s.qtd === 0)) {
+    rankEl.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Sem dados ainda.</div></div>`;
+  } else {
+    const medals = ['gold','silver','bronze'];
+    rankEl.innerHTML = sorted.map((s,i) => `
+      <div class="rank-item">
+        <div class="rank-num ${medals[i]||''}">${i+1}</div>
+        <div class="rank-info">
+          <div class="rank-name">${s.icon} ${s.name}</div>
+          <div class="rank-bar-wrap"><div class="rank-bar" style="width:${(s.val/maxVal*100)}%"></div></div>
+        </div>
+        <div class="rank-stats">
+          <div class="rank-val">R$&nbsp;${s.val.toFixed(2).replace('.',',')}</div>
+          <div class="rank-qtd">${s.qtd} atend.</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Horários de pico
+  const horas = {};
+  const faixas = [
+    ['07-09h',7,9],['09-11h',9,11],['11-13h',11,13],
+    ['13-15h',13,15],['15-17h',15,17],['17-19h',17,19],['19-21h',19,21]
+  ];
+  faixas.forEach(f => horas[f[0]] = 0);
+  lancamentos.forEach(l => {
+    if (!l.hora) return;
+    const h = parseInt(l.hora.split(':')[0]);
+    faixas.forEach(f => { if (h >= f[1] && h < f[2]) horas[f[0]]++; });
+  });
+  const maxH = Math.max(...Object.values(horas), 1);
+  document.getElementById('picoList').innerHTML = faixas.map(f => `
+    <div class="pico-item">
+      <div class="pico-hora">${f[0]}</div>
+      <div class="pico-bar-wrap"><div class="pico-bar" style="width:${(horas[f[0]]/maxH*100)}%"></div></div>
+      <div class="pico-qtd">${horas[f[0]]} atend.</div>
+    </div>
+  `).join('');
+}
+
+// ── CONFIG ──
+function salvarConfig() {
+  webAppUrl = document.getElementById('webAppUrl').value.trim();
+  localStorage.setItem('zapWebApp', webAppUrl);
+  showToast('✅ Configuração salva!');
+  checkConexao();
+}
+
+async function checkConexao() {
+  const el = document.getElementById('statusConexao');
+  if (!webAppUrl) { el.textContent = 'Web App não configurado'; el.className = 'info-val'; return; }
+  el.textContent = 'Verificando...';
+  try {
+    await fetch(webAppUrl + '?action=ping', { mode: 'no-cors' });
+    el.textContent = '🟢 Conectado';
+    el.className = 'info-val green';
+  } catch(e) {
+    el.textContent = '🔴 Offline (dados locais)';
+    el.className = 'info-val';
+  }
+}
+
+// ── NAVIGATION ──
+function goTo(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
+  if (page === 'lancamentos') carregarLancamentos();
+  if (page === 'dashboard') carregarDashboard();
+}
+
+// ── TOAST ──
+function showToast(msg, error = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (error ? ' error' : '') + ' show';
+  setTimeout(() => t.className = 'toast' + (error ? ' error' : ''), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
