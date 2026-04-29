@@ -757,8 +757,27 @@ function updateTotal() {
   document.getElementById('saveBtn').disabled = selected.size === 0;
 }
 
+// ── JSONP helper ──
+function jsonpRequest(url, callback) {
+  const cbName = 'cb_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    document.getElementById('jsonp_script')?.remove();
+    callback(data);
+  };
+  const script = document.createElement('script');
+  script.id = 'jsonp_script';
+  script.src = url + '&callback=' + cbName;
+  script.onerror = function() {
+    delete window[cbName];
+    script.remove();
+    callback(null);
+  };
+  document.body.appendChild(script);
+}
+
 // ── SALVAR ──
-async function salvar() {
+function salvar() {
   if (selected.size === 0) { showToast('Selecione ao menos um serviço', true); return; }
 
   const btn = document.getElementById('saveBtn');
@@ -768,13 +787,7 @@ async function salvar() {
   const svcs = [...selected].map(i => SERVICES[i].name).join('|');
   const vals = [...selected].map(i => SERVICES[i].price).join('|');
 
-  // Salvar no Google Sheets via Web App
-  try {
-    const url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
-    await fetch(url, { mode: 'no-cors' });
-  } catch(e) {}
-
-  // Salvar também no localStorage como backup
+  // Salvar no localStorage imediatamente
   const agora = new Date();
   const data = agora.toLocaleDateString('pt-BR');
   const hora = agora.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
@@ -783,12 +796,20 @@ async function salvar() {
   });
   localStorage.setItem('zapLanc', JSON.stringify(lancamentos.slice(0, 500)));
 
-  showToast('✅ ' + selected.size + ' serviço(s) salvo(s) na planilha!');
+  // Enviar ao Google Sheets via imagem (contorna CORS 100%)
+  const url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
+  const img = new Image();
+  img.src = url;
+
+  showToast('✅ ' + selected.size + ' serviço(s) registrado(s)!');
   selected.clear();
   renderServices();
   updateTotal();
-  btn.disabled = false;
-  btn.textContent = '▶ SALVAR REGISTRO';
+
+  setTimeout(function() {
+    btn.disabled = false;
+    btn.textContent = '▶ SALVAR REGISTRO';
+  }, 2000);
 }
 
 // ── LANÇAMENTOS ──
