@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão: 2.0 | Data: 30/04/2026
-  Web App URL: AKfycbx6VzINWI-1OHPuDPsh5tU_pxIkV8F-POWOOqofz1YrX6iHU8necHMA_GIxyecI7yDjSw
+  Versão: 2.1 | Data: 30/04/2026
+  CORREÇÃO: listar agora usa JSONP (igual ao salvar) — resolve CORS do Apps Script
+  Web App : AKfycbx6VzINWI-1OHPuDPsh5tU_pxIkV8F-POWOOqofz1YrX6iHU8necHMA_GIxyecI7yDjSw
   Sheet ID: 1jLtDUlghJTz8Tlfwn62rWw1BT9wZx7m-gkO8rjJuxxs
 -->
 <html lang="pt-BR">
@@ -162,7 +163,7 @@
     </div>
     <div class="date-badge" id="dateBadge"></div>
   </div>
-  <div class="header-subtitle">Gerenciamento de Serviços · v2.0</div>
+  <div class="header-subtitle">Gerenciamento de Serviços · v2.1</div>
 </div>
 
 <div class="page active" id="page-registrar">
@@ -206,7 +207,7 @@
   </div>
   <div class="section-title">Sobre o Sistema</div>
   <div class="config-card">
-    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">2.0 — 30/04/2026</span></div>
+    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">2.1 — 30/04/2026</span></div>
     <div class="info-row"><span class="info-key">Empresa</span><span class="info-val">ZapClin</span></div>
     <div class="info-row"><span class="info-key">Serviços</span><span class="info-val">7 tipos</span></div>
     <div class="info-row"><span class="info-key">Sheet ID</span><span class="info-val" style="font-size:10px;">1jLtDUlgh...juxxs</span></div>
@@ -222,11 +223,12 @@
 </nav>
 
 <script>
-// ══════════════════════════════════════════════
-// ZAPCLIN — v2.0 | 30/04/2026
+// ══════════════════════════════════════════════════════
+// ZAPCLIN — v2.1 | 30/04/2026
+// CORREÇÃO PRINCIPAL: listar usa JSONP (sem CORS)
 // Sheet ID : 1jLtDUlghJTz8Tlfwn62rWw1BT9wZx7m-gkO8rjJuxxs
 // Web App  : AKfycbx6VzINWI-1OHPuDPsh5tU_...GIxyecI7yDjSw
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
 const SERVICES = [
   { name: 'Higienização Rápida',       price: 15, icon: '🧹', cat: 'Higienização' },
@@ -240,14 +242,47 @@ const SERVICES = [
 
 const WEB_APP_DEFAULT = 'https://script.google.com/macros/s/AKfycbx6VzINWI-1OHPuDPsh5tU_pxIkV8F-POWOOqofz1YrX6iHU8necHMA_GIxyecI7yDjSw/exec';
 
-let selected   = new Set();
-let webAppUrl  = localStorage.getItem('zapWebApp') || WEB_APP_DEFAULT;
+let selected    = new Set();
+let webAppUrl   = localStorage.getItem('zapWebApp') || WEB_APP_DEFAULT;
 let lancamentos = [];
 
+// ── JSONP universal — funciona sem CORS ──
+function jsonpRequest(url, timeoutMs) {
+  timeoutMs = timeoutMs || 10000;
+  return new Promise(function(resolve, reject) {
+    var cbName = 'zap_cb_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+    var scr = document.createElement('script');
+    var timer = setTimeout(function() {
+      cleanup();
+      reject(new Error('timeout'));
+    }, timeoutMs);
+
+    function cleanup() {
+      clearTimeout(timer);
+      if (window[cbName]) delete window[cbName];
+      if (scr.parentNode) scr.remove();
+    }
+
+    window[cbName] = function(data) {
+      cleanup();
+      resolve(data);
+    };
+
+    scr.onerror = function() {
+      cleanup();
+      reject(new Error('script error'));
+    };
+
+    scr.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName + '&t=' + Date.now();
+    document.head.appendChild(scr);
+  });
+}
+
+// ── INIT ──
 function init() {
-  const now   = new Date();
-  const dias  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var now   = new Date();
+  var dias  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   document.getElementById('dateBadge').textContent =
     dias[now.getDay()] + ', ' + String(now.getDate()).padStart(2,'0') + ' ' + meses[now.getMonth()];
   document.getElementById('webAppUrl').value = webAppUrl;
@@ -257,162 +292,182 @@ function init() {
 }
 
 function renderServices() {
-  document.getElementById('serviceList').innerHTML = SERVICES.map((s,i) => `
-    <div class="service-card" id="svc${i}" onclick="toggle(${i})">
-      <div class="svc-icon">${s.icon}</div>
-      <div class="svc-info"><div class="svc-name">${s.name}</div><div class="svc-cat">${s.cat}</div></div>
-      <div class="svc-price">R$&nbsp;${s.price.toFixed(2).replace('.',',')}</div>
-      <div class="svc-check"><span class="check-icon">✓</span></div>
-    </div>`).join('');
+  document.getElementById('serviceList').innerHTML = SERVICES.map(function(s,i) {
+    return '<div class="service-card" id="svc'+i+'" onclick="toggle('+i+')">' +
+      '<div class="svc-icon">'+s.icon+'</div>' +
+      '<div class="svc-info"><div class="svc-name">'+s.name+'</div><div class="svc-cat">'+s.cat+'</div></div>' +
+      '<div class="svc-price">R$\u00a0'+s.price.toFixed(2).replace('.',',')+'</div>' +
+      '<div class="svc-check"><span class="check-icon">✓</span></div>' +
+      '</div>';
+  }).join('');
 }
 
 function toggle(i) {
-  const card = document.getElementById('svc'+i);
+  var card = document.getElementById('svc'+i);
   if (selected.has(i)) { selected.delete(i); card.classList.remove('selected'); }
   else { selected.add(i); card.classList.add('selected'); }
   updateTotal();
 }
 
 function updateTotal() {
-  let total = 0;
-  selected.forEach(i => total += SERVICES[i].price);
+  var total = 0;
+  selected.forEach(function(i) { total += SERVICES[i].price; });
   document.getElementById('totalValue').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
   document.getElementById('selectedCount').textContent = selected.size + ' serviço(s) selecionado(s)';
   document.getElementById('saveBtn').disabled = selected.size === 0;
 }
 
+// ── SALVAR (3 métodos) ──
 function salvar() {
   if (selected.size === 0) { showToast('Selecione ao menos um serviço', true); return; }
-  const btn = document.getElementById('saveBtn');
+  var btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';
 
-  const svcs = [...selected].map(i => SERVICES[i].name).join('|');
-  const vals = [...selected].map(i => SERVICES[i].price).join('|');
+  var svcs = Array.from(selected).map(function(i){ return SERVICES[i].name; }).join('|');
+  var vals = Array.from(selected).map(function(i){ return SERVICES[i].price; }).join('|');
 
-  const agora = new Date();
-  const dd=String(agora.getDate()).padStart(2,'0'), mm=String(agora.getMonth()+1).padStart(2,'0'), yyyy=agora.getFullYear();
-  const hh=String(agora.getHours()).padStart(2,'0'), mi=String(agora.getMinutes()).padStart(2,'0');
-  const data=dd+'/'+mm+'/'+yyyy, hora=hh+':'+mi;
+  var agora = new Date();
+  var dd=String(agora.getDate()).padStart(2,'0');
+  var mm=String(agora.getMonth()+1).padStart(2,'0');
+  var yyyy=agora.getFullYear();
+  var hh=String(agora.getHours()).padStart(2,'0');
+  var mi=String(agora.getMinutes()).padStart(2,'0');
+  var data=dd+'/'+mm+'/'+yyyy, hora=hh+':'+mi;
 
-  [...selected].forEach(i => lancamentos.unshift({ svc:SERVICES[i].name, data, hora, qtd:1, val:SERVICES[i].price }));
+  Array.from(selected).forEach(function(i) {
+    lancamentos.unshift({ svc:SERVICES[i].name, data:data, hora:hora, qtd:1, val:SERVICES[i].price });
+  });
   localStorage.setItem('zapLanc', JSON.stringify(lancamentos.slice(0,500)));
 
-  const url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
+  var url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
 
   // Método 1: fetch no-cors
-  fetch(url, { method:'GET', mode:'no-cors', cache:'no-cache' }).catch(()=>{});
+  fetch(url, { method:'GET', mode:'no-cors', cache:'no-cache' }).catch(function(){});
   // Método 2: imagem
   (new Image()).src = url + '&t=' + Date.now();
   // Método 3: JSONP
-  const scr = document.createElement('script');
-  scr.src = url + '&callback=zapCallback&t=' + Date.now();
-  scr.onerror = () => scr.remove();
-  document.head.appendChild(scr);
-  setTimeout(() => { if (scr.parentNode) scr.remove(); }, 5000);
+  jsonpRequest(url).catch(function(){});
 
   showToast('✅ ' + selected.size + ' serviço(s) registrado(s)!');
   selected.clear(); renderServices(); updateTotal();
-  setTimeout(() => { btn.disabled=false; btn.innerHTML='▶ SALVAR REGISTRO'; }, 2000);
+  setTimeout(function() { btn.disabled=false; btn.innerHTML='▶ SALVAR REGISTRO'; }, 2000);
 }
 
-function zapCallback(data) {}
-
-async function carregarLancamentos() {
-  const list = document.getElementById('lancList');
-  list.innerHTML = '<div class="loading"><div class="spinner"></div> Carregando da planilha...</div>';
-  try {
-    const resp = await fetch(webAppUrl + '?action=listar');
-    const json = await resp.json();
-    if (json.ok && json.items && json.items.length > 0) {
-      lancamentos = json.items;
-      localStorage.setItem('zapLanc', JSON.stringify(lancamentos));
-    } else {
-      lancamentos = JSON.parse(localStorage.getItem('zapLanc') || '[]');
-    }
-  } catch(e) {
-    lancamentos = JSON.parse(localStorage.getItem('zapLanc') || '[]');
-  }
-  if (lancamentos.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>`;
-    return;
-  }
-  list.innerHTML = lancamentos.slice(0,100).map(l => `
-    <div class="lanc-item">
-      <div class="lanc-dot"></div>
-      <div class="lanc-info"><div class="lanc-svc">${l.svc}</div><div class="lanc-meta">${l.data} · ${l.hora}</div></div>
-      <div class="lanc-val">R$&nbsp;${parseFloat(l.val).toFixed(2).replace('.',',')}</div>
-    </div>`).join('');
-}
-
-function carregarDashboard() {
-  fetch(webAppUrl + '?action=listar')
-    .then(r => r.json())
-    .then(json => {
-      if (json.ok && json.items && json.items.length > 0) {
+// ── LISTAR via JSONP (sem CORS) ──
+function buscarDaPlanilha() {
+  return jsonpRequest(webAppUrl + '?action=listar', 12000)
+    .then(function(json) {
+      if (json && json.ok && json.items && json.items.length > 0) {
         lancamentos = json.items;
         localStorage.setItem('zapLanc', JSON.stringify(lancamentos));
-      } else {
-        lancamentos = JSON.parse(localStorage.getItem('zapLanc') || '[]');
+        return true;
       }
-      renderDashboard();
+      return false;
     })
-    .catch(() => {
-      lancamentos = JSON.parse(localStorage.getItem('zapLanc') || '[]');
-      renderDashboard();
-    });
+    .catch(function() { return false; });
+}
+
+function carregarLancamentos() {
+  var list = document.getElementById('lancList');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div> Carregando da planilha...</div>';
+
+  buscarDaPlanilha().then(function(ok) {
+    if (!ok) {
+      var saved = localStorage.getItem('zapLanc');
+      lancamentos = saved ? JSON.parse(saved) : [];
+    }
+    renderLancamentos();
+  });
+}
+
+function renderLancamentos() {
+  var list = document.getElementById('lancList');
+  if (lancamentos.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>';
+    return;
+  }
+  list.innerHTML = lancamentos.slice(0,100).map(function(l) {
+    return '<div class="lanc-item">' +
+      '<div class="lanc-dot"></div>' +
+      '<div class="lanc-info"><div class="lanc-svc">'+l.svc+'</div><div class="lanc-meta">'+l.data+' · '+l.hora+'</div></div>' +
+      '<div class="lanc-val">R$\u00a0'+parseFloat(l.val).toFixed(2).replace('.',',')+'</div>' +
+      '</div>';
+  }).join('');
+}
+
+// ── DASHBOARD ──
+function carregarDashboard() {
+  buscarDaPlanilha().then(function(ok) {
+    if (!ok) {
+      var saved = localStorage.getItem('zapLanc');
+      lancamentos = saved ? JSON.parse(saved) : [];
+    }
+    renderDashboard();
+  });
 }
 
 function renderDashboard() {
-  const now = new Date();
-  const dd=String(now.getDate()).padStart(2,'0'), mm=String(now.getMonth()+1).padStart(2,'0'), yyyy=now.getFullYear();
-  const hoje=dd+'/'+mm+'/'+yyyy, mesAtual=mm+'/'+yyyy;
-  const getMesAno = d => { if(!d) return ''; const p=d.split('/'); return p.length>=3?p[1]+'/'+p[2]:''; };
+  var now = new Date();
+  var dd=String(now.getDate()).padStart(2,'0'), mm=String(now.getMonth()+1).padStart(2,'0'), yyyy=now.getFullYear();
+  var hoje=dd+'/'+mm+'/'+yyyy, mesAtual=mm+'/'+yyyy;
 
-  const totalHoje  = lancamentos.filter(l=>l.data===hoje).reduce((s,l)=>s+parseFloat(l.val||0),0);
-  const totalMes   = lancamentos.filter(l=>getMesAno(l.data)===mesAtual).reduce((s,l)=>s+parseFloat(l.val||0),0);
-  const totalGeral = lancamentos.reduce((s,l)=>s+parseFloat(l.val||0),0);
-  const ticket     = lancamentos.length ? totalGeral/lancamentos.length : 0;
+  function getMesAno(d) {
+    if (!d) return '';
+    var p = d.split('/');
+    return p.length >= 3 ? p[1]+'/'+p[2] : '';
+  }
+
+  var totalHoje  = lancamentos.filter(function(l){ return l.data===hoje; }).reduce(function(s,l){ return s+parseFloat(l.val||0); },0);
+  var totalMes   = lancamentos.filter(function(l){ return getMesAno(l.data)===mesAtual; }).reduce(function(s,l){ return s+parseFloat(l.val||0); },0);
+  var totalGeral = lancamentos.reduce(function(s,l){ return s+parseFloat(l.val||0); },0);
+  var ticket     = lancamentos.length ? totalGeral/lancamentos.length : 0;
 
   document.getElementById('kpiHoje').textContent   = 'R$\u00a0'+totalHoje.toFixed(2).replace('.',',');
   document.getElementById('kpiMes').textContent    = 'R$\u00a0'+totalMes.toFixed(2).replace('.',',');
   document.getElementById('kpiTotal').textContent  = lancamentos.length;
   document.getElementById('kpiTicket').textContent = 'R$\u00a0'+ticket.toFixed(2).replace('.',',');
 
-  const rank = {};
-  SERVICES.forEach(s => { rank[s.name]={qtd:0,val:0}; });
-  lancamentos.forEach(l => { if(rank[l.svc]){rank[l.svc].qtd++;rank[l.svc].val+=parseFloat(l.val);} });
-  const sorted = SERVICES.map(s=>({...s,...rank[s.name]})).sort((a,b)=>b.val-a.val);
-  const maxVal = sorted[0]?.val || 1;
-  const rankEl = document.getElementById('rankingList');
+  var rank = {};
+  SERVICES.forEach(function(s){ rank[s.name]={qtd:0,val:0}; });
+  lancamentos.forEach(function(l){ if(rank[l.svc]){rank[l.svc].qtd++;rank[l.svc].val+=parseFloat(l.val);} });
+  var sorted = SERVICES.map(function(s){ return Object.assign({},s,rank[s.name]); }).sort(function(a,b){ return b.val-a.val; });
+  var maxVal = sorted[0] ? sorted[0].val : 1;
+  if (maxVal === 0) maxVal = 1;
 
-  if (sorted.every(s=>s.qtd===0)) {
-    rankEl.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Sem dados ainda.</div></div>`;
+  var rankEl = document.getElementById('rankingList');
+  if (sorted.every(function(s){ return s.qtd===0; })) {
+    rankEl.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Sem dados ainda.</div></div>';
   } else {
-    const medals=['gold','silver','bronze'];
-    rankEl.innerHTML=sorted.map((s,i)=>`
-      <div class="rank-item">
-        <div class="rank-num ${medals[i]||''}">${i+1}</div>
-        <div class="rank-info">
-          <div class="rank-name">${s.icon} ${s.name}</div>
-          <div class="rank-bar-wrap"><div class="rank-bar" style="width:${s.val/maxVal*100}%"></div></div>
-        </div>
-        <div class="rank-stats"><div class="rank-val">R$&nbsp;${s.val.toFixed(2).replace('.',',')}</div><div class="rank-qtd">${s.qtd} atend.</div></div>
-      </div>`).join('');
+    var medals = ['gold','silver','bronze'];
+    rankEl.innerHTML = sorted.map(function(s,i){
+      return '<div class="rank-item">' +
+        '<div class="rank-num '+(medals[i]||'')+'">'+(i+1)+'</div>' +
+        '<div class="rank-info"><div class="rank-name">'+s.icon+' '+s.name+'</div>' +
+        '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+Math.round(s.val/maxVal*100)+'%"></div></div></div>' +
+        '<div class="rank-stats"><div class="rank-val">R$\u00a0'+s.val.toFixed(2).replace('.',',')+'</div><div class="rank-qtd">'+s.qtd+' atend.</div></div>' +
+        '</div>';
+    }).join('');
   }
 
-  const faixas=[['07-09h',7,9],['09-11h',9,11],['11-13h',11,13],['13-15h',13,15],['15-17h',15,17],['17-19h',17,19],['19-21h',19,21]];
-  const horas={};
-  faixas.forEach(f=>horas[f[0]]=0);
-  lancamentos.forEach(l=>{ if(!l.hora)return; const h=parseInt(l.hora.split(':')[0]); faixas.forEach(f=>{ if(h>=f[1]&&h<f[2])horas[f[0]]++; }); });
-  const maxH=Math.max(...Object.values(horas),1);
-  document.getElementById('picoList').innerHTML=faixas.map(f=>`
-    <div class="pico-item">
-      <div class="pico-hora">${f[0]}</div>
-      <div class="pico-bar-wrap"><div class="pico-bar" style="width:${horas[f[0]]/maxH*100}%"></div></div>
-      <div class="pico-qtd">${horas[f[0]]} atend.</div>
-    </div>`).join('');
+  var faixas=[['07-09h',7,9],['09-11h',9,11],['11-13h',11,13],['13-15h',13,15],['15-17h',15,17],['17-19h',17,19],['19-21h',19,21]];
+  var horas={};
+  faixas.forEach(function(f){ horas[f[0]]=0; });
+  lancamentos.forEach(function(l){
+    if(!l.hora) return;
+    var h=parseInt(l.hora.split(':')[0]);
+    faixas.forEach(function(f){ if(h>=f[1]&&h<f[2]) horas[f[0]]++; });
+  });
+  var maxH=Math.max.apply(null,Object.values(horas).concat([1]));
+  document.getElementById('picoList').innerHTML = faixas.map(function(f){
+    return '<div class="pico-item">' +
+      '<div class="pico-hora">'+f[0]+'</div>' +
+      '<div class="pico-bar-wrap"><div class="pico-bar" style="width:'+Math.round(horas[f[0]]/maxH*100)+'%"></div></div>' +
+      '<div class="pico-qtd">'+horas[f[0]]+' atend.</div>' +
+      '</div>';
+  }).join('');
 }
 
+// ── CONFIG ──
 function salvarConfig() {
   webAppUrl = document.getElementById('webAppUrl').value.trim();
   localStorage.setItem('zapWebApp', webAppUrl);
@@ -420,31 +475,36 @@ function salvarConfig() {
   checkConexao();
 }
 
-async function checkConexao() {
-  const el = document.getElementById('statusConexao');
+function checkConexao() {
+  var el = document.getElementById('statusConexao');
   el.textContent = 'Verificando...';
-  try {
-    await fetch(webAppUrl + '?action=ping', { mode:'no-cors' });
-    el.textContent = '🟢 Conectado'; el.className = 'info-val green';
-  } catch(e) {
-    el.textContent = '🔴 Offline (dados locais)'; el.className = 'info-val';
-  }
+  jsonpRequest(webAppUrl + '?action=ping', 5000)
+    .then(function(r) {
+      el.textContent = '🟢 Conectado';
+      el.className = 'info-val green';
+    })
+    .catch(function() {
+      el.textContent = '🔴 Sem conexão (dados locais)';
+      el.className = 'info-val';
+    });
 }
 
+// ── NAVIGATION ──
 function goTo(page, btn) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('page-'+page).classList.add('active');
   btn.classList.add('active');
   if (page==='lancamentos') carregarLancamentos();
   if (page==='dashboard')   carregarDashboard();
 }
 
-function showToast(msg, error=false) {
-  const t = document.getElementById('toast');
+// ── TOAST ──
+function showToast(msg, error) {
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast'+(error?' error':'')+' show';
-  setTimeout(()=>t.className='toast'+(error?' error':''), 3000);
+  setTimeout(function(){ t.className='toast'+(error?' error':''); }, 3000);
 }
 
 init();
