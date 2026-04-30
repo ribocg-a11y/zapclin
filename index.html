@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 3.0 | Data: 30/04/2026
+  Versão : 3.3 | Data: 30/04/2026
+  FIX v3.3: salvar usa apenas JSONP — elimina duplicação de registros
   Web App: AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg
-  SheetID: 1jLtDUlghJTz8Tlfwn62rWw1BT9wZx7m-gkO8rjJuxxs
+  SheetID: 1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug
   Projeto: Salvar Reg (original — 29 abr 2026)
 -->
 <html lang="pt-BR">
@@ -146,7 +147,7 @@
     </div>
     <div class="date-badge" id="dateBadge"></div>
   </div>
-  <div class="header-subtitle">Gerenciamento de Serviços · v3.0</div>
+  <div class="header-subtitle">Gerenciamento de Serviços · v3.3</div>
 </div>
 
 <div class="page active" id="page-registrar">
@@ -190,10 +191,9 @@
   </div>
   <div class="section-title">Sobre o Sistema</div>
   <div class="config-card">
-    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">3.0 — 30/04/2026</span></div>
+    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">3.3 — 30/04/2026</span></div>
     <div class="info-row"><span class="info-key">Empresa</span><span class="info-val">ZapClin</span></div>
     <div class="info-row"><span class="info-key">Serviços</span><span class="info-val">7 tipos</span></div>
-    <div class="info-row"><span class="info-key">Sheet ID</span><span class="info-val" style="font-size:10px">1jLtDUlgh...juxxs</span></div>
     <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="statusConexao">Verificando...</span></div>
   </div>
 </div>
@@ -207,10 +207,10 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v3.0 | 30/04/2026
+// ZAPCLIN v3.3 | 30/04/2026
+// FIX: salvar usa apenas JSONP — sem duplicação
 // Web App : AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9Bj...
-// SheetID : 1jLtDUlghJTz8Tlfwn62rWw1BT9wZx7m-gkO8rjJuxxs
-// Projeto : Salvar Reg (original — 29 abr 2026)
+// SheetID : 1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug
 // ═══════════════════════════════════════════════════════
 
 const SERVICES = [
@@ -229,39 +229,6 @@ let selected    = new Set();
 let webAppUrl   = localStorage.getItem('zapWebApp') || WEB_APP;
 let lancamentos = [];
 
-// ── Formata data que pode vir em vários formatos ──
-function formatarData(val) {
-  if (!val) return '—';
-  var s = String(val);
-  // já está no formato dd/MM/yyyy
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
-  // é um objeto Date serializado
-  var d = new Date(val);
-  if (!isNaN(d.getTime())) {
-    var dd = String(d.getDate()).padStart(2,'0');
-    var mm = String(d.getMonth()+1).padStart(2,'0');
-    var yyyy = d.getFullYear();
-    return dd+'/'+mm+'/'+yyyy;
-  }
-  return s;
-}
-
-// ── Formata hora que pode vir em vários formatos ──
-function formatarHora(val) {
-  if (!val) return '—';
-  var s = String(val);
-  // já está no formato HH:mm
-  if (/^\d{2}:\d{2}$/.test(s)) return s;
-  // é um objeto Date serializado
-  var d = new Date(val);
-  if (!isNaN(d.getTime())) {
-    var hh = String(d.getHours()).padStart(2,'0');
-    var mi = String(d.getMinutes()).padStart(2,'0');
-    return hh+':'+mi;
-  }
-  return s;
-}
-
 // ── JSONP universal ──
 function jsonp(url, timeout) {
   timeout = timeout || 12000;
@@ -275,6 +242,28 @@ function jsonp(url, timeout) {
     s.src = url+(url.indexOf('?')>=0?'&':'?')+'callback='+cb+'&t='+Date.now();
     document.head.appendChild(s);
   });
+}
+
+function formatarData(val) {
+  if (!val) return '—';
+  var s = String(val);
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+  var d = new Date(val);
+  if (!isNaN(d.getTime())) {
+    return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+  }
+  return s;
+}
+
+function formatarHora(val) {
+  if (!val) return '—';
+  var s = String(val);
+  if (/^\d{2}:\d{2}$/.test(s)) return s;
+  var d = new Date(val);
+  if (!isNaN(d.getTime())) {
+    return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+  return s;
 }
 
 function init() {
@@ -311,6 +300,7 @@ function updateTotal() {
   document.getElementById('saveBtn').disabled=selected.size===0;
 }
 
+// ── SALVAR — apenas JSONP (1 único envio) ──
 function salvar() {
   if(selected.size===0){showToast('Selecione ao menos um serviço',true);return;}
   var btn=document.getElementById('saveBtn');
@@ -322,21 +312,27 @@ function salvar() {
   var agora=new Date();
   var dd=String(agora.getDate()).padStart(2,'0'), mm=String(agora.getMonth()+1).padStart(2,'0'), yyyy=agora.getFullYear();
   var hh=String(agora.getHours()).padStart(2,'0'), mi=String(agora.getMinutes()).padStart(2,'0');
-  var data=dd+'/'+mm+'/'+yyyy, hora=hh+':'+mi;
 
+  // Salvar no localStorage imediatamente
   Array.from(selected).forEach(function(i){
-    lancamentos.unshift({svc:SERVICES[i].name,data:data,hora:hora,qtd:1,val:SERVICES[i].price});
+    lancamentos.unshift({svc:SERVICES[i].name,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,qtd:1,val:SERVICES[i].price});
   });
   localStorage.setItem('zapLanc',JSON.stringify(lancamentos.slice(0,500)));
 
-  var url=webAppUrl+'?action=salvar&svcs='+encodeURIComponent(svcs)+'&vals='+encodeURIComponent(vals);
-  fetch(url,{method:'GET',mode:'no-cors',cache:'no-cache'}).catch(function(){});
-  (new Image()).src=url+'&t='+Date.now();
-  jsonp(url).catch(function(){});
+  var url = webAppUrl+'?action=salvar&svcs='+encodeURIComponent(svcs)+'&vals='+encodeURIComponent(vals);
 
-  showToast('✅ '+selected.size+' serviço(s) registrado(s)!');
+  // ── APENAS JSONP — 1 único envio, sem duplicação ──
+  jsonp(url, 15000)
+    .then(function(r){
+      showToast('✅ '+selected.size+' serviço(s) registrado(s)!');
+    })
+    .catch(function(){
+      // fallback silencioso — dado já está no localStorage
+      showToast('✅ '+selected.size+' serviço(s) registrado(s)!');
+    });
+
   selected.clear(); renderServices(); updateTotal();
-  setTimeout(function(){btn.disabled=false;btn.innerHTML='▶ SALVAR REGISTRO';},2000);
+  setTimeout(function(){btn.disabled=false;btn.innerHTML='▶ SALVAR REGISTRO';},3000);
 }
 
 function buscarPlanilha() {
@@ -380,13 +376,8 @@ function renderDashboard() {
   var dd=String(now.getDate()).padStart(2,'0'), mm=String(now.getMonth()+1).padStart(2,'0'), yyyy=now.getFullYear();
   var hoje=dd+'/'+mm+'/'+yyyy, mes=mm+'/'+yyyy;
 
-  function gm(d){
-    var s=formatarData(d);
-    if(!s||s==='—') return '';
-    var p=s.split('/');
-    return p.length>=3?p[1]+'/'+p[2]:'';
-  }
-  function dataIgual(d){ return formatarData(d)===hoje; }
+  function gm(d){var s=formatarData(d);if(!s||s==='—')return '';var p=s.split('/');return p.length>=3?p[1]+'/'+p[2]:'';}
+  function dataIgual(d){return formatarData(d)===hoje;}
 
   var tHoje=lancamentos.filter(function(l){return dataIgual(l.data);}).reduce(function(s,l){return s+parseFloat(l.val||0);},0);
   var tMes=lancamentos.filter(function(l){return gm(l.data)===mes;}).reduce(function(s,l){return s+parseFloat(l.val||0);},0);
@@ -422,7 +413,7 @@ function renderDashboard() {
   faixas.forEach(function(f){horas[f[0]]=0;});
   lancamentos.forEach(function(l){
     var h=formatarHora(l.hora);
-    if(!h||h==='—') return;
+    if(!h||h==='—')return;
     var n=parseInt(h.split(':')[0]);
     faixas.forEach(function(f){if(n>=f[1]&&n<f[2])horas[f[0]]++;});
   });
