@@ -540,9 +540,7 @@
 <!-- PAGE: REGISTRAR -->
 <div class="page active" id="page-registrar">
   <div class="section-title">Selecionar Serviços</div>
-
   <div id="serviceList"></div>
-
   <div class="total-bar">
     <div>
       <div class="total-label">💰 Total Selecionado</div>
@@ -550,7 +548,6 @@
     </div>
     <div class="total-value" id="totalValue">R$ 0,00</div>
   </div>
-
   <button class="save-btn" id="saveBtn" onclick="salvar()">
     ▶ SALVAR REGISTRO
   </button>
@@ -571,10 +568,8 @@
     <div class="kpi-card yellow"><div class="kpi-label">Atendimentos</div><div class="kpi-value yellow" id="kpiTotal">—</div><div class="kpi-sub">total</div></div>
     <div class="kpi-card blue"><div class="kpi-label">Ticket Médio</div><div class="kpi-value blue" id="kpiTicket">—</div><div class="kpi-sub">por serviço</div></div>
   </div>
-
   <div class="section-title">🏆 Ranking de Serviços</div>
   <div id="rankingList"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
-
   <div class="section-title">🕐 Horários de Pico</div>
   <div class="config-card" id="picoList"><div class="loading"><div class="spinner"></div></div></div>
 </div>
@@ -583,16 +578,14 @@
 <div class="page" id="page-config">
   <div class="section-title">Configuração</div>
   <div class="config-card">
-    <div class="config-label">ID da Planilha Google</div>
-    <input class="config-input" id="sheetId" placeholder="Cole o ID aqui..." type="text">
-    <div class="config-label" style="margin-top:14px">URL do Web App (Apps Script)</div>
+    <div class="config-label">URL do Web App (Apps Script)</div>
     <input class="config-input" id="webAppUrl" placeholder="https://script.google.com/macros/s/..." type="text">
     <button class="config-btn" onclick="salvarConfig()">💾 Salvar Configuração</button>
   </div>
 
   <div class="section-title">Sobre o Sistema</div>
   <div class="config-card">
-    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">1.0.0</span></div>
+    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">1.1.0</span></div>
     <div class="info-row"><span class="info-key">Empresa</span><span class="info-val">ZapClin</span></div>
     <div class="info-row"><span class="info-key">Serviços</span><span class="info-val">7 tipos</span></div>
     <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="statusConexao">Verificando...</span></div>
@@ -600,74 +593,9 @@
 
   <div class="section-title">Instruções de Instalação</div>
   <div class="config-card" style="font-size:13px; color:var(--muted); line-height:1.7;">
-    <strong style="color:var(--cyan);">1.</strong> No Apps Script, adicione o código do Web App abaixo.<br>
-    <strong style="color:var(--cyan);">2.</strong> Clique em Implantar → Novo Implantação → Web App.<br>
-    <strong style="color:var(--cyan);">3.</strong> Acesso: "Qualquer pessoa". Copie a URL gerada.<br>
-    <strong style="color:var(--cyan);">4.</strong> Cole a URL acima e salve.<br>
-    <strong style="color:var(--cyan);">5.</strong> No Safari do iPhone: Compartilhar → Adicionar à Tela de Início.
-  </div>
-
-  <div class="section-title">Código do Web App (Apps Script)</div>
-  <div class="config-card" style="background:#0d0d1a;">
-    <pre style="font-size:10px; color:#00e676; overflow-x:auto; white-space:pre-wrap; line-height:1.6;">function doGet(e) {
-  return doPost(e);
-}
-
-function doPost(e) {
-  var ss = SpreadsheetApp.openById(
-    '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug'
-  );
-  var p = e ? e.parameter : {};
-  var action = p.action || 'ping';
-  var result = {};
-
-  if (action === 'ping') {
-    result = { ok: true };
-
-  } else if (action === 'salvar') {
-    var lanc = ss.getSheets()[1];
-    var svcs = (p.svcs || '').split('|');
-    var vals = (p.vals || '').split('|');
-    var agora = new Date();
-    for (var i = 0; i < svcs.length; i++) {
-      if (!svcs[i]) continue;
-      var dados = lanc.getRange('C10:C2000').getValues();
-      var linha = 10;
-      for (var j = 0; j < dados.length; j++) {
-        if (dados[j][0] !== '') linha = 10 + j + 1;
-        else break;
-      }
-      lanc.getRange(linha,3).setValue(svcs[i]);
-      lanc.getRange(linha,4).setValue(Utilities.formatDate(
-        agora,'America/Sao_Paulo','dd/MM/yyyy'));
-      lanc.getRange(linha,5).setValue(Utilities.formatDate(
-        agora,'America/Sao_Paulo','HH:mm'));
-      lanc.getRange(linha,6).setValue(1);
-      lanc.getRange(linha,7).setValue(parseFloat(vals[i]||0));
-    }
-    result = { ok: true, saved: svcs.length };
-
-  } else if (action === 'listar') {
-    var lanc = ss.getSheets()[1];
-    var rows = lanc.getRange('C10:G500').getValues();
-    var items = [];
-    for (var i = 0; i < rows.length; i++) {
-      if (!rows[i][0]) break;
-      items.push({
-        svc: rows[i][0],
-        data: rows[i][1],
-        hora: rows[i][2],
-        qtd: rows[i][3],
-        val: rows[i][4]
-      });
-    }
-    result = { ok: true, items: items.reverse().slice(0,50) };
-  }
-
-  return ContentService
-    .createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
-}</pre>
+    <strong style="color:var(--cyan);">1.</strong> No Apps Script, o Web App já está implantado.<br>
+    <strong style="color:var(--cyan);">2.</strong> Para atualizar: Implantar → Gerenciar → lápis → Nova versão.<br>
+    <strong style="color:var(--cyan);">3.</strong> No Safari do iPhone: Compartilhar → Adicionar à Tela de Início.
   </div>
 </div>
 
@@ -689,32 +617,33 @@ function doPost(e) {
 
 <script>
 const SERVICES = [
-  { name: 'Higienização Rápida',      price: 15, icon: '🧹', cat: 'Higienização' },
-  { name: 'Higienização Essencial',   price: 18, icon: '🧴', cat: 'Higienização' },
-  { name: 'Higienização Profunda',    price: 23, icon: '💎', cat: 'Higienização' },
-  { name: 'Limpeza + Hig. Rápida',   price: 18, icon: '🔵', cat: 'Limpeza + Higienização' },
+  { name: 'Higienização Rápida',       price: 15, icon: '🧹', cat: 'Higienização' },
+  { name: 'Higienização Essencial',    price: 18, icon: '🧴', cat: 'Higienização' },
+  { name: 'Higienização Profunda',     price: 23, icon: '💎', cat: 'Higienização' },
+  { name: 'Limpeza + Hig. Rápida',    price: 18, icon: '🔵', cat: 'Limpeza + Higienização' },
   { name: 'Limpeza + Hig. Essencial', price: 21, icon: '🟣', cat: 'Limpeza + Higienização' },
   { name: 'Limpeza + Hig. Profunda',  price: 30, icon: '⭐', cat: 'Limpeza + Higienização' },
-  { name: 'Revitalização',            price: 70, icon: '✨', cat: 'Premium' },
+  { name: 'Revitalização',             price: 70, icon: '✨', cat: 'Premium' },
 ];
 
+// ── NOVA URL DO WEB APP ──
+const WEB_APP = 'https://script.google.com/macros/s/AKfycbx6VzINWI-1OHPuDPsh5tU_pxIkV8F-POWOOqofz1YrX6iHU8necHMA_GIxyecI7yDjSw/exec';
+
 let selected = new Set();
-const WEB_APP = 'https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 let webAppUrl = localStorage.getItem('zapWebApp') || WEB_APP;
 let lancamentos = [];
 
 // ── INIT ──
 function init() {
-  // Date
   const now = new Date();
+  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   document.getElementById('dateBadge').textContent =
-    now.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+    dias[now.getDay()] + ', ' +
+    String(now.getDate()).padStart(2,'0') + ' ' +
+    meses[now.getMonth()];
 
-  // Load config
-  document.getElementById('sheetId').value = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
   document.getElementById('webAppUrl').value = webAppUrl;
-
-  // Render services
   renderServices();
   updateTotal();
   checkConexao();
@@ -777,6 +706,7 @@ function salvar() {
   const mi = String(agora.getMinutes()).padStart(2,'0');
   const data = dd+'/'+mm+'/'+yyyy;
   const hora = hh+':'+mi;
+
   [...selected].forEach(i => {
     lancamentos.unshift({ svc: SERVICES[i].name, data, hora, qtd: 1, val: SERVICES[i].price });
   });
@@ -805,11 +735,10 @@ function salvar() {
 
   setTimeout(function() {
     btn.disabled = false;
-    btn.textContent = '▶ SALVAR REGISTRO';
+    btn.innerHTML = '▶ SALVAR REGISTRO';
   }, 2000);
 }
 
-// Callback JSONP
 function zapCallback(data) {}
 
 // ── LANÇAMENTOS ──
@@ -856,10 +785,9 @@ function carregarDashboard() {
   const dd = String(now.getDate()).padStart(2,'0');
   const mm = String(now.getMonth()+1).padStart(2,'0');
   const yyyy = now.getFullYear();
-  const hoje = dd+'/'+mm+'/'+yyyy;       // 30/04/2026
-  const mesAtual = mm+'/'+yyyy;          // 04/2026
+  const hoje = dd+'/'+mm+'/'+yyyy;
+  const mesAtual = mm+'/'+yyyy;
 
-  // Parse date string dd/MM/yyyy to get month/year
   function getMesAno(dataStr) {
     if (!dataStr) return '';
     const parts = dataStr.split('/');
@@ -883,8 +811,7 @@ function carregarDashboard() {
   lancamentos.forEach(l => {
     if (rank[l.svc]) { rank[l.svc].qtd++; rank[l.svc].val += parseFloat(l.val); }
   });
-  const sorted = SERVICES.map((s,i) => ({ ...s, ...rank[s.name] }))
-    .sort((a,b) => b.val - a.val);
+  const sorted = SERVICES.map(s => ({ ...s, ...rank[s.name] })).sort((a,b) => b.val - a.val);
   const maxVal = sorted[0]?.val || 1;
 
   const rankEl = document.getElementById('rankingList');
@@ -908,11 +835,11 @@ function carregarDashboard() {
   }
 
   // Horários de pico
-  const horas = {};
   const faixas = [
     ['07-09h',7,9],['09-11h',9,11],['11-13h',11,13],
     ['13-15h',13,15],['15-17h',15,17],['17-19h',17,19],['19-21h',19,21]
   ];
+  const horas = {};
   faixas.forEach(f => horas[f[0]] = 0);
   lancamentos.forEach(l => {
     if (!l.hora) return;
