@@ -770,8 +770,13 @@ function salvar() {
 
   // Salvar no localStorage
   const agora = new Date();
-  const data = agora.toLocaleDateString('pt-BR');
-  const hora = agora.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  const dd = String(agora.getDate()).padStart(2,'0');
+  const mm = String(agora.getMonth()+1).padStart(2,'0');
+  const yyyy = agora.getFullYear();
+  const hh = String(agora.getHours()).padStart(2,'0');
+  const mi = String(agora.getMinutes()).padStart(2,'0');
+  const data = dd+'/'+mm+'/'+yyyy;
+  const hora = hh+':'+mi;
   [...selected].forEach(i => {
     lancamentos.unshift({ svc: SERVICES[i].name, data, hora, qtd: 1, val: SERVICES[i].price });
   });
@@ -779,9 +784,19 @@ function salvar() {
 
   const url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
 
-  // Envia uma única vez via fetch
-  fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache' })
-    .catch(function() {});
+  // Método 1: fetch no-cors
+  fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache' }).catch(function() {});
+
+  // Método 2: imagem (fallback)
+  const img = new Image();
+  img.src = url + '&t=' + Date.now();
+
+  // Método 3: script tag JSONP (fallback)
+  const scr = document.createElement('script');
+  scr.src = url + '&callback=zapCallback&t=' + Date.now();
+  scr.onerror = function() { scr.remove(); };
+  document.head.appendChild(scr);
+  setTimeout(function() { if(scr.parentNode) scr.remove(); }, 5000);
 
   showToast('✅ ' + selected.size + ' serviço(s) registrado(s)!');
   selected.clear();
