@@ -779,20 +779,9 @@ function salvar() {
 
   const url = webAppUrl + '?action=salvar&svcs=' + encodeURIComponent(svcs) + '&vals=' + encodeURIComponent(vals);
 
-  // Tenta fetch normal primeiro
+  // Envia uma única vez via fetch
   fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache' })
     .catch(function() {});
-
-  // Tenta também via imagem (fallback)
-  const img = new Image();
-  img.src = url + '&t=' + Date.now();
-
-  // Tenta também via script tag (JSONP fallback)
-  const script = document.createElement('script');
-  script.src = url + '&callback=zapCallback&t=' + Date.now();
-  script.onerror = function() { script.remove(); };
-  document.head.appendChild(script);
-  setTimeout(function() { if(script.parentNode) script.remove(); }, 5000);
 
   showToast('✅ ' + selected.size + ' serviço(s) registrado(s)!');
   selected.clear();
@@ -848,12 +837,24 @@ function carregarDashboard() {
   const saved = localStorage.getItem('zapLanc');
   lancamentos = saved ? JSON.parse(saved) : [];
 
-  const hoje = new Date().toLocaleDateString('pt-BR');
-  const mesAtual = new Date().toLocaleDateString('pt-BR', { month:'2-digit', year:'numeric' });
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2,'0');
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy = now.getFullYear();
+  const hoje = dd+'/'+mm+'/'+yyyy;       // 30/04/2026
+  const mesAtual = mm+'/'+yyyy;          // 04/2026
 
-  const totalHoje = lancamentos.filter(l => l.data === hoje).reduce((s,l) => s + parseFloat(l.val), 0);
-  const totalMes  = lancamentos.filter(l => l.data && l.data.slice(3) === mesAtual).reduce((s,l) => s + parseFloat(l.val), 0);
-  const totalGeral = lancamentos.reduce((s,l) => s + parseFloat(l.val), 0);
+  // Parse date string dd/MM/yyyy to get month/year
+  function getMesAno(dataStr) {
+    if (!dataStr) return '';
+    const parts = dataStr.split('/');
+    if (parts.length >= 3) return parts[1]+'/'+parts[2];
+    return '';
+  }
+
+  const totalHoje = lancamentos.filter(l => l.data === hoje).reduce((s,l) => s + parseFloat(l.val||0), 0);
+  const totalMes  = lancamentos.filter(l => getMesAno(l.data) === mesAtual).reduce((s,l) => s + parseFloat(l.val||0), 0);
+  const totalGeral = lancamentos.reduce((s,l) => s + parseFloat(l.val||0), 0);
   const ticket = lancamentos.length ? (totalGeral / lancamentos.length) : 0;
 
   document.getElementById('kpiHoje').textContent   = 'R$\u00a0' + totalHoje.toFixed(2).replace('.',',');
