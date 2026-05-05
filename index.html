@@ -709,7 +709,7 @@ function renderClienteList(){
       statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';
     } else {
       statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'
-        +'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+c.nome.replace(/\'/g,'')+'\',' \''+c.tel+'\','+c.qtd+')">🙌 Obrigado</button>';
+        +'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+c.nome.replace(/\'/g,'')+'\',\''+c.tel+'\','+c.qtd+')">🙌 Obrigado</button>';
     }
 
     var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+c.nome.replace(/'/g,'')+'\',\''+c.tel+'\','+c.qtd+')">🎉 WA Pronto</button>':'';
