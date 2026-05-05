@@ -466,12 +466,13 @@ function _syncNext(p,idx){if(idx>=p.length){var r=getPendentes();if(!r.length)sh
 // ══════════════════════════════════════════════════════
 function msgBoasVindas(nome,qtd){var caps=qtd===1?'capacete':'capacetes';return'Olá, '+nome+'! 😊\n\nSeja muito bem-vindo(a) à *ZapClin*! 🪖✨\n\nSeu(s) '+qtd+' '+caps+' já está(ão) em boas mãos — cuidamos com todo carinho e profissionalismo que você merece!\n\nAssim que estiver(em) pronto(s), te avisamos aqui mesmo. 🏍️💨\n\nNos acompanhe no Instagram:\n📸 *@zapclinhigienizacao*\n\nObrigado por escolher a *ZapClin*! 💙';}
 function msgPronto(nome,qtd){var caps=qtd===1?'capacete ficou pronto':'capacetes ficaram prontos';return'Olá, '+nome+'! 🎉\n\nSeu(s) '+qtd+' '+caps+' e está(ão) impecável(is)! 🪖✨\n\nPode vir buscar quando quiser — estamos te esperando! 😊\n\nAté logo,\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
+function msgAgradecimento(nome){return'Olá, '+nome+'! 🙌\n\nObrigado pela confiança na *ZapClin*! 🪖✨\n\nFoi um prazer cuidar do seu(s) capacete(s). Já sentimos saudade! 😄\n\nTe esperamos em breve! 🏍️💨\n\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
 
 function mostrarWaModal(tipo,nome,tel,qtd){
-  var msg=tipo==='pronto'?msgPronto(nome,qtd):msgBoasVindas(nome,qtd);
+  var msg=tipo==='pronto'?msgPronto(nome,qtd):tipo==='agradecimento'?msgAgradecimento(nome):msgBoasVindas(nome,qtd);
   waData={nome:nome,tel:tel,qtd:qtd,msg:msg};
-  document.getElementById('waEmoji').textContent=tipo==='pronto'?'🎉':'📲';
-  document.getElementById('waTitulo').textContent=tipo==='pronto'?'Capacete(s) Pronto(s)!':'Enviar Boas-vindas';
+  document.getElementById('waEmoji').textContent=tipo==='pronto'?'🎉':tipo==='agradecimento'?'🙌':'📲';
+  document.getElementById('waTitulo').textContent=tipo==='pronto'?'Capacete(s) Pronto(s)!':tipo==='agradecimento'?'Agradecimento':'Enviar Boas-vindas';
   document.getElementById('waClienteNome').textContent=nome;
   document.getElementById('waPreview').textContent=msg;
   document.getElementById('waModal').classList.add('show');
@@ -576,7 +577,7 @@ function gerarCapacetes(){
         +'</div>'
         +'<div class="cap-form">'
           +'<select class="form-input cap-svc-select" id="capSvc'+i+'" onchange="onServicoChange('+i+',this)">'
-            +'<option value="">Selecionar serviço...</option>'+opcoesHtml
+            +'<option value="" disabled selected>⚠️ Selecionar serviço...</option>'+opcoesHtml
           +'</select>'
           +'<div class="chips-wrap" id="chipsWrap'+i+'">'+chipsI+'</div>'
           +'<input class="form-input cap-obs-outro" type="text" id="capObsOutro'+i+'" placeholder="Descreva..." oninput="onOutroChange('+i+',this)">'
@@ -594,7 +595,7 @@ function onFotoSelecionada(i,input){if(!input.files||!input.files[0])return;foto
 function onServicoChange(i,el){servicosPorCap[i]=el.value;var s=SERVICES.find(function(sv){return sv.name===el.value;});var priceEl=document.getElementById('capPrice'+i);if(priceEl)priceEl.textContent=s?fmtBRL(s.price):'';var card=document.getElementById('capCard'+i);if(card)card.classList.toggle('completo',!!(fotosSelecionadas[i]&&el.value));atualizarTotalCliente();verificarCadastroCompleto();}
 function onObsChange(i,el){obsPorCap[i]=el.value;}
 function atualizarTotalCliente(){var total=0;servicosPorCap.forEach(function(svc){var s=SERVICES.find(function(sv){return sv.name===svc;});if(s)total+=s.price;});var el=document.getElementById('clienteTotal');if(el)el.textContent=fmtBRL(total);return total;}
-function verificarCadastroCompleto(){var nome=(document.getElementById('clienteNome').value||'').trim();var tel=(document.getElementById('clienteTel').value||'').trim();var qtd=_qtdCap;var todasFotos=qtd>0&&fotosSelecionadas.every(function(f){return f!==null;});document.getElementById('clienteSaveBtn').disabled=!(nome&&tel&&todasFotos);}
+function verificarCadastroCompleto(){var nome=(document.getElementById('clienteNome').value||'').trim();var tel=(document.getElementById('clienteTel').value||'').trim();var qtd=_qtdCap;var todasFotos=qtd>0&&fotosSelecionadas.every(function(f){return f!==null;});var todosSvcs=qtd>0&&servicosPorCap.slice(0,qtd).every(function(s){return s&&s!=='';});document.getElementById('clienteSaveBtn').disabled=!(nome&&tel&&todasFotos&&todosSvcs);}
 
 function comprimirFoto(file){return new Promise(function(resolve){var r=new FileReader();r.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height,mx=1200;if(w>mx||h>mx){var rt=Math.min(mx/w,mx/h);w=Math.round(w*rt);h=Math.round(h*rt);}var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',0.75));};img.onerror=function(){resolve(e.target.result);};img.src=e.target.result;};r.onerror=function(){resolve(null);};r.readAsDataURL(file);});}
 function setProgress(pct,label){document.getElementById('uploadProgress').style.display='block';document.getElementById('progressBar').style.width=pct+'%';if(label)document.getElementById('progressLabel').textContent=label;}
@@ -606,6 +607,7 @@ function salvarCliente(){
   var criarLanc=document.getElementById('criarLancToggle')&&document.getElementById('criarLancToggle').checked;
   if(!nome||!tel||!qtd){showToast('Preencha todos os campos','error');return;}
   if(fotosSelecionadas.some(function(f){return!f;})){showToast('Selecione todas as fotos','error');return;}
+  if(servicosPorCap.slice(0,qtd).some(function(s){return!s||s==='';})){showToast('Selecione o serviço de cada capacete','error');return;}
   var total=atualizarTotalCliente();
   var btn=document.getElementById('clienteSaveBtn');
   btn.disabled=true;btn.textContent='⏳ Comprimindo...';
@@ -703,7 +705,8 @@ function renderClienteList(){
     } else if(c.status==='Pronto'){
       statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';
     } else {
-      statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>';
+      statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'
+        +'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+c.nome.replace(/\'/g,'')+'\',' \''+c.tel+'\','+c.qtd+')">🙌 Obrigado</button>';
     }
 
     var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+c.nome.replace(/'/g,'')+'\',\''+c.tel+'\','+c.qtd+')">🎉 WA Pronto</button>':'';
