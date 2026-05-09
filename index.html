@@ -370,7 +370,7 @@
   <div class="section-title">Novo Cadastro</div>
   <div class="config-card">
     <div class="form-group"><label class="form-label">👤 Nome do Cliente</label><input class="form-input blue" type="text" id="clienteNome" placeholder="Nome completo" autocomplete="name" oninput="verificarCadastroCompleto()"></div>
-    <div class="form-group"><label class="form-label">📱 Telefone</label><input class="form-input blue" type="tel" id="clienteTel" placeholder="(98) 98147-9616" autocomplete="tel" oninput="verificarCadastroCompleto()"></div>
+    <div class="form-group"><label class="form-label">📱 Telefone</label><input class="form-input blue" type="tel" id="clienteTel" placeholder="(XX) 9XXXX-XXXX" autocomplete="tel" oninput="verificarCadastroCompleto()"></div>
     <!-- Stepper de quantidade -->
     <div class="stepper-wrap">
       <span class="stepper-label">🪖 Quantidade de Capacetes</span>
@@ -658,9 +658,13 @@ function salvarCliente(){
   var nome=document.getElementById('clienteNome').value.trim();
   var tel=document.getElementById('clienteTel').value.trim();
   var qtd=_qtdCap;
-  if(!nome||!tel||!qtd){showToast('Preencha todos os campos','error');return;}
-  if(fotosSelecionadas.some(function(f){return!f;})){showToast('Selecione todas as fotos','error');return;}
-  if(servicosPorCap.slice(0,qtd).some(function(s){return!s||s==='';})){showToast('Selecione o serviço de cada capacete','error');return;}
+  if(!nome){showToast('⚠️ Informe o nome do cliente','error');return;}
+  if(!tel){showToast('⚠️ Informe o telefone','error');return;}
+  if(!qtd){showToast('⚠️ Selecione a quantidade de capacetes','error');return;}
+  for(var vi=0;vi<qtd;vi++){
+    if(!servicosPorCap[vi]||servicosPorCap[vi]===''){showToast('⚠️ Capacete '+(vi+1)+': selecione o serviço','error');return;}
+    if(!fotosSelecionadas[vi]){showToast('⚠️ Capacete '+(vi+1)+': adicione a foto','error');return;}
+  }
   var total=atualizarTotalCliente();
   var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);
   var liq=Math.max(0,total-desc);
