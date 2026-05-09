@@ -537,6 +537,40 @@ function confirmarEnvioWA(){var tel=waData.tel.replace(/\D/g,'');if(tel.startsWi
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
+
+// ── TIMER DE ESPERA ──
+function calcMinutos(data,hora){
+  if(!data||!hora||data==='—')return null;
+  var dp=data.split('/');if(dp.length<3)return null;
+  var hp=hora.split(':');if(hp.length<2)return null;
+  var then=new Date(parseInt(dp[2]),parseInt(dp[1])-1,parseInt(dp[0]),parseInt(hp[0]),parseInt(hp[1]),0);
+  var diff=Math.floor((new Date()-then)/60000);
+  return diff>=0?diff:null;
+}
+function fmtTempo(min){
+  if(min===null||min<0)return null;
+  if(min<60)return min+'min';
+  var h=Math.floor(min/60),m=min%60;
+  return h+'h'+(m>0?m+'min':'');
+}
+function timerCor(min){
+  if(min<30)return'#00e676';
+  if(min<60)return'#ffea00';
+  if(min<120)return'#ff9100';
+  return'#ff4444';
+}
+function atualizarTimers(){
+  clientes.forEach(function(c){
+    if(c.status==='Entregue')return;
+    var el=document.getElementById('timer-'+c.num);
+    if(!el)return;
+    var min=calcMinutos(c.data,c.hora);
+    if(min===null)return;
+    el.textContent='⏱ '+fmtTempo(min);
+    el.style.color=timerCor(min);
+  });
+}
+
 function init(){
   var now=new Date();
   var dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -547,6 +581,7 @@ function init(){
   document.getElementById('custoData').value=yyyy+'-'+mm+'-'+dd;
   renderServices();updateTotal();checkConexao();atualizarBadgePendentes();
   var p=getPendentes();if(p.length>0){setTimeout(function(){showToast('🔄 Sincronizando '+p.length+' pendente(s)...','orange');_syncNext(p,0);},2000);}
+  setInterval(atualizarTimers,60000);
 }
 
 // ── REGISTRAR ──
@@ -839,6 +874,7 @@ function renderClienteList(){
       +'<div class="cli-footer">'
         +'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'
         +'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'
+        +(c.status!=='Entregue'?(function(){var min=calcMinutos(c.data,c.hora);return min!==null?'<span id="timer-'+c.num+'" style="font-size:11px;font-weight:700;color:'+timerCor(min)+';">⏱ '+fmtTempo(min)+'</span>':'';}()):'')
         +(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')
         +(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')
         +(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')
