@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 3.9 | Data: 02/05/2026
+  Versão : 3.10 | Data: 09/05/2026
   NOVO v3.9 (Clientes):
     - Serviço + observação por capacete no cadastro
     - Total calculado automaticamente
@@ -260,9 +260,57 @@
   .pico-bar-wrap{flex:1;background:var(--surface);border-radius:4px;height:6px}
   .pico-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:4px}
   .pico-qtd{color:var(--muted);font-size:11px;width:50px;text-align:right}
+
+  .vp-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+  .vp-modal.show{display:flex;animation:fadeIn .25s ease}
+  .vp-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:28px 24px;max-width:380px;width:100%;text-align:center}
+  .vp-emoji{font-size:48px;margin-bottom:12px}
+  .vp-title{font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
+  .vp-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+  .vp-preview{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:18px;text-align:left;font-size:12px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
+  .vp-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+  .vp-btn:active{transform:scale(.97)}
+  .vp-btn.blue{background:linear-gradient(135deg,var(--blue),#1565c0);box-shadow:0 4px 20px rgba(68,138,255,.3)}
+  .vp-btn.green{background:linear-gradient(135deg,var(--green),#00c853);box-shadow:0 4px 20px rgba(0,230,118,.3);color:#000}
+  .vp-skip{width:100%;padding:13px;background:transparent;border:1px solid var(--border);border-radius:14px;color:var(--muted);font-family:var(--font-head);font-size:13px;cursor:pointer}
+  .desconto-section{background:rgba(255,82,82,.05);border:1px solid rgba(255,82,82,.15);border-radius:14px;padding:12px 16px;margin-top:10px;margin-bottom:4px}
+  .desconto-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+  .desconto-label{font-size:12px;color:var(--muted)}
+  .desconto-liquido{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--cyan)}
+  .info-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .info-badge.vinculo{background:rgba(68,138,255,.12);color:var(--blue);border:1px solid rgba(68,138,255,.25)}
+  .info-badge.pagamento{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+  .info-badge.desconto{background:rgba(255,82,82,.12);color:var(--red);border:1px solid rgba(255,82,82,.25)}
 </style>
 </head>
 <body>
+
+<!-- MODAL VINCULAR LANCAMENTOS -->
+<div class="vp-modal" id="vincularModal">
+  <div class="vp-box">
+    <div class="vp-emoji">📊</div>
+    <div class="vp-title">Registrar no Caixa?</div>
+    <div class="vp-sub">Deseja criar os lançamentos na aba <strong>Vendas</strong>?</div>
+    <div class="vp-preview" id="vincularPreview"></div>
+    <button class="vp-btn blue" onclick="confirmarVincular(true)">✅ Sim, registrar no caixa</button>
+    <button class="vp-skip" onclick="confirmarVincular(false)">Não, somente cadastrar</button>
+  </div>
+</div>
+
+<!-- MODAL PAGAMENTO -->
+<div class="vp-modal" id="pagamentoModal">
+  <div class="vp-box">
+    <div class="vp-emoji">💰</div>
+    <div class="vp-title">Confirmar Entrega</div>
+    <div class="vp-sub">Cliente: <strong id="pagClienteNome"></strong></div>
+    <div class="form-group" style="margin:16px 0 8px;text-align:left">
+      <label class="form-label">📅 Data do Pagamento</label>
+      <input class="form-input" type="date" id="pagamentoData">
+    </div>
+    <button class="vp-btn green" onclick="confirmarPagamento()">💰 Confirmar Entrega e Pagamento</button>
+    <button class="vp-skip" onclick="fecharPagamentoModal()">Cancelar</button>
+  </div>
+</div>
 
 <!-- MODAL WHATSAPP -->
 <div class="wa-modal" id="waModal">
@@ -282,7 +330,7 @@
     <div class="logo"><div class="logo-icon">⚡</div><span class="logo-text">ZapClin</span></div>
     <div class="date-badge" id="dateBadge"></div>
   </div>
-  <div class="header-subtitle">Gerenciamento de Serviços · v3.9</div>
+  <div class="header-subtitle">Gerenciamento de Serviços · v3.10</div>
 </div>
 
 <!-- REGISTRAR -->
@@ -340,15 +388,16 @@
 
       <!-- Total + Toggle -->
       <div class="total-cliente-row">
-        <div><div class="total-cli-label">💰 Total do Atendimento</div></div>
+        <div><div class="total-cli-label">💰 Total Bruto</div></div>
         <div class="total-cli-val" id="clienteTotal">R$ 0,00</div>
       </div>
-      <div class="toggle-row">
-        <div class="toggle-label">
-          📊 Criar lançamentos automaticamente
-          <small>Registra cada serviço na aba Vendas</small>
+      <div class="desconto-section">
+        <div class="form-label">🏷️ Desconto (R$) — opcional</div>
+        <input class="form-input blue" type="number" id="clienteDesconto" placeholder="0,00" step="0.01" min="0" value="" oninput="atualizarTotalCliente()">
+        <div class="desconto-row">
+          <span class="desconto-label">💰 Total Líquido (a receber)</span>
+          <span class="desconto-liquido" id="clienteTotalLiquido">R$ 0,00</span>
         </div>
-        <label class="toggle"><input type="checkbox" id="criarLancToggle"><span class="toggle-slider"></span></label>
       </div>
     </div>
 
@@ -398,7 +447,7 @@
   </div>
   <div class="section-title">Sobre o Sistema</div>
   <div class="config-card">
-    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">3.9 — 02/05/2026</span></div>
+    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">3.10 — 09/05/2026</span></div>
     <div class="info-row"><span class="info-key">Empresa</span><span class="info-val">ZapClin</span></div>
     <div class="info-row"><span class="info-key">Serviços</span><span class="info-val">7 tipos</span></div>
     <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="statusConexao">Verificando...</span></div>
@@ -419,7 +468,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v3.9 | 02/05/2026
+// ZAPCLIN v3.10 | 09/05/2026
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -443,6 +492,8 @@ let selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 let lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
 let fotosSelecionadas=[], servicosPorCap=[], obsPorCap=[];
 let waData={};
+let _criarLanc=false;
+let _pagData={num:0,nome:'',tel:'',qtd:0};
 
 // ── JSONP ──
 function jsonp(url,timeout){timeout=timeout||12000;return new Promise(function(resolve,reject){var cb='zap_'+Date.now()+'_'+Math.floor(Math.random()*99999);var s=document.createElement('script');var t=setTimeout(function(){cleanup();reject('timeout');},timeout);function cleanup(){clearTimeout(t);delete window[cb];if(s.parentNode)s.remove();}window[cb]=function(d){cleanup();resolve(d);};s.onerror=function(){cleanup();reject('error');};s.src=url+(url.indexOf('?')>=0?'&':'?')+'callback='+cb+'&t='+Date.now();document.head.appendChild(s);});}
@@ -597,7 +648,7 @@ function selecionarFoto(i){document.getElementById('fotoInput'+i).click();}
 function onFotoSelecionada(i,input){if(!input.files||!input.files[0])return;fotosSelecionadas[i]=input.files[0];var reader=new FileReader();reader.onload=function(e){document.getElementById('fotoThumb'+i).src=e.target.result;document.getElementById('fotoBox'+i).classList.add('selecionada');};reader.readAsDataURL(input.files[0]);verificarCadastroCompleto();}
 function onServicoChange(i,el){servicosPorCap[i]=el.value;var s=SERVICES.find(function(sv){return sv.name===el.value;});var priceEl=document.getElementById('capPrice'+i);if(priceEl)priceEl.textContent=s?fmtBRL(s.price):'';var card=document.getElementById('capCard'+i);if(card)card.classList.toggle('completo',!!(fotosSelecionadas[i]&&el.value));atualizarTotalCliente();verificarCadastroCompleto();}
 function onObsChange(i,el){obsPorCap[i]=el.value;}
-function atualizarTotalCliente(){var total=0;servicosPorCap.forEach(function(svc){var s=SERVICES.find(function(sv){return sv.name===svc;});if(s)total+=s.price;});var el=document.getElementById('clienteTotal');if(el)el.textContent=fmtBRL(total);return total;}
+function atualizarTotalCliente(){var total=0;servicosPorCap.forEach(function(svc){var s=SERVICES.find(function(sv){return sv.name===svc;});if(s)total+=s.price;});var el=document.getElementById('clienteTotal');if(el)el.textContent=fmtBRL(total);var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var elLiq=document.getElementById('clienteTotalLiquido');if(elLiq)elLiq.textContent=fmtBRL(liq);return total;}
 function verificarCadastroCompleto(){var nome=(document.getElementById('clienteNome').value||'').trim();var tel=(document.getElementById('clienteTel').value||'').trim();var qtd=_qtdCap;var todasFotos=qtd>0&&fotosSelecionadas.every(function(f){return f!==null;});var todosSvcs=qtd>0&&servicosPorCap.slice(0,qtd).every(function(s){return s&&s!=='';});document.getElementById('clienteSaveBtn').disabled=!(nome&&tel&&todasFotos&&todosSvcs);}
 
 function comprimirFoto(file){return new Promise(function(resolve){var r=new FileReader();r.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height,mx=1200;if(w>mx||h>mx){var rt=Math.min(mx/w,mx/h);w=Math.round(w*rt);h=Math.round(h*rt);}var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',0.75));};img.onerror=function(){resolve(e.target.result);};img.src=e.target.result;};r.onerror=function(){resolve(null);};r.readAsDataURL(file);});}
@@ -607,34 +658,55 @@ function salvarCliente(){
   var nome=document.getElementById('clienteNome').value.trim();
   var tel=document.getElementById('clienteTel').value.trim();
   var qtd=_qtdCap;
-  var criarLanc=document.getElementById('criarLancToggle')&&document.getElementById('criarLancToggle').checked;
   if(!nome||!tel||!qtd){showToast('Preencha todos os campos','error');return;}
   if(fotosSelecionadas.some(function(f){return!f;})){showToast('Selecione todas as fotos','error');return;}
   if(servicosPorCap.slice(0,qtd).some(function(s){return!s||s==='';})){showToast('Selecione o serviço de cada capacete','error');return;}
   var total=atualizarTotalCliente();
+  var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);
+  var liq=Math.max(0,total-desc);
+  var preview=servicosPorCap.slice(0,qtd).map(function(s,i){return'🪖 Cap.'+(i+1)+': '+s;}).join('\n');
+  if(desc>0)preview+='\n🏷️ Desconto: -'+fmtBRL(desc);
+  preview+='\n\n💰 Total a receber: '+fmtBRL(liq);
+  document.getElementById('vincularPreview').textContent=preview;
+  document.getElementById('vincularModal').classList.add('show');
+}
+
+function confirmarVincular(sim){
+  _criarLanc=sim;
+  document.getElementById('vincularModal').classList.remove('show');
+  _executarSalvarCliente();
+}
+
+function _executarSalvarCliente(){
+  var nome=document.getElementById('clienteNome').value.trim();
+  var tel=document.getElementById('clienteTel').value.trim();
+  var qtd=_qtdCap;
+  var total=atualizarTotalCliente();
+  var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);
+  var liq=Math.max(0,total-desc);
   var btn=document.getElementById('clienteSaveBtn');
   btn.disabled=true;btn.textContent='⏳ Comprimindo...';
   setProgress(10,'Comprimindo fotos...');
   Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);}))
     .then(function(b64s){
       setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';
-      // Converte arrays de chips em strings legíveis
       var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});
-      var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:criarLanc,total:total};
+      var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};
       return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});
     })
     .then(function(r){setProgress(80,'Salvando cadastro...');return r.json();})
     .then(function(data){
-      setProgress(100,'Concluído! ✅');
+      setProgress(100,'Concluiío! ✅');
       if(data.ok){
         var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');
-        var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:total,numVisita:1,totalVisitas:1};
+        var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:desc,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:1,totalVisitas:1};
         clientes.unshift(novoCliente);
         localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));
-        var msg=criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lançamento(s) criado(s)':'';
+        var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';
+        if(desc>0)msg+=' (desc. '+fmtBRL(desc)+')';
         showToast('✅ '+nome+' cadastrado!'+msg,'blue');
         resetClienteForm();renderClienteList();
-        if(criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos();}
+        if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos();}
         setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd);},1000);
       } else {
         showToast('Erro: '+(data.error||'Tente novamente'),'error');
@@ -644,18 +716,49 @@ function salvarCliente(){
     .finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});
 }
 
-function resetClienteForm(){document.getElementById('clienteNome').value='';document.getElementById('clienteTel').value='';_qtdCap=0;document.getElementById('stepperVal').textContent='0';document.getElementById('stepperMenosBtn').disabled=true;document.getElementById('capacetesSection').style.display='none';document.getElementById('capacetesGrid').innerHTML='';fotosSelecionadas=[];servicosPorCap=[];obsPorCap=[];if(document.getElementById('criarLancToggle'))document.getElementById('criarLancToggle').checked=false;}
+function resetClienteForm(){document.getElementById('clienteNome').value='';document.getElementById('clienteTel').value='';_qtdCap=0;document.getElementById('stepperVal').textContent='0';document.getElementById('stepperMenosBtn').disabled=true;document.getElementById('capacetesSection').style.display='none';document.getElementById('capacetesGrid').innerHTML='';fotosSelecionadas=[];servicosPorCap=[];obsPorCap=[];var dEl=document.getElementById('clienteDesconto');if(dEl)dEl.value='';var lEl=document.getElementById('clienteTotalLiquido');if(lEl)lEl.textContent='R$ 0,00';}
 
 // ── ATUALIZAR STATUS ──
 function marcarStatus(num,novoStatus){
-  // Update optimistic
-  for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;break;}}
+  if(novoStatus==='Entregue'){
+    var cli=clientes.find(function(c){return c.num==num;});
+    _pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};
+    document.getElementById('pagClienteNome').textContent=_pagData.nome;
+    var now=new Date();
+    document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+    document.getElementById('pagamentoModal').classList.add('show');
+    return;
+  }
+  _executarMarcarStatus(num,novoStatus,'');
+}
+
+function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
+
+function confirmarPagamento(){
+  var di=document.getElementById('pagamentoData').value;
+  var p=di.split('-');
+  var dataPag=p[2]+'/'+p[1]+'/'+p[0];
+  fecharPagamentoModal();
+  _executarMarcarStatus(_pagData.num,'Entregue',dataPag);
+  setTimeout(function(){mostrarWaModal('agradecimento',_pagData.nome,_pagData.tel,_pagData.qtd);},500);
+}
+
+function _executarMarcarStatus(num,novoStatus,dataPagamento){
+  for(var i=0;i<clientes.length;i++){
+    if(clientes[i].num==num){
+      clientes[i].status=novoStatus;
+      if(dataPagamento)clientes[i].dataPagamento=dataPagamento;
+      break;
+    }
+  }
   clientesFiltrados=clientes.slice();
   renderClienteList();
   localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));
-  jsonp(webAppUrl+'?action=atualizarStatus&num='+num+'&status='+encodeURIComponent(novoStatus),10000)
+  var url=webAppUrl+'?action=atualizarStatus&num='+num+'&status='+encodeURIComponent(novoStatus);
+  if(dataPagamento)url+='&dataPagamento='+encodeURIComponent(dataPagamento);
+  jsonp(url,10000)
     .then(function(r){
-      if(r&&r.ok){showToast('Status: '+novoStatus,'blue');}
+      if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');}
       else{showToast('⚠️ Status salvo local.','orange');}
     }).catch(function(){showToast('⚠️ Status salvo local.','orange');});
 }
@@ -733,6 +836,9 @@ function renderClienteList(){
         +'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'
         +'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'
         +(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')
+        +(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')
+        +(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')
+        +(c.lancamentosVinculados?'<span class="info-badge vinculo">📊 Vinculado</span>':'')
       +'</div>'
       +'<div class="cli-actions">'
         +statusBtns
