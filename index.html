@@ -705,7 +705,7 @@ function animarCardsHome(){
   });
 }
 
-function atualizarStatsHome(){
+function _calcStatsHome(){
   var lanc=JSON.parse(localStorage.getItem('zapLanc')||'[]');
   var now=new Date();
   var dd=String(now.getDate()).padStart(2,'0'),mm=String(now.getMonth()+1).padStart(2,'0'),yyyy=now.getFullYear();
@@ -716,6 +716,14 @@ function atualizarStatsHome(){
   var aEl=document.getElementById('homeAtend');
   if(rEl)rEl.textContent=fmtBRL(rec);
   if(aEl)aEl.textContent=atd;
+}
+function atualizarStatsHome(){
+  // Mostra cache imediatamente
+  _calcStatsHome();
+  // Busca dados frescos do servidor em background
+  buscarLancamentos().then(function(ok){
+    if(ok) _calcStatsHome();
+  });
 }
 
 // ═══ JSONP ═══
