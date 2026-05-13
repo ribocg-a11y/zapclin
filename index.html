@@ -30,8 +30,8 @@
 <style>
   :root{--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:#2a2a3a;--cyan:#00e5ff;--green:#00e676;--yellow:#ffea00;--red:#ff4444;--orange:#ff9100;--blue:#448aff;--purple:#ab47bc;--text:#e8eaf6;--muted:#6b6b8a;--radius:18px;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;padding-bottom:100px}
-  body.on-home{padding-bottom:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+  
 
   /* ═══ HEADER ═══ */
   .header{background:linear-gradient(135deg,#0d0d1a,#111124);padding:52px 20px 18px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
@@ -114,12 +114,6 @@
   .hc-arr{position:absolute;bottom:12px;right:13px;font-size:14px;color:var(--border);font-weight:700}
 
   /* ═══ NAV ═══ */
-  .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,24,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:none;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-  .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 1px;background:none;border:none;color:var(--muted);font-family:var(--font-body);font-size:8px;cursor:pointer;transition:all .2s;position:relative}
-  .nav-btn.active{color:var(--cyan)}
-  .nav-btn.active::before{content:'';position:absolute;top:0;left:10%;right:10%;height:2px;background:var(--cyan);border-radius:0 0 4px 4px;box-shadow:0 0 8px var(--cyan)}
-  .nav-icon{display:none}
-  .pendente-badge{position:absolute;top:4px;right:6px;background:var(--red);color:#fff;border-radius:10px;min-width:16px;height:16px;font-size:9px;display:none;align-items:center;justify-content:center;font-weight:800;padding:0 3px;line-height:1}
 
   /* ═══ PAGES / ANIMATIONS ═══ */
   .page{display:none;padding:20px}
@@ -632,18 +626,6 @@
   </div>
 </div>
 
-<!-- ═══ BOTTOM NAV (oculta na home) ═══ -->
-<nav class="nav" id="appNav">
-  <button class="nav-btn" data-page="registrar" onclick="goTo('registrar',this)" id="navRegistrar">
-    Registrar
-    <span class="pendente-badge" id="pendenteBadge"></span>
-  </button>
-  <button class="nav-btn" data-page="lancamentos" onclick="goTo('lancamentos',this)">Vendas</button>
-  <button class="nav-btn" data-page="custos" onclick="goTo('custos',this)">Custos</button>
-  <button class="nav-btn" data-page="clientes" onclick="goTo('clientes',this)">Clientes</button>
-  <button class="nav-btn" data-page="dashboard" onclick="goTo('dashboard',this)">Dashboard</button>
-  <button class="nav-btn" data-page="config" onclick="goTo('config',this)">Config</button>
-</nav>
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -703,9 +685,8 @@ function mostrarHome(){
   document.getElementById('page-home').classList.add('active');
   document.getElementById('hdrHome').style.display='';
   document.getElementById('hdrSub').style.display='none';
-  document.getElementById('appNav').style.display='none';
   document.getElementById('appHeader').style.display='none';
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  
   document.body.classList.add('on-home');
   atualizarStatsHome();
   animarCardsHome();
@@ -753,7 +734,7 @@ function statusClass(s){if(s==='Pronto')return'pronto';if(s==='Entregue')return'
 function getPendentes(){return JSON.parse(localStorage.getItem('zapPendentes')||'[]');}
 function setPendentes(arr){localStorage.setItem('zapPendentes',JSON.stringify(arr));}
 function addPendente(svcs,vals){var p=getPendentes();p.push({svcs:svcs,vals:vals,ts:Date.now()});setPendentes(p);atualizarBadgePendentes();}
-function atualizarBadgePendentes(){var p=getPendentes();var n=p.length;var badge=document.getElementById('pendenteBadge');var syncBtn=document.getElementById('syncBtn');var syncCount=document.getElementById('syncCount');if(badge){badge.textContent=n>0?n:'';badge.style.display=n>0?'flex':'none';}if(syncBtn){syncBtn.style.display=n>0?'flex':'none';}if(syncCount){syncCount.textContent=n;}}
+function atualizarBadgePendentes(){var p=getPendentes();var n=p.length;var badge=document.getElementById('pendenteBadge');var syncBtn=document.getElementById('syncBtn');var syncCount=document.getElementById('syncCount');if(badge){badge.textContent=n>0?n:'';badge.style.display=n>0?'flex':'none';}if(syncBtn){syncBtn.style.display=n>0?'flex':'none';} if(syncCount){syncCount.textContent=n;}}
 function sincronizarPendentes(){var p=getPendentes();if(!p.length){showToast('✅ Tudo sincronizado!');return;}showToast('🔄 Sincronizando '+p.length+'...','orange');_syncNext(p,0);}
 function _syncNext(p,idx){if(idx>=p.length){var r=getPendentes();if(!r.length)showToast('✅ '+p.length+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];jsonp(webAppUrl+'?action=salvar&svcs='+encodeURIComponent(item.svcs)+'&vals='+encodeURIComponent(item.vals),15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1);},500);}else{showToast('❌ Erro ao sincronizar','error');}}).catch(function(){showToast('⚠️ Sem conexão.','orange');});}
 
@@ -855,17 +836,8 @@ function goTo(page, btn){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.getElementById('page-'+page).classList.add('active');
   // Atualizar nav inferior
-  var nav=document.getElementById('appNav');
-  nav.style.display='flex';
   document.getElementById('appHeader').style.display='';
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
-  // Ativar botão correto
-  if(btn){
-    btn.classList.add('active');
-  } else {
-    var match=document.querySelector('.nav-btn[data-page="'+page+'"]');
-    if(match)match.classList.add('active');
-  }
+  
   // Atualizar header
   document.getElementById('hdrHome').style.display='none';
   document.getElementById('hdrSub').style.display='';
