@@ -62,7 +62,7 @@
   .drawer-logo-img{width:36px;height:36px;border-radius:8px;object-fit:cover}
   .drawer-brand{font-family:var(--font-head);font-size:18px;font-weight:800}
   .drawer-brand-z{color:var(--cyan)}
-  .drawer-brand-c{color:var(--text)}
+  .drawer-brand-c{color:#fff}
   .drawer-ver{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
   .drawer-body{padding:14px 10px;flex:1}
   .drawer-section{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:0 10px;margin-bottom:8px;margin-top:4px}
@@ -87,7 +87,7 @@
   .home-brand{display:flex;flex-direction:column}
   .home-brand-name{font-family:var(--font-head);font-size:30px;font-weight:800;line-height:1;letter-spacing:-1px}
   .home-brand-z{color:var(--cyan)}
-  .home-brand-c{color:var(--text)}
+  .home-brand-c{color:#fff}
   .home-brand-sub{font-size:9px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-top:4px}
   .home-date-pill{margin-left:auto;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--muted);flex-shrink:0}
   /* Stats */
@@ -118,7 +118,7 @@
   .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 1px;background:none;border:none;color:var(--muted);font-family:var(--font-body);font-size:8px;cursor:pointer;transition:all .2s;position:relative}
   .nav-btn.active{color:var(--cyan)}
   .nav-btn.active::before{content:'';position:absolute;top:0;left:10%;right:10%;height:2px;background:var(--cyan);border-radius:0 0 4px 4px;box-shadow:0 0 8px var(--cyan)}
-  .nav-icon{font-size:19px;line-height:1}
+  .nav-icon{display:none}
   .pendente-badge{position:absolute;top:4px;right:6px;background:var(--red);color:#fff;border-radius:10px;min-width:16px;height:16px;font-size:9px;display:none;align-items:center;justify-content:center;font-weight:800;padding:0 3px;line-height:1}
 
   /* ═══ PAGES / ANIMATIONS ═══ */
@@ -635,14 +635,14 @@
 <!-- ═══ BOTTOM NAV (oculta na home) ═══ -->
 <nav class="nav" id="appNav">
   <button class="nav-btn" data-page="registrar" onclick="goTo('registrar',this)" id="navRegistrar">
-    <span class="nav-icon">📋</span>Registrar
+    Registrar
     <span class="pendente-badge" id="pendenteBadge"></span>
   </button>
-  <button class="nav-btn" data-page="lancamentos" onclick="goTo('lancamentos',this)"><span class="nav-icon">📊</span>Vendas</button>
-  <button class="nav-btn" data-page="custos" onclick="goTo('custos',this)"><span class="nav-icon">💸</span>Custos</button>
-  <button class="nav-btn" data-page="clientes" onclick="goTo('clientes',this)"><span class="nav-icon">👥</span>Clientes</button>
-  <button class="nav-btn" data-page="dashboard" onclick="goTo('dashboard',this)"><span class="nav-icon">📈</span>Dashboard</button>
-  <button class="nav-btn" data-page="config" onclick="goTo('config',this)"><span class="nav-icon">⚙️</span>Config</button>
+  <button class="nav-btn" data-page="lancamentos" onclick="goTo('lancamentos',this)">Vendas</button>
+  <button class="nav-btn" data-page="custos" onclick="goTo('custos',this)">Custos</button>
+  <button class="nav-btn" data-page="clientes" onclick="goTo('clientes',this)">Clientes</button>
+  <button class="nav-btn" data-page="dashboard" onclick="goTo('dashboard',this)">Dashboard</button>
+  <button class="nav-btn" data-page="config" onclick="goTo('config',this)">Config</button>
 </nav>
 
 <script>
