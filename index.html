@@ -113,6 +113,23 @@
   .hc-desc{font-size:10px;color:var(--muted);line-height:1.4}
   .hc-arr{position:absolute;bottom:12px;right:13px;font-size:14px;color:var(--border);font-weight:700}
 
+
+  /* ═══ RELATÓRIO ═══ */
+  .rel-mes{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:20px}
+  .rel-mes-btn{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:10px;color:var(--cyan);width:36px;height:36px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);-webkit-user-select:none}
+  .rel-mes-btn:active{transform:scale(.9)}
+  .rel-mes-btn:disabled{opacity:.3;cursor:not-allowed}
+  .rel-mes-label{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--text);text-align:center}
+  .rel-mes-sub{font-size:10px;color:var(--muted);text-align:center;margin-top:2px}
+  .aluguel-card{background:rgba(255,145,0,.07);border:1px solid rgba(255,145,0,.25);border-radius:16px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .aluguel-left .alug-title{font-size:12px;font-weight:700;color:var(--orange)}
+  .aluguel-left .alug-sub{font-size:11px;color:var(--muted);margin-top:3px}
+  .aluguel-right{text-align:right;flex-shrink:0}
+  .alug-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--orange)}
+  .alug-venc{font-size:10px;color:var(--muted);margin-top:3px}
+  .rel-email-btn{width:100%;padding:16px;margin-top:8px;background:linear-gradient(135deg,var(--blue),#1565c0);border:none;border-radius:var(--radius);color:#fff;font-family:var(--font-head);font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(68,138,255,.3);display:flex;align-items:center;justify-content:center;gap:8px;-webkit-user-select:none}
+  .rel-email-btn:active{transform:scale(.97)}
+  .rel-email-btn:disabled{background:var(--card);color:var(--muted);box-shadow:none;cursor:not-allowed}
   /* ═══ NAV ═══ */
 
   /* ═══ PAGES / ANIMATIONS ═══ */
@@ -375,11 +392,17 @@
     <div class="drawer-item" onclick="goToDrawer('dashboard')">
       <span class="d-icon">📈</span><span class="d-label">Dashboard</span><span class="d-arr">›</span>
     </div>
-    <div class="drawer-item" onclick="goToDrawer('config')">
-      <span class="d-icon">⚙️</span><span class="d-label">Config</span><span class="d-arr">›</span>
+    <div class="drawer-item" onclick="goToDrawer('relatorio')">
+      <span class="d-icon">📋</span><span class="d-label">Relatório</span><span class="d-arr">›</span>
     </div>
   </div>
-  <div class="drawer-foot">ZapClin · Golden Shopping Calhau · São Luís/MA</div>
+  <div class="drawer-foot">
+    <div style="margin-bottom:10px;font-size:11px;color:var(--muted);text-align:left">⚙️ Web App URL</div>
+    <input class="config-input" id="webAppUrl" type="text" style="font-size:11px;padding:9px 10px;margin-bottom:8px">
+    <button onclick="salvarConfig()" style="width:100%;padding:9px;background:rgba(68,138,255,.15);border:1px solid rgba(68,138,255,.3);border-radius:10px;color:var(--blue);font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;margin-bottom:12px">💾 Salvar</button>
+    <div style="font-size:10px;color:var(--muted);text-align:center">ZapClin · Golden Shopping Calhau · São Luís/MA</div>
+    <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:2px">Status: <span id="statusConexao" style="color:var(--green)">Verificando...</span></div>
+  </div>
 </div>
 
 <!-- ═══ MODAIS ═══ -->
@@ -503,10 +526,10 @@
         <div class="hc-desc">Análise de desempenho</div>
         <div class="hc-arr">›</div>
       </div>
-      <div class="home-card" style="--hc:var(--muted)" onclick="goTo('config',null)">
-        <div class="hc-icon">⚙️</div>
-        <div class="hc-name">Config</div>
-        <div class="hc-desc">Configurações do app</div>
+      <div class="home-card" style="--hc:var(--blue)" onclick="goTo('relatorio',null)">
+        <div class="hc-icon">📋</div>
+        <div class="hc-name">Relatório</div>
+        <div class="hc-desc">Resumo mensal completo</div>
         <div class="hc-arr">›</div>
       </div>
     </div>
@@ -609,21 +632,52 @@
   <div class="config-card" id="picoList"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 
-<!-- ═══════════════════════════════ PAGE: CONFIG ═══════════════════════════════ -->
-<div class="page" id="page-config">
-  <div class="section-title">Configuração</div>
-  <div class="config-card">
-    <div class="config-label">URL do Web App (Apps Script)</div>
-    <input class="config-input" id="webAppUrl" type="text">
-    <button class="config-btn" onclick="salvarConfig()">💾 Salvar Configuração</button>
+<!-- ═══════════════════════════════ PAGE: RELATÓRIO ═══════════════════════════════ -->
+<div class="page" id="page-relatorio">
+  <!-- Seletor de mês -->
+  <div class="rel-mes">
+    <button class="rel-mes-btn" onclick="mudarMesRel(-1)">‹</button>
+    <div>
+      <div class="rel-mes-label" id="relMesLabel">—</div>
+      <div class="rel-mes-sub">setas para navegar meses</div>
+    </div>
+    <button class="rel-mes-btn" id="relMesProxBtn" onclick="mudarMesRel(1)">›</button>
   </div>
-  <div class="section-title">Sobre o Sistema</div>
-  <div class="config-card">
-    <div class="info-row"><span class="info-key">Versão</span><span class="info-val">3.11 — 13/05/2026</span></div>
-    <div class="info-row"><span class="info-key">Empresa</span><span class="info-val">ZapClin</span></div>
-    <div class="info-row"><span class="info-key">Serviços</span><span class="info-val">7 tipos</span></div>
-    <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="statusConexao">Verificando...</span></div>
+
+  <!-- KPIs -->
+  <div class="section-title">Resumo financeiro</div>
+  <div class="kpi-grid">
+    <div class="kpi-card cyan"><div class="kpi-label">Receita Bruta</div><div class="kpi-value cyan" id="relReceita">—</div><div class="kpi-sub">faturamento</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Custos Totais</div><div class="kpi-value red" id="relCustos">—</div><div class="kpi-sub">gastos</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Lucro Líquido</div><div class="kpi-value green" id="relLucro">—</div><div class="kpi-sub">receita - custos</div></div>
+    <div class="kpi-card yellow"><div class="kpi-label">Margem</div><div class="kpi-value yellow" id="relMargem">—</div><div class="kpi-sub">% do faturamento</div></div>
+    <div class="kpi-card cyan" style="--kpi-c:var(--blue)"><div class="kpi-label">Atendimentos</div><div class="kpi-value" style="color:var(--blue)" id="relAtend">—</div><div class="kpi-sub">serviços no mês</div></div>
+    <div class="kpi-card cyan" style="--kpi-c:var(--purple)"><div class="kpi-label">Ticket Médio</div><div class="kpi-value" style="color:var(--purple)" id="relTicket">—</div><div class="kpi-sub">por atendimento</div></div>
   </div>
+
+  <!-- Aluguel -->
+  <div class="section-title">Aluguel do espaço</div>
+  <div class="aluguel-card">
+    <div class="aluguel-left">
+      <div class="alug-title">🏢 10% do faturamento bruto</div>
+      <div class="alug-sub">Golden Shopping Calhau</div>
+    </div>
+    <div class="aluguel-right">
+      <div class="alug-val" id="relAluguelVal">—</div>
+      <div class="alug-venc" id="relAluguelVenc">—</div>
+    </div>
+  </div>
+
+  <!-- Top Serviços -->
+  <div class="section-title">🏆 Top Serviços</div>
+  <div id="relRankSvc"><div class="loading"><div class="spinner"></div></div></div>
+
+  <!-- Top Custos -->
+  <div class="section-title">💸 Maiores Custos</div>
+  <div id="relRankCustos"><div class="loading"><div class="spinner"></div></div></div>
+
+  <!-- Botão enviar email -->
+  <button class="rel-email-btn" id="relEmailBtn" onclick="enviarRelatorioEmail()">📧 Enviar Relatório por E-mail</button>
 </div>
 
 
@@ -653,6 +707,7 @@ const PAGE_TITLES={
   custos:'💸 Custos',
   clientes:'👥 Clientes',
   dashboard:'📈 Dashboard',
+  relatorio:'📋 Relatório',
   config:'⚙️ Config'
 };
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
@@ -763,6 +818,118 @@ function fmtTempo(min){if(min===null||min<0)return null;if(min<60)return min+'mi
 function timerCor(min){if(min<30)return'#00e676';if(min<60)return'#ffea00';if(min<120)return'#ff9100';return'#ff4444';}
 function atualizarTimers(){clientes.forEach(function(c){if(c.status==='Entregue')return;var el=document.getElementById('timer-'+c.num);if(!el)return;var min=calcMinutos(c.data,c.hora);if(min===null)return;el.textContent='⏱ '+fmtTempo(min);el.style.color=timerCor(min);});}
 
+
+// ═══ RELATÓRIO ═══
+var _relMesOffset=0;
+
+function mudarMesRel(delta){
+  var novoOffset=_relMesOffset+delta;
+  if(novoOffset>0)return;
+  _relMesOffset=novoOffset;
+  document.getElementById('relMesProxBtn').disabled=_relMesOffset===0;
+  carregarRelatorio();
+}
+
+function carregarRelatorio(){
+  document.getElementById('relMesProxBtn').disabled=_relMesOffset===0;
+  var now=new Date();
+  var target=new Date(now.getFullYear(),now.getMonth()+_relMesOffset,1);
+  var mm=String(target.getMonth()+1).padStart(2,'0');
+  var yyyy=target.getFullYear();
+  var mes=mm+'/'+yyyy;
+  var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('relMesLabel').textContent=meses[target.getMonth()]+' '+yyyy;
+
+  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var cst=custos.length>0?custos:JSON.parse(localStorage.getItem('zapCustos')||'[]');
+
+  function gm(d){var s=fmtData(d);if(!s||s==='—')return'';var p=s.split('/');return p.length>=3?p[1]+'/'+p[2]:'';}
+
+  var lancMes=lanc.filter(function(l){return gm(l.data)===mes;});
+  var cstMes=cst.filter(function(c){return gm(c.data)===mes;});
+
+  var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+  var custoTotal=cstMes.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
+  var lucro=receita-custoTotal;
+  var margem=receita>0?(lucro/receita*100).toFixed(1):0;
+  var atend=lancMes.length;
+  var ticket=atend>0?(receita/atend):0;
+  var aluguel=receita*0.10;
+
+  // Vencimento: dia 10 do mês seguinte
+  var vencMes=new Date(target.getFullYear(),target.getMonth()+1,10);
+  var vencStr='Vence dia 10/'+String(vencMes.getMonth()+1).padStart(2,'0')+'/'+vencMes.getFullYear();
+
+  document.getElementById('relReceita').textContent=fmtBRL(receita);
+  document.getElementById('relCustos').textContent=fmtBRL(custoTotal);
+  document.getElementById('relLucro').textContent=fmtBRL(lucro);
+  var lEl=document.getElementById('relLucro');
+  lEl.style.color=lucro>=0?'var(--green)':'var(--red)';
+  document.getElementById('relMargem').textContent=margem+'%';
+  document.getElementById('relAtend').textContent=atend;
+  document.getElementById('relTicket').textContent=fmtBRL(ticket);
+  document.getElementById('relAluguelVal').textContent=fmtBRL(aluguel);
+  document.getElementById('relAluguelVenc').textContent='⏰ '+vencStr;
+
+  // Ranking serviços
+  var rankSvc={};
+  SERVICES.forEach(function(s){rankSvc[s.name]={qtd:0,val:0,icon:s.icon};});
+  lancMes.forEach(function(l){if(rankSvc[l.svc]){rankSvc[l.svc].qtd++;rankSvc[l.svc].val+=parseFloat(l.val||0);}});
+  var sortedSvc=Object.keys(rankSvc).map(function(k){return{name:k,qtd:rankSvc[k].qtd,val:rankSvc[k].val};})
+    .filter(function(s){return s.qtd>0;}).sort(function(a,b){return b.val-a.val;});
+  var maxSvc=sortedSvc.length>0?sortedSvc[0].val:1;
+  var medals=['gold','silver','bronze'];
+  var relSvcEl=document.getElementById('relRankSvc');
+  if(!sortedSvc.length){
+    relSvcEl.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Sem dados neste mês.</div></div>';
+  } else {
+    relSvcEl.innerHTML=sortedSvc.slice(0,7).map(function(s,i){
+      return'<div class="rank-item"><div class="rank-num '+(medals[i]||'')+'">'+(i+1)+'</div>'+
+        '<div class="rank-info"><div class="rank-name">'+s.name+'</div>'+
+        '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+Math.round(s.val/maxSvc*100)+'%"></div></div></div>'+
+        '<div class="rank-stats"><div class="rank-val">'+fmtBRL(s.val)+'</div><div class="rank-qtd">'+s.qtd+' atend.</div></div></div>';
+    }).join('');
+  }
+
+  // Ranking custos
+  var rankCat={};
+  CATEGORIAS.forEach(function(c){rankCat[c.key]={val:0,qtd:0,icon:c.icon};});
+  cstMes.forEach(function(c){if(rankCat[c.cat]){rankCat[c.cat].val+=parseFloat(c.val||0);rankCat[c.cat].qtd++;}});
+  var sortedCat=Object.keys(rankCat).map(function(k){return{name:k,val:rankCat[k].val,qtd:rankCat[k].qtd,icon:rankCat[k].icon};})
+    .filter(function(c){return c.val>0;}).sort(function(a,b){return b.val-a.val;});
+  var maxCat=sortedCat.length>0?sortedCat[0].val:1;
+  var relCstEl=document.getElementById('relRankCustos');
+  if(!sortedCat.length){
+    relCstEl.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Sem custos neste mês.</div></div>';
+  } else {
+    relCstEl.innerHTML=sortedCat.map(function(c,i){
+      return'<div class="rank-item"><div class="rank-num '+(medals[i]||'')+'">'+(i+1)+'</div>'+
+        '<div class="rank-info"><div class="rank-name">'+c.icon+' '+c.name+'</div>'+
+        '<div class="rank-bar-wrap"><div class="rank-bar red" style="width:'+Math.round(c.val/maxCat*100)+'%"></div></div></div>'+
+        '<div class="rank-stats"><div class="rank-val red">'+fmtBRL(c.val)+'</div><div class="rank-qtd">'+c.qtd+' lançs.</div></div></div>';
+    }).join('');
+  }
+
+  // Busca dados frescos se necessário
+  if(lancamentos.length===0||custos.length===0){
+    Promise.all([buscarLancamentos(),buscarCustos()]).then(function(r){
+      if(r[0]||r[1])carregarRelatorio();
+    });
+  }
+}
+
+function enviarRelatorioEmail(){
+  var btn=document.getElementById('relEmailBtn');
+  btn.disabled=true;btn.textContent='⏳ Enviando...';
+  jsonp(webAppUrl+'?action=enviarRelatorio',25000)
+    .then(function(r){
+      if(r&&r.ok)showToast('✅ Relatório enviado por e-mail!','blue');
+      else showToast('⚠️ '+(r&&r.error||'Erro ao enviar'),'orange');
+    })
+    .catch(function(){showToast('⚠️ Sem conexão','orange');})
+    .finally(function(){btn.disabled=false;btn.innerHTML='📧 Enviar Relatório por E-mail';});
+}
+
 // ═══ INIT ═══
 function init(){
   var now=new Date();
@@ -860,6 +1027,7 @@ function goTo(page, btn){
   if(page==='custos')carregarCustos();
   if(page==='clientes')carregarClientes();
   if(page==='dashboard')carregarDashboard();
+  if(page==='relatorio')carregarRelatorio();
 }
 
 function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(function(){t.className='toast'+(type?' '+type:'');},3500);}
