@@ -704,6 +704,7 @@ function mostrarHome(){
   document.getElementById('hdrHome').style.display='';
   document.getElementById('hdrSub').style.display='none';
   document.getElementById('appNav').style.display='none';
+  document.getElementById('appHeader').style.display='none';
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   document.body.classList.add('on-home');
   atualizarStatsHome();
@@ -856,6 +857,7 @@ function goTo(page, btn){
   // Atualizar nav inferior
   var nav=document.getElementById('appNav');
   nav.style.display='flex';
+  document.getElementById('appHeader').style.display='';
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   // Ativar botão correto
   if(btn){
