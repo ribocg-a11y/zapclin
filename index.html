@@ -74,8 +74,8 @@
   .sb-ver{font-size:9px;color:var(--muted);text-align:center;padding:4px 0}
 
   /* ═══ LAYOUT ═══ */
-  .app-layout{display:flex;min-height:100vh}
-  .content-area{flex:1;margin-left:var(--sb-w);min-height:100vh;display:flex;flex-direction:column}
+  .app-layout{display:block;min-height:100vh}
+  .content-area{margin-left:var(--sb-w);min-height:100vh}
 
   /* ═══ MOBILE HEADER ═══ */
   .mobile-header{display:none;align-items:center;justify-content:space-between;padding:44px 16px 12px;background:linear-gradient(135deg,#0d0d1a,#111124);border-bottom:1px solid var(--border);flex-shrink:0;position:sticky;top:0;z-index:50}
@@ -85,7 +85,7 @@
   .mh-spacer{width:38px}
 
   /* ═══ PAGES ═══ */
-  .page{display:none;padding:24px}
+  .page{display:none;padding:24px;width:100%;box-sizing:border-box}
   .page.active{display:block;animation:fadeIn .3s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   #page-home{padding:0}
@@ -121,7 +121,7 @@
   .pin-btn.del{font-size:18px;color:var(--muted)}
   .pin-btn.cancel{font-size:16px;color:var(--muted)}
   /* Admin badge */
-  .admin-badge{background:linear-gradient(135deg,var(--blue),#1565c0);border-radius:14px;padding:10px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+  .admin-badge{background:linear-gradient(135deg,var(--blue),#1565c0);border-radius:14px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;width:100%}
   .admin-badge-left{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
   .admin-badge-timer{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px}
   .admin-badge-sair{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:9px;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;cursor:pointer}
@@ -135,7 +135,7 @@
   @media(max-width:768px){
     .sidebar{transform:translateX(-100%)}
     .sidebar.open{transform:translateX(0);box-shadow:4px 0 32px rgba(0,0,0,.6)}
-    .content-area{margin-left:0}
+    .content-area{margin-left:0;width:100%}
     .mobile-header{display:flex}
     .page{padding:16px}
     #page-home{padding:0}
@@ -428,12 +428,6 @@
     <button class="sb-btn" data-page="custos" onclick="goTo('custos',this)">
       <span class="sb-icon">💸</span> Custos
     </button>
-    <button class="sb-btn" data-page="lancamentos" onclick="goTo('lancamentos',this)">
-      <span class="sb-icon">📊</span> Vendas
-    </button>
-    <button class="sb-btn" data-page="relatorio" onclick="goTo('relatorio',this)">
-      <span class="sb-icon">📋</span> Relatório
-    </button>
 
     <!-- ═══ ADMIN SECTION — aparece na Fase 3 ═══ -->
     <div class="sb-admin-section" id="sbAdminSection">
@@ -443,6 +437,12 @@
       </button>
       <button class="sb-btn" data-page="dashboard" onclick="goTo('dashboard',this)">
         <span class="sb-icon">📈</span> Dashboard
+      </button>
+      <button class="sb-btn" data-page="lancamentos" onclick="goTo('lancamentos',this)">
+        <span class="sb-icon">💹</span> Vendas
+      </button>
+      <button class="sb-btn" data-page="relatorio" onclick="goTo('relatorio',this)">
+        <span class="sb-icon">📋</span> Relatório
       </button>
       <button class="sb-btn" data-page="historico" onclick="goTo('historico',this)">
         <span class="sb-icon">🗂️</span> Histórico
@@ -1321,7 +1321,7 @@ function goTo(page, btn){
   if(match)match.classList.add('active');
   document.getElementById('mobileTitle').textContent=PAGE_TITLES[page]||'ZapClin';
   // Páginas admin — exigem autenticação
-  var paginasAdmin=['admin','dashboard','historico'];
+  var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     abrirAdmin();
     return;
