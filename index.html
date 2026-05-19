@@ -735,11 +735,8 @@
   <button class="rel-email-btn" id="relEmailBtn" onclick="enviarRelatorioEmail()">📧 Enviar Relatório por E-mail</button>
 </div>
 
-  </div>
-
 <!-- ═══════════════════════════════ PAGE: ADMIN ═══════════════════════════════ -->
 <div class="page" id="page-admin">
-  <!-- Badge admin com timer -->
   <div class="admin-badge">
     <div>
       <div class="admin-badge-left">🔐 Modo Administrador</div>
@@ -747,7 +744,6 @@
     </div>
     <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
   </div>
-  <!-- KPIs -->
   <div class="section-title">Visão Geral</div>
   <div class="kpi-grid">
     <div class="kpi-card cyan"><div class="kpi-label">Faturamento Hoje</div><div class="kpi-value cyan" id="kAdminHoje">—</div><div class="kpi-sub" id="kAdminHojeN">— serviços</div></div>
@@ -755,7 +751,6 @@
     <div class="kpi-card green"><div class="kpi-label">Faturamento Mês</div><div class="kpi-value green" id="kAdminMes">—</div><div class="kpi-sub" id="kAdminMesN">— serviços</div></div>
     <div class="kpi-card yellow"><div class="kpi-label">Resultado Mês</div><div class="kpi-value yellow" id="kAdminResultado">—</div><div class="kpi-sub" id="kAdminMargem">margem —%</div></div>
   </div>
-  <!-- Atalhos de gestão -->
   <div class="section-title">Gestão</div>
   <div class="admin-atalhos">
     <div class="atalho-card" onclick="goTo('dashboard',null)">
@@ -785,9 +780,11 @@
     </div>
     <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
   </div>
-  <!-- Fase 7: implementação completa -->
-  <div class="empty"><div class="empty-icon">🗂️</div><div class="empty-text">Histórico — disponível na Fase 7</div></div>
+  <div class="empty"><div class="empty-icon">🗂️</div><div class="empty-text">Histórico completo — disponível na Fase 7</div></div>
 </div>
+
+  </div>
+
 
 <!-- ═══ PIN MODAL ═══ -->
 <div class="pin-overlay" id="pinOverlay">
