@@ -90,6 +90,47 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   #page-home{padding:0}
 
+
+
+
+  /* ═══ PAINEL ADMIN ═══ */
+  .admin-atalhos{display:flex;flex-direction:column;gap:10px}
+  .atalho-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;-webkit-user-select:none}
+  .atalho-card:active{transform:scale(.98);background:var(--surface)}
+  .atalho-icon{font-size:24px;width:36px;text-align:center;flex-shrink:0}
+  .atalho-info{flex:1}
+  .atalho-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text)}
+  .atalho-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .atalho-arr{font-size:18px;color:var(--muted);font-weight:700}
+  /* ═══ PIN MODAL ═══ */
+  .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;display:none;align-items:flex-end;justify-content:center;padding-bottom:0}
+  .pin-overlay.show{display:flex;animation:fadeIn .25s ease}
+  .pin-sheet{background:var(--card);border:1px solid var(--border);border-radius:28px 28px 0 0;padding:20px 24px 40px;width:100%;max-width:420px;text-align:center}
+  .pin-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px}
+  .pin-icon{font-size:36px;margin-bottom:10px}
+  .pin-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px}
+  .pin-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+  .pin-display{display:flex;justify-content:center;gap:14px;margin-bottom:24px}
+  .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);transition:all .15s}
+  .pin-dot.filled{background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .pin-dot.error{background:var(--red);border-color:var(--red);animation:shake .3s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:0 auto}
+  .pin-btn{height:60px;border:2px solid var(--border);border-radius:14px;background:var(--surface);font-size:22px;font-weight:700;cursor:pointer;color:var(--text);font-family:var(--font-head);transition:all .1s;-webkit-user-select:none}
+  .pin-btn:active{background:rgba(0,229,255,.15);border-color:var(--cyan);transform:scale(.93)}
+  .pin-btn.del{font-size:18px;color:var(--muted)}
+  .pin-btn.cancel{font-size:16px;color:var(--muted)}
+  /* Admin badge */
+  .admin-badge{background:linear-gradient(135deg,var(--blue),#1565c0);border-radius:14px;padding:10px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+  .admin-badge-left{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+  .admin-badge-timer{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px}
+  .admin-badge-sair{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:9px;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;cursor:pointer}
+  .admin-badge-sair:active{background:rgba(255,255,255,.25)}
+  /* ═══ HOME TOPO OPERACIONAL ═══ */
+  .home-topo{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;gap:12px}
+  .home-topo-greeting{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text)}
+  .home-topo-sub{font-size:12px;color:var(--muted);margin-top:3px}
+  .home-date-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);flex-shrink:0;white-space:nowrap}
   /* ═══ MOBILE RESPONSIVE ═══ */
   @media(max-width:768px){
     .sidebar{transform:translateX(-100%)}
@@ -275,17 +316,7 @@
   .info-row:last-child{border-bottom:none}
   .info-key{color:var(--muted)} .info-val{color:var(--text);font-weight:600} .info-val.green{color:var(--green)}
   /* Home screen */
-  .home-wrap{padding:20px}
-  .home-hero{display:flex;align-items:center;gap:14px;padding:4px 0 20px}
-  .home-logo-wrap{position:relative;flex-shrink:0}
-  .home-logo-img{width:56px;height:56px;border-radius:14px;object-fit:cover;box-shadow:0 0 0 2px rgba(0,229,255,.25),0 0 20px rgba(0,229,255,.15)}
-  .home-logo-glow{position:absolute;inset:-6px;border-radius:20px;background:radial-gradient(circle,rgba(0,229,255,.2),transparent 70%);animation:logoPulse 3s ease-in-out infinite;pointer-events:none}
-  @keyframes logoPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
-  .home-brand{display:flex;flex-direction:column}
-  .home-brand-name{font-family:var(--font-head);font-size:30px;font-weight:800;line-height:1;letter-spacing:-1px}
-  .home-brand-z{color:var(--cyan)}
-  .home-brand-c{color:#fff}
-  .home-brand-sub{font-size:9px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-top:4px}
+  .home-wrap{padding:0 20px 20px}
   .home-date-pill{margin-left:auto;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--muted);flex-shrink:0}
   .home-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
   .home-stat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px 16px;position:relative;overflow:hidden}
@@ -489,26 +520,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ═══ HEADER DINÂMICO ═══ -->
-<div class="header" id="appHeader">
-  <!-- Estado HOME -->
-  <div id="hdrHome">
-    <div class="header-top">
-      <div class="logo"><div class="logo-icon">⚡</div><span class="logo-text">ZapClin</span></div>
-      <div class="date-badge" id="dateBadge"></div>
-    </div>
-    <div class="header-subtitle">Gerenciamento de Serviços · v3.11</div>
-  </div>
-  <!-- Estado SUB-PÁGINA -->
-  <div id="hdrSub" style="display:none">
-    <div class="header-sub-row">
-      <button class="h-home-btn" onclick="mostrarHome()">⌂</button>
-      <span class="h-page-title" id="hdrTitle"></span>
-      <button class="h-menu-btn" onclick="abrirDrawer()">☰</button>
-    </div>
-  </div>
-</div>
-
     <div class="toast" id="toast"></div>
 
     <!-- ═══ PÁGINAS ═══ -->
@@ -516,22 +527,16 @@
 <div class="page active" id="page-home">
   <div class="home-wrap">
 
-    <!-- Hero -->
-    <div class="home-hero">
-      <div class="home-logo-wrap">
-        <div class="home-logo-glow"></div>
-        <img class="home-logo-img" src="data:image/png;base64,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" alt="ZapClin Logo">
-      </div>
-      <div class="home-brand">
-        <div class="home-brand-name">
-          <span class="home-brand-z">Zap</span><span class="home-brand-c">Clin</span>
-        </div>
-        <div class="home-brand-sub">Higienização de Capacetes</div>
+    <!-- Topo operacional -->
+    <div class="home-topo">
+      <div class="home-topo-left">
+        <div class="home-topo-greeting" id="homeGreeting">Bom dia 👋</div>
+        <div class="home-topo-sub">Pronto para atender!</div>
       </div>
       <div class="home-date-pill" id="homeDatePill"></div>
     </div>
 
-    <!-- Stats rápidos -->
+        <!-- Stats rápidos -->
     <div class="home-stats">
       <div class="home-stat hs-cyan">
         <div class="hs-label">Receita hoje</div>
@@ -731,6 +736,89 @@
 </div>
 
   </div>
+
+<!-- ═══════════════════════════════ PAGE: ADMIN ═══════════════════════════════ -->
+<div class="page" id="page-admin">
+  <!-- Badge admin com timer -->
+  <div class="admin-badge">
+    <div>
+      <div class="admin-badge-left">🔐 Modo Administrador</div>
+      <div class="admin-badge-timer">Sessão encerra em <span id="adminTimerDisplay">1:00</span></div>
+    </div>
+    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+  </div>
+  <!-- KPIs -->
+  <div class="section-title">Visão Geral</div>
+  <div class="kpi-grid">
+    <div class="kpi-card cyan"><div class="kpi-label">Faturamento Hoje</div><div class="kpi-value cyan" id="kAdminHoje">—</div><div class="kpi-sub" id="kAdminHojeN">— serviços</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Custos Hoje</div><div class="kpi-value red" id="kAdminCusHoje">—</div><div class="kpi-sub">gastos</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Faturamento Mês</div><div class="kpi-value green" id="kAdminMes">—</div><div class="kpi-sub" id="kAdminMesN">— serviços</div></div>
+    <div class="kpi-card yellow"><div class="kpi-label">Resultado Mês</div><div class="kpi-value yellow" id="kAdminResultado">—</div><div class="kpi-sub" id="kAdminMargem">margem —%</div></div>
+  </div>
+  <!-- Atalhos de gestão -->
+  <div class="section-title">Gestão</div>
+  <div class="admin-atalhos">
+    <div class="atalho-card" onclick="goTo('dashboard',null)">
+      <span class="atalho-icon">📈</span>
+      <div class="atalho-info"><div class="atalho-title">Dashboard</div><div class="atalho-sub">Gráficos por dia e tipo</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('relatorio',null)">
+      <span class="atalho-icon">📋</span>
+      <div class="atalho-info"><div class="atalho-title">Relatório Mensal</div><div class="atalho-sub">Enviar e salvar PDF</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('historico',null)">
+      <span class="atalho-icon">🗂️</span>
+      <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Buscar por período</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: HISTORICO ═══════════════════════════════ -->
+<div class="page" id="page-historico">
+  <div class="admin-badge">
+    <div>
+      <div class="admin-badge-left">🗂️ Histórico de Atendimentos</div>
+      <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplay2">1:00</span></div>
+    </div>
+    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+  </div>
+  <!-- Fase 7: implementação completa -->
+  <div class="empty"><div class="empty-icon">🗂️</div><div class="empty-text">Histórico — disponível na Fase 7</div></div>
+</div>
+
+<!-- ═══ PIN MODAL ═══ -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-sheet">
+    <div class="pin-handle"></div>
+    <div class="pin-icon">🔐</div>
+    <div class="pin-title">Área Administrativa</div>
+    <div class="pin-sub">Digite a senha de acesso</div>
+    <div class="pin-display">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-grid">
+      <button class="pin-btn" onclick="pinKey('1')">1</button>
+      <button class="pin-btn" onclick="pinKey('2')">2</button>
+      <button class="pin-btn" onclick="pinKey('3')">3</button>
+      <button class="pin-btn" onclick="pinKey('4')">4</button>
+      <button class="pin-btn" onclick="pinKey('5')">5</button>
+      <button class="pin-btn" onclick="pinKey('6')">6</button>
+      <button class="pin-btn" onclick="pinKey('7')">7</button>
+      <button class="pin-btn" onclick="pinKey('8')">8</button>
+      <button class="pin-btn" onclick="pinKey('9')">9</button>
+      <button class="pin-btn del" onclick="pinDel()">⌫</button>
+      <button class="pin-btn" onclick="pinKey('0')">0</button>
+      <button class="pin-btn cancel" onclick="fecharPin()">✕</button>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -760,6 +848,8 @@ const PAGE_TITLES={
   clientes:'👥 Clientes',
   dashboard:'📈 Dashboard',
   relatorio:'📋 Relatório',
+  admin:'📊 Painel Admin',
+  historico:'🗂️ Histórico',
   config:'⚙️ Config'
 };
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
@@ -973,6 +1063,115 @@ function enviarRelatorioEmail(){
 }
 
 
+
+// ═══ ADMIN / PIN ═══
+const ADMIN_PIN='1321';
+var isAdmin=false;
+var adminTimerInt=null;
+var adminCountdown=60;
+var pinBuffer='';
+
+function abrirAdmin(){
+  if(isAdmin){mostrarHome();return;}
+  pinBuffer='';
+  atualizarDotsPIN();
+  document.getElementById('pinOverlay').classList.add('show');
+}
+function fecharPin(){
+  document.getElementById('pinOverlay').classList.remove('show');
+  pinBuffer='';
+  atualizarDotsPIN();
+}
+function pinKey(d){
+  if(pinBuffer.length>=4)return;
+  pinBuffer+=d;
+  atualizarDotsPIN();
+  if(pinBuffer.length===4)setTimeout(verificarPIN,120);
+}
+function pinDel(){
+  if(pinBuffer.length>0){pinBuffer=pinBuffer.slice(0,-1);atualizarDotsPIN();}
+}
+function atualizarDotsPIN(){
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('pd'+i);
+    if(!d)continue;
+    d.className='pin-dot'+(i<pinBuffer.length?' filled':'');
+  }
+}
+function verificarPIN(){
+  if(pinBuffer===ADMIN_PIN){
+    fecharPin();
+    entrarAdmin();
+  } else {
+    // Erro: dots vermelhos + vibração
+    for(var i=0;i<4;i++){
+      var d=document.getElementById('pd'+i);
+      if(d)d.className='pin-dot error';
+    }
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    setTimeout(function(){
+      pinBuffer='';
+      atualizarDotsPIN();
+    },700);
+  }
+}
+function entrarAdmin(){
+  isAdmin=true;
+  adminCountdown=60;
+  // Mostrar seção admin na sidebar
+  var sec=document.getElementById('sbAdminSection');
+  if(sec)sec.classList.add('visible');
+  // Mostrar barra admin no footer
+  var bar=document.getElementById('sbAdminBar');
+  if(bar)bar.classList.add('visible');
+  // Ocultar botão gerenciar
+  var gbtn=document.getElementById('sbGerenciarBtn');
+  if(gbtn)gbtn.style.display='none';
+  // Iniciar timer
+  atualizarTimerAdmin();
+  adminTimerInt=setInterval(function(){
+    adminCountdown--;
+    atualizarTimerAdmin();
+    if(adminCountdown<=0)adminLogout();
+  },1000);
+  // Registrar reset de timer em qualquer interação
+  document.addEventListener('click',resetAdminTimer);
+  document.addEventListener('touchstart',resetAdminTimer);
+  // Ir para painel admin
+  showToast('✅ Bem-vindo, Administrador!','blue');
+  goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));
+}
+function resetAdminTimer(){
+  if(!isAdmin)return;
+  adminCountdown=60;
+  atualizarTimerAdmin();
+}
+function atualizarTimerAdmin(){
+  var m=Math.floor(adminCountdown/60);
+  var s=adminCountdown%60;
+  var str=m+':'+String(s).padStart(2,'0');
+  var el=document.getElementById('sbTimer');
+  if(el)el.textContent=str;
+  // Badge nas páginas admin
+  var badge=document.getElementById('adminTimerDisplay');
+  if(badge)badge.textContent=str;
+}
+function adminLogout(){
+  isAdmin=false;
+  if(adminTimerInt){clearInterval(adminTimerInt);adminTimerInt=null;}
+  document.removeEventListener('click',resetAdminTimer);
+  document.removeEventListener('touchstart',resetAdminTimer);
+  // Ocultar seção admin
+  var sec=document.getElementById('sbAdminSection');
+  if(sec)sec.classList.remove('visible');
+  var bar=document.getElementById('sbAdminBar');
+  if(bar)bar.classList.remove('visible');
+  var gbtn=document.getElementById('sbGerenciarBtn');
+  if(gbtn)gbtn.style.display='';
+  showToast('🔐 Sessão admin encerrada','orange');
+  mostrarHome();
+}
+
 // ═══ SIDEBAR MOBILE ═══
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
@@ -982,10 +1181,7 @@ function fecharSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sbOverlay').classList.remove('open');
 }
-function abrirAdmin(){
-  // Fase 3: PIN modal
-  showToast('🔐 Admin — disponível na Fase 3','orange');
-}
+// abrirAdmin() definida no bloco ADMIN/PIN acima
 function verificarStatusConexao(){
   var dot=document.getElementById('sbDot');
   var txt=document.getElementById('sbStatusTxt');
@@ -999,6 +1195,39 @@ function verificarStatusConexao(){
     }).catch(function(){dot.className='sb-dot sb-offline';txt.textContent='Offline';});
 }
 
+
+function carregarPainelAdmin(){
+  // Atualizar timer display
+  atualizarTimerAdmin();
+  // Calcular KPIs do cache local
+  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var cst=custos.length>0?custos:JSON.parse(localStorage.getItem('zapCustos')||'[]');
+  var now=new Date();
+  var dd=String(now.getDate()).padStart(2,'0'),mm=String(now.getMonth()+1).padStart(2,'0'),yyyy=now.getFullYear();
+  var hoje=dd+'/'+mm+'/'+yyyy, mes=mm+'/'+yyyy;
+  function gm(d){var s=fmtData(d);if(!s||s==='—')return'';var p=s.split('/');return p.length>=3?p[1]+'/'+p[2]:'';}
+  var lancHoje=lanc.filter(function(l){return fmtData(l.data)===hoje;});
+  var lancMes=lanc.filter(function(l){return gm(l.data)===mes;});
+  var cstMes=cst.filter(function(c){return gm(c.data)===mes;});
+  var fatHoje=lancHoje.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+  var fatMes=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+  var cusMes=cstMes.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
+  var cusHoje=cst.filter(function(c){return fmtData(c.data)===hoje;}).reduce(function(s,c){return s+parseFloat(c.val||0);},0);
+  var resultado=fatMes-cusMes;
+  var margem=fatMes>0?(resultado/fatMes*100).toFixed(1):0;
+  var khEl=document.getElementById('kAdminHoje');if(khEl)khEl.textContent=fmtBRL(fatHoje);
+  var khnEl=document.getElementById('kAdminHojeN');if(khnEl)khnEl.textContent=lancHoje.length+' serviço(s)';
+  var kchEl=document.getElementById('kAdminCusHoje');if(kchEl)kchEl.textContent=fmtBRL(cusHoje);
+  var kmEl=document.getElementById('kAdminMes');if(kmEl)kmEl.textContent=fmtBRL(fatMes);
+  var kmnEl=document.getElementById('kAdminMesN');if(kmnEl)kmnEl.textContent=lancMes.length+' serviço(s)';
+  var krEl=document.getElementById('kAdminResultado');
+  if(krEl){krEl.textContent=fmtBRL(resultado);krEl.style.color=resultado>=0?'var(--green)':'var(--red)';}
+  var kmgEl=document.getElementById('kAdminMargem');if(kmgEl)kmgEl.textContent='margem '+margem+'%';
+  // Sincronizar timer display 2
+  var td2=document.getElementById('adminTimerDisplay2');
+  var td1=document.getElementById('adminTimerDisplay');
+  if(td2&&td1)td2.textContent=td1.textContent;
+}
 // ═══ INIT ═══
 function init(){
   var now=new Date();
@@ -1016,6 +1245,11 @@ function init(){
   renderServices();updateTotal();checkConexao();atualizarBadgePendentes();
   var p=getPendentes();if(p.length>0){setTimeout(function(){showToast('🔄 Sincronizando '+p.length+' pendente(s)...','orange');_syncNext(p,0);},2000);}
   setInterval(atualizarTimers,60000);
+  // Saudação dinâmica
+  var hora=new Date().getHours();
+  var saud=hora<12?'Bom dia 👋':hora<18?'Boa tarde 👋':'Boa noite 👋';
+  var grEl=document.getElementById('homeGreeting');
+  if(grEl)grEl.textContent=saud;
   // Iniciar na HOME com animação
   mostrarHome();
 }
@@ -1086,11 +1320,18 @@ function goTo(page, btn){
   var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
   if(match)match.classList.add('active');
   document.getElementById('mobileTitle').textContent=PAGE_TITLES[page]||'ZapClin';
+  // Páginas admin — exigem autenticação
+  var paginasAdmin=['admin','dashboard','historico'];
+  if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
+    abrirAdmin();
+    return;
+  }
   if(page==='lancamentos')carregarLancamentos();
   if(page==='custos')carregarCustos();
   if(page==='clientes')carregarClientes();
   if(page==='dashboard')carregarDashboard();
   if(page==='relatorio')carregarRelatorio();
+  if(page==='admin')carregarPainelAdmin();
   if(page==='home'){atualizarStatsHome();animarCardsHome();}
 }
 
