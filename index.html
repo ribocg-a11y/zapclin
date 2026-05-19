@@ -20,6 +20,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ZapClin">
 <meta name="theme-color" content="#0a0a0f">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>ZapClin</title>
@@ -135,13 +137,23 @@
   @media(max-width:768px){
     .sidebar{transform:translateX(-100%)}
     .sidebar.open{transform:translateX(0);box-shadow:4px 0 32px rgba(0,0,0,.6)}
-    .content-area{margin-left:0;width:100%}
-    .mobile-header{display:flex}
+    .content-area{margin-left:0!important;width:100%}
+    .mobile-header{display:flex!important}
     .page{padding:16px}
     #page-home{padding:0}
+    .home-topo{padding:16px 16px 12px}
+    .home-wrap{padding:0 16px 20px}
+    .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}
+    .home-grid{gap:8px}
+    .home-card{padding:16px 12px 14px}
+    .admin-atalhos{gap:8px}
+    .atalho-card{padding:12px 14px}
+    .section-title{margin-top:16px}
+    .section-title:first-child{margin-top:0}
   }
   @media(min-width:769px){
     .sb-overlay{display:none!important}
+    .mobile-header{display:none!important}
   }
 
   /* ═══ TODAS AS CLASSES DE PÁGINA (v3.11 preservadas) ═══ */
@@ -569,22 +581,10 @@
         <div class="hc-desc">Controle de gastos</div>
         <div class="hc-arr">›</div>
       </div>
-      <div class="home-card" style="--hc:var(--blue)" onclick="goTo('lancamentos',null)">
-        <div class="hc-icon">📊</div>
-        <div class="hc-name">Vendas</div>
-        <div class="hc-desc">Histórico de lançamentos</div>
-        <div class="hc-arr">›</div>
-      </div>
-      <div class="home-card" style="--hc:var(--green)" onclick="goTo('dashboard',null)">
-        <div class="hc-icon">📈</div>
-        <div class="hc-name">Dashboard</div>
-        <div class="hc-desc">Análise de desempenho</div>
-        <div class="hc-arr">›</div>
-      </div>
-      <div class="home-card" style="--hc:var(--blue)" onclick="goTo('relatorio',null)">
-        <div class="hc-icon">📋</div>
-        <div class="hc-name">Relatório</div>
-        <div class="hc-desc">Resumo mensal completo</div>
+      <div class="home-card" style="--hc:var(--blue)" onclick="abrirAdmin()">
+        <div class="hc-icon">🔐</div>
+        <div class="hc-name">Gerenciar</div>
+        <div class="hc-desc">Área administrativa</div>
         <div class="hc-arr">›</div>
       </div>
     </div>
