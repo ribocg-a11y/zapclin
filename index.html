@@ -339,6 +339,9 @@
   .hs-val{font-family:var(--font-head);font-size:22px;font-weight:800}
   .hs-val.cyan{color:var(--cyan)}
   .hs-val.green{color:var(--green)}
+  .hs-val.orange{color:var(--orange)}
+  .hs-sub{font-size:10px;color:var(--muted);margin-top:4px}
+  .hs-orange::after{background:var(--orange);box-shadow:0 0 14px var(--orange)}
   .home-sec-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
   .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .home-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px 14px 16px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;cursor:pointer;-webkit-user-select:none;transition:transform .15s ease,box-shadow .2s ease}
@@ -548,15 +551,17 @@
       <div class="home-date-pill" id="homeDatePill"></div>
     </div>
 
-        <!-- Stats rápidos -->
+        <!-- Stats operador (sem dados financeiros) -->
     <div class="home-stats">
       <div class="home-stat hs-cyan">
-        <div class="hs-label">Receita hoje</div>
-        <div class="hs-val cyan" id="homeReceita">—</div>
+        <div class="hs-label">Atendimentos hoje</div>
+        <div class="hs-val cyan" id="homeAtend">—</div>
+        <div class="hs-sub">serviços registrados</div>
       </div>
-      <div class="home-stat hs-green">
-        <div class="hs-label">Atendimentos</div>
-        <div class="hs-val green" id="homeAtend">—</div>
+      <div class="home-stat hs-orange">
+        <div class="hs-label">Clientes ativos</div>
+        <div class="hs-val orange" id="homeAtivos">—</div>
+        <div class="hs-sub">aguardando entrega</div>
       </div>
     </div>
 
@@ -921,26 +926,27 @@ function animarCardsHome(){
 }
 
 function _calcStatsHome(){
-  // Usa array em memória (atualizado instantaneamente ao registrar)
+  // Atendimentos hoje — sem dados financeiros (operador)
   var src=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
   var now=new Date();
   var dd=String(now.getDate()).padStart(2,'0'),mm=String(now.getMonth()+1).padStart(2,'0'),yyyy=now.getFullYear();
   var hoje=dd+'/'+mm+'/'+yyyy;
-  var rec=0,atd=0;
-  src.forEach(function(l){if(fmtData(l.data)===hoje){rec+=parseFloat(l.val||0);atd++;}});
-  var rEl=document.getElementById('homeReceita');
+  var atd=0;
+  src.forEach(function(l){if(fmtData(l.data)===hoje)atd++;});
+  // Clientes ativos = Em andamento OU Pronto (não Entregue)
+  var ativos=cli.filter(function(c){return c.status!=='Entregue';}).length;
   var aEl=document.getElementById('homeAtend');
-  if(rEl)rEl.textContent=fmtBRL(rec);
+  var avEl=document.getElementById('homeAtivos');
   if(aEl)aEl.textContent=atd;
+  if(avEl)avEl.textContent=ativos;
 }
 function atualizarStatsHome(){
-  // Atualiza imediatamente com dados em memória
+  // Mostra cache imediatamente
   _calcStatsHome();
-  // Busca do servidor só se não há dados locais
-  if(lancamentos.length===0){
-    buscarLancamentos().then(function(ok){
-      if(ok) _calcStatsHome();
-    });
+  // Se não tem dados, busca agora
+  if(lancamentos.length===0 || clientes.length===0){
+    refreshDados(true);
   }
 }
 
@@ -1610,6 +1616,60 @@ function drawPicoChart(containerId, lancMes) {
   });
 }
 
+
+// ═══ PERFORMANCE — ATUALIZAÇÃO AUTOMÁTICA ═══
+var _refreshInterval = null;
+var _lastRefresh = 0;
+var REFRESH_COOLDOWN = 30000; // 30s entre refreshes
+
+function refreshDados(force) {
+  var agora = Date.now();
+  if (!force && agora - _lastRefresh < REFRESH_COOLDOWN) return;
+  _lastRefresh = agora;
+  
+  // Buscar lançamentos e clientes em paralelo
+  Promise.all([buscarLancamentos(), buscarClientes(), buscarCustos()])
+    .then(function(results) {
+      var algumOk = results.some(function(r){ return r; });
+      if (algumOk) {
+        _calcStatsHome();
+        // Se página admin ativa, atualizar painel também
+        if (isAdmin) {
+          var pageAdmin = document.getElementById('page-admin');
+          if (pageAdmin && pageAdmin.classList.contains('active')) carregarPainelAdmin();
+        }
+      }
+    })
+    .catch(function(e){ console.error('refreshDados:', e); });
+}
+
+function iniciarAutoRefresh() {
+  if (_refreshInterval) clearInterval(_refreshInterval);
+  _refreshInterval = setInterval(function() {
+    if (!document.hidden) refreshDados(false);
+  }, 60000); // a cada 60s quando visível
+}
+
+// Atualizar quando app volta ao foreground
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    // App voltou ao primeiro plano — atualizar se passou >30s
+    var agora = Date.now();
+    if (agora - _lastRefresh > REFRESH_COOLDOWN) {
+      refreshDados(true);
+      _calcStatsHome();
+    }
+  }
+});
+
+// Atualizar quando foco volta para a janela
+window.addEventListener('focus', function() {
+  var agora = Date.now();
+  if (agora - _lastRefresh > REFRESH_COOLDOWN) {
+    refreshDados(true);
+  }
+});
+
 // ═══ INIT ═══
 function init(){
   var now=new Date();
@@ -1632,6 +1692,10 @@ function init(){
   var saud=hora<12?'Bom dia 👋':hora<18?'Boa tarde 👋':'Boa noite 👋';
   var grEl=document.getElementById('homeGreeting');
   if(grEl)grEl.textContent=saud;
+  // Primeiro refresh logo após carregar
+  setTimeout(function(){ refreshDados(true); }, 1500);
+  // Auto-refresh contínuo
+  iniciarAutoRefresh();
   // Iniciar na HOME com animação
   mostrarHome();
 }
@@ -1672,7 +1736,7 @@ function resetClienteForm(){document.getElementById('clienteNome').value='';docu
 function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=clientes.find(function(c){return c.num==num;});_pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};document.getElementById('pagClienteNome').textContent=_pagData.nome;var now=new Date();document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('pagamentoModal').classList.add('show');return;}_executarMarcarStatus(num,novoStatus,'');}
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
 function confirmarPagamento(){var di=document.getElementById('pagamentoData').value;var p=di.split('-');var dataPag=p[2]+'/'+p[1]+'/'+p[0];fecharPagamentoModal();_executarMarcarStatus(_pagData.num,'Entregue',dataPag);setTimeout(function(){mostrarWaModal('agradecimento',_pagData.nome,_pagData.tel,_pagData.qtd);},500);}
-function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var url=webAppUrl+'?action=atualizarStatus&num='+num+'&status='+encodeURIComponent(novoStatus);if(dataPagamento)url+='&dataPagamento='+encodeURIComponent(dataPagamento);jsonp(url,10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');}else{showToast('⚠️ Status salvo local.','orange');}}).catch(function(){showToast('⚠️ Status salvo local.','orange');});}
+function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));_calcStatsHome();var url=webAppUrl+'?action=atualizarStatus&num='+num+'&status='+encodeURIComponent(novoStatus);if(dataPagamento)url+='&dataPagamento='+encodeURIComponent(dataPagamento);jsonp(url,10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');}else{showToast('⚠️ Status salvo local.','orange');}}).catch(function(){showToast('⚠️ Status salvo local.','orange');});}
 function filtrarClientes(query){var q=(query||'').toLowerCase().trim();clientesFiltrados=q?clientes.filter(function(c){return (c.nome||'').toLowerCase().indexOf(q)>=0||(c.tel||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;}):clientes.slice();renderClienteList();}
 function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var src=clientesFiltrados.length>0||document.getElementById('clienteSearch').value?clientesFiltrados:clientes;var ordenados=src.slice().sort(function(a,b){var ord={Pronto:0,'Em andamento':1,Entregue:2};return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var visitaLabel=nthVisita(c.numVisita||1);var isPrimeira=(c.numVisita||1)===1;var svcsHtml='';if(svcs.length>0){var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+obs[i]+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">🪖 Cap.'+(i+1)+': '+s+'</span>'+o+'</div>';}).filter(Boolean).join('');if(linhas)svcsHtml='<div class="cli-servicos">'+linhas+'</div>';}var statusBtns='';if(c.status==='Em andamento'){statusBtns='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">✅ Marcar Pronto</button>';}else if(c.status==='Pronto'){statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';}else{statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🙌 Obrigado</button>';}var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🎉 WA Pronto</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'">'+'<div class="cli-top">'+'<span class="visita-badge'+(isPrimeira?' primeira':'')+'">'+visitaLabel+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+c.status+'</span>'+'</div>'+'<div class="cli-header">'+'<div class="cli-avatar">'+ini+'</div>'+'<div style="flex:1;min-width:0">'+'<div class="cli-nome">'+c.nome+'</div>'+'<div class="cli-tel">📱 '+c.tel+'</div>'+'</div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+ '</div>'+svcsHtml+'<div class="cli-footer">'+'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'+'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.status!=='Entregue'?(function(){var min=calcMinutos(c.data,c.hora);return min!==null?'<span id="timer-'+c.num+'" style="font-size:11px;font-weight:700;color:'+timerCor(min)+';">⏱ '+fmtTempo(min)+'</span>':'';})():'')+(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')+(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')+(c.lancamentosVinculados?'<span class="info-badge vinculo">📊 Vinculado</span>':'')+'</div>'+'<div class="cli-actions">'+statusBtns+waProntoBtn+'<button class="cli-btn wa" onclick="mostrarWaModal(\'boasVindas\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">💬 WA Boas-vindas</button>'+'</div>'+'</div>';}).join('');}
 
