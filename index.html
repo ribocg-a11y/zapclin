@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.2 | Data: 20/05/2026
+  Versão : 4.3 | Data: 20/05/2026
+  FASE 4 v4.3:
+    - Remove botão Home duplicado do topo mobile
+    - Mantém a data no canto direito do cabeçalho mobile
+    - Preserva navegação Home pelo menu lateral e pelos cards internos
   FASE 3 v4.2:
     - Centralização das chamadas da API em apiGet()
     - Redução de carregamento inicial com cache local imediato e refresh em segundo plano
@@ -137,10 +141,9 @@
   .home-topo-greeting{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text)}
   .home-topo-sub{font-size:12px;color:var(--muted);margin-top:3px}
   .home-date-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);flex-shrink:0;white-space:nowrap}
-  /* [v4.2 MOBILE]
-     Melhora estabilidade no celular: botão Home no topo, áreas seguras e rolagem previsível. */
-  .mh-home{background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);width:38px;height:38px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .mh-home:active{background:var(--surface);transform:scale(.96)}
+  /* [v4.3 MOBILE]
+     Remove o botão Home duplicado no topo mobile e usa o espaço direito para exibir a data. */
+  .mh-date{background:var(--card);border:1px solid var(--border);border-radius:18px;color:var(--muted);padding:6px 10px;font-size:11px;line-height:1;white-space:nowrap;min-width:72px;text-align:center}
   .page{scroll-margin-top:70px}
 
   /* ═══ MOBILE RESPONSIVE ═══ */
@@ -580,8 +583,8 @@
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
       <span class="mh-title" id="mobileTitle">ZapClin</span>
-      <!-- [v4.2 MENU/HOME] Botão fixo para voltar à Home no mobile sem depender do menu lateral. -->
-      <button class="mh-home" onclick="goTo('home',null)" aria-label="Voltar para Home">🏠</button>
+      <!-- [v4.3 MOBILE] Removido botão Home duplicado; a área direita agora mostra a data. -->
+      <span class="mh-date" id="mobileDateBadge"></span>
     </div>
 
     <!-- Modais -->
@@ -2118,8 +2121,10 @@ function init(){
   var dateStr=dias[now.getDay()]+', '+String(now.getDate()).padStart(2,'0')+' '+meses[now.getMonth()];
   var db=document.getElementById('dateBadge');
   var hp=document.getElementById('homeDatePill');
+  var mdb=document.getElementById('mobileDateBadge');
   if(db)db.textContent=dateStr;
   if(hp)hp.textContent=dateStr;
+  if(mdb)mdb.textContent=dateStr;
   document.getElementById('webAppUrl').value=webAppUrl;
 
   // [v4.2 PERFORMANCE]
