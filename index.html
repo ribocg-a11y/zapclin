@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.0 | Data: 19/05/2026
+  Versão : 4.1 | Data: 20/05/2026
+  FASE 2 v4.1:
+    - Painel Admin passa a buscar KPIs server-side via action=buscarKpisAdmin
+    - Mantido fallback local/cache se servidor falhar
+    - Nenhuma alteração estrutural nas demais telas/fluxos
   FASE 1 v4.0:
     - Layout base reestruturado com sidebar lateral
     - Sidebar fixa no desktop (240px), overlay no mobile
@@ -1332,10 +1336,29 @@ function verificarStatusConexao(){
 }
 
 
-function carregarPainelAdmin(){
-  // Atualizar timer display
-  atualizarTimerAdmin();
-  // Calcular KPIs do cache local
+function aplicarKpisAdmin_(kpis, origem){
+  // [v4.1 NOVO]
+  // Centraliza a renderização dos KPIs do Painel Admin para permitir duas fontes:
+  // 1) servidor Apps Script, via action=buscarKpisAdmin; 2) fallback local/cache.
+  // Isso evita duplicar escrita de DOM e reduz risco de divergência visual.
+  if(!kpis) return;
+  var khEl=document.getElementById('kAdminHoje');if(khEl)khEl.textContent=fmtBRL(kpis.recHoje||0);
+  var khnEl=document.getElementById('kAdminHojeN');if(khnEl)khnEl.textContent=(kpis.atHoje||0)+' serviço(s)';
+  var kchEl=document.getElementById('kAdminCusHoje');if(kchEl)kchEl.textContent=fmtBRL(kpis.cusHoje||0);
+  var kmEl=document.getElementById('kAdminMes');if(kmEl)kmEl.textContent=fmtBRL(kpis.recMes||0);
+  var kmnEl=document.getElementById('kAdminMesN');if(kmnEl)kmnEl.textContent=(kpis.atMes||0)+' serviço(s)';
+  var krEl=document.getElementById('kAdminResultado');
+  if(krEl){krEl.textContent=fmtBRL(kpis.resultado||0);krEl.style.color=(kpis.resultado||0)>=0?'var(--green)':'var(--red)';}
+  var kmgEl=document.getElementById('kAdminMargem');if(kmgEl)kmgEl.textContent='margem '+(kpis.margem||0)+'%';
+  var td2=document.getElementById('adminTimerDisplay2');
+  var td1=document.getElementById('adminTimerDisplay');
+  if(td2&&td1)td2.textContent=td1.textContent;
+}
+
+function calcularKpisAdminLocal_(){
+  // [v4.1 NOVO]
+  // Fallback preservando exatamente a lógica anterior do v4.0 baseada em cache local.
+  // Usado imediatamente ao abrir o painel e também quando o servidor não responder.
   var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
   var cst=custos.length>0?custos:JSON.parse(localStorage.getItem('zapCustos')||'[]');
   var now=new Date();
@@ -1350,19 +1373,29 @@ function carregarPainelAdmin(){
   var cusMes=cstMes.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
   var cusHoje=cst.filter(function(c){return fmtData(c.data)===hoje;}).reduce(function(s,c){return s+parseFloat(c.val||0);},0);
   var resultado=fatMes-cusMes;
-  var margem=fatMes>0?(resultado/fatMes*100).toFixed(1):0;
-  var khEl=document.getElementById('kAdminHoje');if(khEl)khEl.textContent=fmtBRL(fatHoje);
-  var khnEl=document.getElementById('kAdminHojeN');if(khnEl)khnEl.textContent=lancHoje.length+' serviço(s)';
-  var kchEl=document.getElementById('kAdminCusHoje');if(kchEl)kchEl.textContent=fmtBRL(cusHoje);
-  var kmEl=document.getElementById('kAdminMes');if(kmEl)kmEl.textContent=fmtBRL(fatMes);
-  var kmnEl=document.getElementById('kAdminMesN');if(kmnEl)kmnEl.textContent=lancMes.length+' serviço(s)';
-  var krEl=document.getElementById('kAdminResultado');
-  if(krEl){krEl.textContent=fmtBRL(resultado);krEl.style.color=resultado>=0?'var(--green)':'var(--red)';}
-  var kmgEl=document.getElementById('kAdminMargem');if(kmgEl)kmgEl.textContent='margem '+margem+'%';
-  // Sincronizar timer display 2
-  var td2=document.getElementById('adminTimerDisplay2');
-  var td1=document.getElementById('adminTimerDisplay');
-  if(td2&&td1)td2.textContent=td1.textContent;
+  var margem=fatMes>0?parseFloat((resultado/fatMes*100).toFixed(1)):0;
+  var ticket=lancMes.length>0?parseFloat((fatMes/lancMes.length).toFixed(2)):0;
+  return {recHoje:fatHoje,cusHoje:cusHoje,recMes:fatMes,cusMes:cusMes,atHoje:lancHoje.length,atMes:lancMes.length,resultado:resultado,margem:margem,ticket:ticket};
+}
+
+function carregarPainelAdmin(){
+  // [v4.1 ALTERAÇÃO]
+  // Antes: calculava KPIs apenas por cache local, podendo ficar atrasado.
+  // Agora: mostra fallback local imediatamente e, em seguida, tenta atualizar com dados oficiais do servidor.
+  atualizarTimerAdmin();
+  aplicarKpisAdmin_(calcularKpisAdminLocal_(),'local');
+  jsonp(webAppUrl+'?action=buscarKpisAdmin',12000)
+    .then(function(r){
+      if(r&&r.ok){
+        aplicarKpisAdmin_(r,'server');
+        try{localStorage.setItem('zapKpisAdminServer',JSON.stringify({t:Date.now(),data:r}));}catch(e){}
+      }
+    })
+    .catch(function(){
+      // [v4.1 FALLBACK]
+      // Sem alerta para o usuário porque o painel já está preenchido com cache local.
+      aplicarKpisAdmin_(calcularKpisAdminLocal_(),'fallback');
+    });
 }
 
 // ═══ DASHBOARD — GRÁFICOS ═══
