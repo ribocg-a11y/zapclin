@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.4 | Data: 20/05/2026
+  Versão : 4.5 | Data: 20/05/2026
+  FASE 6 v4.5:
+    - Remove a segunda data da área da Home em mobile e desktop
+    - Mantém somente a data do cabeçalho superior mobile
+    - Evita data colada ao texto de saudação "Boa tarde 👋" no desktop
   FASE 5 v4.4:
     - Remove definitivamente o botão/casa do topo mobile e mantém somente a data no canto direito
     - Exibe a versão atual do frontend ao lado do status Online/Offline e no título mobile
@@ -523,7 +527,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.4</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.5</span>
       </div>
     </div>
   </div>
@@ -587,7 +591,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.4</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.5</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -645,7 +649,10 @@
         <div class="home-topo-greeting" id="homeGreeting">Bom dia 👋</div>
         <div class="home-topo-sub">Pronto para atender!</div>
       </div>
-      <div class="home-date-pill" id="homeDatePill"></div>
+      <!-- [v4.5 REMOÇÃO]
+           A data da Home foi removida para evitar duplicidade no mobile
+           e impedir que no desktop ela fique colada à saudação "Boa tarde 👋".
+           A data oficial permanece apenas no cabeçalho superior mobile. -->
     </div>
 
         <!-- Stats operador (sem dados financeiros) -->
@@ -986,7 +993,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.4 | 20/05/2026 — Frontend versionado e topo mobile corrigido
+// ZAPCLIN v4.5 | 20/05/2026 — Remove segunda data da Home e preserva data somente no topo mobile
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1019,7 +1026,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.4';
+const APP_VERSION='v4.5';
 
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
@@ -2130,10 +2137,11 @@ function init(){
   var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   var dateStr=dias[now.getDay()]+', '+String(now.getDate()).padStart(2,'0')+' '+meses[now.getMonth()];
   var db=document.getElementById('dateBadge');
-  var hp=document.getElementById('homeDatePill');
   var mdb=document.getElementById('mobileDateBadge');
   if(db)db.textContent=dateStr;
-  if(hp)hp.textContent=dateStr;
+  // [v4.5 ALTERAÇÃO]
+  // Não alimenta mais homeDatePill. A data da Home foi removida para manter
+  // uma única data visível no mobile e evitar conflito visual no desktop.
   if(mdb)mdb.textContent=dateStr;
   document.getElementById('webAppUrl').value=webAppUrl;
   // [v4.4 NOVO] Garante que a versão visível seja atualizada em todos os pontos do layout.
