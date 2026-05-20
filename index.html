@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.1 | Data: 20/05/2026
+  Versão : 4.2 | Data: 20/05/2026
+  FASE 3 v4.2:
+    - Centralização das chamadas da API em apiGet()
+    - Redução de carregamento inicial com cache local imediato e refresh em segundo plano
+    - Melhoria de menu/home: botão Home no mobile, validação de rota e scroll ao topo
+    - Estabilização mobile com área segura e fechamento consistente do menu
   FASE 2 v4.1:
     - Painel Admin passa a buscar KPIs server-side via action=buscarKpisAdmin
     - Mantido fallback local/cache se servidor falhar
@@ -132,13 +137,19 @@
   .home-topo-greeting{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text)}
   .home-topo-sub{font-size:12px;color:var(--muted);margin-top:3px}
   .home-date-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--muted);flex-shrink:0;white-space:nowrap}
+  /* [v4.2 MOBILE]
+     Melhora estabilidade no celular: botão Home no topo, áreas seguras e rolagem previsível. */
+  .mh-home{background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);width:38px;height:38px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .mh-home:active{background:var(--surface);transform:scale(.96)}
+  .page{scroll-margin-top:70px}
+
   /* ═══ MOBILE RESPONSIVE ═══ */
   @media(max-width:768px){
     .sidebar{transform:translateX(-100%)}
     .sidebar.open{transform:translateX(0);box-shadow:4px 0 32px rgba(0,0,0,.6)}
     .content-area{margin-left:0!important;width:100%}
     .mobile-header{display:flex!important}
-    .page{padding:16px}
+    .page{padding:16px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
     #page-home{padding:0}
     .home-topo{padding:16px 16px 12px}
     .home-wrap{padding:0 16px 20px}
@@ -149,6 +160,8 @@
     .atalho-card{padding:12px 14px}
     .section-title{margin-top:16px}
     .section-title:first-child{margin-top:0}
+    .mobile-header{padding-top:calc(40px + env(safe-area-inset-top,0px))}
+    .sidebar{padding-top:env(safe-area-inset-top,0px)}
   }
   @media(min-width:769px){
     .sb-overlay{display:none!important}
@@ -567,7 +580,8 @@
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
       <span class="mh-title" id="mobileTitle">ZapClin</span>
-      <div class="mh-spacer"></div>
+      <!-- [v4.2 MENU/HOME] Botão fixo para voltar à Home no mobile sem depender do menu lateral. -->
+      <button class="mh-home" onclick="goTo('home',null)" aria-label="Voltar para Home">🏠</button>
     </div>
 
     <!-- Modais -->
@@ -981,6 +995,7 @@ const CATEGORIAS=[
   {key:'Taxas e Boletos',icon:'📄'},{key:'Outros',icon:'📦'}
 ];
 const PAGE_TITLES={
+  home:'ZapClin',
   registrar:'📋 Registrar',
   lancamentos:'📊 Vendas',
   custos:'💸 Custos',
@@ -1059,6 +1074,28 @@ function atualizarStatsHome(){
 // ═══ JSONP ═══
 function jsonp(url,timeout){timeout=timeout||12000;return new Promise(function(resolve,reject){var cb='zap_'+Date.now()+'_'+Math.floor(Math.random()*99999);var s=document.createElement('script');var t=setTimeout(function(){cleanup();reject('timeout');},timeout);function cleanup(){clearTimeout(t);delete window[cb];if(s.parentNode)s.remove();}window[cb]=function(d){cleanup();resolve(d);};s.onerror=function(){cleanup();reject('error');};s.src=url+(url.indexOf('?')>=0?'&':'?')+('callback='+cb+'&t='+Date.now());document.head.appendChild(s);});}
 
+// [v4.2 API CENTRALIZADA]
+// Todas as novas chamadas GET do Apps Script devem passar por esta função.
+// Motivo: reduzir duplicação de URL/action/callback e padronizar timeout/cache-buster.
+function apiGet(action,params,timeout){
+  params=params||{};
+  var qs='action='+encodeURIComponent(action);
+  Object.keys(params).forEach(function(k){
+    if(params[k]!==undefined&&params[k]!==null)qs+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]);
+  });
+  return jsonp(webAppUrl+'?'+qs,timeout||12000);
+}
+
+// [v4.2 PERFORMANCE]
+// Carrega cache local antes da rede para a Home abrir rápido mesmo em 4G fraco.
+function carregarCacheInicial_(){
+  try{lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]')||[];}catch(e){lancamentos=[];}
+  try{custos=JSON.parse(localStorage.getItem('zapCustos')||'[]')||[];}catch(e){custos=[];}
+  try{clientes=JSON.parse(localStorage.getItem('zapClientes')||'[]')||[];}catch(e){clientes=[];}
+  clientesFiltrados=clientes.slice();
+  _calcStatsHome();
+}
+
 // ═══ Formatadores ═══
 function fmtData(v){if(!v)return'—';var s=String(v);if(/^\d{2}\/\d{2}\/\d{4}$/.test(s))return s;var d=new Date(v);if(!isNaN(d.getTime())){var p=s.split('T')[0].split('-');if(p.length===3)return p[2]+'/'+p[1]+'/'+p[0];return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}return s;}
 function fmtHora(v){if(!v)return'—';var s=String(v);if(/^\d{2}:\d{2}$/.test(s))return s;var d=new Date(v);if(!isNaN(d.getTime()))return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');return s;}
@@ -1074,7 +1111,7 @@ function setPendentes(arr){localStorage.setItem('zapPendentes',JSON.stringify(ar
 function addPendente(svcs,vals){var p=getPendentes();p.push({svcs:svcs,vals:vals,ts:Date.now()});setPendentes(p);atualizarBadgePendentes();}
 function atualizarBadgePendentes(){var p=getPendentes();var n=p.length;var badge=document.getElementById('pendenteBadge');var syncBtn=document.getElementById('syncBtn');var syncCount=document.getElementById('syncCount');if(badge){badge.textContent=n>0?n:'';badge.style.display=n>0?'flex':'none';}if(syncBtn){syncBtn.style.display=n>0?'flex':'none';} if(syncCount){syncCount.textContent=n;}}
 function sincronizarPendentes(){var p=getPendentes();if(!p.length){showToast('✅ Tudo sincronizado!');return;}showToast('🔄 Sincronizando '+p.length+'...','orange');_syncNext(p,0);}
-function _syncNext(p,idx){if(idx>=p.length){var r=getPendentes();if(!r.length)showToast('✅ '+p.length+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];jsonp(webAppUrl+'?action=salvar&svcs='+encodeURIComponent(item.svcs)+'&vals='+encodeURIComponent(item.vals),15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1);},500);}else{showToast('❌ Erro ao sincronizar','error');}}).catch(function(){showToast('⚠️ Sem conexão.','orange');});}
+function _syncNext(p,idx){if(idx>=p.length){var r=getPendentes();if(!r.length)showToast('✅ '+p.length+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];apiGet('salvar',{svcs:item.svcs,vals:item.vals},15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1);},500);}else{showToast('❌ Erro ao sincronizar','error');}}).catch(function(){showToast('⚠️ Sem conexão.','orange');});}
 
 // ═══ WHATSAPP ═══
 function msgBoasVindas(nome,qtd){var caps=qtd===1?'capacete':'capacetes';return'Olá, '+nome+'! 😊\n\nSeja muito bem-vindo(a) à *ZapClin*! 🪖✨\n\nSeu(s) '+qtd+' '+caps+' já está(ão) em boas mãos — cuidamos com todo carinho e profissionalismo que você merece!\n\nAssim que estiver(em) pronto(s), te avisamos aqui mesmo. 🏍️💨\n\nNos acompanhe no Instagram:\n📸 *@zapclinhigienizacao*\n\nObrigado por escolher a *ZapClin*! 💙';}
@@ -1212,7 +1249,8 @@ var adminCountdown=60;
 var pinBuffer='';
 
 function abrirAdmin(){
-  if(isAdmin){mostrarHome();return;}
+  // [v4.2 MENU/HOME] Se o admin já está autenticado, o atalho abre o Painel Admin; antes voltava para Home.
+  if(isAdmin){goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));return;}
   pinBuffer='';
   atualizarDotsPIN();
   document.getElementById('pinOverlay').classList.add('show');
@@ -1325,7 +1363,7 @@ function fecharSidebar(){
 function verificarStatusConexao(){
   var dot=document.getElementById('sbDot');
   var txt=document.getElementById('sbStatusTxt');
-  jsonp(webAppUrl+'?action=ping',5000)
+  apiGet('ping',{},5000)
     .then(function(r){
       if(r&&r.ok){
         dot.className='sb-dot sb-online';txt.textContent='Online';
@@ -1384,7 +1422,7 @@ function carregarPainelAdmin(){
   // Agora: mostra fallback local imediatamente e, em seguida, tenta atualizar com dados oficiais do servidor.
   atualizarTimerAdmin();
   aplicarKpisAdmin_(calcularKpisAdminLocal_(),'local');
-  jsonp(webAppUrl+'?action=buscarKpisAdmin',12000)
+  apiGet('buscarKpisAdmin',{},12000)
     .then(function(r){
       if(r&&r.ok){
         aplicarKpisAdmin_(r,'server');
@@ -2083,35 +2121,44 @@ function init(){
   if(db)db.textContent=dateStr;
   if(hp)hp.textContent=dateStr;
   document.getElementById('webAppUrl').value=webAppUrl;
-  verificarStatusConexao();
+
+  // [v4.2 PERFORMANCE]
+  // Primeiro carrega cache local e renderiza a Home; rede fica em segundo plano.
+  carregarCacheInicial_();
+  renderServices();
+  updateTotal();
+  atualizarBadgePendentes();
+
   var dd=String(now.getDate()).padStart(2,'0'),mm=String(now.getMonth()+1).padStart(2,'0'),yyyy=now.getFullYear();
   document.getElementById('custoData').value=yyyy+'-'+mm+'-'+dd;
-  renderServices();updateTotal();checkConexao();atualizarBadgePendentes();
-  var p=getPendentes();if(p.length>0){setTimeout(function(){showToast('🔄 Sincronizando '+p.length+' pendente(s)...','orange');_syncNext(p,0);},2000);}
-  setInterval(atualizarTimers,60000);
-  // Saudação dinâmica
+
   var hora=new Date().getHours();
   var saud=hora<12?'Bom dia 👋':hora<18?'Boa tarde 👋':'Boa noite 👋';
   var grEl=document.getElementById('homeGreeting');
   if(grEl)grEl.textContent=saud;
-  // Primeiro refresh logo após carregar
-  setTimeout(function(){ refreshDados(true); }, 1500);
-  // Auto-refresh contínuo
-  iniciarAutoRefresh();
-  // Iniciar na HOME com animação
-  mostrarHome();
-}
 
+  mostrarHome();
+
+  // [v4.2 CARREGAMENTO]
+  // Evita dupla consulta ping na abertura e agenda sincronização sem bloquear a interface.
+  setTimeout(verificarStatusConexao,250);
+  setTimeout(function(){refreshDados(true);},700);
+
+  var p=getPendentes();
+  if(p.length>0){setTimeout(function(){showToast('🔄 Sincronizando '+p.length+' pendente(s)...','orange');_syncNext(p,0);},1800);}
+  setInterval(atualizarTimers,60000);
+  iniciarAutoRefresh();
+}
 // ═══ REGISTRAR ═══
 function renderServices(){document.getElementById('serviceList').innerHTML=SERVICES.map(function(s,i){return'<div class="service-card" id="svc'+i+'" onclick="toggle('+i+')"><div class="svc-icon">'+s.icon+'</div><div class="svc-info"><div class="svc-name">'+s.name+'</div><div class="svc-cat">'+s.cat+'</div></div><div class="svc-price">R$\u00a0'+s.price.toFixed(2).replace('.',',')+'</div><div class="svc-check"><span class="check-icon">✓</span></div></div>';}).join('');}
 function toggle(i){var c=document.getElementById('svc'+i);if(selected.has(i)){selected.delete(i);c.classList.remove('selected');}else{selected.add(i);c.classList.add('selected');}updateTotal();}
 function updateTotal(){var t=0;selected.forEach(function(i){t+=SERVICES[i].price;});document.getElementById('totalValue').textContent='R$ '+t.toFixed(2).replace('.',',');document.getElementById('selectedCount').textContent=selected.size+' serviço(s) selecionado(s)';document.getElementById('saveBtn').disabled=selected.size===0;}
 
-function salvar(){if(selected.size===0){showToast('Selecione ao menos um serviço','error');return;}var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='⏳ Salvando...';var svcs=Array.from(selected).map(function(i){return SERVICES[i].name;}).join('|');var vals=Array.from(selected).map(function(i){return SERVICES[i].price;}).join('|');var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var qtdSel=selected.size;Array.from(selected).forEach(function(i){lancamentos.unshift({svc:SERVICES[i].name,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,qtd:1,val:SERVICES[i].price});});localStorage.setItem('zapLanc',JSON.stringify(lancamentos.slice(0,500)));_calcStatsHome();selected.clear();renderServices();updateTotal();jsonp(webAppUrl+'?action=salvar&svcs='+encodeURIComponent(svcs)+'&vals='+encodeURIComponent(vals),15000).then(function(resp){if(resp&&resp.ok){showToast('✅ '+qtdSel+' serviço(s) salvo(s) na planilha!');}else{showToast('⚠️ Erro — na fila de sync','orange');addPendente(svcs,vals);}}).catch(function(){showToast('⚠️ Sem conexão — na fila de sync','orange');addPendente(svcs,vals);}).finally(function(){btn.disabled=false;btn.innerHTML='▶ SALVAR REGISTRO';atualizarBadgePendentes();});}
+function salvar(){if(selected.size===0){showToast('Selecione ao menos um serviço','error');return;}var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='⏳ Salvando...';var svcs=Array.from(selected).map(function(i){return SERVICES[i].name;}).join('|');var vals=Array.from(selected).map(function(i){return SERVICES[i].price;}).join('|');var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var qtdSel=selected.size;Array.from(selected).forEach(function(i){lancamentos.unshift({svc:SERVICES[i].name,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,qtd:1,val:SERVICES[i].price});});localStorage.setItem('zapLanc',JSON.stringify(lancamentos.slice(0,500)));_calcStatsHome();selected.clear();renderServices();updateTotal();apiGet('salvar',{svcs:svcs,vals:vals},15000).then(function(resp){if(resp&&resp.ok){showToast('✅ '+qtdSel+' serviço(s) salvo(s) na planilha!');}else{showToast('⚠️ Erro — na fila de sync','orange');addPendente(svcs,vals);}}).catch(function(){showToast('⚠️ Sem conexão — na fila de sync','orange');addPendente(svcs,vals);}).finally(function(){btn.disabled=false;btn.innerHTML='▶ SALVAR REGISTRO';atualizarBadgePendentes();});}
 
 // ═══ CUSTOS ═══
 function atualizarCategoria(){var desc=document.getElementById('custoDesc').value;var badge=document.getElementById('catBadge');if(desc.length>2){badge.textContent=getCatIcon(detectCat(desc))+' '+detectCat(desc);badge.style.display='inline-block';}else{badge.style.display='none';}}
-function salvarCusto(){var desc=document.getElementById('custoDesc').value.trim();var val=parseFloat(document.getElementById('custoVal').value);var di=document.getElementById('custoData').value;if(!desc){showToast('Informe a descrição','error');return;}if(!val||val<=0){showToast('Informe um valor válido','error');return;}var p=di.split('-');var df=p[2]+'/'+p[1]+'/'+p[0];var btn=document.getElementById('custoBtnSalvar');btn.disabled=true;btn.textContent='⏳ Salvando...';var cat=detectCat(desc);var a=new Date();var hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');custos.unshift({data:df,hora:hh+':'+mi,desc:desc,cat:cat,val:val});localStorage.setItem('zapCustos',JSON.stringify(custos.slice(0,500)));jsonp(webAppUrl+'?action=salvarCusto&desc='+encodeURIComponent(desc)+'&val='+val+'&data='+encodeURIComponent(df),15000).then(function(r){if(r&&r.ok){showToast('💸 Registrado! '+cat,'orange');}else{showToast('⚠️ Custo salvo local.','orange');}}).catch(function(){showToast('⚠️ Custo salvo local.','orange');});document.getElementById('custoDesc').value='';document.getElementById('custoVal').value='';document.getElementById('catBadge').style.display='none';renderCustoList();setTimeout(function(){btn.disabled=false;btn.innerHTML='▶ REGISTRAR CUSTO';},2000);}
+function salvarCusto(){var desc=document.getElementById('custoDesc').value.trim();var val=parseFloat(document.getElementById('custoVal').value);var di=document.getElementById('custoData').value;if(!desc){showToast('Informe a descrição','error');return;}if(!val||val<=0){showToast('Informe um valor válido','error');return;}var p=di.split('-');var df=p[2]+'/'+p[1]+'/'+p[0];var btn=document.getElementById('custoBtnSalvar');btn.disabled=true;btn.textContent='⏳ Salvando...';var cat=detectCat(desc);var a=new Date();var hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');custos.unshift({data:df,hora:hh+':'+mi,desc:desc,cat:cat,val:val});localStorage.setItem('zapCustos',JSON.stringify(custos.slice(0,500)));apiGet('salvarCusto',{desc:desc,val:val,data:df},15000).then(function(r){if(r&&r.ok){showToast('💸 Registrado! '+cat,'orange');}else{showToast('⚠️ Custo salvo local.','orange');}}).catch(function(){showToast('⚠️ Custo salvo local.','orange');});document.getElementById('custoDesc').value='';document.getElementById('custoVal').value='';document.getElementById('catBadge').style.display='none';renderCustoList();setTimeout(function(){btn.disabled=false;btn.innerHTML='▶ REGISTRAR CUSTO';},2000);}
 
 // ═══ CLIENTES ═══
 var OBS_CHIPS=[{emoji:'🔴',label:'Arranhado'},{emoji:'💥',label:'Amassado'},{emoji:'👁',label:'Viseira riscada'},{emoji:'🔩',label:'Fivela quebrada'},{emoji:'🤢',label:'Sujo por dentro'},{emoji:'🎨',label:'Pintura danificada'},{emoji:'🪢',label:'Alça quebrada'},{emoji:'🌪',label:'Deformado'}];
@@ -2138,14 +2185,14 @@ function resetClienteForm(){document.getElementById('clienteNome').value='';docu
 function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=clientes.find(function(c){return c.num==num;});_pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};document.getElementById('pagClienteNome').textContent=_pagData.nome;var now=new Date();document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('pagamentoModal').classList.add('show');return;}_executarMarcarStatus(num,novoStatus,'');}
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
 function confirmarPagamento(){var di=document.getElementById('pagamentoData').value;var p=di.split('-');var dataPag=p[2]+'/'+p[1]+'/'+p[0];fecharPagamentoModal();_executarMarcarStatus(_pagData.num,'Entregue',dataPag);setTimeout(function(){mostrarWaModal('agradecimento',_pagData.nome,_pagData.tel,_pagData.qtd);},500);}
-function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));_calcStatsHome();var url=webAppUrl+'?action=atualizarStatus&num='+num+'&status='+encodeURIComponent(novoStatus);if(dataPagamento)url+='&dataPagamento='+encodeURIComponent(dataPagamento);jsonp(url,10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');}else{showToast('⚠️ Status salvo local.','orange');}}).catch(function(){showToast('⚠️ Status salvo local.','orange');});}
+function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));_calcStatsHome();apiGet('atualizarStatus',{num:num,status:novoStatus,dataPagamento:dataPagamento||''},10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');}else{showToast('⚠️ Status salvo local.','orange');}}).catch(function(){showToast('⚠️ Status salvo local.','orange');});}
 function filtrarClientes(query){var q=(query||'').toLowerCase().trim();clientesFiltrados=q?clientes.filter(function(c){return (c.nome||'').toLowerCase().indexOf(q)>=0||(c.tel||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;}):clientes.slice();renderClienteList();}
 function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var src=clientesFiltrados.length>0||document.getElementById('clienteSearch').value?clientesFiltrados:clientes;var ordenados=src.slice().sort(function(a,b){var ord={Pronto:0,'Em andamento':1,Entregue:2};return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var visitaLabel=nthVisita(c.numVisita||1);var isPrimeira=(c.numVisita||1)===1;var svcsHtml='';if(svcs.length>0){var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+obs[i]+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">🪖 Cap.'+(i+1)+': '+s+'</span>'+o+'</div>';}).filter(Boolean).join('');if(linhas)svcsHtml='<div class="cli-servicos">'+linhas+'</div>';}var statusBtns='';if(c.status==='Em andamento'){statusBtns='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">✅ Marcar Pronto</button>';}else if(c.status==='Pronto'){statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';}else{statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🙌 Obrigado</button>';}var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🎉 WA Pronto</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'">'+'<div class="cli-top">'+'<span class="visita-badge'+(isPrimeira?' primeira':'')+'">'+visitaLabel+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+c.status+'</span>'+'</div>'+'<div class="cli-header">'+'<div class="cli-avatar">'+ini+'</div>'+'<div style="flex:1;min-width:0">'+'<div class="cli-nome">'+c.nome+'</div>'+'<div class="cli-tel">📱 '+c.tel+'</div>'+'</div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+ '</div>'+svcsHtml+'<div class="cli-footer">'+'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'+'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.status!=='Entregue'?(function(){var min=calcMinutos(c.data,c.hora);return min!==null?'<span id="timer-'+c.num+'" style="font-size:11px;font-weight:700;color:'+timerCor(min)+';">⏱ '+fmtTempo(min)+'</span>':'';})():'')+(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')+(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')+(c.lancamentosVinculados?'<span class="info-badge vinculo">📊 Vinculado</span>':'')+'</div>'+'<div class="cli-actions">'+statusBtns+waProntoBtn+'<button class="cli-btn wa" onclick="mostrarWaModal(\'boasVindas\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">💬 WA Boas-vindas</button>'+'</div>'+'</div>';}).join('');}
 
 // ═══ BUSCAR / LISTAR ═══
-function buscarLancamentos(){return jsonp(webAppUrl+'?action=listar',12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
-function buscarCustos(){return jsonp(webAppUrl+'?action=listarCustos',12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){custos=j.items;localStorage.setItem('zapCustos',JSON.stringify(custos));return true;}return false;}).catch(function(){return false;});}
-function buscarClientes(){return jsonp(webAppUrl+'?action=listarClientes',12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){clientes=j.items;clientesFiltrados=clientes.slice();localStorage.setItem('zapClientes',JSON.stringify(clientes));return true;}return false;}).catch(function(){return false;});}
+function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
+function buscarCustos(){return apiGet('listarCustos',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){custos=j.items;localStorage.setItem('zapCustos',JSON.stringify(custos));return true;}return false;}).catch(function(){return false;});}
+function buscarClientes(){return apiGet('listarClientes',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){clientes=j.items;clientesFiltrados=clientes.slice();localStorage.setItem('zapClientes',JSON.stringify(clientes));return true;}return false;}).catch(function(){return false;});}
 function carregarLancamentos(){var list=document.getElementById('lancList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');if(!lancamentos.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>';return;}list.innerHTML=lancamentos.slice(0,100).map(function(l){return'<div class="lanc-item"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+l.svc+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div></div>';}).join('');});}
 function carregarCustos(){buscarCustos().then(function(ok){if(!ok)custos=JSON.parse(localStorage.getItem('zapCustos')||'[]');renderCustoList();});}
 function renderCustoList(){var list=document.getElementById('custoList');if(!custos.length){list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum custo ainda.</div></div>';return;}list.innerHTML=custos.slice(0,50).map(function(c){return'<div class="lanc-item"><div class="lanc-dot red"></div><div class="lanc-info"><div class="lanc-svc">'+getCatIcon(c.cat)+' '+c.desc+'</div><div class="lanc-meta">'+c.cat+' · '+fmtData(c.data)+'</div></div><div class="lanc-val red">-'+fmtBRL(c.val)+'</div></div>';}).join('');}
@@ -2153,23 +2200,29 @@ function carregarClientes(){var list=document.getElementById('clienteList');list
 
 
 function salvarConfig(){webAppUrl=document.getElementById('webAppUrl').value.trim();localStorage.setItem('zapWebApp',webAppUrl);showToast('✅ Configuração salva!');checkConexao();}
-function checkConexao(){var el=document.getElementById('statusConexao');el.textContent='Verificando...';jsonp(webAppUrl+'?action=ping',5000).then(function(r){if(r&&r.ok){el.textContent='🟢 Conectado v'+r.version;el.className='info-val green';}else{el.textContent='🔴 Erro: '+(r&&r.error||'?');el.className='info-val';}}).catch(function(){el.textContent='🔴 Sem conexão';el.className='info-val';});}
+function checkConexao(){var el=document.getElementById('statusConexao');el.textContent='Verificando...';apiGet('ping',{},5000).then(function(r){if(r&&r.ok){el.textContent='🟢 Conectado v'+r.version;el.className='info-val green';}else{el.textContent='🔴 Erro: '+(r&&r.error||'?');el.className='info-val';}}).catch(function(){el.textContent='🔴 Sem conexão';el.className='info-val';});}
 
 // ═══ NAVEGAÇÃO PRINCIPAL ═══
 function goTo(page, btn){
-  fecharSidebar();
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
-  var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
-  if(match)match.classList.add('active');
-  document.getElementById('mobileTitle').textContent=PAGE_TITLES[page]||'ZapClin';
-  // Páginas admin — exigem autenticação
+  // [v4.2 MENU/HOME]
+  // Valida rota, fecha menu mobile sempre, atualiza título e sobe a tela para evitar estado visual quebrado no celular.
+  var target=document.getElementById('page-'+page);
+  if(!target){page='home';target=document.getElementById('page-home');}
   var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
+    fecharSidebar();
     abrirAdmin();
     return;
   }
+  fecharSidebar();
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  target.classList.add('active');
+  document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
+  var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
+  if(match)match.classList.add('active');
+  var mt=document.getElementById('mobileTitle');
+  if(mt)mt.textContent=PAGE_TITLES[page]||'ZapClin';
+  try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
   if(page==='lancamentos')carregarLancamentos();
   if(page==='custos')carregarCustos();
   if(page==='clientes')carregarClientes();
