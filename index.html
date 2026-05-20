@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.3 | Data: 20/05/2026
+  Versão : 4.4 | Data: 20/05/2026
+  FASE 5 v4.4:
+    - Remove definitivamente o botão/casa do topo mobile e mantém somente a data no canto direito
+    - Exibe a versão atual do frontend ao lado do status Online/Offline e no título mobile
+    - Facilita validação visual de que o GitHub Pages carregou a versão atual
   FASE 4 v4.3:
     - Remove botão Home duplicado do topo mobile
     - Mantém a data no canto direito do cabeçalho mobile
@@ -91,7 +95,8 @@
   .mobile-header{display:none;align-items:center;justify-content:space-between;padding:44px 16px 12px;background:linear-gradient(135deg,#0d0d1a,#111124);border-bottom:1px solid var(--border);flex-shrink:0;position:sticky;top:0;z-index:50}
   .mh-hamburger{background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);width:38px;height:38px;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .mh-hamburger:active{background:var(--surface)}
-  .mh-title{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text)}
+  .mh-title{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
+  .mh-version{font-size:10px;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.22);border-radius:999px;padding:3px 7px;line-height:1;font-weight:700}
   .mh-spacer{width:38px}
 
   /* ═══ PAGES ═══ */
@@ -518,7 +523,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando...</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.4</span>
       </div>
     </div>
   </div>
@@ -582,8 +587,10 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin</span>
-      <!-- [v4.3 MOBILE] Removido botão Home duplicado; a área direita agora mostra a data. -->
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.4</span></span>
+      <!-- [v4.4 MOBILE]
+           Botão/casa removido definitivamente do topo mobile.
+           A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
       <span class="mh-date" id="mobileDateBadge"></span>
     </div>
 
@@ -979,7 +986,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.0 | 19/05/2026 — Sidebar + Layout reestruturado
+// ZAPCLIN v4.4 | 20/05/2026 — Frontend versionado e topo mobile corrigido
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1010,6 +1017,9 @@ const PAGE_TITLES={
   config:'⚙️ Config'
 };
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
+// [v4.4 NOVO]
+// Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
+const APP_VERSION='v4.4';
 
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
@@ -1369,11 +1379,11 @@ function verificarStatusConexao(){
   apiGet('ping',{},5000)
     .then(function(r){
       if(r&&r.ok){
-        dot.className='sb-dot sb-online';txt.textContent='Online';
+        dot.className='sb-dot sb-online';txt.textContent='Online · '+APP_VERSION;
         var scEl=document.getElementById('statusConexao');
         if(scEl){scEl.textContent='🟢 Conectado v'+r.version;scEl.className='info-val green';}
-      }else{dot.className='sb-dot sb-offline';txt.textContent='Offline';}
-    }).catch(function(){dot.className='sb-dot sb-offline';txt.textContent='Offline';});
+      }else{dot.className='sb-dot sb-offline';txt.textContent='Offline · '+APP_VERSION;}
+    }).catch(function(){dot.className='sb-dot sb-offline';txt.textContent='Offline · '+APP_VERSION;});
 }
 
 
@@ -2126,6 +2136,9 @@ function init(){
   if(hp)hp.textContent=dateStr;
   if(mdb)mdb.textContent=dateStr;
   document.getElementById('webAppUrl').value=webAppUrl;
+  // [v4.4 NOVO] Garante que a versão visível seja atualizada em todos os pontos do layout.
+  var mv=document.getElementById('mobileVersion'); if(mv)mv.textContent=APP_VERSION;
+  var st=document.getElementById('sbStatusTxt'); if(st)st.textContent='Verificando... · '+APP_VERSION;
 
   // [v4.2 PERFORMANCE]
   // Primeiro carrega cache local e renderiza a Home; rede fica em segundo plano.
