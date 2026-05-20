@@ -436,6 +436,53 @@
   .donut-legend-pct{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
   .dash-empty{text-align:center;padding:30px 0;color:var(--muted);font-size:13px}
 
+  /* ═══ HISTÓRICO ═══ */
+  .hist-filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+  .hist-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:var(--font-head);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;-webkit-user-select:none;white-space:nowrap}
+  .hist-btn:active{transform:scale(.95)}
+  .hist-btn.ativo{background:rgba(0,229,255,.12);border-color:var(--cyan);color:var(--cyan)}
+  .hist-custom{display:none;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+  .hist-custom.show{display:flex}
+  .hist-date-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:8px 12px;outline:none}
+  .hist-date-input:focus{border-color:var(--cyan)}
+  .hist-apply{padding:8px 16px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:10px;color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer}
+  .hist-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .hist-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;position:relative;overflow:hidden}
+  .hist-kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+  .hist-kpi.hk-cyan::after{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .hist-kpi.hk-blue::after{background:var(--blue)}
+  .hist-kpi.hk-green::after{background:var(--green);box-shadow:0 0 8px var(--green)}
+  .hist-kpi.hk-orange::after{background:var(--orange)}
+  .hist-kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+  .hist-kpi-val{font-family:var(--font-head);font-size:18px;font-weight:800}
+  .hist-kpi-val.cyan{color:var(--cyan)}
+  .hist-kpi-val.blue{color:var(--blue)}
+  .hist-kpi-val.green{color:var(--green)}
+  .hist-kpi-val.orange{color:var(--orange)}
+  .hist-kpi-sub{font-size:10px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-periodo-lbl{font-size:11px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+  .hist-periodo-badge{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--cyan);font-weight:600}
+  .hist-rank-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .hist-rank-n{font-family:var(--font-head);font-size:16px;font-weight:800;width:24px;text-align:center;flex-shrink:0}
+  .hist-rank-n.gold{color:#ffd700}.hist-rank-n.silver{color:#c0c0c0}.hist-rank-n.bronze{color:#cd7f32}
+  .hist-rank-info{flex:1}
+  .hist-rank-name{font-size:13px;font-weight:600;color:var(--text)}
+  .hist-rank-bar-w{background:var(--surface);border-radius:4px;height:4px;margin-top:5px;overflow:hidden}
+  .hist-rank-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:4px;transition:width .6s ease}
+  .hist-rank-r{text-align:right;flex-shrink:0}
+  .hist-rank-val{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--green)}
+  .hist-rank-qtd{font-size:10px;color:var(--muted);margin-top:2px}
+  .hist-grupo{margin-bottom:16px}
+  .hist-grupo-data{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding:4px 0;border-bottom:1px solid var(--border)}
+  .hist-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:6px}
+  .hist-item-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);flex-shrink:0}
+  .hist-item-info{flex:1;min-width:0}
+  .hist-item-svc{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hist-item-hora{font-size:10px;color:var(--muted);margin-top:2px}
+  .hist-item-val{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
+  .hist-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+  .hist-empty-icon{font-size:36px;margin-bottom:10px;opacity:.4}
+
 </style>
 </head>
 <body>
@@ -838,11 +885,44 @@
     </div>
     <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
   </div>
-  <div class="empty"><div class="empty-icon">🗂️</div><div class="empty-text">Histórico completo — disponível na Fase 7</div></div>
-</div>
 
+  <!-- Filtros de período -->
+  <div class="hist-filtros">
+    <button class="hist-btn ativo" data-periodo="hoje" onclick="setHistPeriodo('hoje',this)">Hoje</button>
+    <button class="hist-btn" data-periodo="ontem" onclick="setHistPeriodo('ontem',this)">Ontem</button>
+    <button class="hist-btn" data-periodo="7d" onclick="setHistPeriodo('7d',this)">7 dias</button>
+    <button class="hist-btn" data-periodo="mes" onclick="setHistPeriodo('mes',this)">Mês atual</button>
+    <button class="hist-btn" data-periodo="mesant" onclick="setHistPeriodo('mesant',this)">Mês anterior</button>
+    <button class="hist-btn" data-periodo="custom" onclick="setHistPeriodo('custom',this)">📅 Personalizado</button>
+  </div>
+  <div class="hist-custom" id="histCustom">
+    <input type="date" class="hist-date-input" id="histDataDe">
+    <span style="color:var(--muted);font-size:13px">até</span>
+    <input type="date" class="hist-date-input" id="histDataAte">
+    <button class="hist-apply" onclick="aplicarHistCustom()">Ver</button>
   </div>
 
+  <!-- Label do período -->
+  <div class="hist-periodo-lbl">
+    Exibindo: <span class="hist-periodo-badge" id="histPeriodoBadge">Hoje</span>
+  </div>
+
+  <!-- 4 KPIs analytics -->
+  <div class="hist-kpi-grid">
+    <div class="hist-kpi hk-cyan"><div class="hist-kpi-lbl">Faturamento</div><div class="hist-kpi-val cyan" id="hkFat">—</div><div class="hist-kpi-sub" id="hkFatSub">no período</div></div>
+    <div class="hist-kpi hk-blue"><div class="hist-kpi-lbl">Atendimentos</div><div class="hist-kpi-val blue" id="hkAtend">—</div><div class="hist-kpi-sub" id="hkAtendSub">serviços</div></div>
+    <div class="hist-kpi hk-green"><div class="hist-kpi-lbl">Ticket Médio</div><div class="hist-kpi-val green" id="hkTicket">—</div><div class="hist-kpi-sub">por atendimento</div></div>
+    <div class="hist-kpi hk-orange"><div class="hist-kpi-lbl">Top Serviço</div><div class="hist-kpi-val orange" id="hkTop" style="font-size:13px">—</div><div class="hist-kpi-sub" id="hkTopN"></div></div>
+  </div>
+
+  <!-- Ranking de serviços -->
+  <div class="section-title">🏆 Ranking de Serviços</div>
+  <div id="histRanking"></div>
+
+  <!-- Lista de transações -->
+  <div class="section-title">📋 Transações</div>
+  <div id="histLista"></div>
+</div>
 
 <!-- ═══ PIN MODAL ═══ -->
 <div class="pin-overlay" id="pinOverlay">
@@ -1777,6 +1857,188 @@ window.addEventListener('focus', function() {
   }
 });
 
+
+// ═══ HISTÓRICO ═══
+var _histPeriodo = 'hoje';
+var _histDe = null;
+var _histAte = null;
+
+function setHistPeriodo(periodo, btn) {
+  _histPeriodo = periodo;
+  document.querySelectorAll('.hist-btn').forEach(function(b){ b.classList.remove('ativo'); });
+  if(btn) btn.classList.add('ativo');
+  var custom = document.getElementById('histCustom');
+  if(custom) custom.classList.toggle('show', periodo === 'custom');
+  if(periodo !== 'custom') renderHistorico();
+}
+
+function aplicarHistCustom() {
+  var de = document.getElementById('histDataDe').value;
+  var ate = document.getElementById('histDataAte').value;
+  if(!de || !ate){ showToast('Selecione as duas datas','orange'); return; }
+  _histDe = de; _histAte = ate;
+  renderHistorico();
+}
+
+function _getHistRange() {
+  var now = new Date();
+  var hoje = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var de, ate, label;
+  if(_histPeriodo === 'hoje'){
+    de = ate = hoje;
+    label = 'Hoje — ' + String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0');
+  } else if(_histPeriodo === 'ontem'){
+    var ontem = new Date(hoje); ontem.setDate(hoje.getDate()-1);
+    de = ate = ontem;
+    label = 'Ontem — ' + String(ontem.getDate()).padStart(2,'0') + '/' + String(ontem.getMonth()+1).padStart(2,'0');
+  } else if(_histPeriodo === '7d'){
+    de = new Date(hoje); de.setDate(hoje.getDate()-6);
+    ate = hoje; label = 'Últimos 7 dias';
+  } else if(_histPeriodo === 'mes'){
+    de = new Date(now.getFullYear(), now.getMonth(), 1);
+    ate = hoje;
+    var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    label = meses[now.getMonth()] + ' ' + now.getFullYear();
+  } else if(_histPeriodo === 'mesant'){
+    var m = now.getMonth() === 0 ? 11 : now.getMonth()-1;
+    var y = now.getMonth() === 0 ? now.getFullYear()-1 : now.getFullYear();
+    de = new Date(y, m, 1);
+    ate = new Date(y, m+1, 0);
+    var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    label = meses[m] + ' ' + y;
+  } else if(_histPeriodo === 'custom' && _histDe && _histAte){
+    var dp = _histDe.split('-'), ap = _histAte.split('-');
+    de = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+    ate = new Date(parseInt(ap[0]),parseInt(ap[1])-1,parseInt(ap[2]));
+    label = dp[2]+'/'+dp[1]+'/'+dp[0]+' → '+ap[2]+'/'+ap[1]+'/'+ap[0];
+  } else {
+    de = ate = hoje; label = 'Hoje';
+  }
+  return {de:de, ate:ate, label:label};
+}
+
+function _dataNoRange(dataStr, de, ate) {
+  if(!dataStr || dataStr === '—') return false;
+  var p = dataStr.split('/');
+  if(p.length < 3) return false;
+  var d = new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+  d.setHours(0,0,0,0);
+  var deN = new Date(de); deN.setHours(0,0,0,0);
+  var ateN = new Date(ate); ateN.setHours(0,0,0,0);
+  return d >= deN && d <= ateN;
+}
+
+function carregarHistorico() {
+  atualizarTimerAdmin();
+  _histPeriodo = 'hoje';
+  document.querySelectorAll('.hist-btn').forEach(function(b){
+    b.classList.toggle('ativo', b.getAttribute('data-periodo') === 'hoje');
+  });
+  var custom = document.getElementById('histCustom');
+  if(custom) custom.classList.remove('show');
+  renderHistorico();
+}
+
+function renderHistorico() {
+  var range = _getHistRange();
+  var badge = document.getElementById('histPeriodoBadge');
+  if(badge) badge.textContent = range.label;
+
+  var lanc = lancamentos.length > 0 ? lancamentos : JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var filtrados = lanc.filter(function(l){ return _dataNoRange(fmtData(l.data), range.de, range.ate); });
+
+  // KPIs
+  var fat = filtrados.reduce(function(s,l){ return s+parseFloat(l.val||0); },0);
+  var atend = filtrados.length;
+  var ticket = atend > 0 ? fat/atend : 0;
+
+  var topSvc = {};
+  filtrados.forEach(function(l){ topSvc[l.svc] = (topSvc[l.svc]||0)+1; });
+  var topEntry = Object.keys(topSvc).sort(function(a,b){return topSvc[b]-topSvc[a];})[0];
+
+  var el = function(id){ return document.getElementById(id); };
+  if(el('hkFat')) el('hkFat').textContent = fmtBRL(fat);
+  if(el('hkAtend')) el('hkAtend').textContent = atend;
+  if(el('hkAtendSub')) el('hkAtendSub').textContent = atend === 1 ? 'serviço' : 'serviços';
+  if(el('hkTicket')) el('hkTicket').textContent = fmtBRL(ticket);
+  if(el('hkTop')) el('hkTop').textContent = topEntry ? topEntry.split('+')[0].trim().replace('Higienização ','Hig. ').replace('Limpeza ','L. ') : '—';
+  if(el('hkTopN')) el('hkTopN').textContent = topEntry ? topSvc[topEntry]+' atend.' : '';
+
+  // Ranking
+  var rankData = {};
+  SERVICES.forEach(function(s){ rankData[s.name] = {qtd:0,val:0}; });
+  filtrados.forEach(function(l){
+    if(rankData[l.svc]){ rankData[l.svc].qtd++; rankData[l.svc].val+=parseFloat(l.val||0); }
+  });
+  var sorted = Object.keys(rankData).map(function(k){ return {name:k,qtd:rankData[k].qtd,val:rankData[k].val}; })
+    .filter(function(s){ return s.qtd>0; })
+    .sort(function(a,b){ return b.val-a.val; });
+  var maxVal = sorted.length > 0 ? sorted[0].val : 1;
+  var medals = ['gold','silver','bronze'];
+  var rankEl = el('histRanking');
+  if(rankEl){
+    if(sorted.length === 0){
+      rankEl.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">📊</div><div>Sem dados no período</div></div>';
+    } else {
+      rankEl.innerHTML = sorted.map(function(s,i){
+        return '<div class="hist-rank-item">' +
+          '<div class="hist-rank-n '+(medals[i]||'')+'">'+(i+1)+'</div>' +
+          '<div class="hist-rank-info">' +
+            '<div class="hist-rank-name">'+s.name+'</div>' +
+            '<div class="hist-rank-bar-w"><div class="hist-rank-bar" style="width:0" data-w="'+Math.round(s.val/maxVal*100)+'%"></div></div>' +
+          '</div>' +
+          '<div class="hist-rank-r"><div class="hist-rank-val">'+fmtBRL(s.val)+'</div><div class="hist-rank-qtd">'+s.qtd+' atend.</div></div>' +
+        '</div>';
+      }).join('');
+      setTimeout(function(){
+        rankEl.querySelectorAll('.hist-rank-bar').forEach(function(b){
+          b.style.transition='width .6s ease';
+          b.style.width=b.getAttribute('data-w');
+        });
+      },50);
+    }
+  }
+
+  // Lista de transações agrupada por data
+  var listaEl = el('histLista');
+  if(listaEl){
+    if(filtrados.length === 0){
+      listaEl.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">📭</div><div>Nenhuma transação no período</div></div>';
+    } else {
+      // Agrupar por data
+      var grupos = {};
+      var ordenados = filtrados.slice().sort(function(a,b){
+        var da=fmtData(a.data), db=fmtData(b.data);
+        return da < db ? 1 : da > db ? -1 : 0;
+      });
+      ordenados.forEach(function(l){
+        var d = fmtData(l.data); if(!d) return;
+        if(!grupos[d]) grupos[d] = [];
+        grupos[d].push(l);
+      });
+      var html = '';
+      Object.keys(grupos).sort().reverse().forEach(function(data){
+        var items = grupos[data];
+        var totalDia = items.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+        html += '<div class="hist-grupo">';
+        html += '<div class="hist-grupo-data">' + data + ' <span style="color:var(--green);float:right">'+fmtBRL(totalDia)+'</span></div>';
+        items.forEach(function(l){
+          html += '<div class="hist-item">' +
+            '<div class="hist-item-dot"></div>' +
+            '<div class="hist-item-info">' +
+              '<div class="hist-item-svc">'+l.svc+'</div>' +
+              '<div class="hist-item-hora">'+fmtHora(l.hora)+'</div>' +
+            '</div>' +
+            '<div class="hist-item-val">'+fmtBRL(l.val)+'</div>' +
+          '</div>';
+        });
+        html += '</div>';
+      });
+      listaEl.innerHTML = html;
+    }
+  }
+}
+
 // ═══ INIT ═══
 function init(){
   var now=new Date();
@@ -1881,6 +2143,7 @@ function goTo(page, btn){
   if(page==='dashboard')carregarDashboard();
   if(page==='relatorio')carregarRelatorio();
   if(page==='admin')carregarPainelAdmin();
+  if(page==='historico')carregarHistorico();
   if(page==='home'){atualizarStatsHome();animarCardsHome();}
 }
 
