@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.6 | Data: 20/05/2026
+  Versão : 4.8.1 | Data: 20/05/2026
+  HOTFIX v4.8.1:
+    - Corrige Painel Admin para não sobrescrever KPIs locais válidos com resposta zerada/incompleta do servidor
+    - Mantém fallback local/cache quando buscarKpisAdmin retornar dados inconsistentes
+  FASE 9 v4.8:
+    - Reforça o controle de acesso Admin/PIN sem alterar backend nem fluxos operacionais
+    - Centraliza configuração do Admin em ADMIN_CONFIG
+    - Adiciona bloqueio temporário após tentativas incorretas de PIN
+    - Evita múltiplos timers/listeners de sessão Admin ativos ao mesmo tempo
+    - Mantém bloqueio de rotas administrativas quando isAdmin=false
   FASE 8 v4.7:
     - Centraliza controle de versão do frontend em APP_VERSION
     - Adiciona controle seguro de atualização/cache local sem apagar dados operacionais
@@ -998,7 +1007,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.7 | 20/05/2026 — Service Worker/cache PWA profissional + controle de atualização
+// ZAPCLIN v4.8.1 | 20/05/2026 — Hotfix Painel Admin/KPIs + Segurança Admin/PIN
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1031,7 +1040,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.7';
+const APP_VERSION='v4.8.1';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1308,25 +1317,60 @@ function enviarRelatorioEmail(){
 
 
 // ═══ ADMIN / PIN ═══
-const ADMIN_PIN='1321';
+// [v4.8 ALTERAÇÃO]
+// Reforço de segurança do acesso administrativo sem alterar backend nem fluxos operacionais.
+// Observação técnica: como o frontend é público no GitHub Pages, este PIN melhora controle operacional,
+// mas não substitui proteção real server-side no Apps Script para actions sensíveis.
+const ADMIN_CONFIG={
+  pin:'1321',              // PIN atual preservado para não alterar operação da ZapClin.
+  sessionSeconds:60,       // Mantido igual ao baseline: sessão curta de 1 minuto.
+  maxAttempts:5,           // Bloqueia temporariamente após 5 erros consecutivos.
+  lockSeconds:60,          // Tempo de bloqueio após excesso de tentativas.
+  lockKey:'zapAdminLockUntil'
+};
 var isAdmin=false;
 var adminTimerInt=null;
-var adminCountdown=60;
+var adminCountdown=ADMIN_CONFIG.sessionSeconds;
 var pinBuffer='';
+var adminFailedAttempts=0;
+
+function adminNow_(){return Date.now();}
+function adminLockUntil_(){return parseInt(localStorage.getItem(ADMIN_CONFIG.lockKey)||'0',10)||0;}
+function adminIsLocked_(){return adminLockUntil_()>adminNow_();}
+function adminLockRemaining_(){return Math.max(0,Math.ceil((adminLockUntil_()-adminNow_())/1000));}
+function adminClearLock_(){try{localStorage.removeItem(ADMIN_CONFIG.lockKey);}catch(e){}}
+function adminSetLock_(){
+  try{localStorage.setItem(ADMIN_CONFIG.lockKey,String(adminNow_()+ADMIN_CONFIG.lockSeconds*1000));}catch(e){}
+}
+function adminShowLocked_(){
+  var restante=adminLockRemaining_();
+  showToast('🔒 Admin bloqueado por '+restante+'s após tentativas incorretas','orange');
+}
+function adminResetSessionTimer_(){
+  adminCountdown=ADMIN_CONFIG.sessionSeconds;
+  atualizarTimerAdmin();
+}
 
 function abrirAdmin(){
-  // [v4.2 MENU/HOME] Se o admin já está autenticado, o atalho abre o Painel Admin; antes voltava para Home.
+  // [v4.8 ALTERAÇÃO]
+  // Antes de abrir o PIN, verifica bloqueio temporário por excesso de tentativas incorretas.
   if(isAdmin){goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));return;}
+  if(adminIsLocked_()){adminShowLocked_();return;}
   pinBuffer='';
   atualizarDotsPIN();
-  document.getElementById('pinOverlay').classList.add('show');
+  var overlay=document.getElementById('pinOverlay');
+  if(overlay)overlay.classList.add('show');
 }
 function fecharPin(){
-  document.getElementById('pinOverlay').classList.remove('show');
+  var overlay=document.getElementById('pinOverlay');
+  if(overlay)overlay.classList.remove('show');
   pinBuffer='';
   atualizarDotsPIN();
 }
 function pinKey(d){
+  // [v4.8 ALTERAÇÃO]
+  // Impede digitação enquanto o Admin estiver temporariamente bloqueado.
+  if(adminIsLocked_()){adminShowLocked_();return;}
   if(pinBuffer.length>=4)return;
   pinBuffer+=d;
   atualizarDotsPIN();
@@ -1343,58 +1387,79 @@ function atualizarDotsPIN(){
   }
 }
 function verificarPIN(){
-  if(pinBuffer===ADMIN_PIN){
+  if(adminIsLocked_()){
+    pinBuffer='';
+    atualizarDotsPIN();
+    adminShowLocked_();
+    return;
+  }
+  if(pinBuffer===ADMIN_CONFIG.pin){
+    // [v4.8 ALTERAÇÃO]
+    // Zera tentativas e remove bloqueio anterior quando o acesso é válido.
+    adminFailedAttempts=0;
+    adminClearLock_();
     fecharPin();
     entrarAdmin();
   } else {
-    // Erro: dots vermelhos + vibração
+    adminFailedAttempts++;
     for(var i=0;i<4;i++){
       var d=document.getElementById('pd'+i);
       if(d)d.className='pin-dot error';
     }
     if(navigator.vibrate)navigator.vibrate([100,50,100]);
+
+    if(adminFailedAttempts>=ADMIN_CONFIG.maxAttempts){
+      adminSetLock_();
+      setTimeout(function(){
+        fecharPin();
+        adminShowLocked_();
+      },500);
+      return;
+    }
+
     setTimeout(function(){
       pinBuffer='';
       atualizarDotsPIN();
+      showToast('⚠️ PIN incorreto. Tentativa '+adminFailedAttempts+'/'+ADMIN_CONFIG.maxAttempts,'orange');
     },700);
   }
 }
 function entrarAdmin(){
+  // [v4.8 ALTERAÇÃO]
+  // Evita múltiplos intervalos/listeners se entrarAdmin() for chamado mais de uma vez.
   isAdmin=true;
-  adminCountdown=60;
-  // Mostrar seção admin na sidebar
+  if(adminTimerInt){clearInterval(adminTimerInt);adminTimerInt=null;}
+  document.removeEventListener('click',resetAdminTimer);
+  document.removeEventListener('touchstart',resetAdminTimer);
+
+  adminResetSessionTimer_();
+
   var sec=document.getElementById('sbAdminSection');
   if(sec)sec.classList.add('visible');
-  // Mostrar barra admin no footer
   var bar=document.getElementById('sbAdminBar');
   if(bar)bar.classList.add('visible');
-  // Ocultar botão gerenciar
   var gbtn=document.getElementById('sbGerenciarBtn');
   if(gbtn)gbtn.style.display='none';
-  // Iniciar timer
-  atualizarTimerAdmin();
+
   adminTimerInt=setInterval(function(){
     adminCountdown--;
     atualizarTimerAdmin();
     if(adminCountdown<=0)adminLogout();
   },1000);
-  // Registrar reset de timer em qualquer interação
+
   document.addEventListener('click',resetAdminTimer);
   document.addEventListener('touchstart',resetAdminTimer);
-  // Ir para painel admin
   showToast('✅ Bem-vindo, Administrador!','blue');
   goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));
 }
 function resetAdminTimer(){
   if(!isAdmin)return;
-  adminCountdown=60;
-  atualizarTimerAdmin();
+  adminResetSessionTimer_();
 }
 function atualizarTimerAdmin(){
   var m=Math.floor(adminCountdown/60);
   var s=adminCountdown%60;
   var str=m+':'+String(s).padStart(2,'0');
-  // Atualizar TODOS os displays do timer
   ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.textContent=str;
@@ -1402,16 +1467,17 @@ function atualizarTimerAdmin(){
 }
 function adminLogout(){
   isAdmin=false;
+  pinBuffer='';
   if(adminTimerInt){clearInterval(adminTimerInt);adminTimerInt=null;}
   document.removeEventListener('click',resetAdminTimer);
   document.removeEventListener('touchstart',resetAdminTimer);
-  // Ocultar seção admin
   var sec=document.getElementById('sbAdminSection');
   if(sec)sec.classList.remove('visible');
   var bar=document.getElementById('sbAdminBar');
   if(bar)bar.classList.remove('visible');
   var gbtn=document.getElementById('sbGerenciarBtn');
   if(gbtn)gbtn.style.display='';
+  atualizarDotsPIN();
   showToast('🔐 Sessão admin encerrada','orange');
   mostrarHome();
 }
@@ -1482,23 +1548,46 @@ function calcularKpisAdminLocal_(){
   return {recHoje:fatHoje,cusHoje:cusHoje,recMes:fatMes,cusMes:cusMes,atHoje:lancHoje.length,atMes:lancMes.length,resultado:resultado,margem:margem,ticket:ticket};
 }
 
+function isKpisAdminServerValido_(r, localKpis){
+  // [v4.8.1 HOTFIX]
+  // Evita que uma resposta server-side zerada/incompleta sobrescreva KPIs locais válidos.
+  // Causa observada: Painel Admin carregava valores e depois zerava quando buscarKpisAdmin retornava 0.
+  if(!r || !r.ok) return false;
+  var campos=['recHoje','cusHoje','recMes','cusMes','atHoje','atMes','resultado','margem','ticket'];
+  var temNumero=false;
+  for(var i=0;i<campos.length;i++){
+    if(typeof r[campos[i]]==='number' && !isNaN(r[campos[i]])){temNumero=true;break;}
+  }
+  if(!temNumero) return false;
+  var serverTotal=(parseFloat(r.recHoje||0)+parseFloat(r.recMes||0)+parseFloat(r.atHoje||0)+parseFloat(r.atMes||0)+parseFloat(r.cusHoje||0)+parseFloat(r.cusMes||0));
+  var localTotal=localKpis?(parseFloat(localKpis.recHoje||0)+parseFloat(localKpis.recMes||0)+parseFloat(localKpis.atHoje||0)+parseFloat(localKpis.atMes||0)+parseFloat(localKpis.cusHoje||0)+parseFloat(localKpis.cusMes||0)):0;
+  if(serverTotal===0 && localTotal>0) return false;
+  return true;
+}
+
 function carregarPainelAdmin(){
-  // [v4.1 ALTERAÇÃO]
-  // Antes: calculava KPIs apenas por cache local, podendo ficar atrasado.
-  // Agora: mostra fallback local imediatamente e, em seguida, tenta atualizar com dados oficiais do servidor.
+  // [v4.8.1 HOTFIX]
+  // Fluxo seguro:
+  // 1) renderiza local/cache imediatamente;
+  // 2) busca KPIs oficiais no servidor;
+  // 3) só sobrescreve a tela se a resposta do servidor for válida;
+  // 4) se o servidor vier zerado/incompleto, preserva os dados locais.
   atualizarTimerAdmin();
-  aplicarKpisAdmin_(calcularKpisAdminLocal_(),'local');
+  var localKpis=calcularKpisAdminLocal_();
+  aplicarKpisAdmin_(localKpis,'local');
   apiGet('buscarKpisAdmin',{},12000)
     .then(function(r){
-      if(r&&r.ok){
+      if(isKpisAdminServerValido_(r,localKpis)){
         aplicarKpisAdmin_(r,'server');
         try{localStorage.setItem('zapKpisAdminServer',JSON.stringify({t:Date.now(),data:r}));}catch(e){}
+      }else{
+        console.warn('[ZapClin v4.8.1] buscarKpisAdmin retornou dados zerados/incompletos. Mantendo KPIs locais.',r);
+        aplicarKpisAdmin_(localKpis,'server-invalid-fallback');
       }
     })
-    .catch(function(){
-      // [v4.1 FALLBACK]
-      // Sem alerta para o usuário porque o painel já está preenchido com cache local.
-      aplicarKpisAdmin_(calcularKpisAdminLocal_(),'fallback');
+    .catch(function(err){
+      console.warn('[ZapClin v4.8.1] Falha ao buscar KPIs no servidor. Mantendo fallback local.',err);
+      aplicarKpisAdmin_(localKpis,'fallback');
     });
 }
 
@@ -2321,7 +2410,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.7',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.8',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
