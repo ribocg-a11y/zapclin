@@ -69,11 +69,6 @@
   .sb-gerenciar{width:100%;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-family:var(--font-head);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;-webkit-user-select:none;transition:all .15s}
   .sb-gerenciar:hover{background:rgba(255,255,255,.07);color:var(--text)}
   .sb-gerenciar:active{transform:scale(.97)}
-  .sb-config-area{padding:10px 0 0}
-  .sb-config-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font-body);font-size:11px;padding:8px 10px;outline:none;margin-bottom:6px}
-  .sb-config-input:focus{border-color:var(--cyan)}
-  .sb-save-btn{width:100%;padding:8px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:9px;color:var(--cyan);font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;margin-bottom:10px}
-  .sb-ver{font-size:9px;color:var(--muted);text-align:center;padding:4px 0}
 
   /* ═══ LAYOUT ═══ */
   .app-layout{display:block;min-height:100vh}
@@ -507,14 +502,9 @@
     <button class="sb-gerenciar" id="sbGerenciarBtn" onclick="abrirAdmin()">
       🔐 Gerenciar
     </button>
-    <!-- Config URL (compacto) -->
-    <div class="sb-config-area">
-      <div style="font-size:9px;color:var(--muted);padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px">⚙️ Web App URL</div>
-      <input class="sb-config-input" id="webAppUrl" type="text" placeholder="URL do Web App...">
-      <button class="sb-save-btn" onclick="salvarConfig()">💾 Salvar</button>
-      <div class="sb-ver">ZapClin v4.0 · Golden Shopping Calhau</div>
-      <div style="font-size:9px;color:var(--muted);text-align:center;margin-top:2px">Status: <span id="statusConexao">—</span></div>
-    </div>
+    <!-- Input oculto para manter webAppUrl funcional -->
+    <input type="hidden" id="webAppUrl">
+    <input type="hidden" id="statusConexao">
   </div>
 </aside>
 
