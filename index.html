@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.5 | Data: 20/05/2026
+  Versão : 4.6 | Data: 20/05/2026
+  FASE 7 v4.6:
+    - Centraliza controle de versão do frontend em APP_VERSION
+    - Adiciona controle seguro de atualização/cache local sem apagar dados operacionais
+    - Mantém versão visível no topo mobile e no status Online/Offline
+    - Corrige atualização do título mobile para não apagar o indicador de versão na Home
   FASE 6 v4.5:
     - Remove a segunda data da área da Home em mobile e desktop
     - Mantém somente a data do cabeçalho superior mobile
@@ -527,7 +532,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.5</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.6</span>
       </div>
     </div>
   </div>
@@ -591,7 +596,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.5</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.6</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -649,7 +654,7 @@
         <div class="home-topo-greeting" id="homeGreeting">Bom dia 👋</div>
         <div class="home-topo-sub">Pronto para atender!</div>
       </div>
-      <!-- [v4.5 REMOÇÃO]
+      <!-- [v4.6 REMOÇÃO]
            A data da Home foi removida para evitar duplicidade no mobile
            e impedir que no desktop ela fique colada à saudação "Boa tarde 👋".
            A data oficial permanece apenas no cabeçalho superior mobile. -->
@@ -993,7 +998,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.5 | 20/05/2026 — Remove segunda data da Home e preserva data somente no topo mobile
+// ZAPCLIN v4.6 | 20/05/2026 — Controle de versão/cache seguro + ajustes finais de título mobile
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1026,7 +1031,11 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.5';
+const APP_VERSION='v4.6';
+// [v4.6 NOVO]
+// Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
+const APP_VERSION_KEY='zapAppVersion';
+const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer'];
 
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
@@ -1034,6 +1043,41 @@ var fotosSelecionadas=[], servicosPorCap=[], obsPorCap=[];
 var waData={};
 var _criarLanc=false;
 var _pagData={num:0,nome:'',tel:'',qtd:0};
+
+// [v4.6 NOVO]
+// Atualiza o título mobile sem destruir o selo de versão quando a tela ativa é a Home.
+function setMobileTitle_(title){
+  var mt=document.getElementById('mobileTitle');
+  if(!mt)return;
+  if((title||'ZapClin')==='ZapClin'){
+    mt.innerHTML='ZapClin <span class="mh-version" id="mobileVersion">'+APP_VERSION+'</span>';
+  }else{
+    mt.textContent=title;
+  }
+}
+
+// [v4.6 NOVO]
+// Controle seguro de versão/cache. Não apaga lançamentos, clientes, custos, pendências nem configuração do Apps Script.
+function aplicarControleVersao_(){
+  try{
+    var anterior=localStorage.getItem(APP_VERSION_KEY);
+    if(anterior===APP_VERSION)return;
+
+    APP_TRANSIENT_CACHE_KEYS.forEach(function(k){
+      try{localStorage.removeItem(k);}catch(e){}
+    });
+
+    localStorage.setItem(APP_VERSION_KEY,APP_VERSION);
+
+    if(anterior){
+      setTimeout(function(){
+        showToast('✅ Sistema atualizado para '+APP_VERSION,'blue');
+      },900);
+    }
+  }catch(e){
+    console.log('[ZapClin] Controle de versão indisponível:',e);
+  }
+}
 
 // ═══ DRAWER ═══
 
@@ -1048,7 +1092,9 @@ function mostrarHome(){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
   var hbtn=document.querySelector('.sb-btn[data-page="home"]');
   if(hbtn)hbtn.classList.add('active');
-  document.getElementById('mobileTitle').textContent='ZapClin';
+  // [v4.6 ALTERAÇÃO]
+  // Mantém o selo de versão visível na Home. O textContent removia o <span> da versão.
+  setMobileTitle_('ZapClin');
   atualizarStatsHome();
   animarCardsHome();
 }
@@ -2132,6 +2178,9 @@ function renderHistorico() {
 
 // ═══ INIT ═══
 function init(){
+  // [v4.6 NOVO]
+  // Executa antes do carregamento de dados para limpar apenas caches transitórios de versão anterior.
+  aplicarControleVersao_();
   var now=new Date();
   var dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -2139,7 +2188,7 @@ function init(){
   var db=document.getElementById('dateBadge');
   var mdb=document.getElementById('mobileDateBadge');
   if(db)db.textContent=dateStr;
-  // [v4.5 ALTERAÇÃO]
+  // [v4.6 ALTERAÇÃO]
   // Não alimenta mais homeDatePill. A data da Home foi removida para manter
   // uma única data visível no mobile e evitar conflito visual no desktop.
   if(mdb)mdb.textContent=dateStr;
@@ -2246,8 +2295,9 @@ function goTo(page, btn){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
   var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
   if(match)match.classList.add('active');
-  var mt=document.getElementById('mobileTitle');
-  if(mt)mt.textContent=PAGE_TITLES[page]||'ZapClin';
+  // [v4.6 ALTERAÇÃO]
+  // Usa helper para preservar o selo de versão quando a rota volta para Home.
+  setMobileTitle_(PAGE_TITLES[page]||'ZapClin');
   try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
   if(page==='lancamentos')carregarLancamentos();
   if(page==='custos')carregarCustos();
