@@ -1369,127 +1369,212 @@ function carregarDashboard() {
   }, 80);
 }
 
-// ── GRÁFICO 1: Linha + Área (Faturamento Diário) ──
-function drawLineChart(canvasId, diaData, totalAtend) {
-  var canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  var container = canvas.parentElement;
-  var W = container.offsetWidth - 32;
-  if (W < 100) W = 300;
-  canvas.width = W;
-  canvas.height = 200;
-  var ctx = canvas.getContext('2d');
-  var pad = { top: 20, right: 12, bottom: 30, left: 52 };
-  var cW = W - pad.left - pad.right;
-  var cH = canvas.height - pad.top - pad.bottom;
+// ── GRÁFICO 1: Linha + Área (Faturamento Diário) com tooltip ──
+var _lineState = { canvas:null, diaData:[], pad:{top:20,right:12,bottom:30,left:52}, maxVal:1, n:0 };
 
-  var hasData = diaData.some(function(d) { return d.valor > 0; });
-  if (!hasData || totalAtend === 0) {
-    ctx.fillStyle = '#6b6b8a';
-    ctx.font = '12px DM Sans, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Sem dados neste mês', W / 2, canvas.height / 2);
+function _lineMetrics(canvas){
+  var W=canvas.width, H=canvas.height;
+  var pad=_lineState.pad, n=_lineState.n, maxVal=_lineState.maxVal;
+  var cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
+  return {W:W,H:H,pad:pad,cW:cW,cH:cH,n:n,maxVal:maxVal};
+}
+function _xP(m,dia){return m.pad.left+((dia-1)/Math.max(m.n-1,1))*m.cW;}
+function _yP(m,val){return m.pad.top+m.cH-(val/m.maxVal)*m.cH;}
+
+function _drawLineBase(ctx, m){
+  var diaData=_lineState.diaData;
+  ctx.clearRect(0,0,m.W,m.H);
+  // Grid
+  ctx.strokeStyle='#2a2a3a'; ctx.lineWidth=1;
+  for(var i=0;i<=4;i++){
+    var y=m.pad.top+(m.cH/4)*i;
+    ctx.beginPath(); ctx.moveTo(m.pad.left,y); ctx.lineTo(m.pad.left+m.cW,y); ctx.stroke();
+    ctx.fillStyle='#6b6b8a'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='right';
+    ctx.fillText('R$'+Math.round(m.maxVal*(1-i/4)), m.pad.left-4, y+4);
+  }
+  // X labels
+  ctx.fillStyle='#6b6b8a'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='center';
+  diaData.forEach(function(d){
+    if(d.dia===1||d.dia%5===0||d.dia===m.n)ctx.fillText(d.dia,_xP(m,d.dia),m.H-8);
+  });
+  // Gradiente de área
+  var grad=ctx.createLinearGradient(0,m.pad.top,0,m.pad.top+m.cH);
+  grad.addColorStop(0,'rgba(0,229,255,0.25)'); grad.addColorStop(1,'rgba(0,229,255,0.02)');
+  ctx.beginPath();
+  ctx.moveTo(_xP(m,diaData[0].dia),_yP(m,diaData[0].valor));
+  diaData.forEach(function(d,i){
+    if(i>0){var p=diaData[i-1],cpX=(_xP(m,p.dia)+_xP(m,d.dia))/2;
+    ctx.bezierCurveTo(cpX,_yP(m,p.valor),cpX,_yP(m,d.valor),_xP(m,d.dia),_yP(m,d.valor));}
+  });
+  ctx.lineTo(_xP(m,diaData[m.n-1].dia),m.pad.top+m.cH);
+  ctx.lineTo(_xP(m,diaData[0].dia),m.pad.top+m.cH);
+  ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+  // Linha
+  ctx.beginPath(); ctx.strokeStyle='#00e5ff'; ctx.lineWidth=2.5;
+  ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.moveTo(_xP(m,diaData[0].dia),_yP(m,diaData[0].valor));
+  diaData.forEach(function(d,i){
+    if(i>0){var p=diaData[i-1],cpX=(_xP(m,p.dia)+_xP(m,d.dia))/2;
+    ctx.bezierCurveTo(cpX,_yP(m,p.valor),cpX,_yP(m,d.valor),_xP(m,d.dia),_yP(m,d.valor));}
+  });
+  ctx.stroke();
+  // Pontos com dados
+  diaData.forEach(function(d){
+    if(d.valor>0){
+      ctx.beginPath(); ctx.arc(_xP(m,d.dia),_yP(m,d.valor),3,0,Math.PI*2);
+      ctx.fillStyle='#00e5ff'; ctx.fill();
+      ctx.strokeStyle='#0a0a0f'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+  });
+}
+
+function _drawTooltip(ctx, m, nearest){
+  if(!nearest||nearest.valor===0) return;
+  var tx=_xP(m,nearest.dia), ty=_yP(m,nearest.valor);
+  // Linha vertical tracejada
+  ctx.save();
+  ctx.strokeStyle='rgba(0,229,255,0.35)'; ctx.lineWidth=1;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(tx,m.pad.top); ctx.lineTo(tx,m.pad.top+m.cH); ctx.stroke();
+  ctx.setLineDash([]); ctx.restore();
+  // Ponto destacado
+  ctx.beginPath(); ctx.arc(tx,ty,5,0,Math.PI*2);
+  ctx.fillStyle='#00e5ff'; ctx.fill();
+  ctx.strokeStyle='#0a0a0f'; ctx.lineWidth=2; ctx.stroke();
+  // Tooltip box
+  var tW=138, tH=48, tR=8;
+  var bx=tx+12;
+  if(bx+tW>m.W-8) bx=tx-tW-12;
+  var by=ty-28;
+  if(by<m.pad.top) by=ty+10;
+  // Fundo
+  ctx.fillStyle='rgba(16,16,28,0.96)';
+  ctx.strokeStyle='rgba(0,229,255,0.6)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(bx+tR,by); ctx.lineTo(bx+tW-tR,by);
+  ctx.arcTo(bx+tW,by,bx+tW,by+tR,tR);
+  ctx.lineTo(bx+tW,by+tH-tR);
+  ctx.arcTo(bx+tW,by+tH,bx+tW-tR,by+tH,tR);
+  ctx.lineTo(bx+tR,by+tH);
+  ctx.arcTo(bx,by+tH,bx,by+tH-tR,tR);
+  ctx.lineTo(bx,by+tR);
+  ctx.arcTo(bx,by,bx+tR,by,tR);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Texto
+  ctx.textAlign='left';
+  ctx.fillStyle='#6b6b8a'; ctx.font='10px DM Sans,sans-serif';
+  ctx.fillText('Dia '+nearest.dia+' — Maio 2026',bx+10,by+16);
+  ctx.fillStyle='#00e5ff'; ctx.font='bold 15px Syne,sans-serif';
+  ctx.fillText(fmtBRL(nearest.valor),bx+10,by+36);
+}
+
+function _lineGetNearestByX(mouseX, m){
+  var best=null, bestD=Infinity;
+  _lineState.diaData.forEach(function(d){
+    var dist=Math.abs(_xP(m,d.dia)-mouseX);
+    if(dist<bestD){bestD=dist;best=d;}
+  });
+  return best;
+}
+
+function _lineGetMouseX(canvas, e){
+  var rect=canvas.getBoundingClientRect();
+  return (e.clientX-rect.left)*(canvas.width/rect.width);
+}
+
+function _onLineHover(e){
+  var c=_lineState.canvas; if(!c)return;
+  var mx=_lineGetMouseX(c,e);
+  var m=_lineMetrics(c);
+  var ctx=c.getContext('2d');
+  _drawLineBase(ctx,m);
+  _drawTooltip(ctx,m,_lineGetNearestByX(mx,m));
+}
+
+function _onLineLeave(){
+  var c=_lineState.canvas; if(!c)return;
+  var m=_lineMetrics(c);
+  _drawLineBase(c.getContext('2d'),m);
+}
+
+function _onLineTouch(e){
+  e.preventDefault();
+  if(e.touches.length>0){
+    var c=_lineState.canvas; if(!c)return;
+    var rect=c.getBoundingClientRect();
+    var mx=(e.touches[0].clientX-rect.left)*(c.width/rect.width);
+    var m=_lineMetrics(c);
+    _drawLineBase(c.getContext('2d'),m);
+    _drawTooltip(c.getContext('2d'),m,_lineGetNearestByX(mx,m));
+  }
+}
+
+function _setupLineInteraction(canvas){
+  canvas.removeEventListener('mousemove',_onLineHover);
+  canvas.removeEventListener('mouseleave',_onLineLeave);
+  canvas.removeEventListener('click',_onLineHover);
+  canvas.removeEventListener('touchstart',_onLineTouch);
+  canvas.addEventListener('mousemove',_onLineHover);
+  canvas.addEventListener('mouseleave',_onLineLeave);
+  canvas.addEventListener('click',_onLineHover);
+  canvas.addEventListener('touchstart',_onLineTouch,{passive:false});
+  canvas.style.cursor='crosshair';
+}
+
+function drawLineChart(canvasId, diaData, totalAtend) {
+  var canvas=document.getElementById(canvasId); if(!canvas)return;
+  var container=canvas.parentElement;
+  var W=container.offsetWidth-32; if(W<100)W=300;
+  canvas.width=W; canvas.height=200;
+  var ctx=canvas.getContext('2d');
+  var pad={top:20,right:12,bottom:30,left:52};
+  var cW=W-pad.left-pad.right, cH=canvas.height-pad.top-pad.bottom;
+  var hasData=diaData.some(function(d){return d.valor>0;});
+  if(!hasData||totalAtend===0){
+    ctx.fillStyle='#6b6b8a'; ctx.font='12px DM Sans,sans-serif';
+    ctx.textAlign='center'; ctx.fillText('Sem dados neste mês',W/2,canvas.height/2);
     return;
   }
-
-  var maxVal = Math.max.apply(null, diaData.map(function(d) { return d.valor; }));
-  if (maxVal === 0) maxVal = 1;
-  var n = diaData.length;
-
-  function xPos(dia) { return pad.left + ((dia - 1) / Math.max(n - 1, 1)) * cW; }
-  function yPos(val) { return pad.top + cH - (val / maxVal) * cH; }
-
-  // Cancelar animação anterior
-  if (_dashAnimIds['line']) cancelAnimationFrame(_dashAnimIds['line']);
-  var progress = 0;
-
-  function draw() {
-    ctx.clearRect(0, 0, W, canvas.height);
-
-    // Linhas de grade
-    ctx.strokeStyle = '#2a2a3a';
-    ctx.lineWidth = 1;
-    for (var i = 0; i <= 4; i++) {
-      var y = pad.top + (cH / 4) * i;
-      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cW, y); ctx.stroke();
-      var val = maxVal * (1 - i / 4);
-      ctx.fillStyle = '#6b6b8a';
-      ctx.font = '9px DM Sans, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText('R$' + Math.round(val), pad.left - 4, y + 4);
+  var maxVal=Math.max.apply(null,diaData.map(function(d){return d.valor;})); if(maxVal===0)maxVal=1;
+  var n=diaData.length;
+  // Salvar estado para interatividade
+  _lineState={canvas:canvas,diaData:diaData,pad:pad,maxVal:maxVal,n:n};
+  var m={W:W,H:canvas.height,pad:pad,cW:cW,cH:cH,n:n,maxVal:maxVal};
+  if(_dashAnimIds['line'])cancelAnimationFrame(_dashAnimIds['line']);
+  var progress=0;
+  function draw(){
+    ctx.clearRect(0,0,W,canvas.height);
+    // Grid
+    ctx.strokeStyle='#2a2a3a'; ctx.lineWidth=1;
+    for(var i=0;i<=4;i++){
+      var y=pad.top+(cH/4)*i;
+      ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+cW,y); ctx.stroke();
+      ctx.fillStyle='#6b6b8a'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='right';
+      ctx.fillText('R$'+Math.round(maxVal*(1-i/4)),pad.left-4,y+4);
     }
-
-    // Labels do eixo X
-    ctx.fillStyle = '#6b6b8a';
-    ctx.font = '9px DM Sans, sans-serif';
-    ctx.textAlign = 'center';
-    diaData.forEach(function(d) {
-      if (d.dia === 1 || d.dia % 5 === 0 || d.dia === n) {
-        ctx.fillText(d.dia, xPos(d.dia), pad.top + cH + 14);
-      }
-    });
-
-    // Clip para progress
-    var clipX = pad.left + cW * Math.min(progress, 1);
-    ctx.save();
-    ctx.beginPath(); ctx.rect(0, 0, clipX, canvas.height); ctx.clip();
-
-    // Gradiente de área
-    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
-    grad.addColorStop(0, 'rgba(0,229,255,0.25)');
-    grad.addColorStop(1, 'rgba(0,229,255,0.02)');
-
-    ctx.beginPath();
-    ctx.moveTo(xPos(diaData[0].dia), yPos(diaData[0].valor));
-    diaData.forEach(function(d, i) {
-      if (i > 0) {
-        // Suavizar com curva
-        var prev = diaData[i-1];
-        var cpX = (xPos(prev.dia) + xPos(d.dia)) / 2;
-        ctx.bezierCurveTo(cpX, yPos(prev.valor), cpX, yPos(d.valor), xPos(d.dia), yPos(d.valor));
-      }
-    });
-    ctx.lineTo(xPos(diaData[n-1].dia), pad.top + cH);
-    ctx.lineTo(xPos(diaData[0].dia), pad.top + cH);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Linha principal
-    ctx.beginPath();
-    ctx.strokeStyle = '#00e5ff';
-    ctx.lineWidth = 2.5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.moveTo(xPos(diaData[0].dia), yPos(diaData[0].valor));
-    diaData.forEach(function(d, i) {
-      if (i > 0) {
-        var prev = diaData[i-1];
-        var cpX = (xPos(prev.dia) + xPos(d.dia)) / 2;
-        ctx.bezierCurveTo(cpX, yPos(prev.valor), cpX, yPos(d.valor), xPos(d.dia), yPos(d.valor));
-      }
-    });
+    ctx.fillStyle='#6b6b8a'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='center';
+    diaData.forEach(function(d){if(d.dia===1||d.dia%5===0||d.dia===n)ctx.fillText(d.dia,m.W?_xP(m,d.dia):(pad.left+((d.dia-1)/Math.max(n-1,1))*cW),canvas.height-8);});
+    var xP2=function(dia){return pad.left+((dia-1)/Math.max(n-1,1))*cW;};
+    var yP2=function(val){return pad.top+cH-(val/maxVal)*cH;};
+    var clipX=pad.left+cW*Math.min(progress,1);
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,clipX,canvas.height); ctx.clip();
+    var grad=ctx.createLinearGradient(0,pad.top,0,pad.top+cH);
+    grad.addColorStop(0,'rgba(0,229,255,0.25)'); grad.addColorStop(1,'rgba(0,229,255,0.02)');
+    ctx.beginPath(); ctx.moveTo(xP2(diaData[0].dia),yP2(diaData[0].valor));
+    diaData.forEach(function(d,i){if(i>0){var p=diaData[i-1],cpX=(xP2(p.dia)+xP2(d.dia))/2;ctx.bezierCurveTo(cpX,yP2(p.valor),cpX,yP2(d.valor),xP2(d.dia),yP2(d.valor));}});
+    ctx.lineTo(xP2(diaData[n-1].dia),pad.top+cH); ctx.lineTo(xP2(diaData[0].dia),pad.top+cH);
+    ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+    ctx.beginPath(); ctx.strokeStyle='#00e5ff'; ctx.lineWidth=2.5; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.moveTo(xP2(diaData[0].dia),yP2(diaData[0].valor));
+    diaData.forEach(function(d,i){if(i>0){var p=diaData[i-1],cpX=(xP2(p.dia)+xP2(d.dia))/2;ctx.bezierCurveTo(cpX,yP2(p.valor),cpX,yP2(d.valor),xP2(d.dia),yP2(d.valor));}});
     ctx.stroke();
-
-    // Pontos de dados
-    diaData.forEach(function(d) {
-      if (d.valor > 0 && xPos(d.dia) <= clipX) {
-        ctx.beginPath();
-        ctx.arc(xPos(d.dia), yPos(d.valor), 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#00e5ff';
-        ctx.fill();
-        ctx.strokeStyle = '#0a0a0f';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-    });
-
+    diaData.forEach(function(d){if(d.valor>0&&xP2(d.dia)<=clipX){ctx.beginPath();ctx.arc(xP2(d.dia),yP2(d.valor),3,0,Math.PI*2);ctx.fillStyle='#00e5ff';ctx.fill();ctx.strokeStyle='#0a0a0f';ctx.lineWidth=1.5;ctx.stroke();}});
     ctx.restore();
-
-    progress += 0.04;
-    if (progress < 1) {
-      _dashAnimIds['line'] = requestAnimationFrame(draw);
-    }
+    progress+=0.04;
+    if(progress<1){_dashAnimIds['line']=requestAnimationFrame(draw);}
+    else{_drawLineBase(ctx,m);_setupLineInteraction(canvas);}
   }
   draw();
 }
