@@ -1,109 +1,94 @@
-// =====================================================
-// ZAPCLIN SERVICE WORKER
-// Versão: v4.7
-// Controle profissional de cache PWA
-// =====================================================
+// ============================================================
+// ZAPCLIN — SERVICE WORKER
+// Versão: 4.7 | Data: 20/05/2026
+// [v4.7 NOVO]
+// Cache PWA versionado para reduzir inconsistência entre celular/desktop.
+// Mantém rede como fonte principal para navegação e usa cache como fallback.
+// ============================================================
 
-const CACHE_NAME = 'zapclin-cache-v4.7';
+const ZAPCLIN_SW_VERSION = 'v4.7';
+const STATIC_CACHE = 'zapclin-static-v4.7';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.7';
 
-const URLS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+// [v4.7 NOVO]
+// Arquivos locais seguros para cache. Não inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
+const APP_SHELL = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-// -----------------------------------------------------
-// INSTALL
-// -----------------------------------------------------
-
 self.addEventListener('install', event => {
-
-  console.log('[SW] Instalando v4.7');
-
   event.waitUntil(
-
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(URLS_TO_CACHE))
-
+    caches.open(STATIC_CACHE)
+      .then(cache => cache.addAll(APP_SHELL.map(url => new Request(url, { cache: 'reload' }))).catch(() => null))
+      .then(() => self.skipWaiting())
   );
-
-  self.skipWaiting();
-
 });
-
-// -----------------------------------------------------
-// ACTIVATE
-// -----------------------------------------------------
 
 self.addEventListener('activate', event => {
-
-  console.log('[SW] Ativando v4.7');
-
   event.waitUntil(
-
-    caches.keys().then(cacheNames => {
-
-      return Promise.all(
-
-        cacheNames.map(cache => {
-
-          if (cache !== CACHE_NAME) {
-
-            console.log('[SW] Removendo cache antigo:', cache);
-
-            return caches.delete(cache);
-
-          }
-
-        })
-
-      );
-
-    })
-
+    caches.keys().then(keys => Promise.all(
+      keys
+        .filter(key => key.startsWith('zapclin-') && key !== STATIC_CACHE && key !== RUNTIME_CACHE)
+        .map(key => caches.delete(key))
+    )).then(() => self.clients.claim())
   );
-
-  self.clients.claim();
-
 });
 
-// -----------------------------------------------------
-// FETCH
-// -----------------------------------------------------
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 self.addEventListener('fetch', event => {
+  const req = event.request;
+  const url = new URL(req.url);
 
-  if (event.request.method !== 'GET') {
+  if (req.method !== 'GET') return;
+
+  // [v4.7 NOVO]
+  // Nunca interceptar chamadas do Google Apps Script/Google APIs. Evita cache indevido de dados reais.
+  if (
+    url.hostname.includes('script.google.com') ||
+    url.hostname.includes('googleusercontent.com') ||
+    url.hostname.includes('googleapis.com')
+  ) {
     return;
   }
 
-  event.respondWith(
+  // [v4.7 NOVO]
+  // Navegação: rede primeiro para pegar versão nova; fallback para cache se offline.
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req, { cache: 'no-store' })
+        .then(resp => {
+          const copy = resp.clone();
+          caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
+          return resp;
+        })
+        .catch(() => caches.match('./index.html').then(cached => cached || caches.match('./')))
+    );
+    return;
+  }
 
-    fetch(event.request)
-
-      .then(networkResponse => {
-
-        const responseClone = networkResponse.clone();
-
-        caches.open(CACHE_NAME)
-          .then(cache => {
-
-            cache.put(event.request, responseClone);
-
-          });
-
-        return networkResponse;
-
+  // [v4.7 NOVO]
+  // Assets locais: cache primeiro, rede como atualização silenciosa.
+  if (url.origin === self.location.origin) {
+    event.respondWith(
+      caches.match(req).then(cached => {
+        const network = fetch(req).then(resp => {
+          if (resp && resp.status === 200) {
+            const copy = resp.clone();
+            caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy));
+          }
+          return resp;
+        }).catch(() => cached);
+        return cached || network;
       })
-
-      .catch(() => {
-
-        return caches.match(event.request);
-
-      })
-
-  );
-
+    );
+  }
 });
