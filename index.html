@@ -2,7 +2,7 @@
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
   Versão : 4.6 | Data: 20/05/2026
-  FASE 7 v4.6:
+  FASE 8 v4.7:
     - Centraliza controle de versão do frontend em APP_VERSION
     - Adiciona controle seguro de atualização/cache local sem apagar dados operacionais
     - Mantém versão visível no topo mobile e no status Online/Offline
@@ -532,7 +532,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.6</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.7</span>
       </div>
     </div>
   </div>
@@ -596,7 +596,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.6</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.7</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -654,7 +654,7 @@
         <div class="home-topo-greeting" id="homeGreeting">Bom dia 👋</div>
         <div class="home-topo-sub">Pronto para atender!</div>
       </div>
-      <!-- [v4.6 REMOÇÃO]
+      <!-- [v4.7 REMOÇÃO]
            A data da Home foi removida para evitar duplicidade no mobile
            e impedir que no desktop ela fique colada à saudação "Boa tarde 👋".
            A data oficial permanece apenas no cabeçalho superior mobile. -->
@@ -998,7 +998,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.6 | 20/05/2026 — Controle de versão/cache seguro + ajustes finais de título mobile
+// ZAPCLIN v4.7 | 20/05/2026 — Service Worker/cache PWA profissional + controle de atualização
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1031,8 +1031,8 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.6';
-// [v4.6 NOVO]
+const APP_VERSION='v4.7';
+// [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
 const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer'];
@@ -1044,7 +1044,7 @@ var waData={};
 var _criarLanc=false;
 var _pagData={num:0,nome:'',tel:'',qtd:0};
 
-// [v4.6 NOVO]
+// [v4.7 NOVO]
 // Atualiza o título mobile sem destruir o selo de versão quando a tela ativa é a Home.
 function setMobileTitle_(title){
   var mt=document.getElementById('mobileTitle');
@@ -1056,7 +1056,7 @@ function setMobileTitle_(title){
   }
 }
 
-// [v4.6 NOVO]
+// [v4.7 NOVO]
 // Controle seguro de versão/cache. Não apaga lançamentos, clientes, custos, pendências nem configuração do Apps Script.
 function aplicarControleVersao_(){
   try{
@@ -1092,7 +1092,7 @@ function mostrarHome(){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
   var hbtn=document.querySelector('.sb-btn[data-page="home"]');
   if(hbtn)hbtn.classList.add('active');
-  // [v4.6 ALTERAÇÃO]
+  // [v4.7 ALTERAÇÃO]
   // Mantém o selo de versão visível na Home. O textContent removia o <span> da versão.
   setMobileTitle_('ZapClin');
   atualizarStatsHome();
@@ -2178,7 +2178,7 @@ function renderHistorico() {
 
 // ═══ INIT ═══
 function init(){
-  // [v4.6 NOVO]
+  // [v4.7 NOVO]
   // Executa antes do carregamento de dados para limpar apenas caches transitórios de versão anterior.
   aplicarControleVersao_();
   var now=new Date();
@@ -2188,7 +2188,7 @@ function init(){
   var db=document.getElementById('dateBadge');
   var mdb=document.getElementById('mobileDateBadge');
   if(db)db.textContent=dateStr;
-  // [v4.6 ALTERAÇÃO]
+  // [v4.7 ALTERAÇÃO]
   // Não alimenta mais homeDatePill. A data da Home foi removida para manter
   // uma única data visível no mobile e evitar conflito visual no desktop.
   if(mdb)mdb.textContent=dateStr;
@@ -2295,7 +2295,7 @@ function goTo(page, btn){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
   var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
   if(match)match.classList.add('active');
-  // [v4.6 ALTERAÇÃO]
+  // [v4.7 ALTERAÇÃO]
   // Usa helper para preservar o selo de versão quando a rota volta para Home.
   setMobileTitle_(PAGE_TITLES[page]||'ZapClin');
   try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
@@ -2311,6 +2311,66 @@ function goTo(page, btn){
 
 function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(function(){t.className='toast'+(type?' '+type:'');},3500);}
 
+
+// [v4.7 NOVO]
+// Registra Service Worker próprio do PWA para controlar cache de forma versionada.
+// Motivo: reduzir divergência entre celular/computador e evitar que versões antigas fiquem presas no navegador.
+function registrarServiceWorkerZapClin_(){
+  if(!('serviceWorker' in navigator)){
+    console.log('[ZapClin] Service Worker não suportado neste navegador.');
+    return;
+  }
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js?v=4.7',{scope:'./'})
+      .then(function(reg){
+        console.log('[ZapClin] Service Worker registrado:',reg.scope);
+
+        // [v4.7 NOVO]
+        // Se existir uma nova versão esperando ativação, pede ativação imediata com segurança.
+        if(reg.waiting){
+          try{reg.waiting.postMessage({type:'SKIP_WAITING'});}catch(e){}
+        }
+
+        reg.addEventListener('updatefound',function(){
+          var novoSW=reg.installing;
+          if(!novoSW)return;
+          novoSW.addEventListener('statechange',function(){
+            if(novoSW.state==='installed' && navigator.serviceWorker.controller){
+              showToast('Nova versão disponível. Atualizando...', 'blue');
+              try{novoSW.postMessage({type:'SKIP_WAITING'});}catch(e){}
+            }
+          });
+        });
+      })
+      .catch(function(err){
+        console.warn('[ZapClin] Falha ao registrar Service Worker:',err);
+      });
+  });
+
+  // [v4.7 NOVO]
+  // Quando o SW novo assume controle, recarrega uma única vez para aplicar os arquivos novos.
+  var recarregou=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(recarregou)return;
+    recarregou=true;
+    try{sessionStorage.setItem('zapclin_sw_updated','1');}catch(e){}
+    window.location.reload();
+  });
+}
+
+// [v4.7 NOVO]
+// Após reload causado pelo Service Worker, informa atualização sem interromper operação.
+function avisarAtualizacaoSW_(){
+  try{
+    if(sessionStorage.getItem('zapclin_sw_updated')==='1'){
+      sessionStorage.removeItem('zapclin_sw_updated');
+      setTimeout(function(){showToast('✅ Sistema atualizado para '+APP_VERSION,'blue');},800);
+    }
+  }catch(e){}
+}
+
+registrarServiceWorkerZapClin_();
+avisarAtualizacaoSW_();
 init();
 </script>
 </body>
