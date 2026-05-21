@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.8.6 | Data: 21/05/2026
+  Versão : 4.9.0 | Data: 21/05/2026
+  v4.9.0:
+     - Adiciona Painel Admin de LOGS para observabilidade operacional
+     - Lista eventos recentes, erros, alertas e telemetria frontend via backend v3.22
+     - Mantém leitura limitada e fallback local, sem alterar fluxos operacionais
   v4.8.6:
      - Adiciona telemetria frontend para registrar eventos operacionais na aba LOGS via backend v3.21
      - Registra falhas de API, cadastro de cliente, envio WhatsApp, alteração de status e acesso Admin
@@ -537,6 +541,26 @@
   .hist-item-val{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
   .hist-empty{text-align:center;padding:40px 20px;color:var(--muted)}
   .hist-empty-icon{font-size:36px;margin-bottom:10px;opacity:.4}
+  /* [v4.9.0 NOVO] Painel Admin de LOGS */
+  .logs-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .logs-search{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 12px;outline:none}
+  .logs-search:focus{border-color:var(--cyan)}
+  .logs-refresh{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:12px;color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer}
+  .logs-list{display:flex;flex-direction:column;gap:8px}
+  .log-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+  .log-item.erro{border-color:rgba(255,68,68,.45)}
+  .log-item.alerta{border-color:rgba(255,145,0,.45)}
+  .log-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+  .log-badge{font-size:10px;font-weight:800;border-radius:999px;padding:3px 8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+  .log-badge.status-ok{color:var(--green);border-color:rgba(0,230,118,.25);background:rgba(0,230,118,.1)}
+  .log-badge.status-erro{color:var(--red);border-color:rgba(255,68,68,.25);background:rgba(255,68,68,.1)}
+  .log-badge.status-alerta{color:var(--orange);border-color:rgba(255,145,0,.25);background:rgba(255,145,0,.1)}
+  .log-badge.tipo{color:var(--cyan);border-color:rgba(0,229,255,.22);background:rgba(0,229,255,.08)}
+  .log-time{margin-left:auto;font-size:10px;color:var(--muted)}
+  .log-msg{font-size:13px;font-weight:600;color:var(--text);line-height:1.35;overflow-wrap:anywhere}
+  .log-origin{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+  .log-extra{display:none;margin-top:8px;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:8px;color:var(--muted);font-size:10px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+  .log-extra.show{display:block}
 
 </style>
 </head>
@@ -590,6 +614,9 @@
       </button>
       <button class="sb-btn" data-page="historico" onclick="goTo('historico',this)">
         <span class="sb-icon">🗂️</span> Histórico
+      </button>
+      <button class="sb-btn" data-page="logs" onclick="goTo('logs',this)">
+        <span class="sb-icon">🧭</span> Logs
       </button>
     </div>
   </nav>
@@ -934,6 +961,11 @@
       <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Buscar por período</div></div>
       <span class="atalho-arr">›</span>
     </div>
+    <div class="atalho-card" onclick="goTo('logs',null)">
+      <span class="atalho-icon">🧭</span>
+      <div class="atalho-info"><div class="atalho-title">Logs</div><div class="atalho-sub">Eventos, erros e alertas recentes</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
   </div>
 </div>
 
@@ -985,6 +1017,31 @@
   <div id="histLista"></div>
 </div>
 
+<!-- ═══════════════════════════════ PAGE: LOGS ═══════════════════════════════ -->
+<div class="page" id="page-logs">
+  <div class="admin-badge">
+    <div>
+      <div class="admin-badge-left">🧭 Observabilidade</div>
+      <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayLogs">1:00</span></div>
+    </div>
+    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+  </div>
+
+  <div class="section-title">Resumo recente</div>
+  <div class="hist-kpi-grid">
+    <div class="hist-kpi hk-cyan"><div class="hist-kpi-lbl">Eventos</div><div class="hist-kpi-val cyan" id="logTotal">—</div><div class="hist-kpi-sub">últimos registros</div></div>
+    <div class="hist-kpi hk-orange"><div class="hist-kpi-lbl">Alertas</div><div class="hist-kpi-val orange" id="logAlertas">—</div><div class="hist-kpi-sub">atenção operacional</div></div>
+    <div class="hist-kpi hk-blue"><div class="hist-kpi-lbl">Frontend</div><div class="hist-kpi-val blue" id="logFrontend">—</div><div class="hist-kpi-sub">telemetria PWA</div></div>
+    <div class="hist-kpi hk-green"><div class="hist-kpi-lbl">Erros</div><div class="hist-kpi-val green" id="logErros">—</div><div class="hist-kpi-sub">falhas registradas</div></div>
+  </div>
+
+  <div class="logs-toolbar">
+    <input class="logs-search" id="logsSearch" placeholder="Filtrar por tipo, origem, status ou mensagem" oninput="filtrarLogsAdmin(this.value)">
+    <button class="logs-refresh" onclick="carregarLogsAdmin(true)">Atualizar</button>
+  </div>
+  <div class="logs-list" id="logsList"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+</div>
+
 <!-- ═══ PIN MODAL ═══ -->
 <div class="pin-overlay" id="pinOverlay">
   <div class="pin-sheet">
@@ -1019,7 +1076,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.8.4 | 21/05/2026 — OS/Atendimento no comprovante WhatsApp
+// ZAPCLIN v4.9.0 | 21/05/2026 — Painel Admin de LOGS
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1047,19 +1104,21 @@ const PAGE_TITLES={
   relatorio:'📋 Relatório',
   admin:'📊 Painel Admin',
   historico:'🗂️ Histórico',
+  logs:'🧭 Logs',
   config:'⚙️ Config'
 };
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.8.6';
+const APP_VERSION='v4.9.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
-const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer'];
+const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer','zapAdminLogs'];
 
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
+var logsAdmin=[], logsAdminFiltrados=[];
 var fotosSelecionadas=[], servicosPorCap=[], obsPorCap=[];
 var waData={};
 var _criarLanc=false;
@@ -1690,7 +1749,7 @@ function atualizarTimerAdmin(){
   var m=Math.floor(adminCountdown/60);
   var s=adminCountdown%60;
   var str=m+':'+String(s).padStart(2,'0');
-  ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3'].forEach(function(id){
+  ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3','adminTimerDisplayLogs'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.textContent=str;
   });
@@ -2594,6 +2653,57 @@ function renderClienteList(){var list=document.getElementById('clienteList');var
 function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
 function buscarCustos(){return apiGet('listarCustos',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){custos=j.items;localStorage.setItem('zapCustos',JSON.stringify(custos));return true;}return false;}).catch(function(){return false;});}
 function buscarClientes(){return apiGet('listarClientes',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){clientes=j.items;clientesFiltrados=clientes.slice();localStorage.setItem('zapClientes',JSON.stringify(clientes));return true;}return false;}).catch(function(){return false;});}
+function escapeHtml_(v){return String(v||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function buscarLogsAdmin(){return apiGet('listarLogsAdmin',{limite:80},12000).then(function(j){if(j&&j.ok&&j.items){logsAdmin=j.items;logsAdminFiltrados=logsAdmin.slice();try{localStorage.setItem('zapAdminLogs',JSON.stringify({resumo:j.resumo||{},items:logsAdmin}));}catch(e){}return j;}return null;}).catch(function(){return null;});}
+function logStatusClass_(status){var s=String(status||'INFO').toUpperCase();if(s==='ERRO')return'erro';if(s==='ALERTA')return'alerta';if(s==='OK')return'ok';return'info';}
+function atualizarResumoLogs_(resumo){
+  resumo=resumo||{};
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+  set('logTotal',resumo.total||logsAdmin.length||0);
+  set('logAlertas',resumo.alertas||0);
+  set('logFrontend',resumo.frontend||0);
+  set('logErros',resumo.erros||0);
+}
+function renderLogsAdmin(){
+  var list=document.getElementById('logsList');
+  if(!list)return;
+  var src=logsAdminFiltrados.length>0||((document.getElementById('logsSearch')||{}).value||'')?logsAdminFiltrados:logsAdmin;
+  if(!src.length){list.innerHTML='<div class="empty"><div class="empty-icon">🧭</div><div class="empty-text">Nenhum log encontrado.</div></div>';return;}
+  list.innerHTML=src.slice(0,80).map(function(l,i){
+    var sc=logStatusClass_(l.status);
+    var extra=String(l.extra||'');
+    return '<div class="log-item '+(sc==='erro'?'erro':(sc==='alerta'?'alerta':''))+'">'+
+      '<div class="log-head">'+
+        '<span class="log-badge status-'+sc+'">'+escapeHtml_(l.status||'INFO')+'</span>'+
+        '<span class="log-badge tipo">'+escapeHtml_(l.tipo||'GERAL')+'</span>'+
+        '<span class="log-time">'+escapeHtml_(l.timestamp||'')+'</span>'+
+      '</div>'+
+      '<div class="log-msg">'+escapeHtml_(l.mensagem||'Evento registrado')+'</div>'+
+      '<div class="log-origin">'+escapeHtml_(l.origem||'')+(l.versao?' · v'+escapeHtml_(l.versao):'')+'</div>'+
+      (extra?'<button class="hist-apply" style="margin-top:8px" onclick="toggleLogExtra('+i+')">Detalhes</button><div class="log-extra" id="logExtra'+i+'">'+escapeHtml_(extra)+'</div>':'')+
+    '</div>';
+  }).join('');
+}
+function toggleLogExtra(i){var el=document.getElementById('logExtra'+i);if(el)el.classList.toggle('show');}
+function filtrarLogsAdmin(q){
+  q=String(q||'').toLowerCase().trim();
+  logsAdminFiltrados=q?logsAdmin.filter(function(l){return [l.tipo,l.origem,l.status,l.mensagem,l.extra,l.versao,l.timestamp].join(' ').toLowerCase().indexOf(q)>=0;}):logsAdmin.slice();
+  renderLogsAdmin();
+}
+function carregarLogsAdmin(force){
+  atualizarTimerAdmin();
+  var td=document.getElementById('adminTimerDisplayLogs'),td1=document.getElementById('adminTimerDisplay');
+  if(td&&td1)td.textContent=td1.textContent;
+  var list=document.getElementById('logsList');
+  if(list)list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';
+  var cache=null;try{cache=JSON.parse(localStorage.getItem('zapAdminLogs')||'null');}catch(e){cache=null;}
+  if(cache&&cache.items&&!force){logsAdmin=cache.items;logsAdminFiltrados=logsAdmin.slice();atualizarResumoLogs_(cache.resumo);renderLogsAdmin();}
+  buscarLogsAdmin().then(function(r){
+    if(r){atualizarResumoLogs_(r.resumo);filtrarLogsAdmin((document.getElementById('logsSearch')||{}).value||'');return;}
+    if(cache&&cache.items){logsAdmin=cache.items;logsAdminFiltrados=logsAdmin.slice();atualizarResumoLogs_(cache.resumo);renderLogsAdmin();showToast('⚠️ Logs em cache local.','orange');}
+    else if(list){list.innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Não foi possível carregar os logs.</div></div>';}
+  });
+}
 function carregarLancamentos(){var list=document.getElementById('lancList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');if(!lancamentos.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>';return;}list.innerHTML=lancamentos.slice(0,100).map(function(l){return'<div class="lanc-item"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+l.svc+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div></div>';}).join('');});}
 function carregarCustos(){buscarCustos().then(function(ok){if(!ok)custos=JSON.parse(localStorage.getItem('zapCustos')||'[]');renderCustoList();});}
 function renderCustoList(){var list=document.getElementById('custoList');if(!custos.length){list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum custo ainda.</div></div>';return;}list.innerHTML=custos.slice(0,50).map(function(c){return'<div class="lanc-item"><div class="lanc-dot red"></div><div class="lanc-info"><div class="lanc-svc">'+getCatIcon(c.cat)+' '+c.desc+'</div><div class="lanc-meta">'+c.cat+' · '+fmtData(c.data)+'</div></div><div class="lanc-val red">-'+fmtBRL(c.val)+'</div></div>';}).join('');}
@@ -2609,7 +2719,7 @@ function goTo(page, btn){
   // Valida rota, fecha menu mobile sempre, atualiza título e sobe a tela para evitar estado visual quebrado no celular.
   var target=document.getElementById('page-'+page);
   if(!target){page='home';target=document.getElementById('page-home');}
-  var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio'];
+  var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio','logs'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     fecharSidebar();
     abrirAdmin();
@@ -2632,6 +2742,7 @@ function goTo(page, btn){
   if(page==='relatorio')carregarRelatorio();
   if(page==='admin')carregarPainelAdmin();
   if(page==='historico')carregarHistorico();
+  if(page==='logs')carregarLogsAdmin(false);
   if(page==='home'){atualizarStatsHome();animarCardsHome();}
 }
 
@@ -2647,7 +2758,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.8.6',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.9.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
