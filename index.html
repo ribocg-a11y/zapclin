@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.10.0 | Data: 21/05/2026
+  Versão : 4.10.2 | Data: 21/05/2026
+  v4.10.2:
+     - Restaura tempo de permanência no card do cliente
+     - Vincula prazo ao tempo definido de cada serviço e soma tempos por capacete
+     - Exibe status visual de dentro do prazo/atenção/atrasado; cronômetro só para em Entregue/Cancelado
+  v4.10.1:
+     - Transforma página Vendas em visão gerencial com KPIs, filtros, ranking e insights
+     - Mantém histórico editável/cancelável, mas prioriza leitura estratégica do período
   v4.10.0:
      - Adiciona gestão operacional editável para clientes, lançamentos e custos
      - Move ações secundárias para menu contextual, reduzindo poluição visual dos cards
@@ -364,6 +371,11 @@
   .cli-svc-obs{color:var(--muted);font-style:italic}
   .cli-footer{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
   .cli-data{font-size:11px;color:var(--muted)}
+  .tempo-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;border-radius:20px;padding:3px 10px;border:1px solid var(--border);white-space:nowrap}
+  .tempo-badge.ok{background:rgba(0,230,118,.12);color:var(--green);border-color:rgba(0,230,118,.3)}
+  .tempo-badge.warn{background:rgba(255,145,0,.12);color:var(--orange);border-color:rgba(255,145,0,.3)}
+  .tempo-badge.late{background:rgba(255,68,68,.12);color:var(--red);border-color:rgba(255,68,68,.35)}
+  .tempo-badge.done{background:rgba(107,107,138,.12);color:var(--muted);border-color:var(--border)}
   .cli-link{font-size:11px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:3px}
   .cli-actions{display:flex;gap:6px;flex-wrap:wrap}
   .cli-btn{padding:7px 12px;border:none;border-radius:10px;font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;-webkit-user-select:none}
@@ -583,6 +595,32 @@
   .log-origin{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
   .log-extra{display:none;margin-top:8px;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:8px;color:var(--muted);font-size:10px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
   .log-extra.show{display:block}
+  /* [v4.10.1 NOVO] Vendas gerencial */
+  .vendas-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .venda-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 14px;position:relative;overflow:hidden}
+  .venda-kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+  .venda-kpi.cyan::after{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .venda-kpi.green::after{background:var(--green)}
+  .venda-kpi.blue::after{background:var(--blue)}
+  .venda-kpi.orange::after{background:var(--orange)}
+  .venda-kpi-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+  .venda-kpi-val{font-family:var(--font-head);font-size:18px;font-weight:800}
+  .venda-kpi-sub{font-size:10px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .venda-filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .venda-filter-btn{padding:7px 13px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer}
+  .venda-filter-btn.ativo{background:rgba(0,229,255,.12);border-color:var(--cyan);color:var(--cyan)}
+  .venda-insights{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:16px}
+  .venda-insight{display:flex;gap:9px;align-items:flex-start;color:var(--text);font-size:12px;line-height:1.35;padding:6px 0;border-bottom:1px solid rgba(42,42,58,.55)}
+  .venda-insight:last-child{border-bottom:none}
+  .venda-rank{display:grid;gap:8px;margin-bottom:18px}
+  .venda-rank-item{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 13px;display:flex;align-items:center;gap:10px}
+  .venda-rank-n{font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--cyan);width:24px;text-align:center;flex-shrink:0}
+  .venda-rank-info{flex:1;min-width:0}
+  .venda-rank-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .venda-rank-bar-w{height:4px;background:var(--surface);border-radius:4px;margin-top:6px;overflow:hidden}
+  .venda-rank-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+  .venda-rank-val{text-align:right;font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--green);flex-shrink:0}
+  .venda-rank-qtd{font-size:10px;color:var(--muted);margin-top:2px}
 
 </style>
 </head>
@@ -801,7 +839,23 @@
 
 <!-- ═══════════════════════════════ PAGE: LANÇAMENTOS ═══════════════════════════════ -->
 <div class="page" id="page-lancamentos">
-  <div class="section-title">Últimos Registros</div>
+  <div class="section-title">Visão Gerencial</div>
+  <div class="vendas-kpi-grid">
+    <div class="venda-kpi cyan"><div class="venda-kpi-label">Faturamento</div><div class="venda-kpi-val cyan" id="vendaFat">—</div><div class="venda-kpi-sub" id="vendaFatSub">no período</div></div>
+    <div class="venda-kpi blue"><div class="venda-kpi-label">Serviços</div><div class="venda-kpi-val blue" id="vendaQtd">—</div><div class="venda-kpi-sub">lançamentos válidos</div></div>
+    <div class="venda-kpi green"><div class="venda-kpi-label">Ticket médio</div><div class="venda-kpi-val green" id="vendaTicket">—</div><div class="venda-kpi-sub">por serviço</div></div>
+    <div class="venda-kpi orange"><div class="venda-kpi-label">Cancelados</div><div class="venda-kpi-val orange" id="vendaCancel">—</div><div class="venda-kpi-sub">no período</div></div>
+  </div>
+  <div class="venda-filtros">
+    <button class="venda-filter-btn ativo" data-vperiodo="hoje" onclick="setVendasPeriodo('hoje',this)">Hoje</button>
+    <button class="venda-filter-btn" data-vperiodo="7d" onclick="setVendasPeriodo('7d',this)">7 dias</button>
+    <button class="venda-filter-btn" data-vperiodo="mes" onclick="setVendasPeriodo('mes',this)">Mês</button>
+    <button class="venda-filter-btn" data-vperiodo="todos" onclick="setVendasPeriodo('todos',this)">Todos</button>
+  </div>
+  <div class="venda-insights" id="vendaInsights"></div>
+  <div class="section-title">Ranking de Serviços</div>
+  <div class="venda-rank" id="vendaRanking"></div>
+  <div class="section-title">Histórico do Período</div>
   <div id="lancList"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
 </div>
 
@@ -1109,7 +1163,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.10.0 | 21/05/2026 — Gestão operacional editável
+// ZAPCLIN v4.10.2 | 21/05/2026 — Tempo de permanência por serviço
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1121,6 +1175,15 @@ const SERVICES=[
   {name:'Limpeza + Hig. Profunda',price:30,icon:'⭐',cat:'Limpeza + Higienização'},
   {name:'Revitalização',price:70,icon:'✨',cat:'Premium'}
 ];
+const SERVICE_TIMES={
+  'higienizacao rapida':8,
+  'higienizacao essencial':10,
+  'higienizacao profunda':12,
+  'limpeza + hig. rapida':16,
+  'limpeza + hig. essencial':20,
+  'limpeza + hig. profunda':30,
+  'revitalizacao':60
+};
 const CATEGORIAS=[
   {key:'Salários',icon:'👷'},{key:'Produtos/Insumos',icon:'🧴'},
   {key:'Ferramentas/Equipamentos',icon:'🔧'},{key:'Transporte',icon:'🚗'},
@@ -1143,7 +1206,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.10.0';
+const APP_VERSION='v4.10.2';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1152,6 +1215,7 @@ const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer','zapAdminLogs'];
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
 var logsAdmin=[], logsAdminFiltrados=[];
+var vendasPeriodo='hoje';
 var fotosSelecionadas=[], servicosPorCap=[], obsPorCap=[];
 var waData={};
 var _criarLanc=false;
@@ -1527,11 +1591,28 @@ function confirmarEnvioWA(){var tel=waData.tel.replace(/\D/g,'');if(tel.startsWi
 // ═══ TIMER ESPERA ═══
 function calcMinutos(data,hora){if(!data||!hora||data==='—')return null;var dp=data.split('/');if(dp.length<3)return null;var hp=hora.split(':');if(hp.length<2)return null;var then=new Date(parseInt(dp[2]),parseInt(dp[1])-1,parseInt(dp[0]),parseInt(hp[0]),parseInt(hp[1]),0);var diff=Math.floor((new Date()-then)/60000);return diff>=0?diff:null;}
 function fmtTempo(min){if(min===null||min<0)return null;if(min<60)return min+'min';var h=Math.floor(min/60),m=min%60;return h+'h'+(m>0?m+'min':'');}
+function dataHoraLocal_(){var d=new Date();return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 function timerCor(min){if(min<30)return'#00e676';if(min<60)return'#ffea00';if(min<120)return'#ff9100';return'#ff4444';}
 function atualizarTimers(){clientes.forEach(function(c){if(c.status==='Entregue')return;var el=document.getElementById('timer-'+c.num);if(!el)return;var min=calcMinutos(c.data,c.hora);if(min===null)return;el.textContent='⏱ '+fmtTempo(min);el.style.color=timerCor(min);});}
 
 
 // ═══ RELATÓRIO ═══
+function normServico_(nome){return String(nome||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
+function tempoServicoMin_(nome){var key=normServico_(nome);return SERVICE_TIMES[key]||15;}
+function prazoClienteMin_(c){var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];if(svcs.length)return svcs.reduce(function(total,s){return total+tempoServicoMin_(s);},0);return Math.max(1,parseInt(c.qtd||1,10))*15;}
+function statusPrazoCliente_(c){
+  var encerrado=c.status==='Entregue'||c.status==='Cancelado';
+  var elapsed=encerrado&&c.tempoEncerradoMin!==undefined&&c.tempoEncerradoMin!==''?parseInt(c.tempoEncerradoMin,10):calcMinutos(c.data,c.hora);
+  var meta=encerrado&&c.prazoMin!==undefined&&c.prazoMin!==''?parseInt(c.prazoMin,10):prazoClienteMin_(c);
+  if(elapsed===null)return{elapsed:null,meta:meta,cls:'done',label:'Tempo indisponivel'};
+  if(encerrado)return{elapsed:elapsed,meta:meta,cls:'done',label:'Encerrado em '+fmtTempo(elapsed)};
+  if(elapsed<=meta)return{elapsed:elapsed,meta:meta,cls:'ok',label:'No prazo '+fmtTempo(elapsed)+'/'+fmtTempo(meta)};
+  if(elapsed<=meta+10)return{elapsed:elapsed,meta:meta,cls:'warn',label:'Atencao '+fmtTempo(elapsed)+'/'+fmtTempo(meta)};
+  return{elapsed:elapsed,meta:meta,cls:'late',label:'Atrasado '+fmtTempo(elapsed)+'/'+fmtTempo(meta)};
+}
+function tempoBadgeCliente_(c){var st=statusPrazoCliente_(c);return'<span id="timer-'+c.num+'" class="tempo-badge '+st.cls+'" data-os="'+c.num+'">'+st.label+'</span>';}
+function atualizarTimers(){clientes.forEach(function(c){if(c.status==='Entregue'||c.status==='Cancelado')return;var el=document.getElementById('timer-'+c.num);if(!el)return;var st=statusPrazoCliente_(c);el.textContent=st.label;el.className='tempo-badge '+st.cls;});}
+
 var _relMesOffset=0;
 
 function mudarMesRel(delta){
@@ -2703,7 +2784,7 @@ function resetClienteForm(){document.getElementById('clienteNome').value='';docu
 function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=clientes.find(function(c){return c.num==num;});_pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};document.getElementById('pagClienteNome').textContent=_pagData.nome;var now=new Date();document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('pagamentoModal').classList.add('show');return;}_executarMarcarStatus(num,novoStatus,'');}
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
 function confirmarPagamento(){var di=document.getElementById('pagamentoData').value;var p=di.split('-');var dataPag=p[2]+'/'+p[1]+'/'+p[0];fecharPagamentoModal();_executarMarcarStatus(_pagData.num,'Entregue',dataPag);setTimeout(function(){mostrarWaModal('agradecimento',_pagData.nome,_pagData.tel,_pagData.qtd);},500);}
-function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));_calcStatsHome();apiGet('atualizarStatus',{num:num,status:novoStatus,dataPagamento:dataPagamento||''},10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');logEventoSistema_('CLIENTE','atualizarStatus','OK','Status alterado',{os:num,status:novoStatus,dataPagamento:dataPagamento||''});}else{showToast('⚠️ Status salvo local.','orange');logEventoSistema_('CLIENTE','atualizarStatus','ALERTA','Status salvo local',{os:num,status:novoStatus});}}).catch(function(){showToast('⚠️ Status salvo local.','orange');logEventoSistema_('CLIENTE','atualizarStatus','ERRO','Falha API ao alterar status',{os:num,status:novoStatus});});}
+function _executarMarcarStatus(num,novoStatus,dataPagamento){var tempoInfo={tempoMin:'',prazoMin:'',encerradoEm:''};for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){if(novoStatus==='Entregue'||novoStatus==='Cancelado'){tempoInfo.tempoMin=calcMinutos(clientes[i].data,clientes[i].hora);tempoInfo.prazoMin=prazoClienteMin_(clientes[i]);tempoInfo.encerradoEm=dataHoraLocal_();clientes[i].tempoEncerradoMin=tempoInfo.tempoMin;clientes[i].prazoMin=tempoInfo.prazoMin;clientes[i].encerradoEm=tempoInfo.encerradoEm;}else{clientes[i].tempoEncerradoMin='';clientes[i].prazoMin='';clientes[i].encerradoEm='';}clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));_calcStatsHome();apiGet('atualizarStatus',{num:num,status:novoStatus,dataPagamento:dataPagamento||'',tempoMin:tempoInfo.tempoMin,prazoMin:tempoInfo.prazoMin,encerradoEm:tempoInfo.encerradoEm},10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');logEventoSistema_('CLIENTE','atualizarStatus','OK','Status alterado',{os:num,status:novoStatus,dataPagamento:dataPagamento||'',tempoMin:tempoInfo.tempoMin,prazoMin:tempoInfo.prazoMin});}else{showToast('⚠️ Status salvo local.','orange');logEventoSistema_('CLIENTE','atualizarStatus','ALERTA','Status salvo local',{os:num,status:novoStatus});}}).catch(function(){showToast('⚠️ Status salvo local.','orange');logEventoSistema_('CLIENTE','atualizarStatus','ERRO','Falha API ao alterar status',{os:num,status:novoStatus});});}
 // [v4.8.5 ALTERAÇÃO]
 // Busca operacional agora aceita OS, nome ou telefone. Ex.: 176, 000176, OS 176, nome ou número.
 function filtrarClientes(query){var q=(query||'').toLowerCase().trim();var qDigits=q.replace(/\D/g,'');clientesFiltrados=q?clientes.filter(function(c){var os=String(c.num||'');var osPad=String(c.num||'').padStart(6,'0');return (c.nome||'').toLowerCase().indexOf(q)>=0||(c.tel||'').replace(/\D/g,'').indexOf(qDigits)>=0||(qDigits&&((os.indexOf(qDigits)>=0)||(osPad.indexOf(qDigits)>=0)))||('os '+os).indexOf(q)>=0||('#'+osPad).indexOf(q)>=0;}):clientes.slice();renderClienteList();}
@@ -2729,9 +2810,9 @@ function salvarEdicaoCliente(num){
 }
 function cancelarCliente(num){
   if(!confirm('Cancelar este cadastro? Ele ficará preservado no histórico com status Cancelado.'))return;
-  apiGet('cancelarCliente',{num:num},15000).then(function(r){if(r&&r.ok){showToast('Cadastro cancelado','orange');logEventoSistema_('CLIENTE','cancelarCliente','OK','Cliente cancelado',{os:num});carregarClientes();}else showToast('Erro ao cancelar cliente','error');}).catch(function(){showToast('Falha ao cancelar cliente','error');});
+  (function(){var c=clientes.find(function(x){return x.num==num;});var tempoMin=c?calcMinutos(c.data,c.hora):'';var prazoMin=c?prazoClienteMin_(c):'';return apiGet('cancelarCliente',{num:num,tempoMin:tempoMin,prazoMin:prazoMin,encerradoEm:dataHoraLocal_()},15000);})().then(function(r){if(r&&r.ok){showToast('Cadastro cancelado','orange');logEventoSistema_('CLIENTE','cancelarCliente','OK','Cliente cancelado',{os:num});carregarClientes();}else showToast('Erro ao cancelar cliente','error');}).catch(function(){showToast('Falha ao cancelar cliente','error');});
 }
-function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var search=(document.getElementById('clienteSearch')||{}).value||'';var src=clientesFiltrados.length>0||search?clientesFiltrados:clientes;var ord={Pronto:0,'Em andamento':1,Entregue:2,Cancelado:3};var ordenados=src.slice().sort(function(a,b){return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var menuId='menuCli'+c.num;var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+escapeHtml_(Array.isArray(obs[i])?obs[i].join(', '):obs[i])+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">Cap.'+(i+1)+': '+escapeHtml_(s)+'</span>'+o+'</div>';}).filter(Boolean).join('');var svcsHtml=linhas?'<div class="cli-servicos">'+linhas+'</div>':'';var principal='';if(c.status==='Em andamento')principal='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">Marcar pronto</button>';else if(c.status==='Pronto')principal='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">Entregue</button>';else if(c.status==='Entregue')principal='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">Reabrir</button>';var waBtn=c.status!=='Cancelado'?'<button class="cli-btn wa" onclick="mostrarWaModal(\''+(c.status==='Entregue'?'agradecimento':'boasVindas')+'\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'"><div class="cli-top"><span class="info-badge vinculo">OS '+formatarOS_(c.num)+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+escapeHtml_(c.status||'Em andamento')+'</span><div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+menuId+'\')">⋯</button><div class="item-menu" id="'+menuId+'"><button onclick="abrirEditarCliente('+c.num+')">Editar cadastro</button><button onclick="copiarResumoOS('+c.num+')">Copiar OS</button>'+(c.pasta?'<button onclick="window.open(\''+jsStr_(c.pasta)+'\',\'_blank\')">Abrir Drive</button>':'')+'<button onclick="mostrarWaModal(\'boasVindas\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp boas-vindas</button><button class="danger" onclick="cancelarCliente('+c.num+')">Cancelar cadastro</button></div></div></div><div class="cli-header"><div class="cli-avatar">'+escapeHtml_(ini)+'</div><div style="flex:1;min-width:0"><div class="cli-nome">'+escapeHtml_(c.nome)+'</div><div class="cli-tel">'+escapeHtml_(c.tel)+'</div></div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+'</div>'+svcsHtml+'<div class="cli-footer"><span class="cli-caps-badge">'+(c.qtd||1)+' cap.</span><span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.dataPagamento?'<span class="info-badge pagamento">Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">-'+fmtBRL(c.desconto)+'</span>':'')+'</div><div class="cli-actions">'+principal+waBtn+'</div></div>';}).join('');}
+function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var search=(document.getElementById('clienteSearch')||{}).value||'';var src=clientesFiltrados.length>0||search?clientesFiltrados:clientes;var ord={Pronto:0,'Em andamento':1,Entregue:2,Cancelado:3};var ordenados=src.slice().sort(function(a,b){return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var menuId='menuCli'+c.num;var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+escapeHtml_(Array.isArray(obs[i])?obs[i].join(', '):obs[i])+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">Cap.'+(i+1)+': '+escapeHtml_(s)+'</span>'+o+'</div>';}).filter(Boolean).join('');var svcsHtml=linhas?'<div class="cli-servicos">'+linhas+'</div>':'';var principal='';if(c.status==='Em andamento')principal='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">Marcar pronto</button>';else if(c.status==='Pronto')principal='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">Entregue</button>';else if(c.status==='Entregue')principal='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">Reabrir</button>';var waBtn=c.status!=='Cancelado'?'<button class="cli-btn wa" onclick="mostrarWaModal(\''+(c.status==='Entregue'?'agradecimento':'boasVindas')+'\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'"><div class="cli-top"><span class="info-badge vinculo">OS '+formatarOS_(c.num)+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+escapeHtml_(c.status||'Em andamento')+'</span><div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+menuId+'\')">⋯</button><div class="item-menu" id="'+menuId+'"><button onclick="abrirEditarCliente('+c.num+')">Editar cadastro</button><button onclick="copiarResumoOS('+c.num+')">Copiar OS</button>'+(c.pasta?'<button onclick="window.open(\''+jsStr_(c.pasta)+'\',\'_blank\')">Abrir Drive</button>':'')+'<button onclick="mostrarWaModal(\'boasVindas\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp boas-vindas</button><button class="danger" onclick="cancelarCliente('+c.num+')">Cancelar cadastro</button></div></div></div><div class="cli-header"><div class="cli-avatar">'+escapeHtml_(ini)+'</div><div style="flex:1;min-width:0"><div class="cli-nome">'+escapeHtml_(c.nome)+'</div><div class="cli-tel">'+escapeHtml_(c.tel)+'</div></div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+'</div>'+svcsHtml+'<div class="cli-footer"><span class="cli-caps-badge">'+(c.qtd||1)+' cap.</span><span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+tempoBadgeCliente_(c)+(c.dataPagamento?'<span class="info-badge pagamento">Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">-'+fmtBRL(c.desconto)+'</span>':'')+'</div><div class="cli-actions">'+principal+waBtn+'</div></div>';}).join('');}
 
 // ═══ BUSCAR / LISTAR ═══
 function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
@@ -2806,7 +2887,51 @@ function cancelarLancamento(row){
   if(!confirm('Cancelar este lançamento? O registro fica preservado, mas o valor passa a zero.'))return;
   apiGet('cancelarLancamento',{row:row},15000).then(function(r){if(r&&r.ok){showToast('Lançamento cancelado','orange');logEventoSistema_('OPERACAO','cancelarLancamento','OK','Lançamento cancelado',{row:row});carregarLancamentos();refreshDados(true);}else showToast('Erro ao cancelar lançamento','error');}).catch(function(){showToast('Falha ao cancelar lançamento','error');});
 }
-function carregarLancamentos(){var list=document.getElementById('lancList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');if(!lancamentos.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>';return;}list.innerHTML=lancamentos.slice(0,100).map(function(l,i){var id='menuLanc'+(l.row||i);return'<div class="lanc-item'+(l.cancelado?' cancelado':'')+'"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+escapeHtml_(l.svc)+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+(l.num?' · #'+l.num:'')+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div>'+(l.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarLancamento('+l.row+')">Editar lançamento</button><button class="danger" onclick="cancelarLancamento('+l.row+')">Cancelar lançamento</button></div></div>':'')+'</div>';}).join('');});}
+function vendaDataObj_(br){var p=String(br||'').split('/');if(p.length!==3)return null;return new Date(parseInt(p[2],10),parseInt(p[1],10)-1,parseInt(p[0],10));}
+function vendaMesmoDia_(a,b){return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function filtrarVendasPeriodo_(items){
+  var now=new Date();
+  return items.filter(function(l){
+    var d=vendaDataObj_(fmtData(l.data));if(!d)return vendasPeriodo==='todos';
+    if(vendasPeriodo==='todos')return true;
+    if(vendasPeriodo==='hoje')return vendaMesmoDia_(d,now);
+    if(vendasPeriodo==='7d'){var ini=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);return d>=ini&&d<=now;}
+    if(vendasPeriodo==='mes')return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    return true;
+  });
+}
+function labelPeriodoVendas_(){return vendasPeriodo==='hoje'?'hoje':vendasPeriodo==='7d'?'últimos 7 dias':vendasPeriodo==='mes'?'mês atual':'todo o histórico';}
+function setVendasPeriodo(p,btn){vendasPeriodo=p||'hoje';document.querySelectorAll('.venda-filter-btn').forEach(function(b){b.classList.remove('ativo');});if(btn)btn.classList.add('ativo');renderVendasGerencial();}
+function renderVendasGerencial(){
+  var list=document.getElementById('lancList');if(!list)return;
+  var base=lancamentos.length?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var periodo=filtrarVendasPeriodo_(base);
+  var validos=periodo.filter(function(l){return !l.cancelado&&parseFloat(l.val||0)>0;});
+  var cancelados=periodo.length-validos.length;
+  var fat=validos.reduce(function(s,l){return s+(parseFloat(l.val)||0);},0);
+  var qtd=validos.length;
+  var ticket=qtd?fat/qtd:0;
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+  set('vendaFat',fmtBRL(fat));set('vendaQtd',qtd);set('vendaTicket',fmtBRL(ticket));set('vendaCancel',cancelados);
+  var sub=document.getElementById('vendaFatSub');if(sub)sub.textContent=labelPeriodoVendas_();
+  var rank={};validos.forEach(function(l){var k=l.svc||'Sem serviço';if(!rank[k])rank[k]={name:k,qtd:0,val:0};rank[k].qtd++;rank[k].val+=parseFloat(l.val)||0;});
+  var arr=Object.keys(rank).map(function(k){return rank[k];}).sort(function(a,b){return b.val-a.val;});
+  var rankEl=document.getElementById('vendaRanking');
+  if(rankEl){if(!arr.length){rankEl.innerHTML='<div class="empty"><div class="empty-text">Sem vendas no período.</div></div>';}else{var max=arr[0].val||1;rankEl.innerHTML=arr.slice(0,5).map(function(r,i){return'<div class="venda-rank-item"><div class="venda-rank-n">'+(i+1)+'</div><div class="venda-rank-info"><div class="venda-rank-name">'+escapeHtml_(r.name)+'</div><div class="venda-rank-bar-w"><div class="venda-rank-bar" style="width:'+Math.max(6,Math.round(r.val/max*100))+'%"></div></div></div><div class="venda-rank-val">'+fmtBRL(r.val)+'<div class="venda-rank-qtd">'+r.qtd+' venda(s)</div></div></div>';}).join('');}}
+  var insights=[];
+  if(qtd===0)insights.push('Sem vendas válidas em '+labelPeriodoVendas_()+'. Vale conferir movimento, equipe e registro operacional.');
+  else{
+    if(arr[0])insights.push(arr[0].name+' lidera a receita do período com '+fmtBRL(arr[0].val)+'.');
+    var topVol=arr.slice().sort(function(a,b){return b.qtd-a.qtd;})[0];if(topVol&&topVol.name!==(arr[0]&&arr[0].name))insights.push(topVol.name+' lidera em volume, mas não em receita.');
+    if(ticket<20)insights.push('Ticket médio baixo: avalie estimular serviços de maior valor.');
+    else if(ticket>=30)insights.push('Ticket médio saudável: serviços de maior valor estão aparecendo bem.');
+    if(cancelados>0)insights.push(cancelados+' lançamento(s) cancelado(s) no período. Confira se são correções pontuais ou padrão recorrente.');
+  }
+  var insEl=document.getElementById('vendaInsights');if(insEl)insEl.innerHTML=insights.map(function(t){return'<div class="venda-insight"><span>•</span><span>'+escapeHtml_(t)+'</span></div>';}).join('');
+  if(!periodo.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro no período.</div></div>';return;}
+  list.innerHTML=periodo.slice(0,100).map(function(l,i){var id='menuLanc'+(l.row||i);return'<div class="lanc-item'+(l.cancelado?' cancelado':'')+'"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+escapeHtml_(l.svc)+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+(l.num?' · #'+l.num:'')+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div>'+(l.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarLancamento('+l.row+')">Editar lançamento</button><button class="danger" onclick="cancelarLancamento('+l.row+')">Cancelar lançamento</button></div></div>':'')+'</div>';}).join('');
+}
+function carregarLancamentos(){var list=document.getElementById('lancList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');renderVendasGerencial();});}
 function carregarCustos(){buscarCustos().then(function(ok){if(!ok)custos=JSON.parse(localStorage.getItem('zapCustos')||'[]');renderCustoList();});}
 function renderCustoList(){var list=document.getElementById('custoList');if(!custos.length){list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum custo ainda.</div></div>';return;}list.innerHTML=custos.slice(0,50).map(function(c,i){var id='menuCusto'+(c.row||i);return'<div class="lanc-item'+(c.cancelado?' cancelado':'')+'"><div class="lanc-dot red"></div><div class="lanc-info"><div class="lanc-svc">'+getCatIcon(c.cat)+' '+escapeHtml_(c.desc)+'</div><div class="lanc-meta">'+escapeHtml_(c.cat)+' · '+fmtData(c.data)+'</div></div><div class="lanc-val red">-'+fmtBRL(c.val)+'</div>'+(c.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarCusto('+c.row+')">Editar custo</button><button class="danger" onclick="cancelarCusto('+c.row+')">Cancelar custo</button></div></div>':'')+'</div>';}).join('');}
 function carregarClientes(){var list=document.getElementById('clienteList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';document.getElementById('clienteSearch').value='';buscarClientes().then(function(ok){if(!ok){clientes=JSON.parse(localStorage.getItem('zapClientes')||'[]');clientesFiltrados=clientes.slice();}renderClienteList();});}
@@ -2860,7 +2985,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.10.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.10.2',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
