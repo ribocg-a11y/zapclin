@@ -791,7 +791,7 @@
   <div class="section-title">Atendimentos <span id="clienteCount" style="font-weight:400;color:var(--muted);font-size:10px"></span></div>
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
-    <input type="text" class="search-input" id="clienteSearch" placeholder="Buscar por nome ou telefone..." oninput="filtrarClientes(this.value)">
+    <input type="text" class="search-input" id="clienteSearch" placeholder="Buscar por OS, nome ou telefone..." oninput="filtrarClientes(this.value)">
   </div>
   <div id="clienteList"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
 </div>
@@ -1046,7 +1046,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.8.4';
+const APP_VERSION='v4.8.5';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1238,6 +1238,42 @@ function detalhesDoCliente_(nome,tel,qtd){
   var c=buscarClienteParaWhats_(nome,tel);
   if(!c)return null;
   return montarDetalhesAtendimento_(c.nome||nome,c.tel||tel,c.qtd||qtd,c.servicos||[],c.observacoes||[],c.total||0,c.desconto||0,c.num||null);
+}
+
+// [v4.8.5 NOVO]
+// Gera resumo operacional interno da OS para copiar e localizar rapidamente atendimentos sem alterar backend/planilha.
+function montarResumoOSCliente_(c){
+  if(!c)return '';
+  var linhas=[];
+  linhas.push('OS '+formatarOS_(c.num));
+  linhas.push('Cliente: '+(c.nome||'Não informado'));
+  linhas.push('Telefone: '+formatarTelefoneBR_(c.tel||''));
+  linhas.push('Status: '+(c.status||'Em andamento'));
+  linhas.push('Data/Hora: '+fmtData(c.data)+' '+fmtHora(c.hora));
+  linhas.push('Capacetes: '+(c.qtd||1));
+  if(c.total)linhas.push('Total: '+fmtBRL(c.total));
+  var svcs=Array.isArray(c.servicos)?c.servicos:[];
+  var obs=Array.isArray(c.observacoes)?c.observacoes:[];
+  for(var i=0;i<svcs.length;i++){
+    if(!svcs[i])continue;
+    linhas.push('');
+    linhas.push('CAPACETE '+(i+1));
+    linhas.push('Serviço: '+svcs[i]);
+    var o=normalizarObsLista_(obs[i]);
+    if(o.length)linhas.push('Condições: '+o.join(', '));
+  }
+  if(c.pasta){linhas.push('');linhas.push('Drive: '+c.pasta);}
+  return linhas.join('\n');
+}
+function copiarResumoOS(num){
+  var c=clientes.find(function(x){return String(x.num)===String(num);});
+  var txt=montarResumoOSCliente_(c);
+  if(!txt){showToast('OS não encontrada','error');return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){showToast('Resumo da OS copiado','blue');}).catch(function(){prompt('Copie o resumo da OS:',txt);});
+  }else{
+    prompt('Copie o resumo da OS:',txt);
+  }
 }
 // [v4.8.3 ALTERAÇÃO]
 // Montagem da mensagem de WhatsApp sem emojis complexos para evitar caracteres quebrados no iOS/WhatsApp.
@@ -2500,8 +2536,10 @@ function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=client
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
 function confirmarPagamento(){var di=document.getElementById('pagamentoData').value;var p=di.split('-');var dataPag=p[2]+'/'+p[1]+'/'+p[0];fecharPagamentoModal();_executarMarcarStatus(_pagData.num,'Entregue',dataPag);setTimeout(function(){mostrarWaModal('agradecimento',_pagData.nome,_pagData.tel,_pagData.qtd);},500);}
 function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clientes.length;i++){if(clientes[i].num==num){clientes[i].status=novoStatus;if(dataPagamento)clientes[i].dataPagamento=dataPagamento;break;}}clientesFiltrados=clientes.slice();renderClienteList();localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));_calcStatsHome();apiGet('atualizarStatus',{num:num,status:novoStatus,dataPagamento:dataPagamento||''},10000).then(function(r){if(r&&r.ok){showToast('Status: '+novoStatus,novoStatus==='Entregue'?'green':'blue');}else{showToast('⚠️ Status salvo local.','orange');}}).catch(function(){showToast('⚠️ Status salvo local.','orange');});}
-function filtrarClientes(query){var q=(query||'').toLowerCase().trim();clientesFiltrados=q?clientes.filter(function(c){return (c.nome||'').toLowerCase().indexOf(q)>=0||(c.tel||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;}):clientes.slice();renderClienteList();}
-function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var src=clientesFiltrados.length>0||document.getElementById('clienteSearch').value?clientesFiltrados:clientes;var ordenados=src.slice().sort(function(a,b){var ord={Pronto:0,'Em andamento':1,Entregue:2};return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var visitaLabel=nthVisita(c.numVisita||1);var isPrimeira=(c.numVisita||1)===1;var svcsHtml='';if(svcs.length>0){var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+obs[i]+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">🪖 Cap.'+(i+1)+': '+s+'</span>'+o+'</div>';}).filter(Boolean).join('');if(linhas)svcsHtml='<div class="cli-servicos">'+linhas+'</div>';}var statusBtns='';if(c.status==='Em andamento'){statusBtns='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">✅ Marcar Pronto</button>';}else if(c.status==='Pronto'){statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';}else{statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🙌 Obrigado</button>';}var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🎉 WA Pronto</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'">'+'<div class="cli-top">'+'<span class="visita-badge'+(isPrimeira?' primeira':'')+'">'+visitaLabel+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+c.status+'</span>'+'</div>'+'<div class="cli-header">'+'<div class="cli-avatar">'+ini+'</div>'+'<div style="flex:1;min-width:0">'+'<div class="cli-nome">'+c.nome+'</div>'+'<div class="cli-tel">📱 '+c.tel+'</div>'+'</div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+ '</div>'+svcsHtml+'<div class="cli-footer">'+'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'+'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.status!=='Entregue'?(function(){var min=calcMinutos(c.data,c.hora);return min!==null?'<span id="timer-'+c.num+'" style="font-size:11px;font-weight:700;color:'+timerCor(min)+';">⏱ '+fmtTempo(min)+'</span>':'';})():'')+(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')+(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')+(c.lancamentosVinculados?'<span class="info-badge vinculo">📊 Vinculado</span>':'')+'</div>'+'<div class="cli-actions">'+statusBtns+waProntoBtn+'<button class="cli-btn wa" onclick="mostrarWaModal(\'boasVindas\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">💬 WA Boas-vindas</button>'+'</div>'+'</div>';}).join('');}
+// [v4.8.5 ALTERAÇÃO]
+// Busca operacional agora aceita OS, nome ou telefone. Ex.: 176, 000176, OS 176, nome ou número.
+function filtrarClientes(query){var q=(query||'').toLowerCase().trim();var qDigits=q.replace(/\D/g,'');clientesFiltrados=q?clientes.filter(function(c){var os=String(c.num||'');var osPad=String(c.num||'').padStart(6,'0');return (c.nome||'').toLowerCase().indexOf(q)>=0||(c.tel||'').replace(/\D/g,'').indexOf(qDigits)>=0||(qDigits&&((os.indexOf(qDigits)>=0)||(osPad.indexOf(qDigits)>=0)))||('os '+os).indexOf(q)>=0||('#'+osPad).indexOf(q)>=0;}):clientes.slice();renderClienteList();}
+function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var src=clientesFiltrados.length>0||document.getElementById('clienteSearch').value?clientesFiltrados:clientes;var ordenados=src.slice().sort(function(a,b){var ord={Pronto:0,'Em andamento':1,Entregue:2};return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var visitaLabel=nthVisita(c.numVisita||1);var isPrimeira=(c.numVisita||1)===1;var svcsHtml='';if(svcs.length>0){var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+obs[i]+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">🪖 Cap.'+(i+1)+': '+s+'</span>'+o+'</div>';}).filter(Boolean).join('');if(linhas)svcsHtml='<div class="cli-servicos">'+linhas+'</div>';}var statusBtns='';if(c.status==='Em andamento'){statusBtns='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">✅ Marcar Pronto</button>';}else if(c.status==='Pronto'){statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';}else{statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🙌 Obrigado</button>';}var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🎉 WA Pronto</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'">'+'<div class="cli-top">'+'<span class="visita-badge'+(isPrimeira?' primeira':'')+'">'+visitaLabel+'</span>'+'<span class="info-badge vinculo" title="Ordem de Serviço">OS '+formatarOS_(c.num)+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+c.status+'</span>'+'</div>'+'<div class="cli-header">'+'<div class="cli-avatar">'+ini+'</div>'+'<div style="flex:1;min-width:0">'+'<div class="cli-nome">'+c.nome+'</div>'+'<div class="cli-tel">📱 '+c.tel+'</div>'+'</div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+ '</div>'+svcsHtml+'<div class="cli-footer">'+'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'+'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.status!=='Entregue'?(function(){var min=calcMinutos(c.data,c.hora);return min!==null?'<span id="timer-'+c.num+'" style="font-size:11px;font-weight:700;color:'+timerCor(min)+';">⏱ '+fmtTempo(min)+'</span>':'';})():'')+(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')+(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')+(c.lancamentosVinculados?'<span class="info-badge vinculo">📊 Vinculado</span>':'')+'</div>'+'<div class="cli-actions">'+statusBtns+waProntoBtn+'<button class="cli-btn" onclick="copiarResumoOS('+(c.num)+')">📋 Copiar OS</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'boasVindas\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">💬 WA Boas-vindas</button>'+'</div>'+'</div>';}).join('');}
 
 // ═══ BUSCAR / LISTAR ═══
 function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
