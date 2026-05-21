@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.8.1 | Data: 20/05/2026
+  Versão : 4.8.2 | Data: 20/05/2026
   HOTFIX v4.8.1:
+  v4.8.2:
     - Corrige Painel Admin para não sobrescrever KPIs locais válidos com resposta zerada/incompleta do servidor
     - Mantém fallback local/cache quando buscarKpisAdmin retornar dados inconsistentes
   FASE 9 v4.8:
@@ -1007,7 +1008,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.8.1 | 20/05/2026 — Hotfix Painel Admin/KPIs + Segurança Admin/PIN
+// ZAPCLIN v4.8.2 | 20/05/2026 — WhatsApp dinâmico do cadastro + Sujidade crítica
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1040,7 +1041,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.8.1';
+const APP_VERSION='v4.8.2';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1189,10 +1190,123 @@ function sincronizarPendentes(){var p=getPendentes();if(!p.length){showToast('�
 function _syncNext(p,idx){if(idx>=p.length){var r=getPendentes();if(!r.length)showToast('✅ '+p.length+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];apiGet('salvar',{svcs:item.svcs,vals:item.vals},15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1);},500);}else{showToast('❌ Erro ao sincronizar','error');}}).catch(function(){showToast('⚠️ Sem conexão.','orange');});}
 
 // ═══ WHATSAPP ═══
-function msgBoasVindas(nome,qtd){var caps=qtd===1?'capacete':'capacetes';return'Olá, '+nome+'! 😊\n\nSeja muito bem-vindo(a) à *ZapClin*! 🪖✨\n\nSeu(s) '+qtd+' '+caps+' já está(ão) em boas mãos — cuidamos com todo carinho e profissionalismo que você merece!\n\nAssim que estiver(em) pronto(s), te avisamos aqui mesmo. 🏍️💨\n\nNos acompanhe no Instagram:\n📸 *@zapclinhigienizacao*\n\nObrigado por escolher a *ZapClin*! 💙';}
+// [v4.8.2 ALTERAÇÃO]
+// Mensagem de boas-vindas passou a ser dinâmica: usa dados reais do cadastro do atendimento
+// (serviço, valor, condições identificadas e aviso de sujidade crítica quando aplicável).
+function precoServico_(nomeServico){
+  for(var i=0;i<SERVICES.length;i++){
+    if(SERVICES[i].name===nomeServico)return parseFloat(SERVICES[i].price)||0;
+  }
+  return 0;
+}
+function normalizarObsLista_(obs){
+  if(!obs)return[];
+  if(Array.isArray(obs))return obs.filter(function(x){return String(x||'').trim();});
+  return String(obs).split(',').map(function(x){return x.trim();}).filter(Boolean);
+}
+function buscarClienteParaWhats_(nome,tel){
+  var telNorm=String(tel||'').replace(/\D/g,'');
+  for(var i=0;i<clientes.length;i++){
+    var c=clientes[i]||{};
+    if(String(c.tel||'').replace(/\D/g,'')===telNorm)return c;
+  }
+  var nomeNorm=String(nome||'').toLowerCase().trim();
+  for(var j=0;j<clientes.length;j++){
+    var c2=clientes[j]||{};
+    if(String(c2.nome||'').toLowerCase().trim()===nomeNorm)return c2;
+  }
+  return null;
+}
+function montarDetalhesAtendimento_(nome,tel,qtd,servicos,observacoes,total,desconto){
+  return{
+    nome:nome,
+    tel:tel,
+    qtd:parseInt(qtd||0),
+    servicos:Array.isArray(servicos)?servicos.slice(0,qtd):[],
+    observacoes:Array.isArray(observacoes)?observacoes.slice(0,qtd):[],
+    total:parseFloat(total||0)||0,
+    desconto:parseFloat(desconto||0)||0
+  };
+}
+function detalhesDoCliente_(nome,tel,qtd){
+  var c=buscarClienteParaWhats_(nome,tel);
+  if(!c)return null;
+  return montarDetalhesAtendimento_(c.nome||nome,c.tel||tel,c.qtd||qtd,c.servicos||[],c.observacoes||[],c.total||0,c.desconto||0);
+}
+function msgBoasVindas(nome,qtd,detalhes){
+  detalhes=detalhes||detalhesDoCliente_(nome,'',qtd)||null;
+  var linhas=[];
+  linhas.push('✨ Seja muito bem-vindo(a) à *ZapClin*!');
+  linhas.push('');
+  if(!detalhes||!detalhes.servicos||!detalhes.servicos.length){
+    var caps=qtd===1?'capacete':'capacetes';
+    linhas.push('Recebemos seu(s) '+qtd+' '+caps+' e cuidaremos de tudo com atenção e profissionalismo. 🪖✨');
+    linhas.push('');
+    linhas.push('Assim que estiver(em) pronto(s), te avisamos por aqui. 🏍️💨');
+    linhas.push('');
+    linhas.push('Obrigado por escolher a *ZapClin*! 💙');
+    return linhas.join('\n');
+  }
+  linhas.push('Recebemos seu atendimento e registramos abaixo as informações identificadas no cadastro:');
+  var temCondicoes=false;
+  var temSujidadeCritica=false;
+  var soma=0;
+  for(var i=0;i<detalhes.servicos.length;i++){
+    var svc=detalhes.servicos[i];
+    if(!svc)continue;
+    var preco=precoServico_(svc);
+    soma+=preco;
+    var obs=normalizarObsLista_(detalhes.observacoes[i]);
+    if(obs.length)temCondicoes=true;
+    if(obs.indexOf('Sujidade crítica')>=0)temSujidadeCritica=true;
+    linhas.push('');
+    linhas.push('━━━━━━━━━━━━━━━');
+    linhas.push('🪖 *CAPACETE '+(i+1)+'*');
+    linhas.push('');
+    linhas.push('*Serviço escolhido:*');
+    linhas.push('⭐ '+svc);
+    linhas.push('');
+    linhas.push('*Valor:*');
+    linhas.push(fmtBRL(preco));
+    if(obs.length){
+      linhas.push('');
+      linhas.push('*Condições identificadas no recebimento:*');
+      obs.forEach(function(o){linhas.push('• '+o);});
+    }
+  }
+  var desconto=parseFloat(detalhes.desconto||0)||0;
+  var total=parseFloat(detalhes.total||0)||soma;
+  if(detalhes.servicos.length>1||desconto>0){
+    linhas.push('');
+    linhas.push('━━━━━━━━━━━━━━━');
+    if(desconto>0)linhas.push('🏷️ *Desconto:* -'+fmtBRL(desconto));
+    linhas.push('💰 *Total do atendimento:* '+fmtBRL(total));
+  }
+  if(temSujidadeCritica){
+    linhas.push('');
+    linhas.push('⚠️ *SUJIDADE CRÍTICA*');
+    linhas.push('Foi informado que o serviço escolhido pode não remover completamente toda a sujidade existente no capacete. Mesmo assim, o cliente autorizou a execução conforme sua preferência.');
+  }
+  if(temCondicoes||temSujidadeCritica){
+    linhas.push('');
+    linhas.push('Ao responder *OK*, o cliente confirma ciência das condições registradas neste atendimento e autoriza a execução do serviço.');
+  }
+  linhas.push('');
+  linhas.push('Obrigado por escolher a *ZapClin*! 💙');
+  return linhas.join('\n');
+}
 function msgPronto(nome,qtd){var caps=qtd===1?'capacete ficou pronto':'capacetes ficaram prontos';return'Olá, '+nome+'! 🎉\n\nSeu(s) '+qtd+' '+caps+' e está(ão) impecável(is)! 🪖✨\n\nPode vir buscar quando quiser — estamos te esperando! 😊\n\nAté logo,\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
 function msgAgradecimento(nome){return'Olá, '+nome+'! 🙌\n\nObrigado pela confiança na *ZapClin*! 🪖✨\n\nFoi um prazer cuidar do seu(s) capacete(s). Já sentimos saudade! 😄\n\nTe esperamos em breve! 🏍️💨\n\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
-function mostrarWaModal(tipo,nome,tel,qtd){var msg=tipo==='pronto'?msgPronto(nome,qtd):tipo==='agradecimento'?msgAgradecimento(nome):msgBoasVindas(nome,qtd);waData={nome:nome,tel:tel,qtd:qtd,msg:msg};document.getElementById('waEmoji').textContent=tipo==='pronto'?'🎉':tipo==='agradecimento'?'🙌':'📲';document.getElementById('waTitulo').textContent=tipo==='pronto'?'Capacete(s) Pronto(s)!':tipo==='agradecimento'?'Agradecimento':'Enviar Boas-vindas';document.getElementById('waClienteNome').textContent=nome;document.getElementById('waPreview').textContent=msg;document.getElementById('waModal').classList.add('show');}
+function mostrarWaModal(tipo,nome,tel,qtd,detalhes){
+  if(tipo==='boasVindas'&&!detalhes)detalhes=detalhesDoCliente_(nome,tel,qtd);
+  var msg=tipo==='pronto'?msgPronto(nome,qtd):tipo==='agradecimento'?msgAgradecimento(nome):msgBoasVindas(nome,qtd,detalhes);
+  waData={nome:nome,tel:tel,qtd:qtd,msg:msg};
+  document.getElementById('waEmoji').textContent=tipo==='pronto'?'🎉':tipo==='agradecimento'?'🙌':'📲';
+  document.getElementById('waTitulo').textContent=tipo==='pronto'?'Capacete(s) Pronto(s)!':tipo==='agradecimento'?'Agradecimento':'Enviar Recebimento';
+  document.getElementById('waClienteNome').textContent=nome;
+  document.getElementById('waPreview').textContent=msg;
+  document.getElementById('waModal').classList.add('show');
+}
 function fecharWaModal(){document.getElementById('waModal').classList.remove('show');}
 function confirmarEnvioWA(){var tel=waData.tel.replace(/\D/g,'');if(tel.startsWith('0'))tel=tel.substring(1);if(!tel.startsWith('55'))tel='55'+tel;window.open('https://wa.me/'+tel+'?text='+encodeURIComponent(waData.msg),'_blank');fecharWaModal();}
 
@@ -1581,12 +1695,12 @@ function carregarPainelAdmin(){
         aplicarKpisAdmin_(r,'server');
         try{localStorage.setItem('zapKpisAdminServer',JSON.stringify({t:Date.now(),data:r}));}catch(e){}
       }else{
-        console.warn('[ZapClin v4.8.1] buscarKpisAdmin retornou dados zerados/incompletos. Mantendo KPIs locais.',r);
+        console.warn('[ZapClin v4.8.2] buscarKpisAdmin retornou dados zerados/incompletos. Mantendo KPIs locais.',r);
         aplicarKpisAdmin_(localKpis,'server-invalid-fallback');
       }
     })
     .catch(function(err){
-      console.warn('[ZapClin v4.8.1] Falha ao buscar KPIs no servidor. Mantendo fallback local.',err);
+      console.warn('[ZapClin v4.8.2] Falha ao buscar KPIs no servidor. Mantendo fallback local.',err);
       aplicarKpisAdmin_(localKpis,'fallback');
     });
 }
@@ -2325,7 +2439,9 @@ function atualizarCategoria(){var desc=document.getElementById('custoDesc').valu
 function salvarCusto(){var desc=document.getElementById('custoDesc').value.trim();var val=parseFloat(document.getElementById('custoVal').value);var di=document.getElementById('custoData').value;if(!desc){showToast('Informe a descrição','error');return;}if(!val||val<=0){showToast('Informe um valor válido','error');return;}var p=di.split('-');var df=p[2]+'/'+p[1]+'/'+p[0];var btn=document.getElementById('custoBtnSalvar');btn.disabled=true;btn.textContent='⏳ Salvando...';var cat=detectCat(desc);var a=new Date();var hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');custos.unshift({data:df,hora:hh+':'+mi,desc:desc,cat:cat,val:val});localStorage.setItem('zapCustos',JSON.stringify(custos.slice(0,500)));apiGet('salvarCusto',{desc:desc,val:val,data:df},15000).then(function(r){if(r&&r.ok){showToast('💸 Registrado! '+cat,'orange');}else{showToast('⚠️ Custo salvo local.','orange');}}).catch(function(){showToast('⚠️ Custo salvo local.','orange');});document.getElementById('custoDesc').value='';document.getElementById('custoVal').value='';document.getElementById('catBadge').style.display='none';renderCustoList();setTimeout(function(){btn.disabled=false;btn.innerHTML='▶ REGISTRAR CUSTO';},2000);}
 
 // ═══ CLIENTES ═══
-var OBS_CHIPS=[{emoji:'🔴',label:'Arranhado'},{emoji:'💥',label:'Amassado'},{emoji:'👁',label:'Viseira riscada'},{emoji:'🔩',label:'Fivela quebrada'},{emoji:'🤢',label:'Sujo por dentro'},{emoji:'🎨',label:'Pintura danificada'},{emoji:'🪢',label:'Alça quebrada'},{emoji:'🌪',label:'Deformado'}];
+// [v4.8.2 ALTERAÇÃO]
+// Inclusão do marcador operacional "Sujidade crítica" para registrar ciência do cliente quando o serviço escolhido não for compatível com o nível de sujeira identificado.
+var OBS_CHIPS=[{emoji:'🔴',label:'Arranhado'},{emoji:'💥',label:'Amassado'},{emoji:'👁',label:'Viseira riscada'},{emoji:'🔩',label:'Fivela quebrada'},{emoji:'🤢',label:'Sujo por dentro'},{emoji:'🟤',label:'Sujidade crítica'},{emoji:'🎨',label:'Pintura danificada'},{emoji:'🪢',label:'Alça quebrada'},{emoji:'🌪',label:'Deformado'}];
 var _qtdCap=0;
 function stepperMenos(){if(_qtdCap>0)_qtdCap--;_syncStepper();}
 function stepperMais(){if(_qtdCap<20)_qtdCap++;_syncStepper();}
@@ -2344,7 +2460,7 @@ function comprimirFoto(file){return new Promise(function(resolve){var r=new File
 function setProgress(pct,label){document.getElementById('uploadProgress').style.display='block';document.getElementById('progressBar').style.width=pct+'%';if(label)document.getElementById('progressLabel').textContent=label;}
 function salvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;if(!nome){showToast('⚠️ Informe o nome do cliente','error');return;}if(!tel){showToast('⚠️ Informe o telefone','error');return;}if(!qtd){showToast('⚠️ Selecione a quantidade de capacetes','error');return;}for(var vi=0;vi<qtd;vi++){if(!servicosPorCap[vi]||servicosPorCap[vi]===''){showToast('⚠️ Capacete '+(vi+1)+': selecione o serviço','error');return;}if(!fotosSelecionadas[vi]){showToast('⚠️ Capacete '+(vi+1)+': adicione a foto','error');return;}}var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var preview=servicosPorCap.slice(0,qtd).map(function(s,i){return'🪖 Cap.'+(i+1)+': '+s;}).join('\n');if(desc>0)preview+='\n🏷️ Desconto: -'+fmtBRL(desc);preview+='\n\n💰 Total a receber: '+fmtBRL(liq);document.getElementById('vincularPreview').textContent=preview;document.getElementById('vincularModal').classList.add('show');}
 function confirmarVincular(sim){_criarLanc=sim;document.getElementById('vincularModal').classList.remove('show');_executarSalvarCliente();}
-function _executarSalvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var btn=document.getElementById('clienteSaveBtn');btn.disabled=true;btn.textContent='⏳ Comprimindo...';setProgress(10,'Comprimindo fotos...');Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);})).then(function(b64s){setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});}).then(function(r){setProgress(80,'Salvando cadastro...');return r.json();}).then(function(data){setProgress(100,'Concluído! ✅');if(data.ok){var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:desc,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:1,totalVisitas:1};clientes.unshift(novoCliente);localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';if(desc>0)msg+=' (desc. '+fmtBRL(desc)+')';showToast('✅ '+nome+' cadastrado!'+msg,'blue');resetClienteForm();renderClienteList();if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos().then(function(){_calcStatsHome();});}setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd);},1000);}else{showToast('Erro: '+(data.error||'Tente novamente'),'error');}}).catch(function(){showToast('⚠️ Erro ao enviar. Tente novamente.','orange');resetClienteForm();}).finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});}
+function _executarSalvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var btn=document.getElementById('clienteSaveBtn');btn.disabled=true;btn.textContent='⏳ Comprimindo...';setProgress(10,'Comprimindo fotos...');Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);})).then(function(b64s){setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});}).then(function(r){setProgress(80,'Salvando cadastro...');return r.json();}).then(function(data){setProgress(100,'Concluído! ✅');if(data.ok){var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:desc,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:1,totalVisitas:1};clientes.unshift(novoCliente);localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';if(desc>0)msg+=' (desc. '+fmtBRL(desc)+')';showToast('✅ '+nome+' cadastrado!'+msg,'blue');var waDetalhes=montarDetalhesAtendimento_(nome,tel,qtd,servicosPorCap.slice(0,qtd),obsPorCap.slice(0,qtd),data.total||liq,desc);resetClienteForm();renderClienteList();if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos().then(function(){_calcStatsHome();});}setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd,waDetalhes);},1000);}else{showToast('Erro: '+(data.error||'Tente novamente'),'error');}}).catch(function(){showToast('⚠️ Erro ao enviar. Tente novamente.','orange');resetClienteForm();}).finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});}
 function resetClienteForm(){document.getElementById('clienteNome').value='';document.getElementById('clienteTel').value='';_qtdCap=0;document.getElementById('stepperVal').textContent='0';document.getElementById('stepperMenosBtn').disabled=true;document.getElementById('capacetesSection').style.display='none';document.getElementById('capacetesGrid').innerHTML='';fotosSelecionadas=[];servicosPorCap=[];obsPorCap=[];var dEl=document.getElementById('clienteDesconto');if(dEl)dEl.value='';var lEl=document.getElementById('clienteTotalLiquido');if(lEl)lEl.textContent='R$ 0,00';}
 function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=clientes.find(function(c){return c.num==num;});_pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};document.getElementById('pagClienteNome').textContent=_pagData.nome;var now=new Date();document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('pagamentoModal').classList.add('show');return;}_executarMarcarStatus(num,novoStatus,'');}
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
