@@ -2,6 +2,11 @@
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
   Versão : 4.8.2 | Data: 20/05/2026
+  v4.8.3:
+     - Corrige mensagem WhatsApp: remove emojis complexos que quebravam em iOS/WhatsApp
+     - Inclui nome, telefone formatado e data/hora do recebimento no comprovante
+     - Mantém mensagem dinâmica conforme serviço, valor e condições cadastradas
+     - Alerta de Sujidade crítica aparece somente quando marcado
   HOTFIX v4.8.1:
   v4.8.2:
     - Corrige Painel Admin para não sobrescrever KPIs locais válidos com resposta zerada/incompleta do servidor
@@ -1008,7 +1013,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.8.2 | 20/05/2026 — WhatsApp dinâmico do cadastro + Sujidade crítica
+// ZAPCLIN v4.8.3 | 21/05/2026 — WhatsApp compatível + cliente/telefone no comprovante
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1041,7 +1046,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.8.2';
+const APP_VERSION='v4.8.3';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1233,18 +1238,38 @@ function detalhesDoCliente_(nome,tel,qtd){
   if(!c)return null;
   return montarDetalhesAtendimento_(c.nome||nome,c.tel||tel,c.qtd||qtd,c.servicos||[],c.observacoes||[],c.total||0,c.desconto||0);
 }
+// [v4.8.3 ALTERAÇÃO]
+// Montagem da mensagem de WhatsApp sem emojis complexos para evitar caracteres quebrados no iOS/WhatsApp.
+// Inclui vínculo do atendimento: nome do cliente, telefone formatado e data/hora do recebimento.
+function formatarTelefoneBR_(tel){
+  var d=String(tel||'').replace(/\D/g,'');
+  if(d.startsWith('55')&&d.length>11)d=d.substring(2);
+  if(d.length===11)return '('+d.substring(0,2)+') '+d.substring(2,7)+'-'+d.substring(7);
+  if(d.length===10)return '('+d.substring(0,2)+') '+d.substring(2,6)+'-'+d.substring(6);
+  return String(tel||'').trim()||'Não informado';
+}
+function dataHoraRecebimento_(){
+  var d=new Date();
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
 function msgBoasVindas(nome,qtd,detalhes){
   detalhes=detalhes||detalhesDoCliente_(nome,'',qtd)||null;
   var linhas=[];
-  linhas.push('✨ Seja muito bem-vindo(a) à *ZapClin*!');
+  var nomeCliente=(detalhes&&detalhes.nome)||nome||'Cliente';
+  var telCliente=(detalhes&&detalhes.tel)||'';
+  linhas.push('Seja muito bem-vindo(a) à *ZapClin*!');
+  linhas.push('');
+  linhas.push('*Cliente:* '+nomeCliente);
+  linhas.push('*Telefone:* '+formatarTelefoneBR_(telCliente));
+  linhas.push('*Data do recebimento:* '+dataHoraRecebimento_());
   linhas.push('');
   if(!detalhes||!detalhes.servicos||!detalhes.servicos.length){
     var caps=qtd===1?'capacete':'capacetes';
-    linhas.push('Recebemos seu(s) '+qtd+' '+caps+' e cuidaremos de tudo com atenção e profissionalismo. 🪖✨');
+    linhas.push('Recebemos seu(s) '+qtd+' '+caps+' e cuidaremos de tudo com atenção e profissionalismo.');
     linhas.push('');
-    linhas.push('Assim que estiver(em) pronto(s), te avisamos por aqui. 🏍️💨');
+    linhas.push('Assim que estiver(em) pronto(s), avisamos por aqui.');
     linhas.push('');
-    linhas.push('Obrigado por escolher a *ZapClin*! 💙');
+    linhas.push('Obrigado por escolher a *ZapClin*.');
     return linhas.join('\n');
   }
   linhas.push('Recebemos seu atendimento e registramos abaixo as informações identificadas no cadastro:');
@@ -1260,31 +1285,31 @@ function msgBoasVindas(nome,qtd,detalhes){
     if(obs.length)temCondicoes=true;
     if(obs.indexOf('Sujidade crítica')>=0)temSujidadeCritica=true;
     linhas.push('');
-    linhas.push('━━━━━━━━━━━━━━━');
-    linhas.push('🪖 *CAPACETE '+(i+1)+'*');
+    linhas.push('------------------------------');
+    linhas.push('*CAPACETE '+(i+1)+'*');
     linhas.push('');
     linhas.push('*Serviço escolhido:*');
-    linhas.push('⭐ '+svc);
+    linhas.push(svc);
     linhas.push('');
     linhas.push('*Valor:*');
     linhas.push(fmtBRL(preco));
     if(obs.length){
       linhas.push('');
       linhas.push('*Condições identificadas no recebimento:*');
-      obs.forEach(function(o){linhas.push('• '+o);});
+      obs.forEach(function(o){linhas.push('- '+o);});
     }
   }
   var desconto=parseFloat(detalhes.desconto||0)||0;
   var total=parseFloat(detalhes.total||0)||soma;
   if(detalhes.servicos.length>1||desconto>0){
     linhas.push('');
-    linhas.push('━━━━━━━━━━━━━━━');
-    if(desconto>0)linhas.push('🏷️ *Desconto:* -'+fmtBRL(desconto));
-    linhas.push('💰 *Total do atendimento:* '+fmtBRL(total));
+    linhas.push('------------------------------');
+    if(desconto>0)linhas.push('*Desconto:* -'+fmtBRL(desconto));
+    linhas.push('*Total do atendimento:* '+fmtBRL(total));
   }
   if(temSujidadeCritica){
     linhas.push('');
-    linhas.push('⚠️ *SUJIDADE CRÍTICA*');
+    linhas.push('*SUJIDADE CRÍTICA*');
     linhas.push('Foi informado que o serviço escolhido pode não remover completamente toda a sujidade existente no capacete. Mesmo assim, o cliente autorizou a execução conforme sua preferência.');
   }
   if(temCondicoes||temSujidadeCritica){
@@ -1292,7 +1317,7 @@ function msgBoasVindas(nome,qtd,detalhes){
     linhas.push('Ao responder *OK*, o cliente confirma ciência das condições registradas neste atendimento e autoriza a execução do serviço.');
   }
   linhas.push('');
-  linhas.push('Obrigado por escolher a *ZapClin*! 💙');
+  linhas.push('Obrigado por escolher a *ZapClin*.');
   return linhas.join('\n');
 }
 function msgPronto(nome,qtd){var caps=qtd===1?'capacete ficou pronto':'capacetes ficaram prontos';return'Olá, '+nome+'! 🎉\n\nSeu(s) '+qtd+' '+caps+' e está(ão) impecável(is)! 🪖✨\n\nPode vir buscar quando quiser — estamos te esperando! 😊\n\nAté logo,\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
