@@ -1,16 +1,16 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.8.3 | Data: 21/05/2026
-// [v4.8.3 CACHE]
+// Versão: 4.8.4 | Data: 21/05/2026
+// [v4.8.4 CACHE]
 // Cache PWA versionado para reduzir inconsistência entre celular/desktop.
 // Mantém rede como fonte principal para navegação e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.8.3';
-const STATIC_CACHE = 'zapclin-static-v4.8.3';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.8.3';
+const ZAPCLIN_SW_VERSION = 'v4.8.4';
+const STATIC_CACHE = 'zapclin-static-v4.8.4';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.8.4';
 
-// [v4.8.3 CACHE]
+// [v4.8.4 CACHE]
 // Arquivos locais seguros para cache. Não inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
 const APP_SHELL = [
   './',
@@ -50,7 +50,7 @@ self.addEventListener('fetch', event => {
 
   if (req.method !== 'GET') return;
 
-  // [v4.8.3 CACHE]
+  // [v4.8.4 CACHE]
   // Nunca interceptar chamadas do Google Apps Script/Google APIs. Evita cache indevido de dados reais.
   if (
     url.hostname.includes('script.google.com') ||
@@ -60,7 +60,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.8.3 CACHE]
+  // [v4.8.4 CACHE]
   // Navegação: rede primeiro para pegar versão nova; fallback para cache se offline.
   if (req.mode === 'navigate') {
     event.respondWith(
@@ -75,7 +75,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.8.3 CACHE]
+  // [v4.8.4 CACHE]
   // Assets locais: cache primeiro, rede como atualização silenciosa.
   if (url.origin === self.location.origin) {
     event.respondWith(
