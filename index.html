@@ -1013,7 +1013,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.8.3 | 21/05/2026 — WhatsApp compatível + cliente/telefone no comprovante
+// ZAPCLIN v4.8.4 | 21/05/2026 — OS/Atendimento no comprovante WhatsApp
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1046,7 +1046,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.8.3';
+const APP_VERSION='v4.8.4';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1222,8 +1222,9 @@ function buscarClienteParaWhats_(nome,tel){
   }
   return null;
 }
-function montarDetalhesAtendimento_(nome,tel,qtd,servicos,observacoes,total,desconto){
+function montarDetalhesAtendimento_(nome,tel,qtd,servicos,observacoes,total,desconto,os){
   return{
+    os:os||null,
     nome:nome,
     tel:tel,
     qtd:parseInt(qtd||0),
@@ -1236,11 +1237,16 @@ function montarDetalhesAtendimento_(nome,tel,qtd,servicos,observacoes,total,desc
 function detalhesDoCliente_(nome,tel,qtd){
   var c=buscarClienteParaWhats_(nome,tel);
   if(!c)return null;
-  return montarDetalhesAtendimento_(c.nome||nome,c.tel||tel,c.qtd||qtd,c.servicos||[],c.observacoes||[],c.total||0,c.desconto||0);
+  return montarDetalhesAtendimento_(c.nome||nome,c.tel||tel,c.qtd||qtd,c.servicos||[],c.observacoes||[],c.total||0,c.desconto||0,c.num||null);
 }
 // [v4.8.3 ALTERAÇÃO]
 // Montagem da mensagem de WhatsApp sem emojis complexos para evitar caracteres quebrados no iOS/WhatsApp.
-// Inclui vínculo do atendimento: nome do cliente, telefone formatado e data/hora do recebimento.
+// Inclui vínculo do atendimento: OS, nome do cliente, telefone formatado e data/hora do recebimento.
+function formatarOS_(os){
+  var n=parseInt(os||0);
+  if(!n)return 'Não informado';
+  return '#'+String(n).padStart(6,'0');
+}
 function formatarTelefoneBR_(tel){
   var d=String(tel||'').replace(/\D/g,'');
   if(d.startsWith('55')&&d.length>11)d=d.substring(2);
@@ -1259,6 +1265,9 @@ function msgBoasVindas(nome,qtd,detalhes){
   var telCliente=(detalhes&&detalhes.tel)||'';
   linhas.push('Seja muito bem-vindo(a) à *ZapClin*!');
   linhas.push('');
+  // [v4.8.4 NOVO]
+  // Vincula a mensagem ao número real do atendimento retornado pelo backend (clienteId).
+  linhas.push('*Atendimento:* OS '+formatarOS_(detalhes&&detalhes.os));
   linhas.push('*Cliente:* '+nomeCliente);
   linhas.push('*Telefone:* '+formatarTelefoneBR_(telCliente));
   linhas.push('*Data do recebimento:* '+dataHoraRecebimento_());
@@ -2485,7 +2494,7 @@ function comprimirFoto(file){return new Promise(function(resolve){var r=new File
 function setProgress(pct,label){document.getElementById('uploadProgress').style.display='block';document.getElementById('progressBar').style.width=pct+'%';if(label)document.getElementById('progressLabel').textContent=label;}
 function salvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;if(!nome){showToast('⚠️ Informe o nome do cliente','error');return;}if(!tel){showToast('⚠️ Informe o telefone','error');return;}if(!qtd){showToast('⚠️ Selecione a quantidade de capacetes','error');return;}for(var vi=0;vi<qtd;vi++){if(!servicosPorCap[vi]||servicosPorCap[vi]===''){showToast('⚠️ Capacete '+(vi+1)+': selecione o serviço','error');return;}if(!fotosSelecionadas[vi]){showToast('⚠️ Capacete '+(vi+1)+': adicione a foto','error');return;}}var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var preview=servicosPorCap.slice(0,qtd).map(function(s,i){return'🪖 Cap.'+(i+1)+': '+s;}).join('\n');if(desc>0)preview+='\n🏷️ Desconto: -'+fmtBRL(desc);preview+='\n\n💰 Total a receber: '+fmtBRL(liq);document.getElementById('vincularPreview').textContent=preview;document.getElementById('vincularModal').classList.add('show');}
 function confirmarVincular(sim){_criarLanc=sim;document.getElementById('vincularModal').classList.remove('show');_executarSalvarCliente();}
-function _executarSalvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var btn=document.getElementById('clienteSaveBtn');btn.disabled=true;btn.textContent='⏳ Comprimindo...';setProgress(10,'Comprimindo fotos...');Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);})).then(function(b64s){setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});}).then(function(r){setProgress(80,'Salvando cadastro...');return r.json();}).then(function(data){setProgress(100,'Concluído! ✅');if(data.ok){var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:desc,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:1,totalVisitas:1};clientes.unshift(novoCliente);localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';if(desc>0)msg+=' (desc. '+fmtBRL(desc)+')';showToast('✅ '+nome+' cadastrado!'+msg,'blue');var waDetalhes=montarDetalhesAtendimento_(nome,tel,qtd,servicosPorCap.slice(0,qtd),obsPorCap.slice(0,qtd),data.total||liq,desc);resetClienteForm();renderClienteList();if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos().then(function(){_calcStatsHome();});}setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd,waDetalhes);},1000);}else{showToast('Erro: '+(data.error||'Tente novamente'),'error');}}).catch(function(){showToast('⚠️ Erro ao enviar. Tente novamente.','orange');resetClienteForm();}).finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});}
+function _executarSalvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var btn=document.getElementById('clienteSaveBtn');btn.disabled=true;btn.textContent='⏳ Comprimindo...';setProgress(10,'Comprimindo fotos...');Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);})).then(function(b64s){setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});}).then(function(r){setProgress(80,'Salvando cadastro...');return r.json();}).then(function(data){setProgress(100,'Concluído! ✅');if(data.ok){var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:desc,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:1,totalVisitas:1};clientes.unshift(novoCliente);localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';if(desc>0)msg+=' (desc. '+fmtBRL(desc)+')';showToast('✅ '+nome+' cadastrado!'+msg,'blue');var waDetalhes=montarDetalhesAtendimento_(nome,tel,qtd,servicosPorCap.slice(0,qtd),obsPorCap.slice(0,qtd),data.total||liq,desc,data.clienteId);resetClienteForm();renderClienteList();if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos().then(function(){_calcStatsHome();});}setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd,waDetalhes);},1000);}else{showToast('Erro: '+(data.error||'Tente novamente'),'error');}}).catch(function(){showToast('⚠️ Erro ao enviar. Tente novamente.','orange');resetClienteForm();}).finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});}
 function resetClienteForm(){document.getElementById('clienteNome').value='';document.getElementById('clienteTel').value='';_qtdCap=0;document.getElementById('stepperVal').textContent='0';document.getElementById('stepperMenosBtn').disabled=true;document.getElementById('capacetesSection').style.display='none';document.getElementById('capacetesGrid').innerHTML='';fotosSelecionadas=[];servicosPorCap=[];obsPorCap=[];var dEl=document.getElementById('clienteDesconto');if(dEl)dEl.value='';var lEl=document.getElementById('clienteTotalLiquido');if(lEl)lEl.textContent='R$ 0,00';}
 function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=clientes.find(function(c){return c.num==num;});_pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};document.getElementById('pagClienteNome').textContent=_pagData.nome;var now=new Date();document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('pagamentoModal').classList.add('show');return;}_executarMarcarStatus(num,novoStatus,'');}
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
