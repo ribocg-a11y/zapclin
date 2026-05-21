@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.9.0 | Data: 21/05/2026
+  Versão : 4.10.0 | Data: 21/05/2026
+  v4.10.0:
+     - Adiciona gestão operacional editável para clientes, lançamentos e custos
+     - Move ações secundárias para menu contextual, reduzindo poluição visual dos cards
+     - Usa cancelamento lógico auditável em vez de exclusão física imediata
   v4.9.0:
      - Adiciona Painel Admin de LOGS para observabilidade operacional
      - Lista eventos recentes, erros, alertas e telemetria frontend via backend v3.22
@@ -338,6 +342,7 @@
   .cliente-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:10px;transition:border-color .2s}
   .cliente-item.status-pronto{border-color:rgba(0,230,118,.4)}
   .cliente-item.status-entregue{opacity:.6}
+  .cliente-item.status-cancelado,.lanc-item.cancelado{opacity:.52;border-color:rgba(255,68,68,.35)}
   .cli-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
   .visita-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(171,71,188,.2);color:var(--purple);border:1px solid rgba(171,71,188,.3)}
   .visita-badge.primeira{background:rgba(255,215,0,.15);color:#ffd700;border-color:rgba(255,215,0,.3)}
@@ -345,6 +350,7 @@
   .status-badge.andamento{background:rgba(255,145,0,.15);color:var(--orange);border:1px solid rgba(255,145,0,.3)}
   .status-badge.pronto{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.4);animation:pulseGreen 2s infinite}
   .status-badge.entregue{background:rgba(107,107,138,.15);color:var(--muted);border:1px solid var(--border)}
+  .status-badge.cancelado{background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.35)}
   @keyframes pulseGreen{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 4px rgba(0,230,118,0)}}
   .cli-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
   .cli-avatar{width:40px;height:40px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;font-family:var(--font-head)}
@@ -368,6 +374,13 @@
   .cli-btn.wa{background:rgba(37,211,102,.15);color:#25D366;border:1px solid rgba(37,211,102,.3)}
   .cli-btn.blue{background:rgba(68,138,255,.15);color:var(--blue);border:1px solid rgba(68,138,255,.3)}
   .cli-caps-badge{background:rgba(68,138,255,.15);color:var(--blue);border:1px solid rgba(68,138,255,.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600}
+  .item-menu-wrap{position:relative;margin-left:auto}
+  .icon-action{width:34px;height:34px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .item-menu{display:none;position:absolute;right:0;top:38px;z-index:120;background:#151520;border:1px solid var(--border);border-radius:12px;min-width:190px;padding:6px;box-shadow:0 12px 28px rgba(0,0,0,.45)}
+  .item-menu.show{display:block}
+  .item-menu button{width:100%;border:none;background:none;color:var(--text);font-family:var(--font-body);font-size:13px;text-align:left;padding:9px 10px;border-radius:9px;cursor:pointer}
+  .item-menu button:active{background:rgba(255,255,255,.08)}
+  .item-menu button.danger{color:var(--red)}
   .cache-aviso{background:rgba(255,145,0,.1);border:1px solid rgba(255,145,0,.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--orange);display:none}
   .pico-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
   .pico-item:last-child{border-bottom:none}
@@ -445,6 +458,15 @@
   .wa-btn{width:100%;padding:16px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:14px;color:#fff;font-family:var(--font-head);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(37,211,102,.3)}
   .wa-btn:active{transform:scale(.97)}
   .wa-skip{width:100%;padding:13px;background:transparent;border:1px solid var(--border);border-radius:14px;color:var(--muted);font-family:var(--font-head);font-size:13px;cursor:pointer}
+  .edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:820;display:none;align-items:flex-end;justify-content:center}
+  .edit-overlay.show{display:flex}
+  .edit-sheet{background:var(--card);border:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:88vh;overflow:auto;padding:18px 20px 24px}
+  .edit-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .edit-title{font-family:var(--font-head);font-weight:800;font-size:17px;color:var(--text)}
+  .edit-close{width:34px;height:34px;border:none;border-radius:10px;background:var(--surface);color:var(--muted);font-size:18px}
+  .edit-actions{display:flex;gap:8px;margin-top:16px}
+  .edit-actions .save-btn{margin-top:0;padding:14px;font-size:13px}
+  .edit-actions .cancel-edit{background:var(--surface);color:var(--text);box-shadow:none}
   .desconto-section{background:rgba(255,82,82,.05);border:1px solid rgba(255,82,82,.15);border-radius:14px;padding:12px 16px;margin-top:10px;margin-bottom:4px}
   .desconto-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
   .desconto-label{font-size:12px;color:var(--muted)}
@@ -684,6 +706,17 @@
     <div class="wa-preview" id="waPreview"></div>
     <button class="wa-btn" onclick="confirmarEnvioWA()"><span style="font-size:20px">💬</span> Enviar no WhatsApp</button>
     <button class="wa-skip" onclick="fecharWaModal()">Pular por agora</button>
+  </div>
+</div>
+
+<div class="edit-overlay" id="editOverlay" onclick="fecharEditorOperacional(event)">
+  <div class="edit-sheet" onclick="event.stopPropagation()">
+    <div class="edit-head">
+      <div class="edit-title" id="editTitle">Editar</div>
+      <button class="edit-close" onclick="fecharEditorOperacional()">×</button>
+    </div>
+    <div id="editBody"></div>
+    <div class="edit-actions" id="editActions"></div>
   </div>
 </div>
 
@@ -1076,7 +1109,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.9.0 | 21/05/2026 — Painel Admin de LOGS
+// ZAPCLIN v4.10.0 | 21/05/2026 — Gestão operacional editável
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1110,7 +1143,7 @@ const PAGE_TITLES={
 const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.9.0';
+const APP_VERSION='v4.10.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1284,10 +1317,18 @@ function carregarCacheInicial_(){
 function fmtData(v){if(!v)return'—';var s=String(v);if(/^\d{2}\/\d{2}\/\d{4}$/.test(s))return s;var d=new Date(v);if(!isNaN(d.getTime())){var p=s.split('T')[0].split('-');if(p.length===3)return p[2]+'/'+p[1]+'/'+p[0];return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}return s;}
 function fmtHora(v){if(!v)return'—';var s=String(v);if(/^\d{2}:\d{2}$/.test(s))return s;var d=new Date(v);if(!isNaN(d.getTime()))return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');return s;}
 function fmtBRL(v){return'R$\u00a0'+parseFloat(v||0).toFixed(2).replace('.',',');}
+function parseBRDateInput_(br){var p=String(br||'').split('/');return p.length===3?p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0'):'';}
+function inputDateToBR_(iso){var p=String(iso||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:'';}
+function jsStr_(v){return String(v||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');}
+function fecharMenusOperacionais(){document.querySelectorAll('.item-menu.show').forEach(function(m){m.classList.remove('show');});}
+function toggleMenuOperacional(id){var el=document.getElementById(id);if(!el)return;var on=el.classList.contains('show');fecharMenusOperacionais();if(!on)el.classList.add('show');}
+document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.item-menu-wrap'))fecharMenusOperacionais();});
+function abrirEditorOperacional(titulo,bodyHtml,actionsHtml){document.getElementById('editTitle').textContent=titulo;document.getElementById('editBody').innerHTML=bodyHtml;document.getElementById('editActions').innerHTML=actionsHtml;document.getElementById('editOverlay').classList.add('show');}
+function fecharEditorOperacional(){var ov=document.getElementById('editOverlay');if(ov)ov.classList.remove('show');}
 function detectCat(desc){var d=desc.toLowerCase();if(/sal[aá]rio|funcionário|funcionario|colaborador/.test(d))return'Salários';if(/produto|insumo|sab[aã]o|detergente|esponja|luva|pano|microfibra|shampoo|cera|polish|limpador|material/.test(d))return'Produtos/Insumos';if(/ferramenta|equipamento|m[áa]quina|compressor|pistola|mangueira|carrinho|estante|aquisi[cç][aã]o/.test(d))return'Ferramentas/Equipamentos';if(/transporte|combust[ií]vel|gasolina|[aá]lcool|etanol|uber|corrida|[oô]nibus|passagem/.test(d))return'Transporte';if(/[aá]gua|luz|energia|internet|aluguel|conta|mensalidade|plano|lavanderia/.test(d))return'Utilidades';if(/comida|lanche|alimenta[cç][aã]o|refei[cç][aã]o|caf[eé]|marmita|mercado|supermercado/.test(d))return'Comida';if(/taxa|boleto|imposto|das|mei|nota|fiscal|tributo|multa|juro|parcela|financiamento|alvar[aá]/.test(d))return'Taxas e Boletos';return'Outros';}
 function getCatIcon(key){for(var i=0;i<CATEGORIAS.length;i++)if(CATEGORIAS[i].key===key)return CATEGORIAS[i].icon;return'📦';}
 function nthVisita(n){return(n||1)+'ª visita';}
-function statusClass(s){if(s==='Pronto')return'pronto';if(s==='Entregue')return'entregue';return'andamento';}
+function statusClass(s){if(s==='Pronto')return'pronto';if(s==='Entregue')return'entregue';if(s==='Cancelado')return'cancelado';return'andamento';}
 
 // ═══ FILA PENDENTES ═══
 function getPendentes(){return JSON.parse(localStorage.getItem('zapPendentes')||'[]');}
@@ -2616,6 +2657,25 @@ function salvar(){if(selected.size===0){showToast('Selecione ao menos um serviç
 function atualizarCategoria(){var desc=document.getElementById('custoDesc').value;var badge=document.getElementById('catBadge');if(desc.length>2){badge.textContent=getCatIcon(detectCat(desc))+' '+detectCat(desc);badge.style.display='inline-block';}else{badge.style.display='none';}}
 function salvarCusto(){var desc=document.getElementById('custoDesc').value.trim();var val=parseFloat(document.getElementById('custoVal').value);var di=document.getElementById('custoData').value;if(!desc){showToast('Informe a descrição','error');return;}if(!val||val<=0){showToast('Informe um valor válido','error');return;}var p=di.split('-');var df=p[2]+'/'+p[1]+'/'+p[0];var btn=document.getElementById('custoBtnSalvar');btn.disabled=true;btn.textContent='⏳ Salvando...';var cat=detectCat(desc);var a=new Date();var hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');custos.unshift({data:df,hora:hh+':'+mi,desc:desc,cat:cat,val:val});localStorage.setItem('zapCustos',JSON.stringify(custos.slice(0,500)));apiGet('salvarCusto',{desc:desc,val:val,data:df},15000).then(function(r){if(r&&r.ok){showToast('💸 Registrado! '+cat,'orange');logEventoSistema_('OPERACAO','salvarCusto','OK','Custo registrado',{categoria:cat,valor:val});}else{showToast('⚠️ Custo salvo local.','orange');logEventoSistema_('OPERACAO','salvarCusto','ALERTA','Custo salvo local',{categoria:cat,valor:val});}}).catch(function(){showToast('⚠️ Custo salvo local.','orange');logEventoSistema_('OPERACAO','salvarCusto','ERRO','Falha API ao registrar custo',{categoria:cat,valor:val});});document.getElementById('custoDesc').value='';document.getElementById('custoVal').value='';document.getElementById('catBadge').style.display='none';renderCustoList();setTimeout(function(){btn.disabled=false;btn.innerHTML='▶ REGISTRAR CUSTO';},2000);}
 
+function abrirEditarCusto(row){
+  var c=custos.find(function(x){return String(x.row)===String(row);});if(!c)return;
+  abrirEditorOperacional('Editar custo',
+    '<div class="form-group"><label class="form-label">Data</label><input class="form-input" type="date" id="editCustoData" value="'+parseBRDateInput_(c.data)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Descrição</label><input class="form-input" id="editCustoDesc" value="'+escapeHtml_(c.desc)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Valor (R$)</label><input class="form-input" type="number" step="0.01" id="editCustoVal" value="'+(parseFloat(c.val)||0)+'"></div>',
+    '<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Cancelar</button><button class="save-btn orange" onclick="salvarEdicaoCusto('+row+')">Salvar</button>'
+  );
+}
+function salvarEdicaoCusto(row){
+  var desc=document.getElementById('editCustoDesc').value.trim(),val=parseFloat(document.getElementById('editCustoVal').value),data=inputDateToBR_(document.getElementById('editCustoData').value),cat=detectCat(desc);
+  if(!desc||!(val>=0)||!data){showToast('Preencha os dados do custo','error');return;}
+  apiGet('editarCusto',{row:row,desc:desc,val:val,data:data,cat:cat},15000).then(function(r){if(r&&r.ok){showToast('Custo atualizado','orange');logEventoSistema_('OPERACAO','editarCusto','OK','Custo editado',{row:row});fecharEditorOperacional();carregarCustos();}else showToast('Erro ao editar custo','error');}).catch(function(){showToast('Falha ao editar custo','error');});
+}
+function cancelarCusto(row){
+  if(!confirm('Cancelar este custo? O registro fica preservado, mas o valor passa a zero.'))return;
+  apiGet('cancelarCusto',{row:row},15000).then(function(r){if(r&&r.ok){showToast('Custo cancelado','orange');logEventoSistema_('OPERACAO','cancelarCusto','OK','Custo cancelado',{row:row});carregarCustos();}else showToast('Erro ao cancelar custo','error');}).catch(function(){showToast('Falha ao cancelar custo','error');});
+}
+
 // ═══ CLIENTES ═══
 // [v4.8.2 ALTERAÇÃO]
 // Inclusão do marcador operacional "Sujidade crítica" para registrar ciência do cliente quando o serviço escolhido não for compatível com o nível de sujeira identificado.
@@ -2649,10 +2709,34 @@ function _executarMarcarStatus(num,novoStatus,dataPagamento){for(var i=0;i<clien
 function filtrarClientes(query){var q=(query||'').toLowerCase().trim();var qDigits=q.replace(/\D/g,'');clientesFiltrados=q?clientes.filter(function(c){var os=String(c.num||'');var osPad=String(c.num||'').padStart(6,'0');return (c.nome||'').toLowerCase().indexOf(q)>=0||(c.tel||'').replace(/\D/g,'').indexOf(qDigits)>=0||(qDigits&&((os.indexOf(qDigits)>=0)||(osPad.indexOf(qDigits)>=0)))||('os '+os).indexOf(q)>=0||('#'+osPad).indexOf(q)>=0;}):clientes.slice();renderClienteList();}
 function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var src=clientesFiltrados.length>0||document.getElementById('clienteSearch').value?clientesFiltrados:clientes;var ordenados=src.slice().sort(function(a,b){var ord={Pronto:0,'Em andamento':1,Entregue:2};return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var visitaLabel=nthVisita(c.numVisita||1);var isPrimeira=(c.numVisita||1)===1;var svcsHtml='';if(svcs.length>0){var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+obs[i]+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">🪖 Cap.'+(i+1)+': '+s+'</span>'+o+'</div>';}).filter(Boolean).join('');if(linhas)svcsHtml='<div class="cli-servicos">'+linhas+'</div>';}var statusBtns='';if(c.status==='Em andamento'){statusBtns='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">✅ Marcar Pronto</button>';}else if(c.status==='Pronto'){statusBtns='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">📦 Entregue</button>';}else{statusBtns='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">🔄 Reabrir</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'agradecimento\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🙌 Obrigado</button>';}var waProntoBtn=c.status!=='Em andamento'?'<button class="cli-btn wa" onclick="mostrarWaModal(\'pronto\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">🎉 WA Pronto</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'">'+'<div class="cli-top">'+'<span class="visita-badge'+(isPrimeira?' primeira':'')+'">'+visitaLabel+'</span>'+'<span class="info-badge vinculo" title="Ordem de Serviço">OS '+formatarOS_(c.num)+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+c.status+'</span>'+'</div>'+'<div class="cli-header">'+'<div class="cli-avatar">'+ini+'</div>'+'<div style="flex:1;min-width:0">'+'<div class="cli-nome">'+c.nome+'</div>'+'<div class="cli-tel">📱 '+c.tel+'</div>'+'</div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+ '</div>'+svcsHtml+'<div class="cli-footer">'+'<span class="cli-caps-badge">🪖 '+c.qtd+' cap.</span>'+'<span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.status!=='Entregue'?(function(){var min=calcMinutos(c.data,c.hora);return min!==null?'<span id="timer-'+c.num+'" style="font-size:11px;font-weight:700;color:'+timerCor(min)+';">⏱ '+fmtTempo(min)+'</span>':'';})():'')+(c.pasta?'<a class="cli-link" href="'+c.pasta+'" target="_blank">📁 Drive</a>':'')+(c.dataPagamento?'<span class="info-badge pagamento">💰 Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">🏷️ -'+fmtBRL(c.desconto)+'</span>':'')+(c.lancamentosVinculados?'<span class="info-badge vinculo">📊 Vinculado</span>':'')+'</div>'+'<div class="cli-actions">'+statusBtns+waProntoBtn+'<button class="cli-btn" onclick="copiarResumoOS('+(c.num)+')">📋 Copiar OS</button>'+'<button class="cli-btn wa" onclick="mostrarWaModal(\'boasVindas\',\''+(c.nome).replace(/'/g,'')+'\',\''+(c.tel)+'\','+(c.qtd)+')">💬 WA Boas-vindas</button>'+'</div>'+'</div>';}).join('');}
 
+function abrirEditarCliente(num){
+  var c=clientes.find(function(x){return String(x.num)===String(num);});if(!c)return;
+  var statusOpts=['Em andamento','Pronto','Entregue','Cancelado'].map(function(s){return'<option value="'+s+'" '+(c.status===s?'selected':'')+'>'+s+'</option>';}).join('');
+  abrirEditorOperacional('Editar cliente',
+    '<div class="form-group"><label class="form-label">Nome</label><input class="form-input blue" id="editCliNome" value="'+escapeHtml_(c.nome)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Telefone</label><input class="form-input blue" id="editCliTel" value="'+escapeHtml_(c.tel)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Quantidade de capacetes</label><input class="form-input blue" type="number" min="1" id="editCliQtd" value="'+(parseInt(c.qtd)||1)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Status</label><select class="form-input blue" id="editCliStatus">'+statusOpts+'</select></div>'+
+    '<div class="form-group"><label class="form-label">Total (R$)</label><input class="form-input blue" type="number" step="0.01" id="editCliTotal" value="'+(parseFloat(c.total)||0)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Desconto (R$)</label><input class="form-input blue" type="number" step="0.01" id="editCliDesc" value="'+(parseFloat(c.desconto)||0)+'"></div>',
+    '<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Cancelar</button><button class="save-btn blue" onclick="salvarEdicaoCliente('+num+')">Salvar</button>'
+  );
+}
+function salvarEdicaoCliente(num){
+  var nome=document.getElementById('editCliNome').value.trim(),tel=document.getElementById('editCliTel').value.trim(),qtd=parseInt(document.getElementById('editCliQtd').value||1,10),status=document.getElementById('editCliStatus').value,total=parseFloat(document.getElementById('editCliTotal').value||0),desconto=parseFloat(document.getElementById('editCliDesc').value||0);
+  if(!nome||!tel||!qtd){showToast('Preencha os dados do cliente','error');return;}
+  apiGet('editarCliente',{num:num,nome:nome,tel:tel,qtd:qtd,status:status,total:total,desconto:desconto},15000).then(function(r){if(r&&r.ok){showToast('Cliente atualizado','blue');logEventoSistema_('CLIENTE','editarCliente','OK','Cliente editado',{os:num});fecharEditorOperacional();carregarClientes();}else showToast('Erro ao editar cliente','error');}).catch(function(){showToast('Falha ao editar cliente','error');});
+}
+function cancelarCliente(num){
+  if(!confirm('Cancelar este cadastro? Ele ficará preservado no histórico com status Cancelado.'))return;
+  apiGet('cancelarCliente',{num:num},15000).then(function(r){if(r&&r.ok){showToast('Cadastro cancelado','orange');logEventoSistema_('CLIENTE','cancelarCliente','OK','Cliente cancelado',{os:num});carregarClientes();}else showToast('Erro ao cancelar cliente','error');}).catch(function(){showToast('Falha ao cancelar cliente','error');});
+}
+function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var search=(document.getElementById('clienteSearch')||{}).value||'';var src=clientesFiltrados.length>0||search?clientesFiltrados:clientes;var ord={Pronto:0,'Em andamento':1,Entregue:2,Cancelado:3};var ordenados=src.slice().sort(function(a,b){return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var menuId='menuCli'+c.num;var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+escapeHtml_(Array.isArray(obs[i])?obs[i].join(', '):obs[i])+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">Cap.'+(i+1)+': '+escapeHtml_(s)+'</span>'+o+'</div>';}).filter(Boolean).join('');var svcsHtml=linhas?'<div class="cli-servicos">'+linhas+'</div>':'';var principal='';if(c.status==='Em andamento')principal='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">Marcar pronto</button>';else if(c.status==='Pronto')principal='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">Entregue</button>';else if(c.status==='Entregue')principal='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">Reabrir</button>';var waBtn=c.status!=='Cancelado'?'<button class="cli-btn wa" onclick="mostrarWaModal(\''+(c.status==='Entregue'?'agradecimento':'boasVindas')+'\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'"><div class="cli-top"><span class="info-badge vinculo">OS '+formatarOS_(c.num)+'</span>'+(c.totalVisitas>1?'<span style="font-size:10px;color:var(--muted)">'+c.totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+escapeHtml_(c.status||'Em andamento')+'</span><div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+menuId+'\')">⋯</button><div class="item-menu" id="'+menuId+'"><button onclick="abrirEditarCliente('+c.num+')">Editar cadastro</button><button onclick="copiarResumoOS('+c.num+')">Copiar OS</button>'+(c.pasta?'<button onclick="window.open(\''+jsStr_(c.pasta)+'\',\'_blank\')">Abrir Drive</button>':'')+'<button onclick="mostrarWaModal(\'boasVindas\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp boas-vindas</button><button class="danger" onclick="cancelarCliente('+c.num+')">Cancelar cadastro</button></div></div></div><div class="cli-header"><div class="cli-avatar">'+escapeHtml_(ini)+'</div><div style="flex:1;min-width:0"><div class="cli-nome">'+escapeHtml_(c.nome)+'</div><div class="cli-tel">'+escapeHtml_(c.tel)+'</div></div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+'</div>'+svcsHtml+'<div class="cli-footer"><span class="cli-caps-badge">'+(c.qtd||1)+' cap.</span><span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+(c.dataPagamento?'<span class="info-badge pagamento">Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">-'+fmtBRL(c.desconto)+'</span>':'')+'</div><div class="cli-actions">'+principal+waBtn+'</div></div>';}).join('');}
+
 // ═══ BUSCAR / LISTAR ═══
-function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
-function buscarCustos(){return apiGet('listarCustos',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){custos=j.items;localStorage.setItem('zapCustos',JSON.stringify(custos));return true;}return false;}).catch(function(){return false;});}
-function buscarClientes(){return apiGet('listarClientes',{},12000).then(function(j){if(j&&j.ok&&j.items&&j.items.length>0){clientes=j.items;clientesFiltrados=clientes.slice();localStorage.setItem('zapClientes',JSON.stringify(clientes));return true;}return false;}).catch(function(){return false;});}
+function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
+function buscarCustos(){return apiGet('listarCustos',{},12000).then(function(j){if(j&&j.ok&&j.items){custos=j.items;localStorage.setItem('zapCustos',JSON.stringify(custos));return true;}return false;}).catch(function(){return false;});}
+function buscarClientes(){return apiGet('listarClientes',{},12000).then(function(j){if(j&&j.ok&&j.items){clientes=j.items;clientesFiltrados=clientes.slice();localStorage.setItem('zapClientes',JSON.stringify(clientes));return true;}return false;}).catch(function(){return false;});}
 function escapeHtml_(v){return String(v||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function buscarLogsAdmin(){return apiGet('listarLogsAdmin',{limite:80},12000).then(function(j){if(j&&j.ok&&j.items){logsAdmin=j.items;logsAdminFiltrados=logsAdmin.slice();try{localStorage.setItem('zapAdminLogs',JSON.stringify({resumo:j.resumo||{},items:logsAdmin}));}catch(e){}return j;}return null;}).catch(function(){return null;});}
 function logStatusClass_(status){var s=String(status||'INFO').toUpperCase();if(s==='ERRO')return'erro';if(s==='ALERTA')return'alerta';if(s==='OK')return'ok';return'info';}
@@ -2704,9 +2788,27 @@ function carregarLogsAdmin(force){
     else if(list){list.innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Não foi possível carregar os logs.</div></div>';}
   });
 }
-function carregarLancamentos(){var list=document.getElementById('lancList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');if(!lancamentos.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>';return;}list.innerHTML=lancamentos.slice(0,100).map(function(l){return'<div class="lanc-item"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+l.svc+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div></div>';}).join('');});}
+function abrirEditarLancamento(row){
+  var l=lancamentos.find(function(x){return String(x.row)===String(row);});if(!l)return;
+  abrirEditorOperacional('Editar lançamento',
+    '<div class="form-group"><label class="form-label">Serviço</label><input class="form-input" id="editLancSvc" value="'+escapeHtml_(l.svc)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Data</label><input class="form-input" type="date" id="editLancData" value="'+parseBRDateInput_(l.data)+'"></div>'+
+    '<div class="form-group"><label class="form-label">Valor (R$)</label><input class="form-input" type="number" step="0.01" id="editLancVal" value="'+(parseFloat(l.val)||0)+'"></div>',
+    '<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Cancelar</button><button class="save-btn blue" onclick="salvarEdicaoLancamento('+row+')">Salvar</button>'
+  );
+}
+function salvarEdicaoLancamento(row){
+  var svc=document.getElementById('editLancSvc').value.trim(),val=parseFloat(document.getElementById('editLancVal').value),data=inputDateToBR_(document.getElementById('editLancData').value);
+  if(!svc||!(val>=0)||!data){showToast('Preencha os dados do lançamento','error');return;}
+  apiGet('editarLancamento',{row:row,svc:svc,val:val,data:data},15000).then(function(r){if(r&&r.ok){showToast('Lançamento atualizado','blue');logEventoSistema_('OPERACAO','editarLancamento','OK','Lançamento editado',{row:row});fecharEditorOperacional();carregarLancamentos();refreshDados(true);}else showToast('Erro ao editar lançamento','error');}).catch(function(){showToast('Falha ao editar lançamento','error');});
+}
+function cancelarLancamento(row){
+  if(!confirm('Cancelar este lançamento? O registro fica preservado, mas o valor passa a zero.'))return;
+  apiGet('cancelarLancamento',{row:row},15000).then(function(r){if(r&&r.ok){showToast('Lançamento cancelado','orange');logEventoSistema_('OPERACAO','cancelarLancamento','OK','Lançamento cancelado',{row:row});carregarLancamentos();refreshDados(true);}else showToast('Erro ao cancelar lançamento','error');}).catch(function(){showToast('Falha ao cancelar lançamento','error');});
+}
+function carregarLancamentos(){var list=document.getElementById('lancList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');if(!lancamentos.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro ainda.</div></div>';return;}list.innerHTML=lancamentos.slice(0,100).map(function(l,i){var id='menuLanc'+(l.row||i);return'<div class="lanc-item'+(l.cancelado?' cancelado':'')+'"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+escapeHtml_(l.svc)+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+(l.num?' · #'+l.num:'')+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div>'+(l.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarLancamento('+l.row+')">Editar lançamento</button><button class="danger" onclick="cancelarLancamento('+l.row+')">Cancelar lançamento</button></div></div>':'')+'</div>';}).join('');});}
 function carregarCustos(){buscarCustos().then(function(ok){if(!ok)custos=JSON.parse(localStorage.getItem('zapCustos')||'[]');renderCustoList();});}
-function renderCustoList(){var list=document.getElementById('custoList');if(!custos.length){list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum custo ainda.</div></div>';return;}list.innerHTML=custos.slice(0,50).map(function(c){return'<div class="lanc-item"><div class="lanc-dot red"></div><div class="lanc-info"><div class="lanc-svc">'+getCatIcon(c.cat)+' '+c.desc+'</div><div class="lanc-meta">'+c.cat+' · '+fmtData(c.data)+'</div></div><div class="lanc-val red">-'+fmtBRL(c.val)+'</div></div>';}).join('');}
+function renderCustoList(){var list=document.getElementById('custoList');if(!custos.length){list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum custo ainda.</div></div>';return;}list.innerHTML=custos.slice(0,50).map(function(c,i){var id='menuCusto'+(c.row||i);return'<div class="lanc-item'+(c.cancelado?' cancelado':'')+'"><div class="lanc-dot red"></div><div class="lanc-info"><div class="lanc-svc">'+getCatIcon(c.cat)+' '+escapeHtml_(c.desc)+'</div><div class="lanc-meta">'+escapeHtml_(c.cat)+' · '+fmtData(c.data)+'</div></div><div class="lanc-val red">-'+fmtBRL(c.val)+'</div>'+(c.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarCusto('+c.row+')">Editar custo</button><button class="danger" onclick="cancelarCusto('+c.row+')">Cancelar custo</button></div></div>':'')+'</div>';}).join('');}
 function carregarClientes(){var list=document.getElementById('clienteList');list.innerHTML='<div class="loading"><div class="spinner"></div> Carregando...</div>';document.getElementById('clienteSearch').value='';buscarClientes().then(function(ok){if(!ok){clientes=JSON.parse(localStorage.getItem('zapClientes')||'[]');clientesFiltrados=clientes.slice();}renderClienteList();});}
 
 
@@ -2758,7 +2860,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.9.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.10.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
