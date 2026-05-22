@@ -28,6 +28,7 @@ Status: iniciada em `v4.13.1`.
 - Adicionado feedback visual ao mudar status operacional.
 - Revisada fonte numerica para KPIs e valores.
 - Corrigido formato BRL com separador de milhar no padrao brasileiro.
+- Reforco v4.14.1: fonte numerica aplicada em todas as telas onde ainda havia classes antigas, sem mudar fluxo operacional.
 
 ## Fase 23D1 - Relacionamento E Fidelidade
 

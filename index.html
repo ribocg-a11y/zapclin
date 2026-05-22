@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.14.0 | Data: 22/05/2026
+  Versão : 4.14.1 | Data: 22/05/2026
+  v4.14.1:
+     - Padroniza fonte numerica em todas as telas operacionais, historico, vendas, CRM e relatorios
+     - Mantem leitura tabular para valores, OS, rankings, tempos e KPIs sem alterar regras de negocio
   v4.14.0:
      - Adiciona Relacionamento/CRM para recorrência, manutenção 30+ dias, campanhas e fidelidade
      - Inclui link de cadastro VIP na mensagem de recebimento apenas para primeira visita
@@ -125,7 +128,7 @@
   .sb-logo-area{display:flex;align-items:center;gap:10px;padding:20px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
   .sb-logo-img{width:36px;height:36px;border-radius:9px;object-fit:cover;flex-shrink:0;box-shadow:0 0 12px rgba(0,229,255,.2)}
   .sb-brand-wrap{display:flex;flex-direction:column}
-  .sb-brand-name{font-family:var(--font-head);font-size:17px;font-weight:800;line-height:1;letter-spacing:-.5px}
+  .sb-brand-name{font-family:var(--font-head);font-size:17px;font-weight:800;line-height:1;letter-spacing:0}
   .sb-brand-z{color:var(--cyan)}
   .sb-brand-c{color:#fff}
   .sb-status{display:flex;align-items:center;gap:5px;margin-top:3px}
@@ -530,7 +533,7 @@
   .skeleton-card{height:88px;border-radius:14px;border:1px solid var(--border);background:linear-gradient(90deg,rgba(255,255,255,.035),rgba(255,255,255,.085),rgba(255,255,255,.035));background-size:220% 100%;animation:skeletonMove 1.1s ease-in-out infinite}
   .skeleton-card.sm{height:54px}.skeleton-card.lg{height:120px}
   @keyframes skeletonMove{0%{background-position:100% 0}100%{background-position:-100% 0}}
-  .kpi-value,.dash-kpi-val,.op-kpi-val,.venda-kpi-val,.cli-total,.lanc-val,.venda-rank-val,.tempo-badge,.op-time,.op-os,.rank-val,.hist-rank-val,.hist-item-val{font-family:var(--font-data)!important;font-variant-numeric:tabular-nums;letter-spacing:0;font-feature-settings:"tnum" 1}
+  .kpi-value,.dash-kpi-val,.op-kpi-val,.venda-kpi-val,.crm-val,.cli-total,.lanc-val,.rank-num,.rank-val,.balanco-val,.total-value,.total-cli-val,.cap-price-badge,.stepper-val,.hs-val,.alug-val,.desconto-liquido,.donut-legend-pct,.venda-rank-n,.venda-rank-val,.tempo-badge,.op-kpi-val,.op-time,.op-os,.op-lane-count,.hist-kpi-val,.hist-periodo-badge,.hist-rank-n,.hist-rank-val,.hist-item-val,.log-time,.log-badge,.info-badge,.status-badge,.visita-badge,.cli-caps-badge,.cli-data{font-family:var(--font-data)!important;font-variant-numeric:tabular-nums;letter-spacing:0;font-feature-settings:"tnum" 1}
   .cliente-item.status-flash,.op-card.status-flash{animation:statusFlash .75s ease}
   @keyframes statusFlash{0%{transform:scale(.985);box-shadow:0 0 0 rgba(23,217,130,0)}35%{transform:scale(1.01);box-shadow:0 0 24px rgba(23,217,130,.24)}100%{transform:scale(1);box-shadow:none}}
   /* ═══ DASHBOARD GRÁFICOS ═══ */
@@ -1352,7 +1355,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.14.0 | 22/05/2026 — Relacionamento e fidelidade
+// ZAPCLIN v4.14.1 | 22/05/2026 — Ajuste visual de fonte numerica
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1398,7 +1401,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.14.0';
+const APP_VERSION='v4.14.1';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
