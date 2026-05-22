@@ -1,17 +1,17 @@
-// ============================================================
-// ZAPCLIN — SERVICE WORKER
-// Versão: 4.11.0 | Data: 21/05/2026
-// [v4.11.0 CACHE]
-// Cache PWA versionado para reduzir inconsistência entre celular/desktop.
-// Mantém rede como fonte principal para navegação e usa cache como fallback.
+﻿// ============================================================
+// ZAPCLIN â€” SERVICE WORKER
+// VersÃ£o: 4.12.0 | Data: 21/05/2026
+// [v4.12.0 CACHE]
+// Cache PWA versionado para reduzir inconsistÃªncia entre celular/desktop.
+// MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.11.0';
-const STATIC_CACHE = 'zapclin-static-v4.11.0';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.11.0';
+const ZAPCLIN_SW_VERSION = 'v4.12.0';
+const STATIC_CACHE = 'zapclin-static-v4.12.0';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.12.0';
 
-// [v4.11.0 CACHE]
-// Arquivos locais seguros para cache. Não inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
+// [v4.12.0 CACHE]
+// Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
 const APP_SHELL = [
   './',
   './index.html',
@@ -50,7 +50,7 @@ self.addEventListener('fetch', event => {
 
   if (req.method !== 'GET') return;
 
-  // [v4.11.0 CACHE]
+  // [v4.12.0 CACHE]
   // Nunca interceptar chamadas do Google Apps Script/Google APIs. Evita cache indevido de dados reais.
   if (
     url.hostname.includes('script.google.com') ||
@@ -60,8 +60,8 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.11.0 CACHE]
-  // Navegação: rede primeiro para pegar versão nova; fallback para cache se offline.
+  // [v4.12.0 CACHE]
+  // NavegaÃ§Ã£o: rede primeiro para pegar versÃ£o nova; fallback para cache se offline.
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req, { cache: 'no-store' })
@@ -75,8 +75,8 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.11.0 CACHE]
-  // Assets locais: cache primeiro, rede como atualização silenciosa.
+  // [v4.12.0 CACHE]
+  // Assets locais: cache primeiro, rede como atualizaÃ§Ã£o silenciosa.
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(req).then(cached => {
