@@ -17,7 +17,7 @@ Esta fase foi antecipada para organizar a evolucao visual, gerencial e automatiz
 
 ## Fase 23A - Tokens Visuais E Hierarquia
 
-Status: iniciada em `v4.13.1`.
+Status: concluida em `v4.15.0`.
 
 - Criados tokens semanticos de cor no frontend.
 - Reduzida a saturacao constante do neon sem perder identidade ZapClin.
@@ -30,6 +30,7 @@ Status: iniciada em `v4.13.1`.
 - Corrigido formato BRL com separador de milhar no padrao brasileiro.
 - Reforco v4.14.1: fonte numerica aplicada em todas as telas onde ainda havia classes antigas, sem mudar fluxo operacional.
 - Hotfix v4.14.2/v3.31: Revitalizacao passa a ter SLA de 24h/1440min, mantendo soma por capacete e congelamento ao marcar Pronto.
+- Reforco v4.15.0: acabamento visual operacional perceptivel com superficies mais limpas, sidebar mais silenciosa, cards e KPIs com hierarquia mais forte, formularios com foco claro, Operacao/CRM/clientes com estados semanticos e responsividade mais polida.
 
 ## Fase 23D1 - Relacionamento E Fidelidade
 

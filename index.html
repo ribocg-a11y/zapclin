@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.14.3 | Data: 22/05/2026
+  Versão : 4.15.0 | Data: 22/05/2026
+  v4.15.0:
+    - Aplica revisão visual operacional com superfícies mais limpas, hierarquia forte e menor saturação constante
+    - Padroniza cartões, KPIs, formulários, listas e estados visuais sem alterar fluxos de negócio
+    - Melhora leitura em desktop/mobile mantendo identidade escura/neon da ZapClin
   v4.14.3:
      - Adiciona leitura do beneficio Clube VIP/aniversario aplicado pelo backend
      - Destaca card com desconto auditado e total liquido quando a regra for comprovada
@@ -122,7 +126,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--zc-bg:#090a0f;--zc-surface:#11131b;--zc-card:#171923;--zc-card-2:#1d2030;--zc-line:#2a2f42;--zc-text:#eef2ff;--zc-muted:#8b90ad;--zc-muted-2:#69708f;--zc-brand:#00d7f5;--zc-brand-soft:rgba(0,215,245,.10);--zc-info:#4f8cff;--zc-success:#17d982;--zc-warning:#ffad42;--zc-danger:#ff5a66;--zc-money:#15e07f;--zc-premium:#b86cff;--bg:var(--zc-bg);--surface:var(--zc-surface);--card:var(--zc-card);--border:var(--zc-line);--cyan:var(--zc-brand);--green:var(--zc-success);--yellow:#f4d35e;--red:var(--zc-danger);--orange:var(--zc-warning);--blue:var(--zc-info);--purple:var(--zc-premium);--text:var(--zc-text);--muted:var(--zc-muted);--radius:16px;--sb-w:240px;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-data:'Inter','DM Sans',system-ui,sans-serif}
+  :root{--zc-bg:#07080d;--zc-surface:#10131b;--zc-card:#151924;--zc-card-2:#1b2130;--zc-card-3:#202838;--zc-line:#293144;--zc-line-soft:#202738;--zc-text:#f5f7ff;--zc-muted:#9aa3bf;--zc-muted-2:#68718e;--zc-brand:#00d4ee;--zc-brand-soft:rgba(0,212,238,.10);--zc-info:#5b8dff;--zc-success:#19d27f;--zc-warning:#ffae43;--zc-danger:#ff5967;--zc-money:#18db84;--zc-premium:#b879ff;--zc-panel:linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,.018));--zc-shadow:0 18px 48px rgba(0,0,0,.26);--bg:var(--zc-bg);--surface:var(--zc-surface);--card:var(--zc-card);--border:var(--zc-line);--cyan:var(--zc-brand);--green:var(--zc-success);--yellow:#f4d35e;--red:var(--zc-danger);--orange:var(--zc-warning);--blue:var(--zc-info);--purple:var(--zc-premium);--text:var(--zc-text);--muted:var(--zc-muted);--radius:14px;--sb-w:240px;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-data:'Inter','DM Sans',system-ui,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
 
@@ -735,6 +739,61 @@
   .crm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .crm-actions .cli-btn{margin:0}
   @media(max-width:900px){.crm-grid,.crm-list{grid-template-columns:1fr}.crm-actions .cli-btn{flex:1;min-width:130px}}
+
+  /* [v4.15.0 VISUAL] Camada de acabamento operacional sem alterar regras de negócio */
+  body{background:linear-gradient(180deg,#07080d 0%,#090b12 42%,#07080d 100%);color:var(--text);text-rendering:optimizeLegibility}
+  ::selection{background:rgba(0,212,238,.28);color:#fff}
+  .sidebar{background:linear-gradient(180deg,#0b0d14 0%,#080910 100%);border-right:1px solid rgba(255,255,255,.08);box-shadow:8px 0 34px rgba(0,0,0,.22)}
+  .sb-logo-area{padding:22px 16px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0))}
+  .sb-logo-img{box-shadow:0 12px 28px rgba(0,212,238,.12)}
+  .sb-btn{border:1px solid transparent;border-radius:14px;transition:background .18s ease,border-color .18s ease,transform .18s ease,color .18s ease}
+  .sb-btn:hover{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.07);transform:translateX(2px)}
+  .sb-btn.active{background:linear-gradient(135deg,rgba(0,212,238,.14),rgba(91,141,255,.075));border-color:rgba(0,212,238,.22);box-shadow:inset 3px 0 0 var(--cyan)}
+  .page{max-width:1680px;margin:0 auto;padding:30px 30px 36px}
+  .mobile-header{background:rgba(9,11,18,.88);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(16px)}
+  .section-title{display:flex;align-items:center;gap:8px;color:#aeb7d4;letter-spacing:1.8px;font-size:10px}
+  .section-title::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--cyan);box-shadow:0 0 10px rgba(0,212,238,.48);flex-shrink:0}
+  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.op-hero,.op-kpi,.op-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+  .home-card{border-radius:18px;padding:22px 18px;min-height:112px}
+  .home-card::before{height:3px;box-shadow:none;opacity:.92}
+  .home-card::after{background:linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,0));opacity:.78}
+  .home-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.16);box-shadow:0 18px 44px rgba(0,0,0,.24)}
+  .kpi-card,.dash-kpi,.venda-kpi,.crm-card{border-radius:16px;padding:16px 18px}
+  .kpi-card::before,.dash-kpi::before,.crm-card::before,.venda-kpi::after{height:3px;box-shadow:none;opacity:.95}
+  .kpi-label,.dash-kpi-lbl,.venda-kpi-label,.crm-label{color:#aeb7d4;letter-spacing:1.4px;font-size:10px}
+  .kpi-value,.dash-kpi-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-family:var(--font-data)!important;font-size:24px;font-weight:850;line-height:1.04;letter-spacing:0;font-variant-numeric:tabular-nums}
+  .op-kpi-val,.crm-val{font-size:26px}
+  .total-value,.total-cli-val,.cli-total,.lanc-val,.rank-val,.venda-rank-val,.hist-rank-val,.hist-item-val{font-family:var(--font-data)!important;font-weight:850;letter-spacing:0;font-variant-numeric:tabular-nums}
+  .form-input,.form-select,.form-textarea,input[type="text"],input[type="tel"],input[type="number"],input[type="date"],select,textarea{background:#0d111a;border-color:rgba(255,255,255,.10);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+  .form-input:focus,.form-select:focus,.form-textarea:focus,input:focus,select:focus,textarea:focus{border-color:rgba(0,212,238,.55);box-shadow:0 0 0 3px rgba(0,212,238,.085);background:#0f1420}
+  .save-btn,.cli-btn,.op-btn,.venda-filter-btn,.hist-filter-btn,.icon-action{border-radius:14px;box-shadow:none;transition:transform .15s ease,border-color .18s ease,background .18s ease}
+  .save-btn{background:linear-gradient(135deg,#3e8bff,#1268d8);box-shadow:0 12px 28px rgba(62,139,255,.18)}
+  .save-btn:hover,.cli-btn:hover,.op-btn:hover,.venda-filter-btn:hover,.hist-filter-btn:hover{transform:translateY(-1px)}
+  .save-btn:active,.cli-btn:active,.op-btn:active{transform:translateY(0)}
+  .cliente-item{border-radius:18px;padding:16px 18px;margin-bottom:12px}
+  .cliente-item.status-pronto{border-color:rgba(25,210,127,.42);background:linear-gradient(135deg,rgba(25,210,127,.08),rgba(255,255,255,.018))}
+  .cliente-item.status-andamento,.cliente-item.status-em-andamento{border-color:rgba(255,174,67,.26)}
+  .cliente-item.status-cancelado,.lanc-item.cancelado{border-color:rgba(255,89,103,.36);background:rgba(255,89,103,.045)}
+  .cli-avatar{box-shadow:0 10px 24px rgba(0,0,0,.20);border:1px solid rgba(255,255,255,.08)}
+  .status-badge,.info-badge,.visita-badge,.cli-caps-badge,.tempo-badge,.op-os,.op-time,.crm-tag{border-radius:999px}
+  .op-hero{background:linear-gradient(135deg,rgba(0,212,238,.105),rgba(91,141,255,.055));border-color:rgba(0,212,238,.24);box-shadow:0 18px 46px rgba(0,0,0,.20)}
+  .op-kpi{border-radius:16px;padding:16px 18px}
+  .op-card{border-radius:18px;padding:15px}
+  .op-card.late{border-color:rgba(255,89,103,.42);background:linear-gradient(135deg,rgba(255,89,103,.10),rgba(255,255,255,.018))}
+  .op-card.warn{border-color:rgba(255,174,67,.42);background:linear-gradient(135deg,rgba(255,174,67,.10),rgba(255,255,255,.018))}
+  .op-card.ready{border-color:rgba(25,210,127,.42);background:linear-gradient(135deg,rgba(25,210,127,.10),rgba(255,255,255,.018))}
+  .crm-client{border-radius:18px;padding:16px}
+  .crm-client.manutencao{border-color:rgba(255,174,67,.44);background:linear-gradient(135deg,rgba(255,174,67,.10),rgba(255,255,255,.018))}
+  .crm-client.vip{border-color:rgba(184,121,255,.42);background:linear-gradient(135deg,rgba(184,121,255,.095),rgba(255,255,255,.018))}
+  .dash-chart-card{border-radius:18px;padding:20px}
+  .venda-insights,.venda-rank-item,.hist-rank-item,.hist-item,.log-item{border-radius:16px}
+  @media(max-width:900px){
+    .page{padding:18px 14px 28px}
+    .home-card{min-height:104px;padding:18px 16px}
+    .kpi-card,.dash-kpi,.venda-kpi,.crm-card{padding:14px 15px}
+    .kpi-value,.dash-kpi-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-size:22px}
+    .op-kpi-val,.crm-val{font-size:24px}
+  }
 
 </style>
 </head>
@@ -1367,7 +1426,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.14.3 | 22/05/2026 — Beneficio Clube VIP auditado
+// ZAPCLIN v4.15.0 | 22/05/2026 — Revisao visual operacional
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1413,7 +1472,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.14.3';
+const APP_VERSION='v4.15.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3276,7 +3335,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.14.3',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.15.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
