@@ -47,6 +47,12 @@ Hotfix backend `v3.29`:
 - Corrigida busca robusta das abas com emoji/acentos para evitar erro `getRange` de aba nula.
 - Adicionada acao `repararLancamentosClientesHoje` para recuperar atendimentos gravados em CLIENTES sem lancamento financeiro.
 
+Hotfix backend `v3.30`:
+
+- Valida CLIENTES e LANCAMENTOS antes de gravar cadastro com fotos.
+- Evita cadastro parcial quando a criacao de lancamentos falhar.
+- Mantem a regra de baseline: correcao cirurgica, sem alterar fluxo visual do frontend.
+
 ## Fase 23B - Dashboard Executivo
 
 - Receita por dia.

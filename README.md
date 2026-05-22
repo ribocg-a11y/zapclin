@@ -6,7 +6,7 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 - Frontend GitHub Pages: `v4.14.0`
 - Service Worker/PWA: `v4.14.0`
-- Backend Apps Script: `v3.29`
+- Backend Apps Script: `v3.30` preparado para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
 ## Fase Antecipada
@@ -27,11 +27,12 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
 
 1. `Fase 23A` - concluida em v4.13.1 com tokens visuais, hierarquia operacional, skeleton/loading, toasts, feedback visual, fonte numerica revisada e BRL com separador de milhar.
 2. `Fase 23D1` - antecipada em v4.14.0 com Relacionamento/CRM, recorrencia, manutencao 30+ dias, campanhas VIP, cadastro de aniversario e link de avaliacao Google.
-3. `Fase 23B` - dashboard executivo com receita, margem e comparativo semanal.
-4. `Fase 23C` - operacao e SLA com tempo medio por servico, percentual dentro do prazo e horarios de pico.
-5. `Fase 23D2` - historico avancado do cliente, tags, campanhas segmentadas e beneficios de fidelidade.
-6. `Fase 23E` - automacoes e relatorios diario/mensal estrategicos.
-7. `Fase 24` - aceite/assinatura simples usando a base de OS/PDF.
+3. `Hotfix v3.30` - valida CLIENTES/LANCAMENTOS antes do cadastro com fotos para evitar cliente sem atendimento/lancamento.
+4. `Fase 23B` - dashboard executivo com receita, margem e comparativo semanal.
+5. `Fase 23C` - operacao e SLA com tempo medio por servico, percentual dentro do prazo e horarios de pico.
+6. `Fase 23D2` - historico avancado do cliente, tags, campanhas segmentadas e beneficios de fidelidade.
+7. `Fase 23E` - automacoes e relatorios diario/mensal estrategicos.
+8. `Fase 24` - aceite/assinatura simples usando a base de OS/PDF.
 
 ## Regra De Evolucao
 
