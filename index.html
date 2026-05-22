@@ -3249,7 +3249,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.14.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.14.1',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
