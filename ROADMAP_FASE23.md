@@ -42,6 +42,11 @@ Status: antecipada em `v4.14.0`.
 - Link do Clube VIP entra apenas na mensagem de recebimento da primeira visita.
 - Mensagem de pronto inclui link de avaliacao Google.
 
+Hotfix backend `v3.29`:
+
+- Corrigida busca robusta das abas com emoji/acentos para evitar erro `getRange` de aba nula.
+- Adicionada acao `repararLancamentosClientesHoje` para recuperar atendimentos gravados em CLIENTES sem lancamento financeiro.
+
 ## Fase 23B - Dashboard Executivo
 
 - Receita por dia.
