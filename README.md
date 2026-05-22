@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.12.0`
-- Service Worker/PWA: `v4.12.0`
+- Frontend GitHub Pages: `v4.13.0`
+- Service Worker/PWA: `v4.13.0`
 - Backend Apps Script: `v3.27`
 - URL: https://ribocg-a11y.github.io/zapclin/
 
@@ -25,7 +25,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
 
 ## Roadmap Reorganizado
 
-1. `Fase 23A` - tokens visuais, hierarquia operacional, skeleton/loading e toasts.
+1. `Fase 23A` - iniciada em v4.13.0 com tokens visuais, hierarquia operacional, skeleton/loading, toasts e feedback visual.
 2. `Fase 23B` - dashboard executivo com receita, margem e comparativo semanal.
 3. `Fase 23C` - operacao e SLA com tempo medio por servico, percentual dentro do prazo e horarios de pico.
 4. `Fase 23D` - historico do cliente, recorrencia e mensagens personalizadas.
