@@ -43,6 +43,7 @@ Status: antecipada em `v4.14.0`.
 - Cadastro publico Clube VIP para coletar aniversario e preferencias.
 - Link do Clube VIP entra apenas na mensagem de recebimento da primeira visita.
 - Mensagem de pronto inclui link de avaliacao Google.
+- Hotfix v4.14.3/v3.32: beneficio de aniversario passa a ser auditado, aplicado somente apos cadastro VIP confirmado, em OS aberta, sobre um unico servico de menor valor, com teto de R$ 15 e registro na aba `BENEFICIOS VIP`.
 
 Hotfix backend `v3.29`:
 

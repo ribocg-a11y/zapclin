@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.14.2 | Data: 22/05/2026
+  Versão : 4.14.3 | Data: 22/05/2026
+  v4.14.3:
+     - Adiciona leitura do beneficio Clube VIP/aniversario aplicado pelo backend
+     - Destaca card com desconto auditado e total liquido quando a regra for comprovada
   v4.14.2:
      - Corrige prazo operacional da Revitalizacao para 24h/1440min
      - Mantem soma de prazos por capacete e parada do tempo ao marcar Pronto
@@ -379,6 +382,8 @@
   .cliente-item.status-pronto{border-color:rgba(0,230,118,.4)}
   .cliente-item.status-entregue{opacity:.6}
   .cliente-item.status-cancelado,.lanc-item.cancelado{opacity:.52;border-color:rgba(255,68,68,.35)}
+  .cliente-item.vip-beneficio{border-color:rgba(184,108,255,.55);background:linear-gradient(135deg,rgba(184,108,255,.13),rgba(23,217,130,.05),rgba(255,255,255,.02));box-shadow:0 0 0 1px rgba(184,108,255,.12),0 18px 44px rgba(184,108,255,.08)}
+  .cliente-item:has(.info-badge.desconto){border-color:rgba(184,108,255,.48);background:linear-gradient(135deg,rgba(184,108,255,.10),rgba(23,217,130,.04),rgba(255,255,255,.02))}
   .cli-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
   .visita-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(171,71,188,.2);color:var(--purple);border:1px solid rgba(171,71,188,.3)}
   .visita-badge.primeira{background:rgba(255,215,0,.15);color:#ffd700;border-color:rgba(255,215,0,.3)}
@@ -393,6 +398,9 @@
   .cli-nome{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--text)}
   .cli-tel{font-size:12px;color:var(--muted);margin-top:1px}
   .cli-total{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--green);margin-left:auto;flex-shrink:0}
+  .cli-total-wrap{margin-left:auto;text-align:right;flex-shrink:0}
+  .cli-total-old{font-size:10px;color:var(--muted);text-decoration:line-through;margin-bottom:2px}
+  .cli-total-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);font-weight:800}
   .cli-servicos{margin-bottom:10px}
   .cli-svc-item{display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid rgba(42,42,58,.5);font-size:12px}
   .cli-svc-item:last-child{border-bottom:none}
@@ -516,6 +524,7 @@
   .info-badge.vinculo{background:rgba(68,138,255,.12);color:var(--blue);border:1px solid rgba(68,138,255,.25)}
   .info-badge.pagamento{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25)}
   .info-badge.desconto{background:rgba(255,82,82,.12);color:var(--red);border:1px solid rgba(255,82,82,.25)}
+  .info-badge.vip-beneficio{background:rgba(184,108,255,.15);color:#d7b3ff;border:1px solid rgba(184,108,255,.35)}
   /* Misc */
   .empty{text-align:center;padding:40px 20px;color:var(--muted)}
   .empty-icon{font-size:40px;margin-bottom:12px;opacity:.4}
@@ -1358,7 +1367,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.14.2 | 22/05/2026 — Prazo Revitalizacao 24h
+// ZAPCLIN v4.14.3 | 22/05/2026 — Beneficio Clube VIP auditado
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1404,7 +1413,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.14.2';
+const APP_VERSION='v4.14.3';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1751,7 +1760,7 @@ function msgBoasVindas(nome,qtd,detalhes){
     if(isPrimeiraVisita_(detalhes)){
       linhas.push('');
       linhas.push('*Clube VIP ZapClin*');
-      linhas.push('Complete seu cadastro e entre para nossa lista de privilégios. No mês do seu aniversário, você ganha *30% de desconto em qualquer serviço da casa*.');
+      linhas.push('Complete seu cadastro e entre para nossa lista de privilégios. No mês do seu aniversário, você ganha *30% de desconto em 1 serviço da casa*, sempre aplicado sobre um serviço elegível e com controle da ZapClin.');
       linhas.push('É rápido e vale a pena: '+clienteVipUrl_(nomeCliente,telCliente));
     }
     linhas.push('');
@@ -1805,7 +1814,7 @@ function msgBoasVindas(nome,qtd,detalhes){
   if(isPrimeiraVisita_(detalhes)){
     linhas.push('');
     linhas.push('*Clube VIP ZapClin*');
-    linhas.push('Como esta é sua primeira visita, queremos te dar acesso aos nossos privilégios: complete seu cadastro e ganhe *30% de desconto no mês do seu aniversário* em qualquer serviço da casa.');
+    linhas.push('Como esta é sua primeira visita, queremos te dar acesso aos nossos privilégios: complete seu cadastro e ganhe *30% de desconto no mês do seu aniversário em 1 serviço da casa*, com aplicação controlada pela ZapClin.');
     linhas.push('Leva menos de 1 minuto: '+clienteVipUrl_(nomeCliente,telCliente));
   }
   linhas.push('');
@@ -3020,7 +3029,7 @@ function comprimirFoto(file){return new Promise(function(resolve){var r=new File
 function setProgress(pct,label){document.getElementById('uploadProgress').style.display='block';document.getElementById('progressBar').style.width=pct+'%';if(label)document.getElementById('progressLabel').textContent=label;}
 function salvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;if(!nome){showToast('⚠️ Informe o nome do cliente','error');return;}if(!tel){showToast('⚠️ Informe o telefone','error');return;}if(!qtd){showToast('⚠️ Selecione a quantidade de capacetes','error');return;}for(var vi=0;vi<qtd;vi++){if(!servicosPorCap[vi]||servicosPorCap[vi]===''){showToast('⚠️ Capacete '+(vi+1)+': selecione o serviço','error');return;}if(!fotosSelecionadas[vi]){showToast('⚠️ Capacete '+(vi+1)+': adicione a foto','error');return;}}var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var preview=servicosPorCap.slice(0,qtd).map(function(s,i){return'🪖 Cap.'+(i+1)+': '+s;}).join('\n');if(desc>0)preview+='\n🏷️ Desconto: -'+fmtBRL(desc);preview+='\n\n💰 Total a receber: '+fmtBRL(liq);document.getElementById('vincularPreview').textContent=preview;document.getElementById('vincularModal').classList.add('show');}
 function confirmarVincular(sim){_criarLanc=sim;document.getElementById('vincularModal').classList.remove('show');_executarSalvarCliente();}
-function _executarSalvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var btn=document.getElementById('clienteSaveBtn');btn.disabled=true;btn.textContent='⏳ Comprimindo...';setProgress(10,'Comprimindo fotos...');Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);})).then(function(b64s){setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});}).then(function(r){setProgress(80,'Salvando cadastro...');return r.json();}).then(function(data){setProgress(100,'Concluído! ✅');if(data.ok){var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var numVisita=parseInt(data.numVisita||1,10)||1,totalVisitas=parseInt(data.totalVisitas||numVisita,10)||numVisita;var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:desc,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:numVisita,totalVisitas:totalVisitas};clientes.unshift(novoCliente);localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';if(desc>0)msg+=' (desc. '+fmtBRL(desc)+')';showToast('✅ '+nome+' cadastrado!'+msg,'blue');logEventoSistema_('CLIENTE','cadastrarCliente','OK','Cliente cadastrado',{os:data.clienteId,nome:nome,telefone:tel,qtd:qtd,total:data.total||liq,numVisita:numVisita});var waDetalhes=montarDetalhesAtendimento_(nome,tel,qtd,servicosPorCap.slice(0,qtd),obsPorCap.slice(0,qtd),data.total||liq,desc,data.clienteId,numVisita,totalVisitas);resetClienteForm();renderClienteList();if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos().then(function(){_calcStatsHome();});}setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd,waDetalhes);},1000);}else{showToast('Erro: '+(data.error||'Tente novamente'),'error');logEventoSistema_('CLIENTE','cadastrarCliente','ERRO',String(data.error||'Erro backend'),{nome:nome,telefone:tel});}}).catch(function(){showToast('⚠️ Erro ao enviar. Tente novamente.','orange');logEventoSistema_('CLIENTE','cadastrarCliente','ERRO','Falha no envio do cadastro',{nome:nome,telefone:tel});resetClienteForm();}).finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});}
+function _executarSalvarCliente(){var nome=document.getElementById('clienteNome').value.trim();var tel=document.getElementById('clienteTel').value.trim();var qtd=_qtdCap;var total=atualizarTotalCliente();var desc=parseFloat((document.getElementById('clienteDesconto')||{}).value||0);var liq=Math.max(0,total-desc);var btn=document.getElementById('clienteSaveBtn');btn.disabled=true;btn.textContent='⏳ Comprimindo...';setProgress(10,'Comprimindo fotos...');Promise.all(fotosSelecionadas.map(function(f){return comprimirFoto(f);})).then(function(b64s){setProgress(40,'Enviando para o Drive...');btn.textContent='⏳ Enviando fotos...';var obsStrings=obsPorCap.slice(0,qtd).map(function(arr){return Array.isArray(arr)?arr.join(', '):'';});var payload={nome:nome,telefone:tel,qtd:qtd,fotos:b64s,servicos:servicosPorCap.slice(0,qtd),observacoes:obsStrings,criarLancamentos:_criarLanc,total:total,desconto:desc};return fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});}).then(function(r){setProgress(80,'Salvando cadastro...');return r.json();}).then(function(data){setProgress(100,'Concluído! ✅');if(data.ok){var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var numVisita=parseInt(data.numVisita||1,10)||1,totalVisitas=parseInt(data.totalVisitas||numVisita,10)||numVisita;var descontoFinal=parseFloat(data.desconto||desc||0)||0;var novoCliente={num:data.clienteId,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,nome:nome,tel:tel,qtd:qtd,pasta:data.folderUrl||'',servicos:servicosPorCap.slice(0,qtd),observacoes:obsPorCap.slice(0,qtd),status:'Em andamento',total:data.total||liq,desconto:descontoFinal,beneficioVip:data.beneficioVip||null,dataPagamento:'',lancamentosVinculados:_criarLanc,numVisita:numVisita,totalVisitas:totalVisitas};clientes.unshift(novoCliente);localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,200)));var msg=_criarLanc&&data.lancamentosCriados>0?' + '+data.lancamentosCriados+' lanç.':'';if(descontoFinal>0)msg+=' (desc. '+fmtBRL(descontoFinal)+')';showToast('✅ '+nome+' cadastrado!'+msg,'blue');logEventoSistema_('CLIENTE','cadastrarCliente','OK','Cliente cadastrado',{os:data.clienteId,nome:nome,telefone:tel,qtd:qtd,total:data.total||liq,numVisita:numVisita});var waDetalhes=montarDetalhesAtendimento_(nome,tel,qtd,servicosPorCap.slice(0,qtd),obsPorCap.slice(0,qtd),data.total||liq,descontoFinal,data.clienteId,numVisita,totalVisitas);resetClienteForm();renderClienteList();if(_criarLanc&&data.lancamentosCriados>0){lancamentos=[];buscarLancamentos().then(function(){_calcStatsHome();});}setTimeout(function(){mostrarWaModal('boasVindas',nome,tel,qtd,waDetalhes);},1000);}else{showToast('Erro: '+(data.error||'Tente novamente'),'error');logEventoSistema_('CLIENTE','cadastrarCliente','ERRO',String(data.error||'Erro backend'),{nome:nome,telefone:tel});}}).catch(function(){showToast('⚠️ Erro ao enviar. Tente novamente.','orange');logEventoSistema_('CLIENTE','cadastrarCliente','ERRO','Falha no envio do cadastro',{nome:nome,telefone:tel});resetClienteForm();}).finally(function(){setTimeout(function(){document.getElementById('uploadProgress').style.display='none';btn.disabled=false;btn.innerHTML='🪖 CADASTRAR CLIENTE';verificarCadastroCompleto();},2000);});}
 function resetClienteForm(){document.getElementById('clienteNome').value='';document.getElementById('clienteTel').value='';_qtdCap=0;document.getElementById('stepperVal').textContent='0';document.getElementById('stepperMenosBtn').disabled=true;document.getElementById('capacetesSection').style.display='none';document.getElementById('capacetesGrid').innerHTML='';fotosSelecionadas=[];servicosPorCap=[];obsPorCap=[];var dEl=document.getElementById('clienteDesconto');if(dEl)dEl.value='';var lEl=document.getElementById('clienteTotalLiquido');if(lEl)lEl.textContent='R$ 0,00';}
 function marcarStatus(num,novoStatus){if(novoStatus==='Entregue'){var cli=clientes.find(function(c){return c.num==num;});_pagData={num:num,nome:cli?cli.nome:'',tel:cli?cli.tel:'',qtd:cli?cli.qtd:1};document.getElementById('pagClienteNome').textContent=_pagData.nome;var now=new Date();document.getElementById('pagamentoData').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('pagamentoModal').classList.add('show');return;}_executarMarcarStatus(num,novoStatus,'');}
 function fecharPagamentoModal(){document.getElementById('pagamentoModal').classList.remove('show');}
@@ -3054,6 +3063,18 @@ function salvarEdicaoCliente(num){
 function cancelarCliente(num){
   if(!confirm('Cancelar este cadastro? Ele ficará preservado no histórico com status Cancelado.'))return;
   (function(){var c=clientes.find(function(x){return x.num==num;});var tempoMin=c?calcMinutos(c.data,c.hora):'';var prazoMin=c?prazoClienteMin_(c):'';return apiGet('cancelarCliente',{num:num,tempoMin:tempoMin,prazoMin:prazoMin,encerradoEm:dataHoraLocal_()},15000);})().then(function(r){if(r&&r.ok){showToast('Cadastro cancelado','orange');logEventoSistema_('CLIENTE','cancelarCliente','OK','Cliente cancelado',{os:num});carregarClientes();}else showToast('Erro ao cancelar cliente','error');}).catch(function(){showToast('Falha ao cancelar cliente','error');});
+}
+function beneficioVipAtivo_(c){return !!(c&&c.beneficioVip&&parseFloat(c.beneficioVip.desconto||0)>0);}
+function totalClienteHtml_(c){
+  var total=parseFloat(c&&c.total||0)||0,desc=parseFloat(c&&c.desconto||0)||0,vip=beneficioVipAtivo_(c);
+  if(!(total>0))return '';
+  if(!vip)return '<div class="cli-total">'+fmtBRL(total)+'</div>';
+  return '<div class="cli-total-wrap"><div class="cli-total-old">'+fmtBRL(total+desc)+'</div><div class="cli-total-label">Total com Clube VIP</div><div class="cli-total">'+fmtBRL(total)+'</div></div>';
+}
+function badgesVipHtml_(c){
+  if(!beneficioVipAtivo_(c))return '';
+  var b=c.beneficioVip||{},label=b.aniversarioHoje?'Aniversário hoje':'Mês de aniversário';
+  return '<span class="info-badge vip-beneficio">'+label+' · Clube VIP -'+fmtBRL(b.desconto||c.desconto||0)+'</span>';
 }
 function renderClienteList(){var list=document.getElementById('clienteList');var contEl=document.getElementById('clienteCount');var search=(document.getElementById('clienteSearch')||{}).value||'';var src=clientesFiltrados.length>0||search?clientesFiltrados:clientes;var ord={Pronto:0,'Em andamento':1,Entregue:2,Cancelado:3};var ordenados=src.slice().sort(function(a,b){return (ord[a.status]||1)-(ord[b.status]||1);});if(contEl)contEl.textContent='('+clientes.length+' total)';if(!ordenados.length){list.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Nenhum cliente encontrado.</div></div>';return;}list.innerHTML=ordenados.slice(0,80).map(function(c){var ini=(c.nome||'?').split(' ').map(function(w){return w[0]||''}).slice(0,2).join('').toUpperCase();var sCls=statusClass(c.status);var svcs=Array.isArray(c.servicos)?c.servicos:[];var obs=Array.isArray(c.observacoes)?c.observacoes:[];var menuId='menuCli'+c.num;var numVisita=parseInt(c.numVisita||1,10)||1;var totalVisitas=parseInt(c.totalVisitas||numVisita,10)||numVisita;var linhas=svcs.map(function(s,i){if(!s)return'';var o=obs[i]?'<span class="cli-svc-obs"> — '+escapeHtml_(Array.isArray(obs[i])?obs[i].join(', '):obs[i])+'</span>':'';return'<div class="cli-svc-item"><span class="cli-svc-nome">Cap.'+(i+1)+': '+escapeHtml_(s)+'</span>'+o+'</div>';}).filter(Boolean).join('');var svcsHtml=linhas?'<div class="cli-servicos">'+linhas+'</div>':'';var principal='';if(c.status==='Em andamento')principal='<button class="cli-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">Marcar pronto</button>';else if(c.status==='Pronto')principal='<button class="cli-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">Entregue</button>';else if(c.status==='Entregue')principal='<button class="cli-btn orange" onclick="marcarStatus('+c.num+',\'Em andamento\')">Reabrir</button>';var waBtn=c.status!=='Cancelado'?'<button class="cli-btn wa" onclick="mostrarWaModal(\''+(c.status==='Pronto'?'pronto':c.status==='Entregue'?'agradecimento':'boasVindas')+'\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp</button>':'';return'<div class="cliente-item status-'+sCls+'" id="clienteItem'+c.num+'"><div class="cli-top"><span class="visita-badge'+(numVisita===1?' primeira':'')+'">'+nthVisita(numVisita)+'</span><span class="info-badge vinculo">OS '+formatarOS_(c.num)+'</span>'+(totalVisitas>1?'<span class="info-badge vinculo">'+totalVisitas+'x atend.</span>':'')+'<span class="status-badge '+sCls+'">'+escapeHtml_(c.status||'Em andamento')+'</span><div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+menuId+'\')">⋯</button><div class="item-menu" id="'+menuId+'"><button onclick="abrirEditarCliente('+c.num+')">Editar cadastro</button><button onclick="copiarResumoOS('+c.num+')">Copiar OS</button><button onclick="gerarOsPdf('+c.num+')">Gerar PDF OS</button>'+(c.pasta?'<button onclick="window.open(\''+jsStr_(c.pasta)+'\',\'_blank\')">Abrir Drive</button>':'')+'<button onclick="mostrarWaModal(\'boasVindas\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp boas-vindas</button><button class="danger" onclick="cancelarCliente('+c.num+')">Cancelar cadastro</button></div></div></div><div class="cli-header"><div class="cli-avatar">'+escapeHtml_(ini)+'</div><div style="flex:1;min-width:0"><div class="cli-nome">'+escapeHtml_(c.nome)+'</div><div class="cli-tel">'+escapeHtml_(c.tel)+'</div></div>'+(c.total>0?'<div class="cli-total">'+fmtBRL(c.total)+'</div>':'')+'</div>'+svcsHtml+'<div class="cli-footer"><span class="cli-caps-badge">'+(c.qtd||1)+' cap.</span><span class="cli-data">'+fmtData(c.data)+' '+fmtHora(c.hora)+'</span>'+tempoBadgeCliente_(c)+(c.dataPagamento?'<span class="info-badge pagamento">Pago '+c.dataPagamento+'</span>':'')+(c.desconto>0?'<span class="info-badge desconto">-'+fmtBRL(c.desconto)+'</span>':'')+'</div><div class="cli-actions">'+principal+waBtn+'</div></div>';}).join('');}
 
@@ -3252,7 +3273,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.14.2',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.14.3',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
