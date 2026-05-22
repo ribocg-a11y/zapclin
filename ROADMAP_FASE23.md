@@ -29,6 +29,19 @@ Status: iniciada em `v4.13.1`.
 - Revisada fonte numerica para KPIs e valores.
 - Corrigido formato BRL com separador de milhar no padrao brasileiro.
 
+## Fase 23D1 - Relacionamento E Fidelidade
+
+Status: antecipada em `v4.14.0`.
+
+- Criada pagina Relacionamento para gerir recorrencia sem poluir o cadastro.
+- Restaurado indicador de visita no card do cliente.
+- Consolidacao por telefone para identificar clientes unicos, recorrentes, VIP e 30+ dias.
+- Mensagem de manutencao para estimular retorno apos 30 dias.
+- Campanha VIP para clientes com frequencia ou valor historico maior.
+- Cadastro publico Clube VIP para coletar aniversario e preferencias.
+- Link do Clube VIP entra apenas na mensagem de recebimento da primeira visita.
+- Mensagem de pronto inclui link de avaliacao Google.
+
 ## Fase 23B - Dashboard Executivo
 
 - Receita por dia.
@@ -43,12 +56,14 @@ Status: iniciada em `v4.13.1`.
 - Ranking de horarios de pico.
 - Alertas de atraso e proximidade do prazo.
 
-## Fase 23D - Cliente E Recorrencia
+## Fase 23D2 - Cliente E Recorrencia Avancada
 
 - Historico do cliente.
 - Total gasto.
 - Servicos anteriores.
 - Mensagem diferente para cliente recorrente.
+- Tags de campanha, preferencias, aniversario e consentimento.
+- Automacao futura de disparos de aniversario e campanhas sazonais.
 
 ## Fase 23E - Automacoes E Relatorios
 
