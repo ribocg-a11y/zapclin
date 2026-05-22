@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.16.0 | Data: 22/05/2026
+  Versão : 4.17.0 | Data: 22/05/2026
+  v4.17.0:
+    - Conclui Fase 23C com inteligência operacional de SLA na Fila de Produção
+    - Adiciona tempo médio por serviço, ranking de horários de pico e alerta de proximidade do prazo
+    - Mostra leitura operacional acionável sem alterar cadastro, status ou WhatsApp
   v4.16.0:
     - Conclui Fase 23B com Dashboard Executivo: comparativo semanal, melhor dia e leitura estratégica do mês
     - Separa lançamentos válidos de cancelados nas análises gerenciais
@@ -691,6 +695,21 @@
   .op-btn.gray{background:rgba(107,107,138,.14);color:var(--muted);border:1px solid var(--border)}
   .op-btn.wa{background:rgba(37,211,102,.14);color:#25D366;border:1px solid rgba(37,211,102,.3)}
   .op-empty{border:1px dashed var(--border);border-radius:14px;padding:18px;text-align:center;color:var(--muted);font-size:12px}
+  .op-intel-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin-bottom:14px}
+  .op-intel-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;overflow:hidden}
+  .op-intel-title{font-family:var(--font-head);font-size:12px;font-weight:900;color:var(--text);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .op-svc-row,.op-peak-row{display:grid;grid-template-columns:minmax(0,1fr) 86px 68px;gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.065);font-size:11px}
+  .op-svc-row:last-child,.op-peak-row:last-child{border-bottom:none}
+  .op-svc-name,.op-peak-hora{font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .op-svc-meta,.op-peak-meta{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .op-svc-sla{font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
+  .op-svc-sla.ok{color:var(--green)}.op-svc-sla.warn{color:var(--orange)}.op-svc-sla.late{color:var(--red)}
+  .op-mini-bar{height:5px;background:var(--surface);border-radius:999px;overflow:hidden;margin-top:5px}
+  .op-mini-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:999px}
+  .op-risk-list{display:grid;gap:7px;margin-bottom:14px}
+  .op-risk-item{border:1px solid rgba(255,174,67,.28);background:rgba(255,174,67,.075);border-radius:14px;padding:10px 12px;color:var(--orange);font-size:12px;line-height:1.35;display:flex;justify-content:space-between;gap:10px}
+  .op-risk-item.late{border-color:rgba(255,89,103,.32);background:rgba(255,89,103,.075);color:var(--red)}
+  .op-risk-os{font-weight:900;color:var(--text);white-space:nowrap}
   @media(max-width:900px){.op-kpis{grid-template-columns:1fr 1fr}.op-lanes{grid-template-columns:1fr}.op-hero{align-items:flex-start;flex-direction:column}.op-refresh{width:100%}}
   .log-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
   .log-item.erro{border-color:rgba(255,68,68,.45)}
@@ -769,7 +788,7 @@
   .mobile-header{background:rgba(9,11,18,.88);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(16px)}
   .section-title{display:flex;align-items:center;gap:8px;color:#aeb7d4;letter-spacing:1.8px;font-size:10px}
   .section-title::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--cyan);box-shadow:0 0 10px rgba(0,212,238,.48);flex-shrink:0}
-  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.dash-exec-card,.op-hero,.op-kpi,.op-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.dash-exec-card,.op-hero,.op-kpi,.op-card,.op-intel-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
   .home-card{border-radius:18px;padding:22px 18px;min-height:112px}
   .home-card::before{height:3px;box-shadow:none;opacity:.92}
   .home-card::after{background:linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,0));opacity:.78}
@@ -810,6 +829,7 @@
     .kpi-card,.dash-kpi,.dash-exec-card,.venda-kpi,.crm-card{padding:14px 15px}
     .kpi-value,.dash-kpi-val,.dash-exec-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-size:22px}
     .op-kpi-val,.crm-val{font-size:24px}
+    .op-intel-grid{grid-template-columns:1fr}
   }
   @media(max-width:520px){.dash-exec-grid{grid-template-columns:1fr}}
 
@@ -1099,6 +1119,19 @@
   </div>
 
   <div class="op-alert" id="opAlert"></div>
+
+  <div class="op-risk-list" id="opRiskList"></div>
+
+  <div class="op-intel-grid">
+    <div class="op-intel-card">
+      <div class="op-intel-title">⏱ Tempo médio por serviço</div>
+      <div id="opServicoSlaList"><div class="dash-empty">Carregando análise...</div></div>
+    </div>
+    <div class="op-intel-card">
+      <div class="op-intel-title">🕐 Horários de pico</div>
+      <div id="opPicoList"><div class="dash-empty">Carregando horários...</div></div>
+    </div>
+  </div>
 
   <div class="op-filters">
     <button class="op-filter ativo" data-op="todos" onclick="setOperacaoFiltro('todos',this)">Todos</button>
@@ -1477,7 +1510,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.16.0 | 22/05/2026 — Dashboard Executivo Fase 23B
+// ZAPCLIN v4.17.0 | 22/05/2026 — Operacao e SLA Fase 23C
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1523,7 +1556,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.16.0';
+const APP_VERSION='v4.17.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3412,7 +3445,41 @@ function classificarOperacao_(c){var st=statusPrazoCliente_(c);var status=String
 function opResumoServicos_(c){var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];if(!svcs.length)return'—';return svcs.slice(0,3).map(function(s,i){return'Cap.'+(i+1)+': '+escapeHtml_(s);}).join('<br>')+(svcs.length>3?'<br>+'+(svcs.length-3)+' cap.':'');}
 function opCardHtml_(it){var c=it.c,st=it.st,cls=st.cls==='late'?'late':st.cls==='warn'?'warn':it.tipo==='prontos'?'ready':'';var btn=it.tipo==='prontos'?'<button class="op-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">Entregue</button><button class="op-btn wa" onclick="mostrarWaModal(\'pronto\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp</button>':'<button class="op-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">Marcar pronto</button>';return'<div class="op-card '+cls+'" id="opCard'+c.num+'"><div class="op-card-top"><span class="op-os">OS '+formatarOS_(c.num)+'</span><span class="op-time '+st.cls+'">'+escapeHtml_(st.label)+'</span></div><div class="op-name">'+escapeHtml_(c.nome)+'</div><div class="op-meta">'+(c.qtd||1)+' cap. · '+fmtData(c.data)+' '+fmtHora(c.hora)+'</div><div class="op-services">'+opResumoServicos_(c)+'</div><div class="op-actions">'+btn+'<button class="op-btn gray" onclick="goTo(\'clientes\',null);setTimeout(function(){filtrarClientes(\''+formatarOS_(c.num)+'\');},150)">Ver OS</button><button class="op-btn gray" onclick="gerarOsPdf('+c.num+')">PDF</button></div></div>';}
 function renderOperacaoLista_(id,items,msg){var el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map(opCardHtml_).join(''):'<div class="op-empty">'+msg+'</div>';}
-function renderOperacaoPainel(){var src=(clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]')).filter(function(c){return c&&c.status!=='Entregue'&&c.status!=='Cancelado';}).map(classificarOperacao_);var atencao=src.filter(function(i){return i.tipo==='atencao';}).sort(function(a,b){return a.prioridade-b.prioridade;});var andamento=src.filter(function(i){return i.tipo==='andamento';}).sort(function(a,b){return a.prioridade-b.prioridade;});var prontos=src.filter(function(i){return i.tipo==='prontos';}).sort(function(a,b){return (a.c.encerradoEm||'')<(b.c.encerradoEm||'')?1:-1;});var producao=atencao.length+andamento.length,totalAnd=producao,ok=andamento.length,pct=totalAnd?Math.round(ok/totalAnd*100):100;var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};set('opKpiProducao',producao);set('opKpiAtraso',atencao.length);set('opKpiProntos',prontos.length);set('opKpiSla',pct+'%');set('opCountAtencao',atencao.length);set('opCountAndamento',andamento.length);set('opCountProntos',prontos.length);var sub=document.getElementById('opSub');if(sub)sub.textContent=src.length+' atendimento(s) ativo(s) · atualizado agora';var alert=document.getElementById('opAlert');if(alert){if(atencao.length){var p=atencao[0];alert.classList.add('show');alert.textContent='Prioridade: '+(p.c.nome||'Cliente')+' · OS '+formatarOS_(p.c.num)+' · '+p.st.label;}else{alert.classList.remove('show');alert.textContent='';}}var show=function(wrap,on){var el=document.getElementById(wrap);if(el)el.style.display=on?'block':'none';};show('opLaneAtencaoWrap',operacaoFiltro==='todos'||operacaoFiltro==='atencao');show('opLaneAndamentoWrap',operacaoFiltro==='todos'||operacaoFiltro==='andamento');show('opLaneProntosWrap',operacaoFiltro==='todos'||operacaoFiltro==='prontos');renderOperacaoLista_('opListAtencao',atencao,'Nenhum atendimento em risco agora.');renderOperacaoLista_('opListAndamento',andamento,'Fila de produção vazia.');renderOperacaoLista_('opListProntos',prontos,'Nenhum capacete pronto para retirada.');}
+function opMinRestante_(it){if(!it||!it.st||it.st.elapsed===null)return null;return (it.st.meta||0)-(it.st.elapsed||0);}
+function opRenderRiscos_(items){
+  var el=document.getElementById('opRiskList');if(!el)return;
+  var riscos=items.filter(function(it){var r=opMinRestante_(it);return it.tipo!=='prontos'&&r!==null&&r<=10;}).sort(function(a,b){return opMinRestante_(a)-opMinRestante_(b);}).slice(0,4);
+  if(!riscos.length){el.innerHTML='';return;}
+  el.innerHTML=riscos.map(function(it){var r=opMinRestante_(it),late=r<0;var txt=late?'atrasado há '+fmtTempo(Math.abs(r)):'vence em '+fmtTempo(r);return'<div class="op-risk-item '+(late?'late':'')+'"><span>'+escapeHtml_(it.c.nome||'Cliente')+' · '+txt+'</span><span class="op-risk-os">OS '+formatarOS_(it.c.num)+'</span></div>';}).join('');
+}
+function opRenderServicoSla_(base){
+  var el=document.getElementById('opServicoSlaList');if(!el)return;
+  var mapa={};
+  base.forEach(function(c){
+    if(c.status==='Cancelado')return;
+    var st=statusPrazoCliente_(c),svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];
+    if(!svcs.length)svcs=['Serviço não informado'];
+    var porSvc=svcs.length?Math.round((st.elapsed||0)/svcs.length):st.elapsed;
+    svcs.forEach(function(s){
+      var k=s||'Serviço não informado';if(!mapa[k])mapa[k]={nome:k,total:0,qtd:0,ok:0,meta:tempoServicoMin_(k)};
+      if(st.elapsed!==null){mapa[k].total+=porSvc;mapa[k].qtd++;}
+      if(st.elapsed!==null&&st.elapsed<=st.meta)mapa[k].ok++;
+    });
+  });
+  var arr=Object.keys(mapa).map(function(k){var m=mapa[k];m.media=m.qtd?Math.round(m.total/m.qtd):0;m.sla=m.qtd?Math.round(m.ok/m.qtd*100):0;return m;}).sort(function(a,b){return b.qtd-a.qtd||b.media-a.media;}).slice(0,6);
+  if(!arr.length){el.innerHTML='<div class="dash-empty">Sem dados de serviço ainda.</div>';return;}
+  el.innerHTML=arr.map(function(m){var cls=m.sla>=85?'ok':m.sla>=60?'warn':'late';return'<div class="op-svc-row"><div><div class="op-svc-name">'+escapeHtml_(m.nome)+'</div><div class="op-mini-bar"><div class="op-mini-fill" style="width:'+Math.min(100,m.sla)+'%"></div></div></div><div class="op-svc-meta">'+fmtTempo(m.media)+' méd.</div><div class="op-svc-sla '+cls+'">'+m.sla+'%</div></div>';}).join('');
+}
+function opRenderPicos_(base){
+  var el=document.getElementById('opPicoList');if(!el)return;
+  var hrs={};base.forEach(function(c){if(c.status==='Cancelado')return;var h=fmtHora(c.hora);if(!h||h==='—')return;var n=parseInt(h.split(':')[0],10);if(isNaN(n))return;hrs[n]=(hrs[n]||0)+1;});
+  var arr=Object.keys(hrs).map(function(k){return{h:parseInt(k,10),qtd:hrs[k]};}).sort(function(a,b){return b.qtd-a.qtd||a.h-b.h;}).slice(0,5);
+  var max=arr.length?arr[0].qtd:0;
+  if(!arr.length){el.innerHTML='<div class="dash-empty">Sem dados de horário ainda.</div>';return;}
+  el.innerHTML=arr.map(function(x){var pct=max?Math.round(x.qtd/max*100):0;return'<div class="op-peak-row"><div><div class="op-peak-hora">'+String(x.h).padStart(2,'0')+'h</div><div class="op-mini-bar"><div class="op-mini-fill" style="width:'+pct+'%"></div></div></div><div class="op-peak-meta">'+x.qtd+' atend.</div><div class="op-svc-sla ok">'+pct+'%</div></div>';}).join('');
+}
+function opRenderInteligencia_(src,base){opRenderRiscos_(src);opRenderServicoSla_(base);opRenderPicos_(base);}
+function renderOperacaoPainel(){var base=(clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]')).filter(function(c){return c&&c.status!=='Cancelado';});var src=base.filter(function(c){return c.status!=='Entregue';}).map(classificarOperacao_);var atencao=src.filter(function(i){return i.tipo==='atencao';}).sort(function(a,b){return a.prioridade-b.prioridade;});var andamento=src.filter(function(i){return i.tipo==='andamento';}).sort(function(a,b){return a.prioridade-b.prioridade;});var prontos=src.filter(function(i){return i.tipo==='prontos';}).sort(function(a,b){return (a.c.encerradoEm||'')<(b.c.encerradoEm||'')?1:-1;});var producao=atencao.length+andamento.length,totalAnd=producao,ok=andamento.length,pct=totalAnd?Math.round(ok/totalAnd*100):100;var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};set('opKpiProducao',producao);set('opKpiAtraso',atencao.length);set('opKpiProntos',prontos.length);set('opKpiSla',pct+'%');set('opCountAtencao',atencao.length);set('opCountAndamento',andamento.length);set('opCountProntos',prontos.length);var sub=document.getElementById('opSub');if(sub)sub.textContent=src.length+' atendimento(s) ativo(s) · atualizado agora';var alert=document.getElementById('opAlert');if(alert){if(atencao.length){var p=atencao[0];alert.classList.add('show');alert.textContent='Prioridade: '+(p.c.nome||'Cliente')+' · OS '+formatarOS_(p.c.num)+' · '+p.st.label;}else{alert.classList.remove('show');alert.textContent='';}}opRenderInteligencia_(src,base);var show=function(wrap,on){var el=document.getElementById(wrap);if(el)el.style.display=on?'block':'none';};show('opLaneAtencaoWrap',operacaoFiltro==='todos'||operacaoFiltro==='atencao');show('opLaneAndamentoWrap',operacaoFiltro==='todos'||operacaoFiltro==='andamento');show('opLaneProntosWrap',operacaoFiltro==='todos'||operacaoFiltro==='prontos');renderOperacaoLista_('opListAtencao',atencao,'Nenhum atendimento em risco agora.');renderOperacaoLista_('opListAndamento',andamento,'Fila de produção vazia.');renderOperacaoLista_('opListProntos',prontos,'Nenhum capacete pronto para retirada.');}
 function salvarConfig(){webAppUrl=document.getElementById('webAppUrl').value.trim();localStorage.setItem('zapWebApp',webAppUrl);showToast('✅ Configuração salva!');checkConexao();}
 function checkConexao(){var el=document.getElementById('statusConexao');el.textContent='Verificando...';apiGet('ping',{},5000).then(function(r){if(r&&r.ok){el.textContent='🟢 Conectado v'+r.version;el.className='info-val green';}else{el.textContent='🔴 Erro: '+(r&&r.error||'?');el.className='info-val';}}).catch(function(){el.textContent='🔴 Sem conexão';el.className='info-val';});}
 
@@ -3463,7 +3530,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.16.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.17.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

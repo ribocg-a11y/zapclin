@@ -71,10 +71,13 @@ Status: concluida em `v4.16.0`.
 
 ## Fase 23C - Operacao E SLA
 
+Status: concluida em `v4.17.0`.
+
 - Tempo medio por servico.
 - Percentual dentro do SLA.
 - Ranking de horarios de pico.
 - Alertas de atraso e proximidade do prazo.
+- Leitura fica na propria Fila de Producao para apoiar decisao operacional sem abrir relatorio.
 
 ## Fase 23D2 - Cliente E Recorrencia Avancada
 
