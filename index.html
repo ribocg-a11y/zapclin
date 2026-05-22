@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.14.1 | Data: 22/05/2026
+  Versão : 4.14.2 | Data: 22/05/2026
+  v4.14.2:
+     - Corrige prazo operacional da Revitalizacao para 24h/1440min
+     - Mantem soma de prazos por capacete e parada do tempo ao marcar Pronto
   v4.14.1:
      - Padroniza fonte numerica em todas as telas operacionais, historico, vendas, CRM e relatorios
      - Mantem leitura tabular para valores, OS, rankings, tempos e KPIs sem alterar regras de negocio
@@ -1355,7 +1358,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.14.1 | 22/05/2026 — Ajuste visual de fonte numerica
+// ZAPCLIN v4.14.2 | 22/05/2026 — Prazo Revitalizacao 24h
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1374,7 +1377,7 @@ const SERVICE_TIMES={
   'limpeza + hig. rapida':16,
   'limpeza + hig. essencial':20,
   'limpeza + hig. profunda':30,
-  'revitalizacao':60
+  'revitalizacao':1440
 };
 const CATEGORIAS=[
   {key:'Salários',icon:'👷'},{key:'Produtos/Insumos',icon:'🧴'},
@@ -1401,7 +1404,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.14.1';
+const APP_VERSION='v4.14.2';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3249,7 +3252,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.14.1',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.14.2',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

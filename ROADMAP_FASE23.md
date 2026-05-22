@@ -29,6 +29,7 @@ Status: iniciada em `v4.13.1`.
 - Revisada fonte numerica para KPIs e valores.
 - Corrigido formato BRL com separador de milhar no padrao brasileiro.
 - Reforco v4.14.1: fonte numerica aplicada em todas as telas onde ainda havia classes antigas, sem mudar fluxo operacional.
+- Hotfix v4.14.2/v3.31: Revitalizacao passa a ter SLA de 24h/1440min, mantendo soma por capacete e congelamento ao marcar Pronto.
 
 ## Fase 23D1 - Relacionamento E Fidelidade
 
