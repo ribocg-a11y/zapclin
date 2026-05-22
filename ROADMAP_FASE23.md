@@ -17,7 +17,7 @@ Esta fase foi antecipada para organizar a evolucao visual, gerencial e automatiz
 
 ## Fase 23A - Tokens Visuais E Hierarquia
 
-Status: iniciada em `v4.13.0`.
+Status: iniciada em `v4.13.1`.
 
 - Criados tokens semanticos de cor no frontend.
 - Reduzida a saturacao constante do neon sem perder identidade ZapClin.
@@ -26,6 +26,8 @@ Status: iniciada em `v4.13.0`.
 - Criados skeleton/loading para listas operacionais.
 - Melhorados toasts para mostrar acao, resultado e proximo passo.
 - Adicionado feedback visual ao mudar status operacional.
+- Revisada fonte numerica para KPIs e valores.
+- Corrigido formato BRL com separador de milhar no padrao brasileiro.
 
 ## Fase 23B - Dashboard Executivo
 
