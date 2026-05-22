@@ -59,10 +59,15 @@ Hotfix backend `v3.30`:
 
 ## Fase 23B - Dashboard Executivo
 
+Status: concluida em `v4.16.0`.
+
 - Receita por dia.
 - Servicos mais vendidos.
 - Margem: vendas menos custos.
 - Comparativo semana atual vs semana anterior.
+- Melhor dia do mes.
+- Leitura estrategica com insights de tendencia, ticket, servico lider e margem.
+- Analises consideram apenas lancamentos validos, ignorando cancelados.
 
 ## Fase 23C - Operacao E SLA
 

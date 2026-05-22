@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.15.0 | Data: 22/05/2026
+  Versão : 4.16.0 | Data: 22/05/2026
+  v4.16.0:
+    - Conclui Fase 23B com Dashboard Executivo: comparativo semanal, melhor dia e leitura estratégica do mês
+    - Separa lançamentos válidos de cancelados nas análises gerenciais
+    - Adiciona insights acionáveis de receita, margem, ticket e volume sem alterar backend
   v4.15.0:
     - Aplica revisão visual operacional com superfícies mais limpas, hierarquia forte e menor saturação constante
     - Padroniza cartões, KPIs, formulários, listas e estados visuais sem alterar fluxos de negócio
@@ -578,6 +582,18 @@
   .dash-donut-wrap{display:flex;align-items:center;gap:16px}
   .dash-donut-canvas{flex-shrink:0}
   .dash-donut-legend{flex:1;min-width:0}
+  .dash-exec-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+  .dash-exec-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 14px;position:relative;overflow:hidden}
+  .dash-exec-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+  .dash-exec-val{font-family:var(--font-data);font-size:22px;font-weight:850;font-variant-numeric:tabular-nums;line-height:1.05}
+  .dash-exec-sub{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.35}
+  .dash-delta{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 8px;margin-top:8px;font-size:10px;font-weight:800;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035)}
+  .dash-delta.up{color:var(--green);border-color:rgba(25,210,127,.26);background:rgba(25,210,127,.08)}
+  .dash-delta.down{color:var(--red);border-color:rgba(255,89,103,.28);background:rgba(255,89,103,.08)}
+  .dash-delta.flat{color:var(--muted)}
+  .dash-insights{display:grid;gap:8px}
+  .dash-insight{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075);border-radius:13px;padding:10px 12px;color:var(--text);font-size:12px;line-height:1.4}
+  .dash-insight b{font-weight:800}
   .donut-legend-item{display:flex;align-items:center;gap:7px;margin-bottom:7px}
   .donut-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
   .donut-legend-name{font-size:10px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -753,15 +769,15 @@
   .mobile-header{background:rgba(9,11,18,.88);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(16px)}
   .section-title{display:flex;align-items:center;gap:8px;color:#aeb7d4;letter-spacing:1.8px;font-size:10px}
   .section-title::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--cyan);box-shadow:0 0 10px rgba(0,212,238,.48);flex-shrink:0}
-  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.op-hero,.op-kpi,.op-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.dash-exec-card,.op-hero,.op-kpi,.op-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
   .home-card{border-radius:18px;padding:22px 18px;min-height:112px}
   .home-card::before{height:3px;box-shadow:none;opacity:.92}
   .home-card::after{background:linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,0));opacity:.78}
   .home-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.16);box-shadow:0 18px 44px rgba(0,0,0,.24)}
-  .kpi-card,.dash-kpi,.venda-kpi,.crm-card{border-radius:16px;padding:16px 18px}
+  .kpi-card,.dash-kpi,.dash-exec-card,.venda-kpi,.crm-card{border-radius:16px;padding:16px 18px}
   .kpi-card::before,.dash-kpi::before,.crm-card::before,.venda-kpi::after{height:3px;box-shadow:none;opacity:.95}
-  .kpi-label,.dash-kpi-lbl,.venda-kpi-label,.crm-label{color:#aeb7d4;letter-spacing:1.4px;font-size:10px}
-  .kpi-value,.dash-kpi-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-family:var(--font-data)!important;font-size:24px;font-weight:850;line-height:1.04;letter-spacing:0;font-variant-numeric:tabular-nums}
+  .kpi-label,.dash-kpi-lbl,.dash-exec-label,.venda-kpi-label,.crm-label{color:#aeb7d4;letter-spacing:1.4px;font-size:10px}
+  .kpi-value,.dash-kpi-val,.dash-exec-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-family:var(--font-data)!important;font-size:24px;font-weight:850;line-height:1.04;letter-spacing:0;font-variant-numeric:tabular-nums}
   .op-kpi-val,.crm-val{font-size:26px}
   .total-value,.total-cli-val,.cli-total,.lanc-val,.rank-val,.venda-rank-val,.hist-rank-val,.hist-item-val{font-family:var(--font-data)!important;font-weight:850;letter-spacing:0;font-variant-numeric:tabular-nums}
   .form-input,.form-select,.form-textarea,input[type="text"],input[type="tel"],input[type="number"],input[type="date"],select,textarea{background:#0d111a;border-color:rgba(255,255,255,.10);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
@@ -790,10 +806,12 @@
   @media(max-width:900px){
     .page{padding:18px 14px 28px}
     .home-card{min-height:104px;padding:18px 16px}
-    .kpi-card,.dash-kpi,.venda-kpi,.crm-card{padding:14px 15px}
-    .kpi-value,.dash-kpi-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-size:22px}
+    .dash-exec-grid{grid-template-columns:1fr 1fr}
+    .kpi-card,.dash-kpi,.dash-exec-card,.venda-kpi,.crm-card{padding:14px 15px}
+    .kpi-value,.dash-kpi-val,.dash-exec-val,.op-kpi-val,.venda-kpi-val,.crm-val,.hist-kpi-val{font-size:22px}
     .op-kpi-val,.crm-val{font-size:24px}
   }
+  @media(max-width:520px){.dash-exec-grid{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -1208,6 +1226,39 @@
     <div class="dash-kpi c-purple"><div class="dash-kpi-lbl">Margem</div><div class="dash-kpi-val purple" id="dkMargem">—</div></div>
   </div>
 
+  <!-- Comparativo executivo -->
+  <div class="section-title">Comparativo semanal</div>
+  <div class="dash-exec-grid">
+    <div class="dash-exec-card">
+      <div class="dash-exec-label">Receita da semana</div>
+      <div class="dash-exec-val cyan" id="dkSemanaReceita">—</div>
+      <div class="dash-exec-sub" id="dkSemanaPeriodo">—</div>
+      <div id="dkSemanaReceitaDelta"></div>
+    </div>
+    <div class="dash-exec-card">
+      <div class="dash-exec-label">Atendimentos</div>
+      <div class="dash-exec-val blue" id="dkSemanaAtend">—</div>
+      <div class="dash-exec-sub">vs semana anterior</div>
+      <div id="dkSemanaAtendDelta"></div>
+    </div>
+    <div class="dash-exec-card">
+      <div class="dash-exec-label">Margem semanal</div>
+      <div class="dash-exec-val purple" id="dkSemanaMargem">—</div>
+      <div class="dash-exec-sub" id="dkSemanaLucro">—</div>
+      <div id="dkSemanaMargemDelta"></div>
+    </div>
+    <div class="dash-exec-card">
+      <div class="dash-exec-label">Melhor dia do mês</div>
+      <div class="dash-exec-val green" id="dkMelhorDia">—</div>
+      <div class="dash-exec-sub" id="dkMelhorDiaSub">—</div>
+    </div>
+  </div>
+
+  <div class="dash-chart-card">
+    <div class="dash-chart-title">💡 Leitura estratégica</div>
+    <div class="dash-insights" id="dashInsights"></div>
+  </div>
+
   <!-- Gráfico 1: Faturamento Diário -->
   <div class="dash-chart-card">
     <div class="dash-chart-title">📊 Faturamento por Dia</div>
@@ -1426,7 +1477,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.15.0 | 22/05/2026 — Revisao visual operacional
+// ZAPCLIN v4.16.0 | 22/05/2026 — Dashboard Executivo Fase 23B
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1472,7 +1523,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.15.0';
+const APP_VERSION='v4.16.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2325,6 +2376,80 @@ function mudarMesDash(delta) {
   carregarDashboard();
 }
 
+function dashData_(v){
+  var s=fmtData(v);
+  if(!s||s==='—')return null;
+  var p=s.split('/');
+  if(p.length<3)return null;
+  var d=new Date(parseInt(p[2],10),parseInt(p[1],10)-1,parseInt(p[0],10));
+  return isNaN(d.getTime())?null:d;
+}
+function dashDiaKey_(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}
+function dashAddDias_(d,n){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;}
+function dashEntre_(d,a,b){if(!d)return false;var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();return x>=a.getTime()&&x<=b.getTime();}
+function dashValidLanc_(l){return l&&!l.cancelado&&parseFloat(l.val||0)>0;}
+function dashValidCusto_(c){return c&&!c.cancelado&&parseFloat(c.val||0)>0;}
+function dashResumoPeriodo_(lanc,cst,de,ate){
+  var ls=lanc.filter(function(l){return dashValidLanc_(l)&&dashEntre_(dashData_(l.data),de,ate);});
+  var cs=cst.filter(function(c){return dashValidCusto_(c)&&dashEntre_(dashData_(c.data),de,ate);});
+  var receita=ls.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+  var custo=cs.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
+  var lucro=receita-custo;
+  return{lanc:ls,custos:cs,receita:receita,custo:custo,lucro:lucro,margem:receita>0?parseFloat((lucro/receita*100).toFixed(1)):0,atend:ls.length,ticket:ls.length?receita/ls.length:0};
+}
+function dashDelta_(atual,anterior,sufixo){
+  sufixo=sufixo||'';
+  var cls='flat',txt='sem variação';
+  if(anterior>0){
+    var pct=(atual-anterior)/anterior*100;
+    cls=pct>0?'up':pct<0?'down':'flat';
+    txt=(pct>0?'↑ ':'↓ ')+Math.abs(pct).toFixed(1).replace('.',',')+'%';
+  }else if(atual>0){cls='up';txt='novo movimento';}
+  return'<span class="dash-delta '+cls+'">'+txt+sufixo+'</span>';
+}
+function dashSet_(id,html){var el=document.getElementById(id);if(el)el.innerHTML=html;}
+function dashMelhorDia_(diaData){
+  var best=diaData.reduce(function(a,b){return (b.valor||0)>(a.valor||0)?b:a;},{dia:'—',valor:0});
+  return best.valor>0?best:null;
+}
+function renderDashboardExecutivo_(lanc,cst,lancMes,cstMes,diaData,target){
+  var hoje=new Date();
+  var isMesAtual=target.getFullYear()===hoje.getFullYear()&&target.getMonth()===hoje.getMonth();
+  var fim=isMesAtual?new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate()):new Date(target.getFullYear(),target.getMonth()+1,0);
+  var ini=dashAddDias_(fim,-6);
+  var fimAnt=dashAddDias_(ini,-1);
+  var iniAnt=dashAddDias_(fimAnt,-6);
+  var atual=dashResumoPeriodo_(lanc,cst,ini,fim);
+  var ant=dashResumoPeriodo_(lanc,cst,iniAnt,fimAnt);
+  var melhor=dashMelhorDia_(diaData);
+  dashSet_('dkSemanaReceita',fmtBRL(atual.receita));
+  dashSet_('dkSemanaPeriodo',dashDiaKey_(ini)+' a '+dashDiaKey_(fim));
+  dashSet_('dkSemanaReceitaDelta',dashDelta_(atual.receita,ant.receita));
+  dashSet_('dkSemanaAtend',String(atual.atend));
+  dashSet_('dkSemanaAtendDelta',dashDelta_(atual.atend,ant.atend));
+  dashSet_('dkSemanaMargem',atual.margem.toFixed(1).replace('.',',')+'%');
+  dashSet_('dkSemanaLucro','lucro '+fmtBRL(atual.lucro));
+  dashSet_('dkSemanaMargemDelta',dashDelta_(atual.margem,ant.margem,' margem'));
+  dashSet_('dkMelhorDia',melhor?String(melhor.dia):'—');
+  dashSet_('dkMelhorDiaSub',melhor?fmtBRL(melhor.valor)+' em receita':'sem receita no mês');
+  var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+  var custo=cstMes.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
+  var ticket=lancMes.length?receita/lancMes.length:0;
+  var svc={};
+  lancMes.forEach(function(l){svc[l.svc]=(svc[l.svc]||0)+parseFloat(l.val||0);});
+  var top=Object.keys(svc).map(function(k){return{name:k,val:svc[k]};}).sort(function(a,b){return b.val-a.val;})[0];
+  var insights=[];
+  if(atual.receita>ant.receita)insights.push('A semana atual está acima da anterior em receita. Vale reforçar os serviços que puxaram esse resultado.');
+  else if(ant.receita>0)insights.push('A semana atual está abaixo da anterior. Observe horários de pico e considere campanha rápida para recuperar fluxo.');
+  else insights.push('Ainda não há base semanal suficiente para tendência, mas o dashboard já está pronto para acompanhar.');
+  if(top)insights.push('Serviço mais forte do mês: <b>'+escapeHtml_(top.name)+'</b>, com '+fmtBRL(top.val)+' em receita.');
+  if(ticket<20&&lancMes.length)insights.push('Ticket médio baixo. Priorize oferta guiada para elevar pacote ou incluir limpeza de viseira/acessórios.');
+  if(ticket>=30)insights.push('Ticket médio saudável. Mantenha destaque para serviços de maior valor e acompanhe margem.');
+  if(receita>0&&((receita-custo)/receita*100)<20)insights.push('Margem do mês pede atenção: custos estão consumindo parte relevante do faturamento.');
+  var el=document.getElementById('dashInsights');
+  if(el)el.innerHTML=insights.map(function(t){return'<div class="dash-insight"><span>•</span><span>'+t+'</span></div>';}).join('');
+}
+
 function carregarDashboard() {
   // Sincronizar timer admin
   atualizarTimerAdmin();
@@ -2355,8 +2480,8 @@ function carregarDashboard() {
     return p.length >= 3 ? p[1] + '/' + p[2] : '';
   }
 
-  var lancMes = lanc.filter(function(l) { return gm(l.data) === mes; });
-  var cstMes  = cst.filter(function(c)  { return gm(c.data)  === mes; });
+  var lancMes = lanc.filter(function(l) { return gm(l.data) === mes && dashValidLanc_(l); });
+  var cstMes  = cst.filter(function(c)  { return gm(c.data)  === mes && dashValidCusto_(c); });
 
   var receita = lancMes.reduce(function(s,l){ return s + parseFloat(l.val||0); }, 0);
   var custoT  = cstMes.reduce(function(s,c){  return s + parseFloat(c.val||0); }, 0);
@@ -2387,6 +2512,8 @@ function carregarDashboard() {
   });
   var diaData = [];
   for (var d = 1; d <= diasMes; d++) diaData.push({ dia: d, valor: fatDia[d] });
+
+  renderDashboardExecutivo_(lanc,cst,lancMes,cstMes,diaData,target);
 
   // Desenhar gráficos com pequeno delay para garantir que o canvas está visível
   setTimeout(function() {
@@ -2492,7 +2619,8 @@ function _drawTooltip(ctx, m, nearest){
   // Texto
   ctx.textAlign='left';
   ctx.fillStyle='#6b6b8a'; ctx.font='10px DM Sans,sans-serif';
-  ctx.fillText('Dia '+nearest.dia+' — Maio 2026',bx+10,by+16);
+  var mesLbl=(document.getElementById('dashMesLabel')||{}).textContent||'mês selecionado';
+  ctx.fillText('Dia '+nearest.dia+' — '+mesLbl,bx+10,by+16);
   ctx.fillStyle='#00e5ff'; ctx.font='bold 15px Syne,sans-serif';
   ctx.fillText(fmtBRL(nearest.valor),bx+10,by+36);
 }
@@ -3335,7 +3463,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.15.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.16.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
