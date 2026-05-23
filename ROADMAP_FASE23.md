@@ -81,12 +81,15 @@ Status: concluida em `v4.17.0`.
 
 ## Fase 23D2 - Cliente E Recorrencia Avancada
 
+Status: concluida em `v4.18.0`.
+
 - Historico do cliente.
 - Total gasto.
 - Servicos anteriores.
 - Mensagem diferente para cliente recorrente.
 - Tags de campanha, preferencias, aniversario e consentimento.
 - Automacao futura de disparos de aniversario e campanhas sazonais.
+- Perfil comercial fica na pagina Relacionamento para preservar o cadastro operacional limpo.
 
 ## Fase 23E - Automacoes E Relatorios
 
