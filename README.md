@@ -4,9 +4,9 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.19.1`
-- Service Worker/PWA: `v4.19.1`
-- Backend Apps Script: `v3.32` pronto para reimplantacao
+- Frontend GitHub Pages: `v4.20.0`
+- Service Worker/PWA: `v4.20.0`
+- Backend Apps Script: `v3.33` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
 ## Fase Antecipada
@@ -36,7 +36,8 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
 8. `Fase 23D2` - concluida em v4.18.0 com historico comercial do cliente, total gasto, ticket medio, servicos anteriores, tags e mensagem para cliente recorrente.
 9. `Fase 23E` - concluida em v4.19.0 com resumo diario copiavel, leitura mensal estrategica, WhatsApp guiado por status e sugestao de retirada.
 10. `Gate QA v4.19.1` - auditoria controlada antes da proxima fase: sintaxe, rotas, acoes frontend/backend, base exportada, rastreabilidade, SLA, WhatsApp, Clube VIP, stress de 600 clientes e limpeza de sobreposicoes antigas.
-11. `Fase 24` - aceite/assinatura simples usando a base de OS/PDF.
+11. `Fase 23F` - concluida em v4.20.0/v3.33 com ficha CRM completa na aba Relacionamento e criacao de nova OS rapida para cliente recorrente.
+12. `Fase 24` - aceite/assinatura simples usando a base de OS/PDF.
 
 ## Regra De Evolucao
 

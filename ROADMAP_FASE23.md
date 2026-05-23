@@ -113,6 +113,17 @@ Status: concluida em `v4.19.1`.
 - Removidas sobreposicoes antigas de `renderClienteList` e `atualizarTimers` para reduzir risco de regressao.
 - Mantida observacao tecnica: ainda nao ha tempo real pleno; o app atualiza ao abrir pagina/acao/cache. Polling central ou invalidacao global fica como melhoria futura.
 
+## Fase 23F - Ficha CRM E Nova OS Recorrente
+
+Status: concluida em `v4.20.0` com backend `v3.33`.
+
+- Relacionamento passa a abrir ficha completa do cliente ao clicar no card.
+- A ficha mostra aniversario, e-mail, modelo/capacete, origem, consentimento, cadastro VIP, total gasto, ticket medio e historico operacional.
+- Dados do cadastro VIP deixam de ficar apenas na planilha e passam a ser retornados em `listarClientes` para uso no app.
+- Adicionada busca por nome, telefone, OS e servico dentro da pagina Relacionamento.
+- Adicionada Nova OS rapida a partir de cliente conhecido, gerando novo atendimento e lancamentos sem preencher nome/telefone novamente.
+- Mantida alternativa de cadastro com fotos pre-preenchido quando a OS exigir documentacao visual.
+
 ## Fase 24 - Aceite/Assinatura Simples
 
 Adicionar aceite digital leve ou registro de confirmacao usando a base de OS/PDF ja criada.
