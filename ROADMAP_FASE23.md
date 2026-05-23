@@ -93,10 +93,14 @@ Status: concluida em `v4.18.0`.
 
 ## Fase 23E - Automacoes E Relatorios
 
+Status: concluida em `v4.19.0`.
+
 - WhatsApp guiado por status.
 - Relatorio diario resumido.
 - Relatorio mensal com leitura estrategica.
 - Sugestao de horario de retirada.
+- Resumo diario copiavel no Painel Admin, sem alterar backend.
+- Leitura estrategica mensal dentro da pagina Relatorio, conectando receita, margem, ticket, top servico e maior custo.
 
 ## Fase 24 - Aceite/Assinatura Simples
 

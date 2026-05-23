@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.18.0 | Data: 22/05/2026
+  Versão : 4.19.0 | Data: 22/05/2026
+  v4.19.0:
+    - Conclui Fase 23E com resumo diario copiavel e leitura mensal estrategica
+    - Adiciona sugestao de horario de retirada no aviso WhatsApp de pronto
+    - Mantem automacoes guiadas no frontend sem alterar backend ou dados operacionais
   v4.18.0:
     - Conclui Fase 23D2 com perfil comercial do cliente na página Relacionamento
     - Adiciona ticket médio, serviços anteriores, tags de campanha e mensagens para recorrentes
@@ -602,6 +606,16 @@
   .dash-insights{display:grid;gap:8px}
   .dash-insight{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075);border-radius:13px;padding:10px 12px;color:var(--text);font-size:12px;line-height:1.4}
   .dash-insight b{font-weight:800}
+  .strategy-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px 16px;margin-bottom:16px}
+  .strategy-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .strategy-title{font-family:var(--font-head);font-size:14px;font-weight:850;color:var(--text)}
+  .strategy-copy{border:1px solid rgba(0,212,238,.3);background:rgba(0,212,238,.09);color:var(--cyan);border-radius:10px;padding:8px 11px;font-family:var(--font-head);font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap}
+  .strategy-lines{display:grid;gap:8px}
+  .strategy-line{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.38;color:var(--text);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px 10px}
+  .strategy-line strong{font-weight:850;color:#fff}
+  .strategy-line .ok{color:var(--green)} .strategy-line .warn{color:var(--orange)} .strategy-line .bad{color:var(--red)} .strategy-line .info{color:var(--cyan)}
+  .daily-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+  .daily-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);border-radius:999px;padding:6px 9px;font-size:11px;color:var(--muted)}
   .donut-legend-item{display:flex;align-items:center;gap:7px;margin-bottom:7px}
   .donut-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
   .donut-legend-name{font-size:10px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -801,7 +815,7 @@
   .mobile-header{background:rgba(9,11,18,.88);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(16px)}
   .section-title{display:flex;align-items:center;gap:8px;color:#aeb7d4;letter-spacing:1.8px;font-size:10px}
   .section-title::before{content:'';width:7px;height:7px;border-radius:999px;background:var(--cyan);box-shadow:0 0 10px rgba(0,212,238,.48);flex-shrink:0}
-  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.dash-exec-card,.op-hero,.op-kpi,.op-card,.op-intel-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+  .service-card,.kpi-card,.total-bar,.cap-card,.cliente-item,.home-card,.dash-kpi,.dash-chart-card,.dash-exec-card,.op-hero,.op-kpi,.op-card,.op-intel-card,.venda-kpi,.venda-insights,.venda-rank-item,.crm-card,.crm-client,.hist-kpi,.hist-rank-item,.hist-item,.log-item,.atalho-card,.strategy-card{background:var(--zc-panel);border-color:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.18)}
   .home-card{border-radius:18px;padding:22px 18px;min-height:112px}
   .home-card::before{height:3px;box-shadow:none;opacity:.92}
   .home-card::after{background:linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,0));opacity:.78}
@@ -1349,6 +1363,14 @@
     <div class="kpi-card cyan" style="--kpi-c:var(--blue)"><div class="kpi-label">Atendimentos</div><div class="kpi-value" style="color:var(--blue)" id="relAtend">—</div><div class="kpi-sub">serviços no mês</div></div>
     <div class="kpi-card cyan" style="--kpi-c:var(--purple)"><div class="kpi-label">Ticket Médio</div><div class="kpi-value" style="color:var(--purple)" id="relTicket">—</div><div class="kpi-sub">por atendimento</div></div>
   </div>
+  <div class="section-title">Leitura estratégica</div>
+  <div class="strategy-card" id="relEstrategia">
+    <div class="strategy-head">
+      <div class="strategy-title">Resumo do mês</div>
+      <button class="strategy-copy" onclick="copiarRelatorioMensal_()">Copiar leitura</button>
+    </div>
+    <div class="strategy-lines"><div class="skeleton-card sm"></div></div>
+  </div>
 
   <!-- Aluguel -->
   <div class="section-title">Aluguel do espaço</div>
@@ -1390,6 +1412,14 @@
     <div class="kpi-card red"><div class="kpi-label">Custos Hoje</div><div class="kpi-value red" id="kAdminCusHoje">—</div><div class="kpi-sub">gastos</div></div>
     <div class="kpi-card green"><div class="kpi-label">Faturamento Mês</div><div class="kpi-value green" id="kAdminMes">—</div><div class="kpi-sub" id="kAdminMesN">— serviços</div></div>
     <div class="kpi-card yellow"><div class="kpi-label">Resultado Mês</div><div class="kpi-value yellow" id="kAdminResultado">—</div><div class="kpi-sub" id="kAdminMargem">margem —%</div></div>
+  </div>
+  <div class="section-title">Resumo diário</div>
+  <div class="strategy-card" id="adminResumoDiario">
+    <div class="strategy-head">
+      <div class="strategy-title">Operação de hoje</div>
+      <button class="strategy-copy" onclick="copiarResumoDiarioAdmin_()">Copiar resumo</button>
+    </div>
+    <div class="strategy-lines"><div class="skeleton-card sm"></div></div>
   </div>
   <div class="section-title">Gestão</div>
   <div class="admin-atalhos">
@@ -1523,7 +1553,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN v4.18.0 | 22/05/2026 — Cliente e recorrencia avancada Fase 23D2
+// ZAPCLIN v4.19.0 | 22/05/2026 — Automacoes e relatorios Fase 23E
 // ═══════════════════════════════════════════════════════
 
 const SERVICES=[
@@ -1569,7 +1599,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.18.0';
+const APP_VERSION='v4.19.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1977,7 +2007,14 @@ function msgBoasVindas(nome,qtd,detalhes){
   linhas.push('Obrigado por escolher a *ZapClin*.');
   return linhas.join('\n');
 }
-function msgPronto(nome,qtd){var caps=qtd===1?'capacete ficou pronto':'capacetes ficaram prontos';return'Olá, '+nome+'! 🎉\n\nSeu(s) '+qtd+' '+caps+' e está(ão) impecável(is)! 🪖✨\n\nPode vir buscar quando quiser — estamos te esperando! 😊\n\nDepois da retirada, sua avaliação ajuda muito a ZapClin crescer. Se puder, avalie nosso atendimento no Google:\n'+GOOGLE_REVIEW_URL+'\n\nAté logo,\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
+function sugestaoRetiradaTexto_(){
+  var h=new Date().getHours();
+  if(h<11)return'Sugestão de retirada: hoje entre 12h e 14h, se ficar confortável para você.';
+  if(h<15)return'Sugestão de retirada: hoje entre 16h e 18h, evitando o horário de maior movimento.';
+  if(h<19)return'Sugestão de retirada: ainda hoje ou no próximo horário de atendimento.';
+  return'Sugestão de retirada: no próximo horário de atendimento, com calma e segurança.';
+}
+function msgPronto(nome,qtd){var caps=qtd===1?'capacete ficou pronto':'capacetes ficaram prontos';return'Olá, '+nome+'! 🎉\n\nSeu(s) '+qtd+' '+caps+' e está(ão) impecável(is)! 🪖✨\n\nPode vir buscar quando quiser — estamos te esperando! 😊\n'+sugestaoRetiradaTexto_()+'\n\nDepois da retirada, sua avaliação ajuda muito a ZapClin crescer. Se puder, avalie nosso atendimento no Google:\n'+GOOGLE_REVIEW_URL+'\n\nAté logo,\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
 function msgAgradecimento(nome){return'Olá, '+nome+'! 🙌\n\nObrigado pela confiança na *ZapClin*! 🪖✨\n\nFoi um prazer cuidar do seu(s) capacete(s). Já sentimos saudade! 😄\n\nTe esperamos em breve! 🏍️💨\n\n*ZapClin Higienização* 💙\n📸 *@zapclinhigienizacao*';}
 function mostrarWaModal(tipo,nome,tel,qtd,detalhes){
   if(tipo==='boasVindas'&&!detalhes)detalhes=detalhesDoCliente_(nome,tel,qtd);
@@ -2029,6 +2066,46 @@ function mudarMesRel(delta){
   carregarRelatorio();
 }
 
+var _relatorioMensalTexto='';
+
+function montarRelatorioEstrategico_(ctx){
+  var linhas=[];
+  if(!ctx.atend){
+    linhas.push({cls:'warn',txt:'Sem atendimentos registrados no mês selecionado. Confira se os lançamentos estão entrando corretamente antes de tomar decisão comercial.'});
+    return linhas;
+  }
+  linhas.push({cls:'info',txt:'Foram registrados <strong>'+ctx.atend+' atendimento(s)</strong>, com receita de <strong>'+fmtBRL(ctx.receita)+'</strong> e ticket médio de <strong>'+fmtBRL(ctx.ticket)+'</strong>.'});
+  if(ctx.margemNum>=35)linhas.push({cls:'ok',txt:'Margem saudável em <strong>'+ctx.margemNum.toFixed(1)+'%</strong>. Bom momento para reforçar serviços de maior valor sem mexer em preço.'});
+  else if(ctx.margemNum>=15)linhas.push({cls:'warn',txt:'Margem em atenção: <strong>'+ctx.margemNum.toFixed(1)+'%</strong>. Acompanhe custos antes de criar descontos amplos.'});
+  else linhas.push({cls:'bad',txt:'Margem crítica: <strong>'+ctx.margemNum.toFixed(1)+'%</strong>. Prioridade deve ser controlar custos e proteger ticket médio.'});
+  if(ctx.topServico)linhas.push({cls:'info',txt:'Serviço líder: <strong>'+escapeHtml_(ctx.topServico.name)+'</strong>, somando '+ctx.topServico.qtd+' atendimento(s) e '+fmtBRL(ctx.topServico.val)+'.'});
+  if(ctx.topCusto)linhas.push({cls:'warn',txt:'Maior custo do mês: <strong>'+escapeHtml_(ctx.topCusto.name)+'</strong>, com '+fmtBRL(ctx.topCusto.val)+'.'});
+  if(ctx.ticket<20)linhas.push({cls:'warn',txt:'Ticket médio baixo. Use abordagem no balcão para migrar cliente para pacotes completos ou incluir manutenção de viseira.'});
+  else if(ctx.ticket>=30)linhas.push({cls:'ok',txt:'Ticket médio forte. Preserve o padrão de oferta atual e acompanhe se a Revitalização mantém conversão.'});
+  return linhas;
+}
+
+function renderRelatorioEstrategico_(ctx){
+  var el=document.getElementById('relEstrategia');
+  if(!el)return;
+  var linhas=montarRelatorioEstrategico_(ctx);
+  _relatorioMensalTexto='Resumo mensal ZapClin - '+ctx.mesLabel+'\n'+
+    linhas.map(function(l){return'- '+stripHtml_(l.txt);}).join('\n');
+  el.querySelector('.strategy-lines').innerHTML=linhas.map(function(l){
+    return '<div class="strategy-line"><span class="'+l.cls+'">•</span><span>'+l.txt+'</span></div>';
+  }).join('');
+}
+
+function stripHtml_(s){return String(s||'').replace(/<[^>]+>/g,'');}
+function copiarTexto_(texto,sucesso){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(function(){showToast(sucesso,'blue');}).catch(function(){showToast('Não consegui copiar automaticamente.','orange');});
+  }else{
+    showToast('Seu navegador não liberou cópia automática.','orange');
+  }
+}
+function copiarRelatorioMensal_(){copiarTexto_(_relatorioMensalTexto||'Resumo mensal ainda não carregado.','Leitura mensal copiada.');}
+
 function carregarRelatorio(){
   document.getElementById('relMesProxBtn').disabled=_relMesOffset===0;
   var now=new Date();
@@ -2050,7 +2127,8 @@ function carregarRelatorio(){
   var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
   var custoTotal=cstMes.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
   var lucro=receita-custoTotal;
-  var margem=receita>0?(lucro/receita*100).toFixed(1):0;
+  var margemNum=receita>0?(lucro/receita*100):0;
+  var margem=margemNum.toFixed(1);
   var atend=lancMes.length;
   var ticket=atend>0?(receita/atend):0;
   var aluguel=receita*0.10;
@@ -2109,6 +2187,18 @@ function carregarRelatorio(){
     }).join('');
   }
 
+  renderRelatorioEstrategico_({
+    mesLabel:document.getElementById('relMesLabel').textContent,
+    receita:receita,
+    custoTotal:custoTotal,
+    lucro:lucro,
+    margemNum:margemNum,
+    atend:atend,
+    ticket:ticket,
+    topServico:sortedSvc[0]||null,
+    topCusto:sortedCat[0]||null
+  });
+
   // Busca dados frescos se necessário
   if(lancamentos.length===0||custos.length===0){
     Promise.all([buscarLancamentos(),buscarCustos()]).then(function(r){
@@ -2165,6 +2255,45 @@ function adminResetSessionTimer_(){
   adminCountdown=ADMIN_CONFIG.sessionSeconds;
   atualizarTimerAdmin();
 }
+
+var _resumoDiarioAdminTexto='';
+
+function resumoOperacaoDiaria_(kpis){
+  var arr=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var ativos=arr.filter(function(c){return c.status!=='Entregue'&&c.status!=='Cancelado';});
+  var prontos=ativos.filter(function(c){return c.status==='Pronto';});
+  var producao=ativos.filter(function(c){return c.status!=='Pronto';});
+  var atencao=producao.filter(function(c){var s=statusPrazoCliente_(c);return s.cls==='warn'||s.cls==='late';});
+  var atrasados=producao.filter(function(c){return statusPrazoCliente_(c).cls==='late';});
+  var receitaHoje=kpis&&kpis.recHoje?parseFloat(kpis.recHoje):0;
+  var custosHoje=kpis&&kpis.cusHoje?parseFloat(kpis.cusHoje):0;
+  var resultadoHoje=receitaHoje-custosHoje;
+  var linhas=[
+    {cls:resultadoHoje>=0?'ok':'bad',txt:'Resultado de hoje: <strong>'+fmtBRL(resultadoHoje)+'</strong> ('+fmtBRL(receitaHoje)+' de receita e '+fmtBRL(custosHoje)+' em custos).'},
+    {cls:producao.length?'info':'ok',txt:'Fila ativa: <strong>'+ativos.length+'</strong> cliente(s), sendo '+producao.length+' em produção e '+prontos.length+' pronto(s) para retirada.'}
+  ];
+  if(atrasados.length)linhas.push({cls:'bad',txt:'Ação imediata: <strong>'+atrasados.length+'</strong> atendimento(s) atrasado(s). Priorize contato e conclusão antes de novos encaixes.'});
+  else if(atencao.length)linhas.push({cls:'warn',txt:'Atenção: <strong>'+atencao.length+'</strong> atendimento(s) próximo(s) do prazo. Vale revisar a fila agora.'});
+  else linhas.push({cls:'ok',txt:'SLA sob controle no momento. Nenhum atendimento em atraso pela leitura atual.'});
+  if(prontos.length)linhas.push({cls:'ok',txt:'Retirada: existem <strong>'+prontos.length+'</strong> capacete(s) pronto(s). Reforce WhatsApp e organize balcão para entrega rápida.'});
+  else linhas.push({cls:'info',txt:'Retirada: sem capacetes prontos agora. Foque em reduzir tempo dos atendimentos em produção.'});
+  linhas.push({cls:'info',txt:sugestaoRetiradaTexto_()});
+  _resumoDiarioAdminTexto='Resumo diário ZapClin\n'+
+    linhas.map(function(l){return'- '+stripHtml_(l.txt);}).join('\n');
+  return linhas;
+}
+
+function renderResumoDiarioAdmin_(kpis){
+  var el=document.getElementById('adminResumoDiario');
+  if(!el)return;
+  var linhas=resumoOperacaoDiaria_(kpis||calcularKpisAdminLocal_());
+  el.querySelector('.strategy-lines').innerHTML=linhas.map(function(l){
+    return '<div class="strategy-line"><span class="'+l.cls+'">•</span><span>'+l.txt+'</span></div>';
+  }).join('')+
+  '<div class="daily-actions"><span class="daily-chip">WhatsApp por status</span><span class="daily-chip">SLA monitorado</span><span class="daily-chip">Retirada sugerida</span></div>';
+}
+
+function copiarResumoDiarioAdmin_(){copiarTexto_(_resumoDiarioAdminTexto||'Resumo diário ainda não carregado.','Resumo diário copiado.');}
 
 function abrirAdmin(){
   // [v4.8 ALTERAÇÃO]
@@ -2341,6 +2470,7 @@ function aplicarKpisAdmin_(kpis, origem){
   var td2=document.getElementById('adminTimerDisplay2');
   var td1=document.getElementById('adminTimerDisplay');
   if(td2&&td1)td2.textContent=td1.textContent;
+  renderResumoDiarioAdmin_(kpis);
 }
 
 function calcularKpisAdminLocal_(){
@@ -3543,7 +3673,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.18.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.19.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
