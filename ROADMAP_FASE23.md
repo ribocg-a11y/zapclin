@@ -102,6 +102,17 @@ Status: concluida em `v4.19.0`.
 - Resumo diario copiavel no Painel Admin, sem alterar backend.
 - Leitura estrategica mensal dentro da pagina Relatorio, conectando receita, margem, ticket, top servico e maior custo.
 
+## Gate QA - Auditoria Controlada
+
+Status: concluida em `v4.19.1`.
+
+- Criado ambiente de testes local para validar frontend, service worker, Apps Script e planilha exportada sem alterar dados reais.
+- Validadas rotas/paginas, acoes de API, mensagens WhatsApp, SLA, Clube VIP, CRM, Operacao, Relatorio e renders principais.
+- Executado stress test com 600 clientes, 1000 lancamentos e 300 custos no harness de frontend.
+- Corrigida regressao visual do Clube VIP no card do cliente, exibindo destaque e total antes/depois.
+- Removidas sobreposicoes antigas de `renderClienteList` e `atualizarTimers` para reduzir risco de regressao.
+- Mantida observacao tecnica: ainda nao ha tempo real pleno; o app atualiza ao abrir pagina/acao/cache. Polling central ou invalidacao global fica como melhoria futura.
+
 ## Fase 24 - Aceite/Assinatura Simples
 
 Adicionar aceite digital leve ou registro de confirmacao usando a base de OS/PDF ja criada.
