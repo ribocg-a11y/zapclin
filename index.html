@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.21.2 | Data: 23/05/2026
+  Versão : 4.21.3 | Data: 23/05/2026
+  v4.21.3:
+    - Corrige comparativo semanal do Dashboard para semana operacional de segunda a domingo
+    - Compara sempre contra a semana completa anterior, mantendo padrao brasileiro de leitura
+    - Nao altera graficos mensais nem demais calculos operacionais
   v4.21.2:
     - Busca fotos de capacetes sob demanda no Relacionamento para evitar lentidao no carregamento geral
     - Ativa sincronizacao viva mais curta entre aparelhos, renderizando telas dependentes apos cada ciclo
@@ -1654,7 +1658,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.21.2';
+const APP_VERSION='v4.21.3';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2627,6 +2631,8 @@ function dashData_(v){
 }
 function dashDiaKey_(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();}
 function dashAddDias_(d,n){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;}
+function dashInicioSemanaSegunda_(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());var dia=x.getDay();var volta=dia===0?6:dia-1;x.setDate(x.getDate()-volta);return x;}
+function dashFimSemanaDomingo_(d){return dashAddDias_(dashInicioSemanaSegunda_(d),6);}
 function dashEntre_(d,a,b){if(!d)return false;var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();return x>=a.getTime()&&x<=b.getTime();}
 function dashValidLanc_(l){return l&&!l.cancelado&&parseFloat(l.val||0)>0;}
 function dashValidCusto_(c){return c&&!c.cancelado&&parseFloat(c.val||0)>0;}
@@ -2656,10 +2662,11 @@ function dashMelhorDia_(diaData){
 function renderDashboardExecutivo_(lanc,cst,lancMes,cstMes,diaData,target){
   var hoje=new Date();
   var isMesAtual=target.getFullYear()===hoje.getFullYear()&&target.getMonth()===hoje.getMonth();
-  var fim=isMesAtual?new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate()):new Date(target.getFullYear(),target.getMonth()+1,0);
-  var ini=dashAddDias_(fim,-6);
+  var referencia=isMesAtual?new Date(hoje.getFullYear(),hoje.getMonth(),hoje.getDate()):new Date(target.getFullYear(),target.getMonth()+1,0);
+  var ini=dashInicioSemanaSegunda_(referencia);
+  var fim=dashFimSemanaDomingo_(referencia);
   var fimAnt=dashAddDias_(ini,-1);
-  var iniAnt=dashAddDias_(fimAnt,-6);
+  var iniAnt=dashInicioSemanaSegunda_(fimAnt);
   var atual=dashResumoPeriodo_(lanc,cst,ini,fim);
   var ant=dashResumoPeriodo_(lanc,cst,iniAnt,fimAnt);
   var melhor=dashMelhorDia_(diaData);
@@ -3786,7 +3793,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.21.2',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.21.3',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
