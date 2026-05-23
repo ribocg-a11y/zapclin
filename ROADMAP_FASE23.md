@@ -124,6 +124,18 @@ Status: concluida em `v4.20.0` com backend `v3.33`.
 - Adicionada Nova OS rapida a partir de cliente conhecido, gerando novo atendimento e lancamentos sem preencher nome/telefone novamente.
 - Mantida alternativa de cadastro com fotos pre-preenchido quando a OS exigir documentacao visual.
 
+## Fase 23G - Retorno Assistido Com Fotos
+
+Status: entregue em `v4.21.0` com backend `v3.34`.
+
+- A Nova OS do Relacionamento deixa de ser apenas rapida e passa a ser assistida.
+- A ficha do cliente exibe fotos anteriores retornadas pelo Drive.
+- O operador pode reutilizar uma foto anterior como referencia ou cadastrar foto nova obrigatoria por capacete.
+- Ao reutilizar foto, o backend copia a imagem para a nova pasta da OS, mantendo rastreabilidade.
+- Servicos e condicoes usam a mesma base operacional do cadastro completo.
+- WhatsApp de recebimento passa a reconhecer cliente recorrente, citar dias desde a ultima visita e incentivar cadastro VIP se ainda estiver pendente.
+- O fluxo segue para Operacao, mantendo controle de SLA, Pronto, Entregue e mensagem padrao de pronto.
+
 ## Fase 24 - Aceite/Assinatura Simples
 
 Adicionar aceite digital leve ou registro de confirmacao usando a base de OS/PDF ja criada.

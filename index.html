@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.20.0 | Data: 23/05/2026
+  Versão : 4.21.0 | Data: 23/05/2026
+  v4.21.0:
+    - Evolui Relacionamento para nova OS assistida de cliente recorrente
+    - Exibe fotos anteriores do capacete e permite reutilizar referência ou cadastrar novo capacete
+    - Mantém foto obrigatória, serviços/condições completos e WhatsApp personalizado de retorno
   v4.20.0:
     - Evolui Relacionamento para ficha CRM completa por cliente
     - Permite abrir dados de cadastro VIP, historico, preferencias e recorrencia pelo card
@@ -821,9 +825,22 @@
   .crm-history{display:grid;gap:8px;margin-top:10px;max-height:260px;overflow:auto;padding-right:2px}
   .crm-history-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.075);border-radius:12px;padding:9px}
   .crm-os-builder{display:grid;gap:10px}
-  .crm-os-line{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .crm-os-line{display:grid;gap:10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;background:rgba(255,255,255,.028)}
+  .crm-os-fields{display:grid;grid-template-columns:1fr;gap:8px}
+  .crm-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin:10px 0 4px}
+  .crm-photo-card,.crm-photo-option{border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.035);overflow:hidden;min-height:82px;display:grid;align-content:start;color:var(--text);font:inherit;text-align:left}
+  .crm-photo-card img,.crm-photo-option img{width:100%;height:76px;object-fit:cover;display:block;background:#10131d}
+  .crm-photo-caption{font-size:9px;color:var(--muted);padding:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crm-photo-empty{border:1px dashed rgba(255,255,255,.16);border-radius:12px;padding:12px;color:var(--muted);font-size:12px;background:rgba(255,255,255,.025)}
+  .crm-photo-option{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+  .crm-photo-option:hover{transform:translateY(-1px);border-color:rgba(0,229,255,.45)}
+  .crm-photo-option.ativo{border-color:var(--cyan);box-shadow:0 0 0 1px rgba(0,229,255,.35),0 0 16px rgba(0,229,255,.13)}
+  .crm-photo-upload{border:1px dashed rgba(68,138,255,.45);border-radius:12px;padding:12px;background:rgba(68,138,255,.06);display:grid;gap:6px;cursor:pointer}
+  .crm-photo-upload strong{font-size:12px;color:var(--text)}
+  .crm-photo-upload span{font-size:11px;color:var(--muted)}
+  .crm-selected-photo{font-size:11px;color:var(--green);font-weight:800}
   @media(max-width:900px){.crm-grid,.crm-list{grid-template-columns:1fr}.crm-actions .cli-btn{flex:1;min-width:130px}}
-  @media(max-width:520px){.crm-profile,.crm-detail-grid,.crm-os-line{grid-template-columns:1fr}.crm-detail-head{grid-template-columns:1fr}}
+  @media(max-width:520px){.crm-profile,.crm-detail-grid{grid-template-columns:1fr}.crm-detail-head{grid-template-columns:1fr}.crm-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
   /* [v4.15.0 VISUAL] Camada de acabamento operacional sem alterar regras de negócio */
   body{background:linear-gradient(180deg,#07080d 0%,#090b12 42%,#07080d 100%);color:var(--text);text-rendering:optimizeLegibility}
@@ -1627,7 +1644,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.20.0';
+const APP_VERSION='v4.21.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1863,7 +1880,9 @@ function montarDetalhesAtendimento_(nome,tel,qtd,servicos,observacoes,total,desc
     total:parseFloat(total||0)||0,
     desconto:parseFloat(desconto||0)||0,
     numVisita:parseInt(numVisita||1,10)||1,
-    totalVisitas:parseInt(totalVisitas||numVisita||1,10)||1
+    totalVisitas:parseInt(totalVisitas||numVisita||1,10)||1,
+    diasDesdeUltima:null,
+    vipCompleto:null
   };
 }
 function detalhesDoCliente_(nome,tel,qtd){
@@ -1957,7 +1976,16 @@ function msgBoasVindas(nome,qtd,detalhes){
   var linhas=[];
   var nomeCliente=(detalhes&&detalhes.nome)||nome||'Cliente';
   var telCliente=(detalhes&&detalhes.tel)||'';
-  linhas.push('Seja muito bem-vindo(a) à *ZapClin*!');
+  var primeira=isPrimeiraVisita_(detalhes);
+  var precisaVip=primeira||(detalhes&&detalhes.vipCompleto===false);
+  if(primeira){
+    linhas.push('Seja muito bem-vindo(a) à *ZapClin*!');
+  }else{
+    linhas.push('Olá, '+nomeCliente+'! Que bom ter você de volta à *ZapClin*.');
+    if(detalhes&&detalhes.diasDesdeUltima!==null&&detalhes.diasDesdeUltima!==undefined){
+      linhas.push('Já faz '+detalhes.diasDesdeUltima+' dia(s) desde sua última visita. Gostamos de ver você cuidando bem do seu capacete.');
+    }
+  }
   linhas.push('');
   // [v4.8.4 NOVO]
   // Vincula a mensagem ao número real do atendimento retornado pelo backend (clienteId).
@@ -1971,17 +1999,17 @@ function msgBoasVindas(nome,qtd,detalhes){
     linhas.push('Recebemos seu(s) '+qtd+' '+caps+' e cuidaremos de tudo com atenção e profissionalismo.');
     linhas.push('');
     linhas.push('Assim que estiver(em) pronto(s), avisamos por aqui.');
-    if(isPrimeiraVisita_(detalhes)){
+    if(precisaVip){
       linhas.push('');
       linhas.push('*Clube VIP ZapClin*');
-      linhas.push('Complete seu cadastro e entre para nossa lista de privilégios. No mês do seu aniversário, você ganha *30% de desconto em 1 serviço da casa*, sempre aplicado sobre um serviço elegível e com controle da ZapClin.');
+      linhas.push('Complete seu cadastro e entre para nossa lista de privilégios. No mês do seu aniversário, você ganha benefício especial em *1 serviço da casa*, sempre aplicado com controle da ZapClin.');
       linhas.push('É rápido e vale a pena: '+clienteVipUrl_(nomeCliente,telCliente));
     }
     linhas.push('');
     linhas.push('Obrigado por escolher a *ZapClin*.');
     return linhas.join('\n');
   }
-  linhas.push('Recebemos seu atendimento e registramos abaixo as informações identificadas no cadastro:');
+  linhas.push(primeira?'Recebemos seu atendimento e registramos abaixo as informações identificadas no cadastro:':'Recebemos seu capacete novamente e registramos abaixo as informações desta nova OS:');
   var temCondicoes=false;
   var temSujidadeCritica=false;
   var soma=0;
@@ -2025,10 +2053,10 @@ function msgBoasVindas(nome,qtd,detalhes){
     linhas.push('');
     linhas.push('Ao responder *OK*, o cliente confirma ciência das condições registradas neste atendimento e autoriza a execução do serviço.');
   }
-  if(isPrimeiraVisita_(detalhes)){
+  if(precisaVip){
     linhas.push('');
     linhas.push('*Clube VIP ZapClin*');
-    linhas.push('Como esta é sua primeira visita, queremos te dar acesso aos nossos privilégios: complete seu cadastro e ganhe *30% de desconto no mês do seu aniversário em 1 serviço da casa*, com aplicação controlada pela ZapClin.');
+    linhas.push(primeira?'Como esta é sua primeira visita, queremos te dar acesso aos nossos privilégios: complete seu cadastro e receba benefícios especiais no mês do seu aniversário.':'Seu cadastro VIP ainda não está completo. Finalizando agora, você libera benefícios especiais e a ZapClin consegue cuidar do seu histórico com mais precisão.');
     linhas.push('Leva menos de 1 minuto: '+clienteVipUrl_(nomeCliente,telCliente));
   }
   linhas.push('');
@@ -3608,12 +3636,21 @@ function crmByKey_(key){return crmClientes.find(function(c){return c.key===key;}
 function enviarMensagemRelacionamento(key,tipo){var c=crmByKey_(key);if(!c)return;var msg;if(tipo==='vip')msg='Olá, '+c.nome+'! A ZapClin preparou condições especiais para clientes que já confiam na gente. Seu histórico por aqui mostra '+c.visitas+' visita(s) e preferência por '+(c.preferencia||'serviços de higienização')+'. Queremos te avisar em primeira mão sobre campanhas, benefícios e cuidados para manter seu capacete sempre higienizado. 💎';else if(tipo==='recorrente')msg='Olá, '+c.nome+'! Que bom ter você como cliente recorrente da ZapClin. Vi aqui que seu serviço mais comum é '+(c.preferencia||'higienização')+' e já são '+c.visitas+' visita(s) com a gente. Quer que eu te ajude a programar a próxima manutenção para manter o capacete sempre pronto para uso?';else msg='Olá, '+c.nome+'! Já faz '+(c.dias||30)+' dias desde sua última higienização na ZapClin. Esse é um ótimo momento para fazer uma manutenção rápida e manter seu capacete cheiroso, protegido e pronto para uso. Posso reservar um horário para você?';waData={tipo:'relacionamento-'+tipo,nome:c.nome,tel:c.tel,qtd:1,msg:msg};document.getElementById('waEmoji').textContent='💎';document.getElementById('waTitulo').textContent=tipo==='vip'?'Campanha VIP':tipo==='recorrente'?'Cliente recorrente':'Retorno 30 dias';document.getElementById('waClienteNome').textContent=c.nome;document.getElementById('waPreview').textContent=msg;document.getElementById('waModal').classList.add('show');}
 function abrirHistoricoRelacionamento(tel){goTo('clientes',null);setTimeout(function(){var s=document.getElementById('clienteSearch');if(s){s.value=telKey_(tel);filtrarClientes(s.value);s.focus();}},200);}
 function crmRelVal_(v){return v?escapeHtml_(v):'—';}
-function abrirFichaRelacionamento(key){var c=crmByKey_(key);if(!c)return;var r=c.relacionamento||{};var hist=c.registros.slice(0,8).map(function(os){var sv=Array.isArray(os.servicos)?os.servicos.filter(Boolean).join(', '):'';return'<div class="crm-history-row"><span class="info-badge vinculo">'+formatarOS_(os.num)+'</span><div><div style="font-weight:800">'+escapeHtml_(sv||'Serviço não informado')+'</div><div class="crm-meta">'+fmtData(os.data)+' '+fmtHora(os.hora)+' · '+escapeHtml_(os.status||'')+'</div></div><div class="lanc-val">'+fmtBRL(os.total||0)+'</div></div>';}).join('')||'<div class="empty"><div class="empty-text">Sem histórico operacional.</div></div>';var body='<div class="crm-detail-head"><div><div class="crm-detail-name">'+escapeHtml_(c.nome)+'</div><div class="crm-detail-phone">'+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div></div><div class="crm-tags">'+c.tags.map(function(t){return'<span class="crm-tag '+t.cls+'">'+escapeHtml_(t.txt)+'</span>';}).join('')+'</div></div><div class="crm-detail-grid"><div class="crm-detail-item"><div class="crm-detail-lbl">Aniversário</div><div class="crm-detail-val">'+crmRelVal_(r.aniversario)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">E-mail</div><div class="crm-detail-val">'+crmRelVal_(r.email)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Modelo/capacete</div><div class="crm-detail-val">'+crmRelVal_(r.modelo)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Origem</div><div class="crm-detail-val">'+crmRelVal_(r.origem)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Consentimento</div><div class="crm-detail-val">'+crmRelVal_(r.consentimento)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Cadastro VIP</div><div class="crm-detail-val">'+crmRelVal_(r.timestamp)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Total gasto</div><div class="crm-detail-val">'+fmtBRL(c.total)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Ticket médio</div><div class="crm-detail-val">'+fmtBRL(c.ticket)+'</div></div></div><div class="section-title" style="margin:12px 0 8px">Histórico operacional</div><div class="crm-history">'+hist+'</div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Fechar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro com fotos</button><button class="save-btn green" onclick="abrirNovaOsRelacionamento(\''+jsStr_(c.key)+'\')">Nova OS rápida</button>';abrirEditorOperacional('Ficha do cliente',body,actions);}
+function crmVipCompleto_(c){var r=c&&c.relacionamento||{};return !!(r.aniversario||r.email||r.modelo||r.timestamp);}
+function crmFotos_(c){var out=[];(c&&c.registros||[]).forEach(function(os){(os.fotos||[]).forEach(function(f,idx){if(!f)return;out.push({id:f.id||'',name:f.name||('Capacete '+(idx+1)),url:f.url||'',thumb:f.thumb||f.downloadUrl||f.url||'',os:os.num,data:fmtData(os.data),hora:fmtHora(os.hora)});});});return out;}
+function crmFotoHtml_(f){var src=escapeHtml_(f.thumb||f.url||'');var cap=escapeHtml_((f.name||'Foto')+' · OS '+formatarOS_(f.os));return'<div class="crm-photo-card">'+(src?'<img src="'+src+'" loading="lazy" onerror="this.style.display=\'none\'">':'')+'<div class="crm-photo-caption">'+cap+'</div></div>';}
+function abrirFichaRelacionamento(key){var c=crmByKey_(key);if(!c)return;var r=c.relacionamento||{};var fotos=crmFotos_(c);var fotosHtml=fotos.length?'<div class="crm-photo-grid">'+fotos.slice(0,18).map(crmFotoHtml_).join('')+'</div>':'<div class="crm-photo-empty">Nenhuma foto retornada pelo Drive ainda. A próxima OS pode cadastrar uma foto nova pelo fluxo completo.</div>';var hist=c.registros.slice(0,8).map(function(os){var sv=Array.isArray(os.servicos)?os.servicos.filter(Boolean).join(', '):'';return'<div class="crm-history-row"><span class="info-badge vinculo">'+formatarOS_(os.num)+'</span><div><div style="font-weight:800">'+escapeHtml_(sv||'Serviço não informado')+'</div><div class="crm-meta">'+fmtData(os.data)+' '+fmtHora(os.hora)+' · '+escapeHtml_(os.status||'')+'</div></div><div class="lanc-val">'+fmtBRL(os.total||0)+'</div></div>';}).join('')||'<div class="empty"><div class="empty-text">Sem histórico operacional.</div></div>';var body='<div class="crm-detail-head"><div><div class="crm-detail-name">'+escapeHtml_(c.nome)+'</div><div class="crm-detail-phone">'+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div></div><div class="crm-tags">'+c.tags.map(function(t){return'<span class="crm-tag '+t.cls+'">'+escapeHtml_(t.txt)+'</span>';}).join('')+'</div></div><div class="crm-detail-grid"><div class="crm-detail-item"><div class="crm-detail-lbl">Aniversário</div><div class="crm-detail-val">'+crmRelVal_(r.aniversario)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">E-mail</div><div class="crm-detail-val">'+crmRelVal_(r.email)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Modelo/capacete</div><div class="crm-detail-val">'+crmRelVal_(r.modelo)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Origem</div><div class="crm-detail-val">'+crmRelVal_(r.origem)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Consentimento</div><div class="crm-detail-val">'+crmRelVal_(r.consentimento)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Cadastro VIP</div><div class="crm-detail-val">'+(crmVipCompleto_(c)?'Completo':'Pendente')+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Total gasto</div><div class="crm-detail-val">'+fmtBRL(c.total)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Ticket médio</div><div class="crm-detail-val">'+fmtBRL(c.ticket)+'</div></div></div><div class="section-title" style="margin:12px 0 8px">Capacetes/fotos no histórico</div>'+fotosHtml+'<div class="section-title" style="margin:12px 0 8px">Histórico operacional</div><div class="crm-history">'+hist+'</div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Fechar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro com fotos</button><button class="save-btn green" onclick="abrirNovaOsRelacionamento(\''+jsStr_(c.key)+'\')">Nova OS assistida</button>';abrirEditorOperacional('Ficha do cliente',body,actions);}
 function preencherCadastroRelacionamento(key){var c=crmByKey_(key);if(!c)return;fecharEditorOperacional();goTo('clientes',null);setTimeout(function(){resetClienteForm();document.getElementById('clienteNome').value=c.nome||'';document.getElementById('clienteTel').value=formatarTelefoneBR_(c.tel)||c.tel||'';verificarCadastroCompleto();var n=document.getElementById('clienteNome');if(n)n.focus();showToast({title:'Cliente preenchido',msg:'Agora escolha capacetes, serviços e fotos para a nova OS.'},'info');},180);}
-function renderCrmOsItens_(){var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10));var wrap=document.getElementById('crmOsItens');if(!wrap)return;var opts=SERVICES.map(function(s){return'<option value="'+escapeHtml_(s.name)+'">'+escapeHtml_(s.name)+' · '+fmtBRL(s.price)+'</option>';}).join('');var html='';for(var i=0;i<qtd;i++)html+='<div class="crm-os-line"><select class="form-input blue crm-os-svc" id="crmOsSvc'+i+'" onchange="atualizarTotalCrmOs_()"><option value="">Serviço...</option>'+opts+'</select><input class="form-input blue crm-os-obs" id="crmOsObs'+i+'" placeholder="Observação/condição"></div>';wrap.innerHTML=html;atualizarTotalCrmOs_();}
+var crmOsFotosSelecionadas=[],crmOsFotoRefs=[],crmOsObsPorCap=[];
+function renderCrmOsItens_(){var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10));var key=(document.getElementById('crmOsKey')||{}).value||'';var c=crmByKey_(key);var fotos=crmFotos_(c);crmOsFotosSelecionadas=new Array(qtd).fill(null);crmOsFotoRefs=new Array(qtd).fill(null);crmOsObsPorCap=new Array(qtd).fill(null).map(function(){return[];});for(var a=0;a<qtd&&a<fotos.length;a++)crmOsFotoRefs[a]=fotos[a];var wrap=document.getElementById('crmOsItens');if(!wrap)return;var opts=SERVICES.map(function(s){return'<option value="'+escapeHtml_(s.name)+'">'+escapeHtml_(s.name)+' · '+fmtBRL(s.price)+'</option>';}).join('');var chipBase=OBS_CHIPS.map(function(ch){return'<span class="chip" onclick="toggleCrmChip_(IDX,this,\''+jsStr_(ch.label)+'\')">'+ch.emoji+' '+escapeHtml_(ch.label)+'</span>';}).join('');var html='';for(var i=0;i<qtd;i++){var photoOpts=fotos.length?'<div class="crm-photo-grid">'+fotos.slice(0,12).map(function(f,idx){var src=escapeHtml_(f.thumb||f.url||'');return'<button type="button" class="crm-photo-option '+(idx===i?'ativo':'')+'" id="crmPhotoOpt'+i+'_'+idx+'" onclick="selecionarFotoCrmRef_('+i+','+idx+')">'+(src?'<img src="'+src+'" loading="lazy" onerror="this.style.display=\'none\'">':'')+'<span class="crm-photo-caption">OS '+formatarOS_(f.os)+'</span></button>';}).join('')+'</div>':'<div class="crm-photo-empty">Sem foto anterior disponível: cadastre uma nova foto para este capacete.</div>';html+='<div class="crm-os-line"><div class="cap-card-header"><span class="cap-num-label">Capacete '+(i+1)+'</span><span class="crm-selected-photo" id="crmFotoStatus'+i+'">'+(crmOsFotoRefs[i]?'Foto anterior selecionada':'Foto obrigatória')+'</span></div><div class="crm-os-fields"><select class="form-input blue crm-os-svc" id="crmOsSvc'+i+'" onchange="atualizarTotalCrmOs_()"><option value="">Serviço...</option>'+opts+'</select><div class="chips-wrap">'+chipBase.replace(/IDX/g,i)+'<span class="chip chip-outro" onclick="toggleCrmOutro_('+i+',this)">➕ Outro...</span></div><input class="form-input cap-obs-outro" type="text" id="crmOsOutro'+i+'" placeholder="Descreva..." oninput="onCrmOutroChange_('+i+',this)"></div><div><label class="crm-photo-upload" for="crmOsFotoInput'+i+'"><strong>Cadastrar nova foto</strong><span>Use quando for outro capacete ou a foto antiga não representar o estado atual.</span><input type="file" id="crmOsFotoInput'+i+'" accept="image/*" capture="environment" style="display:none" onchange="onFotoCrmSelecionada_('+i+',this)"></label>'+photoOpts+'</div></div>';}wrap.innerHTML=html;atualizarTotalCrmOs_();}
 function atualizarTotalCrmOs_(){var total=0;document.querySelectorAll('.crm-os-svc').forEach(function(el){var s=SERVICES.find(function(x){return x.name===el.value;});if(s)total+=s.price;});var t=document.getElementById('crmOsTotal');if(t)t.textContent=fmtBRL(total);return total;}
-function abrirNovaOsRelacionamento(key){var c=crmByKey_(key);if(!c)return;var body='<div class="crm-os-builder"><div class="crm-detail-item"><div class="crm-detail-lbl">Cliente</div><div class="crm-detail-val">'+escapeHtml_(c.nome)+' · '+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div></div><div class="form-group"><label class="form-label">Quantidade de capacetes</label><input class="form-input blue" id="crmOsQtd" type="number" min="1" max="20" value="1" onchange="renderCrmOsItens_()"></div><div id="crmOsItens"></div><div class="total-cliente-row"><div class="total-cli-label">Total da nova OS</div><div class="total-cli-val" id="crmOsTotal">R$ 0,00</div></div></div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Cancelar</button><button class="save-btn green" id="crmOsSalvarBtn" onclick="salvarNovaOsRelacionamento(\''+jsStr_(key)+'\')">Criar OS</button>';abrirEditorOperacional('Nova OS rápida',body,actions);setTimeout(function(){renderCrmOsItens_();},30);}
-function salvarNovaOsRelacionamento(key){var c=crmByKey_(key);if(!c)return;var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10));var serv=[],obs=[];for(var i=0;i<qtd;i++){var s=(document.getElementById('crmOsSvc'+i)||{}).value||'';if(!s){showToast('Escolha o serviço do capacete '+(i+1),'warning');return;}serv.push(s);obs.push((document.getElementById('crmOsObs'+i)||{}).value||'');}var total=atualizarTotalCrmOs_();var btn=document.getElementById('crmOsSalvarBtn');if(btn){btn.disabled=true;btn.textContent='Criando OS...';}var payload={nome:c.nome,telefone:c.tel,qtd:qtd,fotos:[],servicos:serv,observacoes:obs,criarLancamentos:true,total:total,desconto:0,origem:'relacionamento'};fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'}).then(function(r){return r.json();}).then(function(data){if(!data||!data.ok)throw new Error(data&&data.error||'Falha ao criar OS');showToast({title:'OS criada',msg:'Nova OS '+formatarOS_(data.clienteId)+' vinculada ao cliente.'},'success');fecharEditorOperacional();buscarClientes().then(function(){crmClientes=consolidarClientesCRM_();renderRelacionamento();renderOperacaoPainel();});var detalhes=montarDetalhesAtendimento_(c.nome,c.tel,qtd,serv,obs,data.total||total,data.desconto||0,data.clienteId,data.numVisita||c.visitas+1,data.totalVisitas||c.visitas+1);setTimeout(function(){mostrarWaModal('boasVindas',c.nome,c.tel,qtd,detalhes);},600);}).catch(function(err){showToast({title:'Erro ao criar OS',msg:String(err.message||err)},'error');}).finally(function(){if(btn){btn.disabled=false;btn.textContent='Criar OS';}});}
+function selecionarFotoCrmRef_(cap,idx){var key=(document.getElementById('crmOsKey')||{}).value||'';var fotos=crmFotos_(crmByKey_(key));crmOsFotoRefs[cap]=fotos[idx]||null;crmOsFotosSelecionadas[cap]=null;document.querySelectorAll('[id^="crmPhotoOpt'+cap+'_"]').forEach(function(b){b.classList.remove('ativo');});var btn=document.getElementById('crmPhotoOpt'+cap+'_'+idx);if(btn)btn.classList.add('ativo');var st=document.getElementById('crmFotoStatus'+cap);if(st)st.textContent='Foto anterior selecionada';}
+function onFotoCrmSelecionada_(cap,input){var file=input&&input.files&&input.files[0];if(!file)return;crmOsFotosSelecionadas[cap]=file;crmOsFotoRefs[cap]=null;document.querySelectorAll('[id^="crmPhotoOpt'+cap+'_"]').forEach(function(b){b.classList.remove('ativo');});var st=document.getElementById('crmFotoStatus'+cap);if(st)st.textContent='Nova foto: '+file.name;}
+function toggleCrmChip_(cap,el,label){crmOsObsPorCap[cap]=crmOsObsPorCap[cap]||[];var arr=crmOsObsPorCap[cap];var idx=arr.indexOf(label);if(idx>=0){arr.splice(idx,1);el.classList.remove('selected');}else{arr.push(label);el.classList.add('selected');}}
+function toggleCrmOutro_(cap,el){el.classList.toggle('selected');var inp=document.getElementById('crmOsOutro'+cap);if(inp){inp.classList.toggle('show',el.classList.contains('selected'));if(el.classList.contains('selected'))inp.focus();else inp.value='';onCrmOutroChange_(cap,inp);}}
+function onCrmOutroChange_(cap,input){crmOsObsPorCap[cap]=crmOsObsPorCap[cap]||[];var arr=crmOsObsPorCap[cap].filter(function(x){return x.indexOf('Outro: ')!==0;});var v=String(input&&input.value||'').trim();if(v)arr.push('Outro: '+v);crmOsObsPorCap[cap]=arr;}
+function abrirNovaOsRelacionamento(key){var c=crmByKey_(key);if(!c)return;var body='<div class="crm-os-builder"><input type="hidden" id="crmOsKey" value="'+escapeHtml_(key)+'"><div class="crm-detail-item"><div class="crm-detail-lbl">Cliente recorrente</div><div class="crm-detail-val">'+escapeHtml_(c.nome)+' · '+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div><div class="crm-meta">Última visita: '+escapeHtml_(c.ultimaData||'—')+' · '+(c.dias===0?'hoje':c.dias+' dia(s)')+'</div></div><div class="form-group"><label class="form-label">Quantidade de capacetes</label><input class="form-input blue" id="crmOsQtd" type="number" min="1" max="20" value="1" onchange="renderCrmOsItens_()"></div><div id="crmOsItens"></div><div class="total-cliente-row"><div class="total-cli-label">Total da nova OS</div><div class="total-cli-val" id="crmOsTotal">R$ 0,00</div></div></div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Cancelar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro completo</button><button class="save-btn green" id="crmOsSalvarBtn" onclick="salvarNovaOsRelacionamento(\''+jsStr_(key)+'\')">Criar OS</button>';abrirEditorOperacional('Nova OS assistida',body,actions);setTimeout(function(){renderCrmOsItens_();},30);}
+async function salvarNovaOsRelacionamento(key){var c=crmByKey_(key);if(!c)return;var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10));var serv=[],obs=[],fotoRefs=[],fotos=[];for(var i=0;i<qtd;i++){var s=(document.getElementById('crmOsSvc'+i)||{}).value||'';if(!s){showToast('Escolha o serviço do capacete '+(i+1),'warning');return;}if(!crmOsFotosSelecionadas[i]&&!crmOsFotoRefs[i]){showToast('Informe foto nova ou selecione foto anterior do capacete '+(i+1),'warning');return;}serv.push(s);obs.push((crmOsObsPorCap[i]||[]).join(', '));fotoRefs.push(crmOsFotoRefs[i]?{id:crmOsFotoRefs[i].id,name:crmOsFotoRefs[i].name,os:crmOsFotoRefs[i].os}:null);}var total=atualizarTotalCrmOs_();var btn=document.getElementById('crmOsSalvarBtn');if(btn){btn.disabled=true;btn.textContent='Preparando fotos...';}try{for(var f=0;f<qtd;f++){fotos.push(crmOsFotosSelecionadas[f]?await comprimirFoto(crmOsFotosSelecionadas[f]):'');}if(btn)btn.textContent='Criando OS...';var payload={nome:c.nome,telefone:c.tel,qtd:qtd,fotos:fotos,fotoRefs:fotoRefs,servicos:serv,observacoes:obs,criarLancamentos:true,total:total,desconto:0,origem:'relacionamento'};var resp=await fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});var data=await resp.json();if(!data||!data.ok)throw new Error(data&&data.error||'Falha ao criar OS');showToast({title:'OS criada',msg:'Nova OS '+formatarOS_(data.clienteId)+' vinculada ao cliente.'},'success');fecharEditorOperacional();buscarClientes().then(function(){crmClientes=consolidarClientesCRM_();renderRelacionamento();renderOperacaoPainel();});var detalhes=montarDetalhesAtendimento_(c.nome,c.tel,qtd,serv,obs,data.total||total,data.desconto||0,data.clienteId,data.numVisita||c.visitas+1,data.totalVisitas||c.visitas+1);detalhes.diasDesdeUltima=c.dias;detalhes.vipCompleto=crmVipCompleto_(c);setTimeout(function(){mostrarWaModal('boasVindas',c.nome,c.tel,qtd,detalhes);},600);}catch(err){showToast({title:'Erro ao criar OS',msg:String(err.message||err)},'error');}finally{if(btn){btn.disabled=false;btn.textContent='Criar OS';}}}
 
 function carregarClientes(){var list=document.getElementById('clienteList');if(list)list.innerHTML=skeletonList_(3,'lg');document.getElementById('clienteSearch').value='';buscarClientes().then(function(ok){if(!ok){clientes=JSON.parse(localStorage.getItem('zapClientes')||'[]');clientesFiltrados=clientes.slice();}renderClienteList();});}
 
@@ -3709,7 +3746,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.20.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.21.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
