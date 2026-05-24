@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.24.4 | Data: 24/05/2026
+  Versão : 4.25.0 | Data: 24/05/2026
+  v4.25.0:
+    - Fecha Fase 25B com Relatorio Golden v2 mais institucional e gerencial
+    - Separa leitura oficial de governanca para bases historicas consolidadas
+    - Evita composicao por servico falsa quando o lancamento vem agregado do PDF
   v4.24.5:
     - Reforca texto do aceite digital na mensagem de recebimento
     - Mantem link do aceite visivel como acao principal do cliente
@@ -602,6 +606,9 @@
   .gr-evo-val.pos{color:#087f5b}.gr-evo-val.neg{color:#b42318}
   .gr-evo-sub{font-size:11px;color:#52627a;margin-top:6px}
   .gr-evo-note{font-size:12px;line-height:1.35;color:#22324a;display:flex;align-items:center}
+  .gr-governance{margin-top:10px;background:#fff8e6;border:1px solid #f3c466;border-left:4px solid #d99000;color:#392b10;padding:9px 11px;font-size:11px;line-height:1.35}
+  .gr-business{margin-top:8px;background:#f7fbff;border:1px solid #b5d4f4;border-left:4px solid #378add;color:#22324a;padding:10px 12px;font-size:12px;line-height:1.35}
+  .gr-business strong,.gr-governance strong{color:#0c447c}
   .gr-table{width:100%;border-collapse:collapse;font-size:13px}
   .gr-table th{background:#0c447c;color:#e6f1fb;text-align:left;padding:9px 10px;font-weight:800;border:1px solid #0b3b6e}
   .gr-table td{padding:8px 10px;border:1px solid #cfe0f2;color:#1a1a2e}
@@ -1555,7 +1562,7 @@
 
   <!-- Ações do relatório -->
   <div class="rel-actions">
-    <button class="rel-email-btn preview" onclick="visualizarRelatorioGolden()">👁️ Visualizar Relatório</button>
+    <button class="rel-email-btn preview" onclick="visualizarRelatorioGolden()">👁️ Visualizar Golden</button>
     <button class="rel-email-btn" id="relEmailBtn" onclick="enviarRelatorioEmail()">📧 Enviar Relatório por E-mail</button>
   </div>
 </div>
@@ -1816,7 +1823,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.24.5';
+const APP_VERSION='v4.25.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2398,6 +2405,17 @@ function obterDadosRelatorioGolden_(){
     var atend=arr.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
     return {receita:receita,atend:atend,fonte:'Planilha'};
   }
+  function lancamentoConsolidado_(l){
+    if(!l)return false;
+    var svcNome=String(l.svc||'');
+    var qtd=qtdLancamentoRel_(l);
+    var valor=parseFloat(l.val||0)||0;
+    if(/^Faturamento oficial Golden/i.test(svcNome)||/consolid/i.test(svcNome))return true;
+    var svc=SERVICES.find(function(s){return s.name===svcNome;});
+    if(!svc||qtd<=1)return false;
+    var unit=valor/qtd;
+    return Math.abs(unit-svc.price)>0.75;
+  }
   function baseComparativaMes_(key, apurado){
     var oficiais={
       '04/2026':{receita:9199,atend:277,fonte:'PDF oficial Golden Abril/2026'}
@@ -2410,6 +2428,7 @@ function obterDadosRelatorioGolden_(){
     return incompleto?oficial:apurado;
   }
   var lancMes=lanc.filter(function(l){return mesDeData(l.data)===mesKey;});
+  var linhasConsolidadas=lancMes.filter(lancamentoConsolidado_).length;
   var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
   var atend=lancMes.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
   var prevTarget=new Date(target.getFullYear(),target.getMonth()-1,1);
@@ -2445,7 +2464,7 @@ function obterDadosRelatorioGolden_(){
   });
   var porSvc={};
   lancMes.forEach(function(l){
-    var nome=l.svc||'Serviço não identificado';
+    var nome=lancamentoConsolidado_(l)?'Base histórica consolidada':(l.svc||'Serviço não identificado');
     if(!porSvc[nome])porSvc[nome]={qtd:0,val:0,unit:0};
     porSvc[nome].qtd+=qtdLancamentoRel_(l);
     porSvc[nome].val+=parseFloat(l.val||0);
@@ -2471,6 +2490,8 @@ function obterDadosRelatorioGolden_(){
     prevReceita:prev.receita,
     prevAtend:prev.atend,
     prevFonte:prev.fonte||'Planilha',
+    baseConsolidada:linhasConsolidadas>0,
+    linhasConsolidadas:linhasConsolidadas,
     evolReceita:evolReceita,
     evolAtend:evolAtend,
     diaria:diaria,
@@ -2493,6 +2514,14 @@ function montarHtmlRelatorioGolden_(d){
     var pct=d.receita>0?(s.val/d.receita*100).toFixed(1).replace('.',',')+'%':'0%';
     return '<tr><td>'+escapeHtml_(s.nome)+'</td><td class="center">'+s.qtd+'</td><td class="right">'+fmtBRL(s.unit)+'</td><td class="right">'+fmtBRL(s.val)+'</td><td class="right">'+pct+'</td></tr>';
   }).join(''):'<tr><td colspan="5" class="center">Sem serviços no mês selecionado.</td></tr>';
+  var governancaHtml=d.baseConsolidada
+    ? '<div class="gr-governance"><strong>Governança da base:</strong> este mês contém '+d.linhasConsolidadas+' lançamento(s) histórico(s) consolidado(s). Os totais de faturamento, atendimentos e aluguel são preservados; a composição por serviço é agrupada quando a linha importada não permite auditoria segura do preço unitário.</div>'
+    : '';
+  var leituraGolden=d.evolReceita===null
+    ? 'A leitura de evolução será exibida quando houver mês anterior consolidado para comparação.'
+    : (d.evolReceita>=0
+      ? 'A operação demonstra crescimento frente ao mês anterior, gerando receita proporcional ao shopping e fortalecendo o fluxo de serviços recorrentes no ponto.'
+      : 'A comparação mensal indica queda pontual; o relatório mantém rastreabilidade para orientar ações comerciais e recuperar fluxo.');
   return ''+
     '<article class="golden-report">'+
       '<div class="gr-header">'+
@@ -2512,6 +2541,8 @@ function montarHtmlRelatorioGolden_(d){
         '<div><div class="gr-evo-label">Atendimentos vs mês anterior</div><div class="gr-evo-val">'+evolTxt_(d.evolAtend)+'</div><div class="gr-evo-sub">Mês anterior: '+d.prevAtend+' atend. · '+escapeHtml_(d.prevFonte)+'</div></div>'+
         '<div class="gr-evo-note">'+evolMsg+'</div>'+
       '</div>'+
+      '<div class="gr-business"><strong>Leitura para o Golden:</strong> '+leituraGolden+'</div>'+
+      governancaHtml+
       '<div class="gr-section">Movimentação diária — '+d.mesUpper+'</div>'+
       '<table class="gr-table"><thead><tr><th>Data</th><th>Dia da semana</th><th class="center">Atend.</th><th class="right">Faturamento</th><th class="right">Acumulado</th></tr></thead><tbody>'+diariaHtml+'<tr class="total"><td colspan="2">Total do mês</td><td class="center">'+d.atend+'</td><td class="right">'+fmtBRL(d.receita)+'</td><td></td></tr></tbody></table>'+
       '<div class="gr-section">Composição do faturamento por serviço</div>'+
@@ -4237,7 +4268,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.24.5',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.25.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

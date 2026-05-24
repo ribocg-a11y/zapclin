@@ -170,3 +170,14 @@ Status: iniciada em `v4.24.0`; reforcada em `v4.24.2/v3.39`.
 - Correcao `v4.24.3`: se abril ainda estiver parcial na planilha/app, a previa usa a base oficial do PDF Abril/2026 como comparativo anterior, evitando percentuais artificiais como comparar Maio contra apenas R$ 348,00. A tipografia numerica do relatorio tambem foi reduzida.
 - Correcao `v4.24.4`: Abril pode ser substituido integralmente na aba `LANÇAMENTOS` pelos dados oficiais do PDF; telas gerenciais passam a contar a coluna `QTD` para que linhas consolidadas por dia representem todos os atendimentos reais.
 - Correcao `v4.24.5`: mensagem de recebimento destaca o aceite digital como acao principal; o cliente abre o link e confirma no botao verde da pagina de aceite.
+
+## Fase 25B - Relatorio Golden V2 Oficial E Gerencial
+
+Status: concluida em `v4.25.0`.
+
+- Mantem o envio oficial por e-mail/Drive preservado no Apps Script.
+- Melhora a previa do relatorio oficial dentro da pagina `Relatorio`, com linguagem mais institucional para o Golden.
+- Adiciona leitura de evolucao do negocio, explicando crescimento, tracao comercial e relevancia da operacao para o shopping.
+- Adiciona nota de governanca quando a base do mes possui linhas historicas consolidadas vindas de PDF.
+- Agrupa linhas consolidadas como `Base historica consolidada` quando nao ha seguranca para abrir o mix por servico, evitando composicao falsa.
+- Mantem o relatorio gerencial interno na pagina Relatorio para decisao da ZapClin, separado da prestacao oficial ao Golden.

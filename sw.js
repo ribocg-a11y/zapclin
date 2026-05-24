@@ -1,16 +1,16 @@
 ﻿// ============================================================
 // ZAPCLIN â€” SERVICE WORKER
-// VersÃ£o: 4.24.5 | Data: 24/05/2026
-// [v4.24.5 CACHE]
+// VersÃ£o: 4.25.0 | Data: 24/05/2026
+// [v4.25.0 CACHE]
 // Cache PWA versionado para reduzir inconsistÃªncia entre celular/desktop.
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.24.5';
-const STATIC_CACHE = 'zapclin-static-v4.24.5';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.24.5';
+const ZAPCLIN_SW_VERSION = 'v4.25.0';
+const STATIC_CACHE = 'zapclin-static-v4.25.0';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.25.0';
 
-// [v4.24.5 CACHE]
+// [v4.25.0 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
 const APP_SHELL = [
   './',
