@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.24.1 | Data: 24/05/2026
+  Versão : 4.24.2 | Data: 24/05/2026
+  v4.24.2:
+    - Prepara relatório Golden para histórico consolidado por dia usando coluna QTD
+    - Adiciona leitura de evolução mensal para reforçar crescimento/rentabilidade ao Golden
   v4.24.1:
     - Reduz hierarquia visual dos valores no preview oficial Golden
   v4.24.0:
@@ -581,6 +584,14 @@
   .gr-kpi.center .gr-kpi-val{font-size:22px}
   .gr-kpi.due .gr-kpi-val{font-size:23px;color:#0c447c}
   .gr-kpi-sub{font-size:11px;color:#185fa5;margin-top:5px}
+  .gr-evolution{display:grid;grid-template-columns:1fr 1fr 1.45fr;gap:0;background:#f7fbff;border:1px solid #b5d4f4;border-bottom:3px solid #378add}
+  .gr-evolution>div{padding:10px 12px;border-right:1px solid #cfe0f2}
+  .gr-evolution>div:last-child{border-right:0}
+  .gr-evo-label{font-size:11px;color:#185fa5;font-weight:800;text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px}
+  .gr-evo-val{font-size:20px;font-weight:900;color:#0c447c;line-height:1}
+  .gr-evo-val.pos{color:#087f5b}.gr-evo-val.neg{color:#b42318}
+  .gr-evo-sub{font-size:11px;color:#52627a;margin-top:6px}
+  .gr-evo-note{font-size:12px;line-height:1.35;color:#22324a;display:flex;align-items:center}
   .gr-table{width:100%;border-collapse:collapse;font-size:13px}
   .gr-table th{background:#0c447c;color:#e6f1fb;text-align:left;padding:9px 10px;font-weight:800;border:1px solid #0b3b6e}
   .gr-table td{padding:8px 10px;border:1px solid #cfe0f2;color:#1a1a2e}
@@ -1795,7 +1806,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.24.1';
+const APP_VERSION='v4.24.2';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2364,9 +2375,26 @@ function obterDadosRelatorioGolden_(){
   var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
   function mesDeData(d){var s=fmtData(d);if(!s||s==='—')return'';var p=s.split('/');return p.length>=3?p[1]+'/'+p[2]:'';}
   function diaDeData(d){var s=fmtData(d);if(!s||s==='—')return 0;var p=s.split('/');return p.length>=3?parseInt(p[0],10):0;}
+  function qtdRelatorio_(l){
+    var svc=String(l.svc||'');
+    if(l.cancelado||/^CANCELADO\b/i.test(svc)||/^Desconto$/i.test(svc))return 0;
+    var n=parseInt(l.qtd||1,10);
+    return n>0?n:1;
+  }
+  function resumoMes_(key){
+    var arr=lanc.filter(function(l){return mesDeData(l.data)===key;});
+    var receita=arr.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+    var atend=arr.reduce(function(s,l){return s+qtdRelatorio_(l);},0);
+    return {receita:receita,atend:atend};
+  }
   var lancMes=lanc.filter(function(l){return mesDeData(l.data)===mesKey;});
   var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
-  var atend=lancMes.length;
+  var atend=lancMes.reduce(function(s,l){return s+qtdRelatorio_(l);},0);
+  var prevTarget=new Date(target.getFullYear(),target.getMonth()-1,1);
+  var prevKey=String(prevTarget.getMonth()+1).padStart(2,'0')+'/'+prevTarget.getFullYear();
+  var prev=resumoMes_(prevKey);
+  var evolReceita=prev.receita>0?(receita-prev.receita)/prev.receita*100:null;
+  var evolAtend=prev.atend>0?(atend-prev.atend)/prev.atend*100:null;
   var aluguel=receita*0.10;
   var venc=new Date(target.getFullYear(),target.getMonth()+1,10);
   var vencStr='10/'+String(venc.getMonth()+1).padStart(2,'0')+'/'+venc.getFullYear();
@@ -2377,7 +2405,7 @@ function obterDadosRelatorioGolden_(){
   lancMes.forEach(function(l){
     var dia=diaDeData(l.data); if(!dia)return;
     if(!porDia[dia])porDia[dia]={qtd:0,val:0};
-    porDia[dia].qtd++;
+    porDia[dia].qtd+=qtdRelatorio_(l);
     porDia[dia].val+=parseFloat(l.val||0);
   });
   var diasOrd=Object.keys(porDia).map(Number).sort(function(a,b){return a-b;});
@@ -2397,7 +2425,7 @@ function obterDadosRelatorioGolden_(){
   lancMes.forEach(function(l){
     var nome=l.svc||'Serviço não identificado';
     if(!porSvc[nome])porSvc[nome]={qtd:0,val:0,unit:0};
-    porSvc[nome].qtd++;
+    porSvc[nome].qtd+=qtdRelatorio_(l);
     porSvc[nome].val+=parseFloat(l.val||0);
   });
   var servicos=Object.keys(porSvc).map(function(nome){
@@ -2418,12 +2446,23 @@ function obterDadosRelatorioGolden_(){
     atend:atend,
     diasOperados:diasOrd.length,
     aluguel:aluguel,
+    prevReceita:prev.receita,
+    prevAtend:prev.atend,
+    evolReceita:evolReceita,
+    evolAtend:evolAtend,
     diaria:diaria,
     servicos:servicos
   };
 }
 
 function montarHtmlRelatorioGolden_(d){
+  function evolTxt_(v){return v===null?'sem base anterior':((v>=0?'+':'')+v.toFixed(1).replace('.',',')+'%');}
+  var evolClasse=d.evolReceita===null?'':' '+(d.evolReceita>=0?'pos':'neg');
+  var evolMsg=d.evolReceita===null
+    ? 'Este é o primeiro mês com base histórica comparável no sistema.'
+    : (d.evolReceita>=0
+      ? 'A operação mostra evolução de receita contra o mês anterior, reforçando tração comercial e potencial de crescimento no shopping.'
+      : 'A operação teve queda contra o mês anterior; a leitura serve para orientar campanhas e recuperar fluxo.');
   var diariaHtml=d.diaria.length?d.diaria.map(function(r){
     return '<tr><td>'+r.data+'</td><td>'+r.diaSemana+'</td><td class="center">'+r.qtd+'</td><td class="right">'+fmtBRL(r.val)+'</td><td class="right">'+fmtBRL(r.acum)+'</td></tr>';
   }).join(''):'<tr><td colspan="5" class="center">Sem movimentação no mês selecionado.</td></tr>';
@@ -2443,6 +2482,12 @@ function montarHtmlRelatorioGolden_(d){
         '<div class="gr-kpi center"><div class="gr-kpi-label">Dias operados</div><div class="gr-kpi-val">'+d.diasOperados+' dias</div></div>'+
         '<div class="gr-kpi center"><div class="gr-kpi-label">Total de atendimentos</div><div class="gr-kpi-val">'+d.atend+'</div></div>'+
         '<div class="gr-kpi due"><div class="gr-kpi-label">Aluguel devido (10%)</div><div class="gr-kpi-val">'+fmtBRL(d.aluguel)+'</div><div class="gr-kpi-sub">vence '+d.vencStr+'</div></div>'+
+      '</div>'+
+      '<div class="gr-section">Evolução do negócio</div>'+
+      '<div class="gr-evolution">'+
+        '<div><div class="gr-evo-label">Receita vs mês anterior</div><div class="gr-evo-val'+evolClasse+'">'+evolTxt_(d.evolReceita)+'</div><div class="gr-evo-sub">Mês anterior: '+fmtBRL(d.prevReceita)+'</div></div>'+
+        '<div><div class="gr-evo-label">Atendimentos vs mês anterior</div><div class="gr-evo-val">'+evolTxt_(d.evolAtend)+'</div><div class="gr-evo-sub">Mês anterior: '+d.prevAtend+' atend.</div></div>'+
+        '<div class="gr-evo-note">'+evolMsg+'</div>'+
       '</div>'+
       '<div class="gr-section">Movimentação diária — '+d.mesUpper+'</div>'+
       '<table class="gr-table"><thead><tr><th>Data</th><th>Dia da semana</th><th class="center">Atend.</th><th class="right">Faturamento</th><th class="right">Acumulado</th></tr></thead><tbody>'+diariaHtml+'<tr class="total"><td colspan="2">Total do mês</td><td class="center">'+d.atend+'</td><td class="right">'+fmtBRL(d.receita)+'</td><td></td></tr></tbody></table>'+
@@ -4160,7 +4205,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.24.1',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.24.2',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

@@ -156,7 +156,7 @@ Status: concluida em `v4.23.0` com backend `v3.38`; hotfix visual `v4.22.1` atua
 
 ## Fase 25A - Preview Do Relatorio Oficial Golden
 
-Status: iniciada em `v4.24.0` sem alteracao de backend.
+Status: iniciada em `v4.24.0`; reforcada em `v4.24.2/v3.39`.
 
 - A pagina Relatorio ganha o botao `Visualizar Relatorio` ao lado do envio por e-mail.
 - A visualizacao monta uma previa do relatorio oficial Golden com a mesma base operacional do mes selecionado.
@@ -164,3 +164,6 @@ Status: iniciada em `v4.24.0` sem alteracao de backend.
 - O botao `Baixar PDF` abre a impressao do navegador para salvar a previa em PDF antes do envio oficial.
 - O envio oficial por e-mail/Drive continua separado em `enviarRelatorioMensal()` no Apps Script, preservando o baseline contratual.
 - Ajuste `v4.24.1`: valores do resumo financeiro ficam menores para evitar peso visual excessivo no documento oficial.
+- Ajuste `v4.24.2/v3.39`: dados oficiais de abril do PDF Golden foram conciliados em arquivo de base separado; o relatorio passa a respeitar a coluna `QTD` em lancamentos consolidados, evitando que um dia historico conte como apenas uma linha.
+- Adicionada secao `Evolucao do negocio`, comparando receita e atendimentos contra o mes anterior para demonstrar crescimento, tracao comercial e relevancia da operacao para o Golden.
+- Regra de governanca: historico importado de PDF deve ter aba de conciliacao e prova de total, para nao duplicar valores existentes nem inventar mix de servicos quando o PDF antigo so informa total diario.
