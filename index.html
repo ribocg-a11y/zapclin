@@ -1,11 +1,14 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.24.3 | Data: 24/05/2026
+  Versão : 4.24.4 | Data: 24/05/2026
+  v4.24.4:
+    - Ajusta relatorio mensal para contar atendimentos pela coluna QTD
+    - Permite que abril importado do PDF apareça corretamente na tela Relatorio
+    - Reduz ainda mais hierarquia dos valores monetarios no relatorio Golden
   v4.24.3:
     - Corrige comparativo do relatorio Golden para nao usar abril parcial como base anterior
     - Reduz mais a fonte numerica do relatorio oficial para leitura institucional
-  v4.24.2:
   v4.24.2:
     - Prepara relatório Golden para histórico consolidado por dia usando coluna QTD
     - Adiciona leitura de evolução mensal para reforçar crescimento/rentabilidade ao Golden
@@ -583,10 +586,10 @@
   .gr-kpi{padding:10px 12px;min-height:76px;display:flex;flex-direction:column;justify-content:center}
   .gr-kpi.due{border-left:4px solid #378add}
   .gr-kpi-label{font-size:12px;color:#185fa5;margin-bottom:6px}
-  .gr-kpi-val{font-size:18px;font-weight:900;color:#042c53;line-height:1.05}
+  .gr-kpi-val{font-size:16px;font-weight:900;color:#042c53;line-height:1.08}
   .gr-kpi.center{text-align:center}
-  .gr-kpi.center .gr-kpi-val{font-size:18px}
-  .gr-kpi.due .gr-kpi-val{font-size:19px;color:#0c447c}
+  .gr-kpi.center .gr-kpi-val{font-size:16px}
+  .gr-kpi.due .gr-kpi-val{font-size:17px;color:#0c447c}
   .gr-kpi-sub{font-size:11px;color:#185fa5;margin-top:5px}
   .gr-evolution{display:grid;grid-template-columns:1fr 1fr 1.45fr;gap:0;background:#f7fbff;border:1px solid #b5d4f4;border-bottom:3px solid #378add}
   .gr-evolution>div{padding:10px 12px;border-right:1px solid #cfe0f2}
@@ -1810,7 +1813,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.24.3';
+const APP_VERSION='v4.24.4';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2368,6 +2371,13 @@ function copiarTexto_(texto,sucesso){
 }
 function copiarRelatorioMensal_(){copiarTexto_(_relatorioMensalTexto||'Resumo mensal ainda não carregado.','Leitura mensal copiada.');}
 
+function qtdLancamentoRel_(l){
+  var svc=String((l&&l.svc)||'');
+  if(!l||l.cancelado||/^CANCELADO\b/i.test(svc)||/^Desconto$/i.test(svc))return 0;
+  var n=parseInt(l.qtd||1,10);
+  return n>0?n:1;
+}
+
 function obterDadosRelatorioGolden_(){
   var now=new Date();
   var target=new Date(now.getFullYear(),now.getMonth()+_relMesOffset,1);
@@ -2379,16 +2389,10 @@ function obterDadosRelatorioGolden_(){
   var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
   function mesDeData(d){var s=fmtData(d);if(!s||s==='—')return'';var p=s.split('/');return p.length>=3?p[1]+'/'+p[2]:'';}
   function diaDeData(d){var s=fmtData(d);if(!s||s==='—')return 0;var p=s.split('/');return p.length>=3?parseInt(p[0],10):0;}
-  function qtdRelatorio_(l){
-    var svc=String(l.svc||'');
-    if(l.cancelado||/^CANCELADO\b/i.test(svc)||/^Desconto$/i.test(svc))return 0;
-    var n=parseInt(l.qtd||1,10);
-    return n>0?n:1;
-  }
   function resumoMes_(key){
     var arr=lanc.filter(function(l){return mesDeData(l.data)===key;});
     var receita=arr.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
-    var atend=arr.reduce(function(s,l){return s+qtdRelatorio_(l);},0);
+    var atend=arr.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
     return {receita:receita,atend:atend,fonte:'Planilha'};
   }
   function baseComparativaMes_(key, apurado){
@@ -2404,7 +2408,7 @@ function obterDadosRelatorioGolden_(){
   }
   var lancMes=lanc.filter(function(l){return mesDeData(l.data)===mesKey;});
   var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
-  var atend=lancMes.reduce(function(s,l){return s+qtdRelatorio_(l);},0);
+  var atend=lancMes.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
   var prevTarget=new Date(target.getFullYear(),target.getMonth()-1,1);
   var prevKey=String(prevTarget.getMonth()+1).padStart(2,'0')+'/'+prevTarget.getFullYear();
   var prev=baseComparativaMes_(prevKey,resumoMes_(prevKey));
@@ -2420,7 +2424,7 @@ function obterDadosRelatorioGolden_(){
   lancMes.forEach(function(l){
     var dia=diaDeData(l.data); if(!dia)return;
     if(!porDia[dia])porDia[dia]={qtd:0,val:0};
-    porDia[dia].qtd+=qtdRelatorio_(l);
+    porDia[dia].qtd+=qtdLancamentoRel_(l);
     porDia[dia].val+=parseFloat(l.val||0);
   });
   var diasOrd=Object.keys(porDia).map(Number).sort(function(a,b){return a-b;});
@@ -2440,7 +2444,7 @@ function obterDadosRelatorioGolden_(){
   lancMes.forEach(function(l){
     var nome=l.svc||'Serviço não identificado';
     if(!porSvc[nome])porSvc[nome]={qtd:0,val:0,unit:0};
-    porSvc[nome].qtd+=qtdRelatorio_(l);
+    porSvc[nome].qtd+=qtdLancamentoRel_(l);
     porSvc[nome].val+=parseFloat(l.val||0);
   });
   var servicos=Object.keys(porSvc).map(function(nome){
@@ -2574,7 +2578,7 @@ function carregarRelatorio(){
   var lucro=receita-custoTotal;
   var margemNum=receita>0?(lucro/receita*100):0;
   var margem=margemNum.toFixed(1);
-  var atend=lancMes.length;
+  var atend=lancMes.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
   var ticket=atend>0?(receita/atend):0;
   var aluguel=receita*0.10;
 
@@ -2596,7 +2600,12 @@ function carregarRelatorio(){
   // Ranking serviços
   var rankSvc={};
   SERVICES.forEach(function(s){rankSvc[s.name]={qtd:0,val:0,icon:s.icon};});
-  lancMes.forEach(function(l){if(rankSvc[l.svc]){rankSvc[l.svc].qtd++;rankSvc[l.svc].val+=parseFloat(l.val||0);}});
+  lancMes.forEach(function(l){
+    var nome=l.svc||'Serviço não identificado';
+    if(!rankSvc[nome])rankSvc[nome]={qtd:0,val:0,icon:'📄'};
+    rankSvc[nome].qtd+=qtdLancamentoRel_(l);
+    rankSvc[nome].val+=parseFloat(l.val||0);
+  });
   var sortedSvc=Object.keys(rankSvc).map(function(k){return{name:k,qtd:rankSvc[k].qtd,val:rankSvc[k].val};})
     .filter(function(s){return s.qtd>0;}).sort(function(a,b){return b.val-a.val;});
   var maxSvc=sortedSvc.length>0?sortedSvc[0].val:1;
@@ -2937,8 +2946,10 @@ function calcularKpisAdminLocal_(){
   var cusHoje=cst.filter(function(c){return fmtData(c.data)===hoje;}).reduce(function(s,c){return s+parseFloat(c.val||0);},0);
   var resultado=fatMes-cusMes;
   var margem=fatMes>0?parseFloat((resultado/fatMes*100).toFixed(1)):0;
-  var ticket=lancMes.length>0?parseFloat((fatMes/lancMes.length).toFixed(2)):0;
-  return {recHoje:fatHoje,cusHoje:cusHoje,recMes:fatMes,cusMes:cusMes,atHoje:lancHoje.length,atMes:lancMes.length,resultado:resultado,margem:margem,ticket:ticket};
+  var atHoje=lancHoje.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
+  var atMes=lancMes.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
+  var ticket=atMes>0?parseFloat((fatMes/atMes).toFixed(2)):0;
+  return {recHoje:fatHoje,cusHoje:cusHoje,recMes:fatMes,cusMes:cusMes,atHoje:atHoje,atMes:atMes,resultado:resultado,margem:margem,ticket:ticket};
 }
 
 function isKpisAdminServerValido_(r, localKpis){
@@ -3018,7 +3029,8 @@ function dashResumoPeriodo_(lanc,cst,de,ate){
   var receita=ls.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
   var custo=cs.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
   var lucro=receita-custo;
-  return{lanc:ls,custos:cs,receita:receita,custo:custo,lucro:lucro,margem:receita>0?parseFloat((lucro/receita*100).toFixed(1)):0,atend:ls.length,ticket:ls.length?receita/ls.length:0};
+  var atend=ls.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
+  return{lanc:ls,custos:cs,receita:receita,custo:custo,lucro:lucro,margem:receita>0?parseFloat((lucro/receita*100).toFixed(1)):0,atend:atend,ticket:atend?receita/atend:0};
 }
 function dashDelta_(atual,anterior,sufixo){
   sufixo=sufixo||'';
@@ -3058,7 +3070,8 @@ function renderDashboardExecutivo_(lanc,cst,lancMes,cstMes,diaData,target){
   dashSet_('dkMelhorDiaSub',melhor?fmtBRL(melhor.valor)+' em receita':'sem receita no mês');
   var receita=lancMes.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
   var custo=cstMes.reduce(function(s,c){return s+parseFloat(c.val||0);},0);
-  var ticket=lancMes.length?receita/lancMes.length:0;
+  var atendMesInsights=lancMes.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
+  var ticket=atendMesInsights?receita/atendMesInsights:0;
   var svc={};
   lancMes.forEach(function(l){svc[l.svc]=(svc[l.svc]||0)+parseFloat(l.val||0);});
   var top=Object.keys(svc).map(function(k){return{name:k,val:svc[k]};}).sort(function(a,b){return b.val-a.val;})[0];
@@ -3067,7 +3080,7 @@ function renderDashboardExecutivo_(lanc,cst,lancMes,cstMes,diaData,target){
   else if(ant.receita>0)insights.push('A semana atual está abaixo da anterior. Observe horários de pico e considere campanha rápida para recuperar fluxo.');
   else insights.push('Ainda não há base semanal suficiente para tendência, mas o dashboard já está pronto para acompanhar.');
   if(top)insights.push('Serviço mais forte do mês: <b>'+escapeHtml_(top.name)+'</b>, com '+fmtBRL(top.val)+' em receita.');
-  if(ticket<20&&lancMes.length)insights.push('Ticket médio baixo. Priorize oferta guiada para elevar pacote ou incluir limpeza de viseira/acessórios.');
+  if(ticket<20&&atendMesInsights)insights.push('Ticket médio baixo. Priorize oferta guiada para elevar pacote ou incluir limpeza de viseira/acessórios.');
   if(ticket>=30)insights.push('Ticket médio saudável. Mantenha destaque para serviços de maior valor e acompanhe margem.');
   if(receita>0&&((receita-custo)/receita*100)<20)insights.push('Margem do mês pede atenção: custos estão consumindo parte relevante do faturamento.');
   var el=document.getElementById('dashInsights');
@@ -3111,7 +3124,7 @@ function carregarDashboard() {
   var custoT  = cstMes.reduce(function(s,c){  return s + parseFloat(c.val||0); }, 0);
   var lucro   = receita - custoT;
   var margem  = receita > 0 ? (lucro / receita * 100).toFixed(1) : 0;
-  var atend   = lancMes.length;
+  var atend   = lancMes.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
   var ticket  = atend > 0 ? receita / atend : 0;
 
   // Atualizar KPIs
@@ -3141,7 +3154,7 @@ function carregarDashboard() {
 
   // Desenhar gráficos com pequeno delay para garantir que o canvas está visível
   setTimeout(function() {
-    drawLineChart('chartDiario', diaData, lancMes.length);
+    drawLineChart('chartDiario', diaData, atend);
     drawDonutChart('chartServico', lancMes);
     drawPicoChart('dashPicoList', lancMes);
   }, 80);
@@ -4068,12 +4081,12 @@ function renderVendasGerencial(){
   var validos=periodo.filter(function(l){return !l.cancelado&&parseFloat(l.val||0)>0;});
   var cancelados=periodo.length-validos.length;
   var fat=validos.reduce(function(s,l){return s+(parseFloat(l.val)||0);},0);
-  var qtd=validos.length;
+  var qtd=validos.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
   var ticket=qtd?fat/qtd:0;
   var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
   set('vendaFat',fmtBRL(fat));set('vendaQtd',qtd);set('vendaTicket',fmtBRL(ticket));set('vendaCancel',cancelados);
   var sub=document.getElementById('vendaFatSub');if(sub)sub.textContent=labelPeriodoVendas_();
-  var rank={};validos.forEach(function(l){var k=l.svc||'Sem serviço';if(!rank[k])rank[k]={name:k,qtd:0,val:0};rank[k].qtd++;rank[k].val+=parseFloat(l.val)||0;});
+  var rank={};validos.forEach(function(l){var k=l.svc||'Sem serviço';if(!rank[k])rank[k]={name:k,qtd:0,val:0};rank[k].qtd+=qtdLancamentoRel_(l);rank[k].val+=parseFloat(l.val)||0;});
   var arr=Object.keys(rank).map(function(k){return rank[k];}).sort(function(a,b){return b.val-a.val;});
   var rankEl=document.getElementById('vendaRanking');
   if(rankEl){if(!arr.length){rankEl.innerHTML='<div class="empty"><div class="empty-text">Sem vendas no período.</div></div>';}else{var max=arr[0].val||1;rankEl.innerHTML=arr.slice(0,5).map(function(r,i){return'<div class="venda-rank-item"><div class="venda-rank-n">'+(i+1)+'</div><div class="venda-rank-info"><div class="venda-rank-name">'+escapeHtml_(r.name)+'</div><div class="venda-rank-bar-w"><div class="venda-rank-bar" style="width:'+Math.max(6,Math.round(r.val/max*100))+'%"></div></div></div><div class="venda-rank-val">'+fmtBRL(r.val)+'<div class="venda-rank-qtd">'+r.qtd+' venda(s)</div></div></div>';}).join('');}}
@@ -4221,7 +4234,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.24.3',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.24.4',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
