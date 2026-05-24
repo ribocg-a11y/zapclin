@@ -163,3 +163,4 @@ Status: iniciada em `v4.24.0` sem alteracao de backend.
 - A previa traz resumo financeiro, movimentacao diaria, composicao por servico e demonstrativo de aluguel.
 - O botao `Baixar PDF` abre a impressao do navegador para salvar a previa em PDF antes do envio oficial.
 - O envio oficial por e-mail/Drive continua separado em `enviarRelatorioMensal()` no Apps Script, preservando o baseline contratual.
+- Ajuste `v4.24.1`: valores do resumo financeiro ficam menores para evitar peso visual excessivo no documento oficial.

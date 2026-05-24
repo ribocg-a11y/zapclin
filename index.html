@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.24.0 | Data: 24/05/2026
+  Versão : 4.24.1 | Data: 24/05/2026
+  v4.24.1:
+    - Reduz hierarquia visual dos valores no preview oficial Golden
   v4.24.0:
     - Adiciona visualizacao do relatorio oficial Golden antes do envio
     - Permite imprimir/salvar PDF da previa diretamente pela pagina Relatorio
@@ -574,10 +576,10 @@
   .gr-kpi{padding:10px 12px;min-height:76px;display:flex;flex-direction:column;justify-content:center}
   .gr-kpi.due{border-left:4px solid #378add}
   .gr-kpi-label{font-size:12px;color:#185fa5;margin-bottom:6px}
-  .gr-kpi-val{font-size:26px;font-weight:900;color:#042c53;line-height:1}
+  .gr-kpi-val{font-size:22px;font-weight:900;color:#042c53;line-height:1}
   .gr-kpi.center{text-align:center}
   .gr-kpi.center .gr-kpi-val{font-size:22px}
-  .gr-kpi.due .gr-kpi-val{font-size:28px;color:#0c447c}
+  .gr-kpi.due .gr-kpi-val{font-size:23px;color:#0c447c}
   .gr-kpi-sub{font-size:11px;color:#185fa5;margin-top:5px}
   .gr-table{width:100%;border-collapse:collapse;font-size:13px}
   .gr-table th{background:#0c447c;color:#e6f1fb;text-align:left;padding:9px 10px;font-weight:800;border:1px solid #0b3b6e}
@@ -1793,7 +1795,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.24.0';
+const APP_VERSION='v4.24.1';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -4158,7 +4160,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.24.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.24.1',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

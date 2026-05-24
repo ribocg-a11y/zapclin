@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.24.0`
-- Service Worker/PWA: `v4.24.0`
+- Frontend GitHub Pages: `v4.24.1`
+- Service Worker/PWA: `v4.24.1`
 - Backend Apps Script: `v3.38` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
@@ -46,6 +46,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
    - Hotfix v3.37: formulario publico do Clube VIP passa a ser mobile-first, ocupando a tela inteira no celular com campos maiores e melhor area de toque.
 13. `Fase 24` - concluida em v4.23.0/v3.38 com aceite simples por botao vinculado a OS, link na mensagem de recebimento, status no card, registro auditavel na aba `ACEITES OS` e painel administrativo de pendencias/confirmacoes. Hotfix v4.22.1 atualiza favicons e icones PWA/Apple com a logo oficial ZapClin.
 14. `Fase 25A` - iniciada em v4.24.0 com visualizacao do relatorio oficial Golden dentro da pagina Relatorio, antes do envio por e-mail, e opcao de imprimir/salvar PDF da previa.
+   - Ajuste v4.24.1: reduz fonte dos valores no resumo financeiro para leitura mais institucional.
 
 ## Regra De Evolucao
 
