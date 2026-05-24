@@ -181,3 +181,13 @@ Status: concluida em `v4.25.0`.
 - Adiciona nota de governanca quando a base do mes possui linhas historicas consolidadas vindas de PDF.
 - Agrupa linhas consolidadas como `Base historica consolidada` quando nao ha seguranca para abrir o mix por servico, evitando composicao falsa.
 - Mantem o relatorio gerencial interno na pagina Relatorio para decisao da ZapClin, separado da prestacao oficial ao Golden.
+
+## Fase 25C - Backend Do Relatorio Golden Oficial
+
+Status: backend preparado em `v3.40`.
+
+- O Apps Script passa a montar o e-mail e o PDF oficial com o mesmo modelo Golden v2 aprovado no preview do app.
+- O PDF salvo em `ZapClin_Relatorios/ANO` agora inclui evolucao do negocio e nota de governanca quando houver base historica consolidada.
+- O envio mensal continua usando `enviarRelatorioMensal()`, preservando destinatarios, CC, percentual e vencimento configurados na aba `EMAIL`.
+- O teste manual continua em `testarEnvioEmail()`, enviando para o e-mail de teste e salvando PDF no Drive.
+- O modelo antigo de PDF por planilha temporaria fica preservado no codigo como fallback historico, mas a emissao principal usa HTML institucional em PDF.
