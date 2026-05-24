@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.22.0 | Data: 24/05/2026
+  Versão : 4.22.1 | Data: 24/05/2026
+  v4.22.1:
+    - Atualiza favicons e icones PWA/Apple com a logo oficial ZapClin
+    - Garante logo correta no atalho da tela inicial e barra do navegador
   v4.22.0:
     - Inicia Fase 24 com aceite simples por botao vinculado a OS
     - Inclui link de aceite na mensagem de recebimento e status visual no card do cliente
@@ -169,8 +172,11 @@
 <meta name="theme-color" content="#0a0a0f">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json?v=4.22.1">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=4.22.1">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4.22.1">
+<link rel="shortcut icon" href="favicon.ico?v=4.22.1">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=4.22.1">
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -1664,7 +1670,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.22.0';
+const APP_VERSION='v4.22.1';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3830,7 +3836,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.22.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.22.1',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

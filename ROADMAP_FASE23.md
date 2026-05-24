@@ -144,7 +144,7 @@ Status: entregue em `v4.21.0` com backend `v3.34`.
 
 ## Fase 24 - Aceite/Assinatura Simples
 
-Status: iniciada em `v4.22.0` com backend `v3.38`.
+Status: iniciada em `v4.22.0` com backend `v3.38`; hotfix visual `v4.22.1` atualiza favicons e icones PWA/Apple com a logo oficial.
 
 - Usa aceite por botao, sem assinatura desenhada.
 - Gera link publico por OS via Apps Script.
