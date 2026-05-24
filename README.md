@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.24.4`
-- Service Worker/PWA: `v4.24.4`
+- Frontend GitHub Pages: `v4.24.5`
+- Service Worker/PWA: `v4.24.5`
 - Backend Apps Script: `v3.39` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
@@ -50,6 +50,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
    - Ajuste v4.24.2/v3.39: prepara historico oficial de abril conciliado com PDF do Golden, respeita coluna `QTD` em lancamentos consolidados e adiciona leitura de evolucao mes contra mes.
    - Ajuste v4.24.3: corrige evolucao para usar abril oficial do PDF quando a planilha ainda estiver parcial, evitando comparativos inflados; reduz mais a fonte numerica do preview.
    - Ajuste v4.24.4: substitui Abril pela base oficial do PDF na planilha exportada e ajusta Relatorio/Dashboard/Vendas para contar atendimentos pela coluna `QTD`, nao por quantidade de linhas.
+   - Ajuste v4.24.5: reforca o aceite digital na mensagem de recebimento com link destacado para a tela onde o cliente toca no botao de confirmacao.
 
 ## Regra De Evolucao
 

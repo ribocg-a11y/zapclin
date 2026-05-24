@@ -2,6 +2,9 @@
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
   Versão : 4.24.4 | Data: 24/05/2026
+  v4.24.5:
+    - Reforca texto do aceite digital na mensagem de recebimento
+    - Mantem link do aceite visivel como acao principal do cliente
   v4.24.4:
     - Ajusta relatorio mensal para contar atendimentos pela coluna QTD
     - Permite que abril importado do PDF apareça corretamente na tela Relatorio
@@ -1813,7 +1816,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.24.4';
+const APP_VERSION='v4.24.5';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2199,8 +2202,8 @@ function msgBoasVindas(nome,qtd,detalhes){
     linhas.push('Assim que estiver(em) pronto(s), avisamos por aqui.');
     if(detalhes&&detalhes.os){
       linhas.push('');
-      linhas.push('*Aceite digital da OS*');
-      linhas.push('Para registrar sua ciência de forma simples, toque no link e confirme no botão:');
+      linhas.push('*Botão de aceite digital da OS*');
+      linhas.push('Abra o link abaixo e toque no botão verde *Aceito as condições da OS*:');
       linhas.push(detalhes.aceiteUrl||aceiteOsUrl_(detalhes.os));
     }
     if(precisaVip){
@@ -2259,8 +2262,8 @@ function msgBoasVindas(nome,qtd,detalhes){
   }
   if(detalhes&&detalhes.os){
     linhas.push('');
-    linhas.push('*Aceite digital da OS*');
-    linhas.push('Para registrar sua ciência de forma simples, toque no link e confirme no botão:');
+    linhas.push('*Botão de aceite digital da OS*');
+    linhas.push('Abra o link abaixo e toque no botão verde *Aceito as condições da OS*:');
     linhas.push(detalhes.aceiteUrl||aceiteOsUrl_(detalhes.os));
   }
   if(precisaVip){
@@ -4234,7 +4237,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.24.4',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.24.5',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
