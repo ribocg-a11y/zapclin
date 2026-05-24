@@ -144,4 +144,11 @@ Status: entregue em `v4.21.0` com backend `v3.34`.
 
 ## Fase 24 - Aceite/Assinatura Simples
 
-Adicionar aceite digital leve ou registro de confirmacao usando a base de OS/PDF ja criada.
+Status: iniciada em `v4.22.0` com backend `v3.38`.
+
+- Usa aceite por botao, sem assinatura desenhada.
+- Gera link publico por OS via Apps Script.
+- Inclui link de aceite na mensagem de recebimento enviada pelo WhatsApp.
+- Registra aceite confirmado na aba `ACEITES OS` com data/hora, OS, cliente, telefone, total, servicos, observacoes e versao.
+- Retorna status do aceite no `listarClientes` para exibir `Aceite pendente` ou `Aceite confirmado` no card.
+- Mantem fluxo rapido de cadastro, Relacionamento e Operacao sem exigir etapa extra antes de registrar o atendimento.
