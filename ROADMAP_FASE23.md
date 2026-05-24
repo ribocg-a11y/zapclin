@@ -144,7 +144,7 @@ Status: entregue em `v4.21.0` com backend `v3.34`.
 
 ## Fase 24 - Aceite/Assinatura Simples
 
-Status: iniciada em `v4.22.0` com backend `v3.38`; hotfix visual `v4.22.1` atualiza favicons e icones PWA/Apple com a logo oficial.
+Status: concluida em `v4.23.0` com backend `v3.38`; hotfix visual `v4.22.1` atualiza favicons e icones PWA/Apple com a logo oficial.
 
 - Usa aceite por botao, sem assinatura desenhada.
 - Gera link publico por OS via Apps Script.
@@ -152,3 +152,4 @@ Status: iniciada em `v4.22.0` com backend `v3.38`; hotfix visual `v4.22.1` atual
 - Registra aceite confirmado na aba `ACEITES OS` com data/hora, OS, cliente, telefone, total, servicos, observacoes e versao.
 - Retorna status do aceite no `listarClientes` para exibir `Aceite pendente` ou `Aceite confirmado` no card.
 - Mantem fluxo rapido de cadastro, Relacionamento e Operacao sem exigir etapa extra antes de registrar o atendimento.
+- Adiciona pagina administrativa `Aceites` com KPIs de OS ativas, pendentes, confirmadas, taxa de aceite, busca e acoes rapidas para WhatsApp/link.

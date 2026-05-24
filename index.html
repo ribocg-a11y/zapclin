@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.22.1 | Data: 24/05/2026
+  Versão : 4.23.0 | Data: 24/05/2026
+  v4.23.0:
+    - Fecha Fase 24 com painel administrativo de aceites de OS
+    - Mostra aceites pendentes/confirmados, taxa de aceite e acoes rapidas de WhatsApp/link
   v4.22.1:
     - Atualiza favicons e icones PWA/Apple com a logo oficial ZapClin
     - Garante logo correta no atalho da tela inicial e barra do navegador
@@ -713,6 +716,18 @@
   .logs-search:focus{border-color:var(--cyan)}
   .logs-refresh{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:12px;color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer}
   .logs-list{display:flex;flex-direction:column;gap:8px}
+  .aceite-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .aceite-list{display:flex;flex-direction:column;gap:10px}
+  .aceite-item{background:var(--zc-panel);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+  .aceite-item.pendente{border-color:rgba(255,174,67,.30)}
+  .aceite-item.confirmado{border-color:rgba(25,210,127,.30)}
+  .aceite-name{font-family:var(--font-head);font-size:14px;font-weight:900;color:var(--text);line-height:1.1}
+  .aceite-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+  .aceite-os{color:var(--blue);font-weight:800}
+  .aceite-total{color:var(--green);font-family:var(--font-data);font-weight:850}
+  .aceite-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .aceite-insight{background:rgba(0,212,238,.07);border:1px solid rgba(0,212,238,.18);border-radius:16px;padding:13px 15px;margin:12px 0 18px;color:var(--text);font-size:12px;line-height:1.45}
+  @media(max-width:700px){.aceite-item{grid-template-columns:1fr}.aceite-actions{justify-content:flex-start}.aceite-actions .cli-btn{flex:1;min-width:120px}}
   .op-hero{background:linear-gradient(135deg,rgba(0,215,245,.08),rgba(79,140,255,.07));border:1px solid rgba(0,215,245,.20);border-radius:18px;padding:18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
   .op-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text)}
   .op-sub{font-size:12px;color:var(--muted);margin-top:4px}
@@ -984,6 +999,9 @@
       </button>
       <button class="sb-btn" data-page="historico" onclick="goTo('historico',this)">
         <span class="sb-icon">🗂️</span> Histórico
+      </button>
+      <button class="sb-btn" data-page="aceites" onclick="goTo('aceites',this)">
+        <span class="sb-icon">✅</span> Aceites
       </button>
       <button class="sb-btn" data-page="logs" onclick="goTo('logs',this)">
         <span class="sb-icon">🧭</span> Logs
@@ -1509,12 +1527,46 @@
       <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Buscar por período</div></div>
       <span class="atalho-arr">›</span>
     </div>
+    <div class="atalho-card" onclick="goTo('aceites',null)">
+      <span class="atalho-icon">✅</span>
+      <div class="atalho-info"><div class="atalho-title">Aceites de OS</div><div class="atalho-sub">Pendências e confirmações</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
     <div class="atalho-card" onclick="goTo('logs',null)">
       <span class="atalho-icon">🧭</span>
       <div class="atalho-info"><div class="atalho-title">Logs</div><div class="atalho-sub">Eventos, erros e alertas recentes</div></div>
       <span class="atalho-arr">›</span>
     </div>
   </div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE: ACEITES ═══════════════════════════════ -->
+<div class="page" id="page-aceites">
+  <div class="admin-badge">
+    <div>
+      <div class="admin-badge-left">✅ Aceites de OS</div>
+      <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayAceites">1:00</span></div>
+    </div>
+    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+  </div>
+
+  <div class="section-title">Controle de aceite</div>
+  <div class="hist-kpi-grid">
+    <div class="hist-kpi hk-cyan"><div class="hist-kpi-lbl">OS ativas</div><div class="hist-kpi-val cyan" id="aceiteTotal">—</div><div class="hist-kpi-sub">em andamento/prontas</div></div>
+    <div class="hist-kpi hk-orange"><div class="hist-kpi-lbl">Pendentes</div><div class="hist-kpi-val orange" id="aceitePendentes">—</div><div class="hist-kpi-sub">precisam confirmar</div></div>
+    <div class="hist-kpi hk-green"><div class="hist-kpi-lbl">Confirmados</div><div class="hist-kpi-val green" id="aceiteConfirmados">—</div><div class="hist-kpi-sub">registrados na planilha</div></div>
+    <div class="hist-kpi hk-blue"><div class="hist-kpi-lbl">Taxa</div><div class="hist-kpi-val blue" id="aceiteTaxa">—</div><div class="hist-kpi-sub">controle documental</div></div>
+  </div>
+
+  <div class="aceite-insight" id="aceiteInsight">Carregando leitura dos aceites...</div>
+  <div class="aceite-toolbar">
+    <button class="hist-btn ativo" data-aceite="pendentes" onclick="setAceiteFiltro_('pendentes',this)">Pendentes</button>
+    <button class="hist-btn" data-aceite="confirmados" onclick="setAceiteFiltro_('confirmados',this)">Confirmados</button>
+    <button class="hist-btn" data-aceite="todos" onclick="setAceiteFiltro_('todos',this)">Todos</button>
+    <input class="logs-search" id="aceiteSearch" placeholder="Buscar por nome, telefone, OS ou serviço" oninput="renderAceitesPainel_()">
+    <button class="logs-refresh" onclick="carregarAceitesPainel_(true)">Atualizar</button>
+  </div>
+  <div class="aceite-list" id="aceiteList"><div class="skeleton-list"><div class="skeleton-card sm"></div><div class="skeleton-card sm"></div></div></div>
 </div>
 
 <!-- ═══════════════════════════════ PAGE: HISTORICO ═══════════════════════════════ -->
@@ -1661,6 +1713,7 @@ const PAGE_TITLES={
   dashboard:'📈 Dashboard',
   relatorio:'📋 Relatório',
   admin:'📊 Painel Admin',
+  aceites:'✅ Aceites',
   historico:'🗂️ Histórico',
   logs:'🧭 Logs',
   relacionamento:'Relacionamento',
@@ -1670,7 +1723,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.22.1';
+const APP_VERSION='v4.23.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1979,6 +2032,22 @@ function copiarLinkAceiteOs(num){
   }else{
     prompt('Copie o link de aceite:',url);
   }
+}
+function msgAceiteOs_(c){
+  var url=(c&&c.aceite&&c.aceite.url)||aceiteOsUrl_(c&&c.num);
+  var svcs=Array.isArray(c&&c.servicos)?c.servicos.filter(Boolean).join(', '):'serviço registrado';
+  return 'Olá, '+(c.nome||'tudo bem')+'! Para manter sua OS '+formatarOS_(c.num)+' registrada com segurança, confirme o aceite digital pelo botão neste link:\n\n'+
+    url+'\n\nServiço(s): '+svcs+'\nValor: '+fmtBRL(c.total||0)+'\n\nÉ rápido e ajuda a ZapClin manter tudo organizado para você. ✅';
+}
+function enviarAceiteWhatsApp_(num){
+  var c=clientes.find(function(x){return String(x.num)===String(num);});
+  if(!c)return;
+  waData={tipo:'aceite-os',nome:c.nome,tel:c.tel,qtd:c.qtd||1,msg:msgAceiteOs_(c)};
+  document.getElementById('waEmoji').textContent='✅';
+  document.getElementById('waTitulo').textContent='Solicitar aceite da OS';
+  document.getElementById('waClienteNome').textContent=c.nome||'Cliente';
+  document.getElementById('waPreview').textContent=waData.msg;
+  document.getElementById('waModal').classList.add('show');
 }
 // [v4.8.3 ALTERAÇÃO]
 // Montagem da mensagem de WhatsApp sem emojis complexos para evitar caracteres quebrados no iOS/WhatsApp.
@@ -2512,7 +2581,7 @@ function atualizarTimerAdmin(){
   var m=Math.floor(adminCountdown/60);
   var s=adminCountdown%60;
   var str=m+':'+String(s).padStart(2,'0');
-  ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3','adminTimerDisplayLogs'].forEach(function(id){
+  ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3','adminTimerDisplayLogs','adminTimerDisplayAceites'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.textContent=str;
   });
@@ -3644,6 +3713,51 @@ function carregarLogsAdmin(force){
     else if(list){list.innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Não foi possível carregar os logs.</div></div>';}
   });
 }
+
+var aceiteFiltro='pendentes';
+function aceiteStatus_(c){return String(((c||{}).aceite||{}).status||'PENDENTE').toUpperCase();}
+function aceiteAtivo_(c){return c&&c.status!=='Cancelado'&&c.status!=='Entregue';}
+function setAceiteFiltro_(f,btn){
+  aceiteFiltro=f||'pendentes';
+  document.querySelectorAll('[data-aceite]').forEach(function(b){b.classList.remove('ativo');});
+  if(btn)btn.classList.add('ativo');
+  renderAceitesPainel_();
+}
+function carregarAceitesPainel_(force){
+  atualizarTimerAdmin();
+  var td=document.getElementById('adminTimerDisplayAceites'),td1=document.getElementById('adminTimerDisplay');
+  if(td&&td1)td.textContent=td1.textContent;
+  if(force||!clientes.length){
+    var list=document.getElementById('aceiteList');
+    if(list)list.innerHTML=skeletonList_(3,'sm');
+    buscarClientes().then(function(){renderAceitesPainel_();}).catch(function(){renderAceitesPainel_();showToast('Não consegui atualizar aceites agora.','orange');});
+  }else renderAceitesPainel_();
+}
+function renderAceitesPainel_(){
+  var base=(clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]')).filter(aceiteAtivo_);
+  var confirmados=base.filter(function(c){return aceiteStatus_(c)==='CONFIRMADO';});
+  var pendentes=base.filter(function(c){return aceiteStatus_(c)!=='CONFIRMADO';});
+  var taxa=base.length?Math.round(confirmados.length/base.length*100):100;
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+  set('aceiteTotal',base.length);set('aceitePendentes',pendentes.length);set('aceiteConfirmados',confirmados.length);set('aceiteTaxa',taxa+'%');
+  var insight=document.getElementById('aceiteInsight');
+  if(insight)insight.innerHTML=pendentes.length?'Existem <strong>'+pendentes.length+'</strong> OS ativa(s) sem aceite confirmado. Use WhatsApp ou copie o link antes de avançar muito no atendimento.':'Todos os atendimentos ativos estão com aceite confirmado. Rastreabilidade documental em dia.';
+  var arr=aceiteFiltro==='confirmados'?confirmados:aceiteFiltro==='todos'?base:pendentes;
+  var q=String((document.getElementById('aceiteSearch')||{}).value||'').toLowerCase().trim();
+  if(q)arr=arr.filter(function(c){return [c.nome,c.tel,formatarOS_(c.num),(c.servicos||[]).join(' ')].join(' ').toLowerCase().indexOf(q)>=0;});
+  arr=arr.slice().sort(function(a,b){var sa=aceiteStatus_(a)==='CONFIRMADO'?1:0,sb=aceiteStatus_(b)==='CONFIRMADO'?1:0;if(sa!==sb)return sa-sb;return String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR');});
+  var list=document.getElementById('aceiteList');if(!list)return;
+  if(!arr.length){list.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">Nenhuma OS neste filtro.</div></div>';return;}
+  list.innerHTML=arr.map(function(c){
+    var ok=aceiteStatus_(c)==='CONFIRMADO';
+    var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean).join(', '):'';
+    return '<div class="aceite-item '+(ok?'confirmado':'pendente')+'">'+
+      '<div><div class="aceite-name">'+escapeHtml_(c.nome||'Cliente')+'</div>'+
+      '<div class="aceite-meta"><span class="aceite-os">'+formatarOS_(c.num)+'</span> · '+escapeHtml_(formatarTelefoneBR_(c.tel||''))+' · '+escapeHtml_(c.status||'')+' · <span class="aceite-total">'+fmtBRL(c.total||0)+'</span><br>'+escapeHtml_(svcs||'Serviço não informado')+'</div></div>'+
+      '<div class="aceite-actions"><span class="info-badge '+(ok?'green':'orange')+'">'+(ok?'Confirmado':'Pendente')+'</span><button class="cli-btn wa" onclick="enviarAceiteWhatsApp_('+c.num+')">WhatsApp</button><button class="cli-btn gray" onclick="copiarLinkAceiteOs('+c.num+')">Copiar link</button></div>'+
+      '</div>';
+  }).join('');
+}
 function abrirEditarLancamento(row){
   var l=lancamentos.find(function(x){return String(x.row)===String(row);});if(!l)return;
   abrirEditorOperacional('Editar lançamento',
@@ -3795,7 +3909,7 @@ function goTo(page, btn){
   // Valida rota, fecha menu mobile sempre, atualiza título e sobe a tela para evitar estado visual quebrado no celular.
   var target=document.getElementById('page-'+page);
   if(!target){page='home';target=document.getElementById('page-home');}
-  var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio','logs'];
+  var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio','logs','aceites'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     fecharSidebar();
     abrirAdmin();
@@ -3821,6 +3935,7 @@ function goTo(page, btn){
   if(page==='admin')carregarPainelAdmin();
   if(page==='historico')carregarHistorico();
   if(page==='logs')carregarLogsAdmin(false);
+  if(page==='aceites')carregarAceitesPainel_(false);
   if(page==='home'){atualizarStatsHome();animarCardsHome();}
 }
 
@@ -3836,7 +3951,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.22.1',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.23.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
