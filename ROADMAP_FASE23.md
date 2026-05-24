@@ -153,3 +153,13 @@ Status: concluida em `v4.23.0` com backend `v3.38`; hotfix visual `v4.22.1` atua
 - Retorna status do aceite no `listarClientes` para exibir `Aceite pendente` ou `Aceite confirmado` no card.
 - Mantem fluxo rapido de cadastro, Relacionamento e Operacao sem exigir etapa extra antes de registrar o atendimento.
 - Adiciona pagina administrativa `Aceites` com KPIs de OS ativas, pendentes, confirmadas, taxa de aceite, busca e acoes rapidas para WhatsApp/link.
+
+## Fase 25A - Preview Do Relatorio Oficial Golden
+
+Status: iniciada em `v4.24.0` sem alteracao de backend.
+
+- A pagina Relatorio ganha o botao `Visualizar Relatorio` ao lado do envio por e-mail.
+- A visualizacao monta uma previa do relatorio oficial Golden com a mesma base operacional do mes selecionado.
+- A previa traz resumo financeiro, movimentacao diaria, composicao por servico e demonstrativo de aluguel.
+- O botao `Baixar PDF` abre a impressao do navegador para salvar a previa em PDF antes do envio oficial.
+- O envio oficial por e-mail/Drive continua separado em `enviarRelatorioMensal()` no Apps Script, preservando o baseline contratual.
