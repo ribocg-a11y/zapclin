@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.21.3`
-- Service Worker/PWA: `v4.21.3`
+- Frontend GitHub Pages: `v4.21.4`
+- Service Worker/PWA: `v4.21.4`
 - Backend Apps Script: `v3.36` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
@@ -41,6 +41,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
    - Reforco v4.21.1: sincronizacao imediata entre Relacionamento, Clientes, Vendas, Operacao, Historico e Home apos nova OS/status, reduzindo dependencia de refresh manual.
    - Hotfix v4.21.2/v3.35: fotos de capacetes passam a carregar sob demanda ao abrir ficha/Nova OS, removendo peso do carregamento geral de clientes; sincronizacao viva reduzida para alinhar aparelhos em uso sem exigir fechar o app.
    - Hotfix v4.21.3: Dashboard passa a calcular comparativo semanal de segunda a domingo, comparando sempre contra a semana civil anterior.
+   - Hotfix v4.21.4: Relacionamento passa a abrir em Todos, com filtros reorganizados e carteira ordenada alfabeticamente.
    - Hotfix v3.36: Apps Script passa a usar trava transacional nas escritas criticas para evitar colisao de linhas quando varios operadores gravam ao mesmo tempo.
 13. `Fase 24` - aceite/assinatura simples usando a base de OS/PDF.
 

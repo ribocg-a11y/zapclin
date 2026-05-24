@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.21.3 | Data: 23/05/2026
+  Versão : 4.21.4 | Data: 23/05/2026
+  v4.21.4:
+    - Relacionamento inicia em Todos, reorganiza filtros e ordena clientes alfabeticamente
   v4.21.3:
     - Corrige comparativo semanal do Dashboard para semana operacional de segunda a domingo
     - Compara sempre contra a semana completa anterior, mantendo padrao brasileiro de leitura
@@ -1299,8 +1301,8 @@
   </div>
 
   <div class="venda-filtros">
-    <button class="venda-filter-btn ativo" data-crm="30d" onclick="setRelacionamentoFiltro('30d',this)">Manutenção 30+</button>
-    <button class="venda-filter-btn" data-crm="todos" onclick="setRelacionamentoFiltro('todos',this)">Todos</button>
+    <button class="venda-filter-btn ativo" data-crm="todos" onclick="setRelacionamentoFiltro('todos',this)">Todos</button>
+    <button class="venda-filter-btn" data-crm="30d" onclick="setRelacionamentoFiltro('30d',this)">Manutenção 30+</button>
     <button class="venda-filter-btn" data-crm="recorrentes" onclick="setRelacionamentoFiltro('recorrentes',this)">Recorrentes</button>
     <button class="venda-filter-btn" data-crm="vip" onclick="setRelacionamentoFiltro('vip',this)">VIP</button>
     <button class="venda-filter-btn" data-crm="novos" onclick="setRelacionamentoFiltro('novos',this)">Primeira visita</button>
@@ -1658,7 +1660,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.21.3';
+const APP_VERSION='v4.21.4';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3668,12 +3670,12 @@ function carregarLancamentos(){var list=document.getElementById('lancList');if(l
 function carregarCustos(){var list=document.getElementById('custoList');if(list)list.innerHTML=skeletonList_(4,'sm');buscarCustos().then(function(ok){if(!ok)custos=JSON.parse(localStorage.getItem('zapCustos')||'[]');renderCustoList();});}
 function renderCustoList(){var list=document.getElementById('custoList');if(!custos.length){list.innerHTML='<div class="empty"><div class="empty-icon">💸</div><div class="empty-text">Nenhum custo ainda.</div></div>';return;}list.innerHTML=custos.slice(0,50).map(function(c,i){var id='menuCusto'+(c.row||i);return'<div class="lanc-item'+(c.cancelado?' cancelado':'')+'"><div class="lanc-dot red"></div><div class="lanc-info"><div class="lanc-svc">'+getCatIcon(c.cat)+' '+escapeHtml_(c.desc)+'</div><div class="lanc-meta">'+escapeHtml_(c.cat)+' · '+fmtData(c.data)+'</div></div><div class="lanc-val red">-'+fmtBRL(c.val)+'</div>'+(c.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarCusto('+c.row+')">Editar custo</button><button class="danger" onclick="cancelarCusto('+c.row+')">Cancelar custo</button></div></div>':'')+'</div>';}).join('');}
 // ═══ RELACIONAMENTO / CRM ═══
-var relacionamentoFiltro='30d';
+var relacionamentoFiltro='todos';
 var relacionamentoBusca='';
 var crmClientes=[];
 function telKey_(tel){return String(tel||'').replace(/\D/g,'').replace(/^55/,'');}
 function dateBR_(br,hora){var p=String(br||'').split('/');if(p.length<3)return null;var hp=String(hora||'00:00').split(':');return new Date(parseInt(p[2],10),parseInt(p[1],10)-1,parseInt(p[0],10),parseInt(hp[0]||0,10),parseInt(hp[1]||0,10));}
-function consolidarClientesCRM_(){var mapa={};clientes.forEach(function(c){if((c.status||'')==='Cancelado')return;var k=telKey_(c.tel)||('nome:'+String(c.nome||'').toLowerCase());if(!mapa[k])mapa[k]={key:k,nome:c.nome||'Cliente',tel:c.tel||'',visitas:0,total:0,ultimo:null,os:[],registros:[],servicosCount:{},servicosLista:[],lastSvc:'',preferencia:'',aniversario:false,beneficio:false,relacionamento:null,abertos:0,prontos:0};var g=mapa[k];g.visitas++;g.total+=parseFloat(c.total||0)||0;g.os.push(c.num);g.registros.push(c);if(c.status==='Em andamento')g.abertos++;if(c.status==='Pronto')g.prontos++;if(c.relacionamento)g.relacionamento=c.relacionamento;if(c.beneficioVip){g.beneficio=true;g.aniversario=!!(c.beneficioVip.aniversarioHoje||c.beneficioVip.aniversarioMes);}var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];svcs.forEach(function(s){g.servicosLista.push(s);g.servicosCount[s]=(g.servicosCount[s]||0)+1;});var d=dateBR_(fmtData(c.data),fmtHora(c.hora));if(!g.ultimo||d>g.ultimo){g.ultimo=d;g.ultimaData=fmtData(c.data);g.ultimaHora=fmtHora(c.hora);g.lastSvc=svcs[0]||'';g.nome=c.nome||g.nome;g.tel=c.tel||g.tel;g.status=c.status||g.status;}});return Object.keys(mapa).map(function(k){var g=mapa[k];g.registros.sort(function(a,b){return (dateBR_(fmtData(b.data),fmtHora(b.hora))||0)-(dateBR_(fmtData(a.data),fmtHora(a.hora))||0);});g.dias=g.ultimo?Math.max(0,Math.floor((new Date()-g.ultimo)/86400000)):null;g.recorrente=g.visitas>1;g.ticket=g.visitas?g.total/g.visitas:0;g.vip=g.visitas>=3||g.total>=150||g.beneficio;g.manutencao=g.dias!==null&&g.dias>=30;g.inativo=g.dias!==null&&g.dias>=60;g.novo=g.visitas<=1;g.servicosTop=Object.keys(g.servicosCount).map(function(s){return{nome:s,qtd:g.servicosCount[s]};}).sort(function(a,b){return b.qtd-a.qtd||a.nome.localeCompare(b.nome);}).slice(0,3);g.preferencia=(g.relacionamento&&g.relacionamento.preferencia)||g.servicosTop[0]&&g.servicosTop[0].nome||g.lastSvc||'não identificado';g.tags=[];if(g.recorrente)g.tags.push({cls:'green',txt:'Recorrente'});else g.tags.push({cls:'blue',txt:'Novo'});if(g.vip)g.tags.push({cls:'purple',txt:'Potencial VIP'});if(g.manutencao)g.tags.push({cls:'orange',txt:'Manutenção'});if(g.inativo)g.tags.push({cls:'red',txt:'Inativo'});if(g.relacionamento)g.tags.push({cls:'purple',txt:'Cadastro VIP'});if(g.aniversario)g.tags.push({cls:'purple',txt:'Aniversário'});if(g.abertos)g.tags.push({cls:'orange',txt:g.abertos+' OS aberta'});if(g.prontos)g.tags.push({cls:'green',txt:g.prontos+' pronto'});return g;}).sort(function(a,b){return (b.dias||0)-(a.dias||0);});}
+function consolidarClientesCRM_(){var mapa={};clientes.forEach(function(c){if((c.status||'')==='Cancelado')return;var k=telKey_(c.tel)||('nome:'+String(c.nome||'').toLowerCase());if(!mapa[k])mapa[k]={key:k,nome:c.nome||'Cliente',tel:c.tel||'',visitas:0,total:0,ultimo:null,os:[],registros:[],servicosCount:{},servicosLista:[],lastSvc:'',preferencia:'',aniversario:false,beneficio:false,relacionamento:null,abertos:0,prontos:0};var g=mapa[k];g.visitas++;g.total+=parseFloat(c.total||0)||0;g.os.push(c.num);g.registros.push(c);if(c.status==='Em andamento')g.abertos++;if(c.status==='Pronto')g.prontos++;if(c.relacionamento)g.relacionamento=c.relacionamento;if(c.beneficioVip){g.beneficio=true;g.aniversario=!!(c.beneficioVip.aniversarioHoje||c.beneficioVip.aniversarioMes);}var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];svcs.forEach(function(s){g.servicosLista.push(s);g.servicosCount[s]=(g.servicosCount[s]||0)+1;});var d=dateBR_(fmtData(c.data),fmtHora(c.hora));if(!g.ultimo||d>g.ultimo){g.ultimo=d;g.ultimaData=fmtData(c.data);g.ultimaHora=fmtHora(c.hora);g.lastSvc=svcs[0]||'';g.nome=c.nome||g.nome;g.tel=c.tel||g.tel;g.status=c.status||g.status;}});return Object.keys(mapa).map(function(k){var g=mapa[k];g.registros.sort(function(a,b){return (dateBR_(fmtData(b.data),fmtHora(b.hora))||0)-(dateBR_(fmtData(a.data),fmtHora(a.hora))||0);});g.dias=g.ultimo?Math.max(0,Math.floor((new Date()-g.ultimo)/86400000)):null;g.recorrente=g.visitas>1;g.ticket=g.visitas?g.total/g.visitas:0;g.vip=g.visitas>=3||g.total>=150||g.beneficio;g.manutencao=g.dias!==null&&g.dias>=30;g.inativo=g.dias!==null&&g.dias>=60;g.novo=g.visitas<=1;g.servicosTop=Object.keys(g.servicosCount).map(function(s){return{nome:s,qtd:g.servicosCount[s]};}).sort(function(a,b){return b.qtd-a.qtd||a.nome.localeCompare(b.nome,'pt-BR',{sensitivity:'base'});}).slice(0,3);g.preferencia=(g.relacionamento&&g.relacionamento.preferencia)||g.servicosTop[0]&&g.servicosTop[0].nome||g.lastSvc||'não identificado';g.tags=[];if(g.recorrente)g.tags.push({cls:'green',txt:'Recorrente'});else g.tags.push({cls:'blue',txt:'Novo'});if(g.vip)g.tags.push({cls:'purple',txt:'Potencial VIP'});if(g.manutencao)g.tags.push({cls:'orange',txt:'Manutenção'});if(g.inativo)g.tags.push({cls:'red',txt:'Inativo'});if(g.relacionamento)g.tags.push({cls:'purple',txt:'Cadastro VIP'});if(g.aniversario)g.tags.push({cls:'purple',txt:'Aniversário'});if(g.abertos)g.tags.push({cls:'orange',txt:g.abertos+' OS aberta'});if(g.prontos)g.tags.push({cls:'green',txt:g.prontos+' pronto'});return g;}).sort(function(a,b){var n=String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR',{sensitivity:'base'});if(n!==0)return n;return String(a.tel||'').localeCompare(String(b.tel||''),'pt-BR',{sensitivity:'base'});});}
 function setRelacionamentoFiltro(f,btn){relacionamentoFiltro=f;document.querySelectorAll('[data-crm]').forEach(function(b){b.classList.remove('ativo');});if(btn)btn.classList.add('ativo');renderRelacionamento();}
 function carregarRelacionamento(force){var el=document.getElementById('crmList');if(el)el.innerHTML='<div class="skeleton-card lg"></div><div class="skeleton-card lg"></div>';var done=function(){crmClientes=consolidarClientesCRM_();renderRelacionamento();};if(force||!clientes.length){buscarClientes().then(done).catch(done);}else done();}
 function filtrarRelacionamento(q){relacionamentoBusca=String(q||'').toLowerCase().trim();renderRelacionamento();}
@@ -3793,7 +3795,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.21.3',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.21.4',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

@@ -138,6 +138,7 @@ Status: entregue em `v4.21.0` com backend `v3.34`.
 - Reforco `v4.21.1`: nova OS e mudancas de status passam a redesenhar imediatamente as telas dependentes, incluindo Clientes, Vendas, Relacionamento, Operacao, Historico e Home.
 - Hotfix `v4.21.2/v3.35`: fotos anteriores deixam de ser carregadas junto com todos os clientes. A ficha/Nova OS do Relacionamento chama `listarFotosCliente` sob demanda, reduzindo lentidao e deixando claro quando o Drive ainda esta carregando. O polling vivo foi encurtado para alinhar aparelhos sem fechar o app.
 - Hotfix `v4.21.3`: comparativo semanal do Dashboard passa a usar semana operacional brasileira, de segunda a domingo, e compara contra a semana civil anterior.
+- Hotfix `v4.21.4`: Relacionamento passa a iniciar em `Todos`, com filtros na ordem Todos, Manutencao 30+, Recorrentes, VIP, Primeira visita e 60+ dias; a carteira ativa fica em ordem alfabetica.
 - Hotfix `v3.36`: backend adiciona `LockService` nas escritas criticas para proteger cadastro com fotos/Nova OS, status, custos, edicoes, cancelamentos, VIP e lancamentos simples em uso simultaneo por varios operadores.
 
 ## Fase 24 - Aceite/Assinatura Simples
