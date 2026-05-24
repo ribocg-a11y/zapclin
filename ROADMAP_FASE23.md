@@ -140,6 +140,7 @@ Status: entregue em `v4.21.0` com backend `v3.34`.
 - Hotfix `v4.21.3`: comparativo semanal do Dashboard passa a usar semana operacional brasileira, de segunda a domingo, e compara contra a semana civil anterior.
 - Hotfix `v4.21.4`: Relacionamento passa a iniciar em `Todos`, com filtros na ordem Todos, Manutencao 30+, Recorrentes, VIP, Primeira visita e 60+ dias; a carteira ativa fica em ordem alfabetica.
 - Hotfix `v3.36`: backend adiciona `LockService` nas escritas criticas para proteger cadastro com fotos/Nova OS, status, custos, edicoes, cancelamentos, VIP e lancamentos simples em uso simultaneo por varios operadores.
+- Hotfix `v3.37`: formulario publico do Clube VIP passa a usar layout mobile-first em tela cheia no celular, com campos e botao maiores para evitar zoom manual.
 
 ## Fase 24 - Aceite/Assinatura Simples
 

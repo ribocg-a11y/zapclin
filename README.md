@@ -6,7 +6,7 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 - Frontend GitHub Pages: `v4.21.4`
 - Service Worker/PWA: `v4.21.4`
-- Backend Apps Script: `v3.36` pronto para reimplantacao
+- Backend Apps Script: `v3.37` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
 ## Fase Antecipada
@@ -43,6 +43,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
    - Hotfix v4.21.3: Dashboard passa a calcular comparativo semanal de segunda a domingo, comparando sempre contra a semana civil anterior.
    - Hotfix v4.21.4: Relacionamento passa a abrir em Todos, com filtros reorganizados e carteira ordenada alfabeticamente.
    - Hotfix v3.36: Apps Script passa a usar trava transacional nas escritas criticas para evitar colisao de linhas quando varios operadores gravam ao mesmo tempo.
+   - Hotfix v3.37: formulario publico do Clube VIP passa a ser mobile-first, ocupando a tela inteira no celular com campos maiores e melhor area de toque.
 13. `Fase 24` - aceite/assinatura simples usando a base de OS/PDF.
 
 ## Regra De Evolucao
