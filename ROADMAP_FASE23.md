@@ -167,3 +167,4 @@ Status: iniciada em `v4.24.0`; reforcada em `v4.24.2/v3.39`.
 - Ajuste `v4.24.2/v3.39`: dados oficiais de abril do PDF Golden foram conciliados em arquivo de base separado; o relatorio passa a respeitar a coluna `QTD` em lancamentos consolidados, evitando que um dia historico conte como apenas uma linha.
 - Adicionada secao `Evolucao do negocio`, comparando receita e atendimentos contra o mes anterior para demonstrar crescimento, tracao comercial e relevancia da operacao para o Golden.
 - Regra de governanca: historico importado de PDF deve ter aba de conciliacao e prova de total, para nao duplicar valores existentes nem inventar mix de servicos quando o PDF antigo so informa total diario.
+- Correcao `v4.24.3`: se abril ainda estiver parcial na planilha/app, a previa usa a base oficial do PDF Abril/2026 como comparativo anterior, evitando percentuais artificiais como comparar Maio contra apenas R$ 348,00. A tipografia numerica do relatorio tambem foi reduzida.
