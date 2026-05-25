@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.26.3 | Data: 25/05/2026
+  Versão : 4.26.4 | Data: 25/05/2026
+  HOTFIX v4.26.4:
+    - Adiciona diagnostico de consistencia no Painel Admin para LANCAMENTOS vs CLIENTES/OS
+    - Mostra lancamentos avulsos, vinculados e pendencia de backend v3.44 sem alterar dados
+  HOTFIX v4.26.3:
   HOTFIX v4.26.3:
     - Sinaliza lancamentos avulsos como validos e separados de OS/clientes
     - Prepara leitura do vinculo CLIENTE retornado pelo backend v3.44
@@ -849,6 +853,20 @@
   .logs-search:focus{border-color:var(--cyan)}
   .logs-refresh{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:12px;color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer}
   .logs-list{display:flex;flex-direction:column;gap:8px}
+  .consistency-card{background:var(--zc-panel);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:14px 16px;margin-bottom:18px}
+  .consistency-card.ok{border-color:rgba(25,210,127,.32);background:linear-gradient(135deg,rgba(25,210,127,.09),rgba(255,255,255,.02))}
+  .consistency-card.warn{border-color:rgba(255,174,67,.34);background:linear-gradient(135deg,rgba(255,174,67,.10),rgba(255,255,255,.02))}
+  .consistency-card.error{border-color:rgba(255,68,68,.34);background:linear-gradient(135deg,rgba(255,68,68,.10),rgba(255,255,255,.02))}
+  .consistency-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .consistency-title{font-family:var(--font-head);font-size:13px;font-weight:900;color:var(--text)}
+  .consistency-status{font-family:var(--font-head);font-size:11px;font-weight:900;border-radius:999px;padding:5px 9px;background:rgba(255,255,255,.08)}
+  .consistency-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+  .consistency-metric{border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;background:rgba(0,0,0,.12)}
+  .consistency-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .consistency-value{font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--cyan);margin-top:3px}
+  .consistency-lines{display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--muted);line-height:1.35}
+  .consistency-lines strong{color:var(--text)}
+  @media(max-width:760px){.consistency-grid{grid-template-columns:repeat(2,1fr)}}
   .aceite-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .aceite-list{display:flex;flex-direction:column;gap:10px}
   .aceite-item{background:var(--zc-panel);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
@@ -1666,6 +1684,22 @@
     </div>
     <div class="strategy-lines"><div class="skeleton-card sm"></div></div>
   </div>
+  <div class="section-title">Consistência operacional</div>
+  <div class="consistency-card warn" id="adminConsistencia">
+    <div class="consistency-head">
+      <div class="consistency-title">Lançamentos vs Clientes/OS</div>
+      <div class="consistency-status" id="consStatus">Verificando</div>
+    </div>
+    <div class="consistency-grid">
+      <div class="consistency-metric"><div class="consistency-label">Serviços hoje</div><div class="consistency-value" id="consServicosHoje">—</div></div>
+      <div class="consistency-metric"><div class="consistency-label">OS ativas</div><div class="consistency-value" id="consOsAtivas">—</div></div>
+      <div class="consistency-metric"><div class="consistency-label">Vinculados</div><div class="consistency-value" id="consVinculados">—</div></div>
+      <div class="consistency-metric"><div class="consistency-label">Avulsos</div><div class="consistency-value" id="consAvulsos">—</div></div>
+    </div>
+    <div class="consistency-lines" id="consLinhas">
+      <div>Carregando leitura local...</div>
+    </div>
+  </div>
   <div class="section-title">Gestão</div>
   <div class="admin-atalhos">
     <div class="atalho-card" onclick="goTo('dashboard',null)">
@@ -1879,7 +1913,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.26.3';
+const APP_VERSION='v4.26.4';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3081,6 +3115,58 @@ function calcularKpisAdminLocal_(){
   return {recHoje:fatHoje,cusHoje:cusHoje,recMes:fatMes,cusMes:cusMes,atHoje:atHoje,atMes:atMes,resultado:resultado,margem:margem,ticket:ticket};
 }
 
+function calcularConsistenciaOperacional_(){
+  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var hoje=hojeBR_();
+  var lancHoje=lanc.filter(function(l){
+    var svc=String(l&&l.svc||'');
+    return fmtData(l&&l.data)===hoje&&!l.cancelado&&!/^CANCELADO\b/i.test(svc);
+  });
+  var servicosHoje=lancHoje.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
+  var temInfo=lancHoje.some(lancamentoTemInfoCliente_);
+  var vinculados=temInfo?lancHoje.filter(function(l){return !lancamentoAvulso_(l);}).reduce(function(s,l){return s+qtdLancamentoRel_(l);},0):0;
+  var avulsos=temInfo?lancHoje.filter(lancamentoAvulso_).reduce(function(s,l){return s+qtdLancamentoRel_(l);},0):0;
+  var osHoje=cli.filter(function(c){return fmtData(c&&c.data)===hoje&&!clienteCancelado_(c);}).length;
+  var osAtivas=cli.filter(clienteAberto_).length;
+  var abertasHoje=cli.filter(function(c){return fmtData(c&&c.data)===hoje&&clienteAberto_(c);}).length;
+  var status='ok';
+  var linhas=[
+    '<strong>Regra aplicada:</strong> Home/Vendas leem LANCAMENTOS; Clientes/Operação leem CLIENTES/OS.'
+  ];
+  if(!temInfo&&lancHoje.length){
+    status='warn';
+    linhas.push('Backend ainda não trouxe vínculo CLIENTE/OS em listar. Reimplantar Apps Script v3.44 para distinguir OS e avulso.');
+  }else{
+    linhas.push('Hoje: '+servicosHoje+' serviço(s), '+vinculados+' vinculado(s) a OS e '+avulsos+' avulso(s) válido(s).');
+  }
+  if(servicosHoje>0&&osHoje===0){
+    linhas.push('Existem serviços hoje sem OS cadastrada hoje. Isso pode ser normal quando o registro foi avulso.');
+  }
+  if(osAtivas>0&&!cli.length){
+    status='warn';
+    linhas.push('Cache de clientes indisponível para validar Operação.');
+  }
+  if(servicosHoje===0&&osAtivas>0){
+    status='warn';
+    linhas.push('Há OS ativa, mas nenhum lançamento hoje no cache. Verificar se o lançamento foi criado em outro dia ou se a sincronização ainda não atualizou.');
+  }
+  return {status:status,servicosHoje:servicosHoje,osAtivas:osAtivas,vinculados:vinculados,avulsos:avulsos,osHoje:osHoje,abertasHoje:abertasHoje,linhas:linhas,temInfo:temInfo};
+}
+
+function renderConsistenciaOperacional_(){
+  var c=calcularConsistenciaOperacional_();
+  var card=document.getElementById('adminConsistencia');
+  if(card){card.className='consistency-card '+(c.status==='ok'?'ok':c.status==='error'?'error':'warn');}
+  var status=document.getElementById('consStatus');
+  if(status)status.textContent=c.status==='ok'?'Coerente':'Atenção';
+  [['consServicosHoje',c.servicosHoje],['consOsAtivas',c.osAtivas],['consVinculados',c.temInfo?c.vinculados:'—'],['consAvulsos',c.temInfo?c.avulsos:'—']].forEach(function(x){
+    var el=document.getElementById(x[0]);if(el)el.textContent=x[1];
+  });
+  var linhas=document.getElementById('consLinhas');
+  if(linhas)linhas.innerHTML=c.linhas.map(function(l){return'<div>'+l+'</div>';}).join('');
+}
+
 function isKpisAdminServerValido_(r, localKpis){
   // [v4.8.1 HOTFIX]
   // Evita que uma resposta server-side zerada/incompleta sobrescreva KPIs locais válidos.
@@ -3108,6 +3194,7 @@ function carregarPainelAdmin(){
   atualizarTimerAdmin();
   var localKpis=calcularKpisAdminLocal_();
   aplicarKpisAdmin_(localKpis,'local');
+  renderConsistenciaOperacional_();
   apiGet('buscarKpisAdmin',{},12000)
     .then(function(r){
       if(isKpisAdminServerValido_(r,localKpis)){
@@ -4371,7 +4458,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.26.3',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.26.4',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
