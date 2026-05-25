@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.26.5 | Data: 25/05/2026
+  Versão : 4.26.6 | Data: 25/05/2026
+  HOTFIX v4.26.6:
+    - Adiciona saude da sincronizacao local no Painel Admin
+    - Mostra pendencias offline, idade da fila e atalho seguro para sincronizar
+  HOTFIX v4.26.5:
   HOTFIX v4.26.5:
     - Adiciona diagnostico backend manual no Painel Admin usando action=diagnosticoSistema
     - Mostra checks de planilha, triggers, Drive, Gmail, logs e deployment sem alterar fluxos
@@ -878,6 +882,7 @@
   .diag-pill{font-family:var(--font-head);font-size:10px;font-weight:900;border-radius:999px;padding:3px 7px;white-space:nowrap}
   .diag-pill.ok{background:rgba(25,210,127,.14);color:var(--green)}
   .diag-pill.fail{background:rgba(255,68,68,.14);color:var(--red)}
+  .sync-health-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
   @media(max-width:760px){.consistency-grid{grid-template-columns:repeat(2,1fr)}}
   .aceite-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .aceite-list{display:flex;flex-direction:column;gap:10px}
@@ -1726,6 +1731,26 @@
       <button class="logs-refresh" id="diagBtn" onclick="executarDiagnosticoBackend_()">Executar diagnóstico</button>
     </div>
   </div>
+  <div class="section-title">Sincronização local</div>
+  <div class="consistency-card ok" id="adminSyncHealth">
+    <div class="consistency-head">
+      <div class="consistency-title">Fila offline e pendências</div>
+      <div class="consistency-status" id="syncHealthStatus">Verificando</div>
+    </div>
+    <div class="consistency-grid">
+      <div class="consistency-metric"><div class="consistency-label">Pendentes</div><div class="consistency-value" id="syncPendCount">—</div></div>
+      <div class="consistency-metric"><div class="consistency-label">Mais antigo</div><div class="consistency-value" id="syncPendAge">—</div></div>
+      <div class="consistency-metric"><div class="consistency-label">Conexão</div><div class="consistency-value" id="syncConnState">—</div></div>
+      <div class="consistency-metric"><div class="consistency-label">Último ciclo</div><div class="consistency-value" id="syncLastCycle">—</div></div>
+    </div>
+    <div class="consistency-lines" id="syncHealthLines">
+      <div>Sem leitura ainda.</div>
+    </div>
+    <div class="sync-health-actions">
+      <button class="logs-refresh" onclick="renderSyncHealth_()">Atualizar leitura</button>
+      <button class="logs-refresh" onclick="sincronizarPendentes()">Sincronizar pendentes</button>
+    </div>
+  </div>
   <div class="section-title">Gestão</div>
   <div class="admin-atalhos">
     <div class="atalho-card" onclick="goTo('dashboard',null)">
@@ -1939,7 +1964,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.26.5';
+const APP_VERSION='v4.26.6';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -2161,11 +2186,48 @@ function statusClass(s){if(s==='Pronto')return'pronto';if(s==='Entregue')return'
 
 // ═══ FILA PENDENTES ═══
 function getPendentes(){return JSON.parse(localStorage.getItem('zapPendentes')||'[]');}
-function setPendentes(arr){localStorage.setItem('zapPendentes',JSON.stringify(arr));}
-function addPendente(svcs,vals){var p=getPendentes();p.push({svcs:svcs,vals:vals,ts:Date.now()});setPendentes(p);atualizarBadgePendentes();}
-function atualizarBadgePendentes(){var p=getPendentes();var n=p.length;var badge=document.getElementById('pendenteBadge');var syncBtn=document.getElementById('syncBtn');var syncCount=document.getElementById('syncCount');if(badge){badge.textContent=n>0?n:'';badge.style.display=n>0?'flex':'none';}if(syncBtn){syncBtn.style.display=n>0?'flex':'none';} if(syncCount){syncCount.textContent=n;}}
-function sincronizarPendentes(){var p=getPendentes();if(!p.length){showToast('✅ Tudo sincronizado!');return;}showToast('🔄 Sincronizando '+p.length+'...','orange');_syncNext(p,0);}
-function _syncNext(p,idx){if(idx>=p.length){var r=getPendentes();if(!r.length)showToast('✅ '+p.length+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];apiGet('salvar',{svcs:item.svcs,vals:item.vals},15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1);},500);}else{showToast('❌ Erro ao sincronizar','error');}}).catch(function(){showToast('⚠️ Sem conexão.','orange');});}
+function setPendentes(arr){localStorage.setItem('zapPendentes',JSON.stringify(arr));renderSyncHealth_();}
+function addPendente(svcs,vals){var p=getPendentes();p.push({id:'pend_'+Date.now()+'_'+p.length,tipo:'servico-avulso',svcs:svcs,vals:vals,ts:Date.now(),tentativas:0});setPendentes(p);atualizarBadgePendentes();}
+function idadePendenciaTexto_(ts){
+  var diff=Math.max(0,Date.now()-(parseInt(ts||0,10)||Date.now()));
+  var min=Math.floor(diff/60000);
+  if(min<1)return'agora';
+  if(min<60)return min+'min';
+  var h=Math.floor(min/60),m=min%60;
+  return h+'h'+(m?m+'min':'');
+}
+function syncResumoLocal_(){
+  var p=getPendentes();
+  var oldest=p.length?p.reduce(function(a,b){return (parseInt(a.ts||0,10)||Date.now())<(parseInt(b.ts||0,10)||Date.now())?a:b;}):null;
+  var last=localStorage.getItem('zapLastSyncCycle')||'';
+  return {pendentes:p,quantidade:p.length,oldest:oldest,idade:oldest?idadePendenciaTexto_(oldest.ts):'—',online:navigator.onLine!==false,last:last};
+}
+function renderSyncHealth_(){
+  var r=syncResumoLocal_();
+  var card=document.getElementById('adminSyncHealth');
+  if(card)card.className='consistency-card '+(r.quantidade?'warn':'ok');
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+  set('syncHealthStatus',r.quantidade?'Pendência':'OK');
+  set('syncPendCount',r.quantidade);
+  set('syncPendAge',r.idade);
+  set('syncConnState',r.online?'Online':'Offline');
+  set('syncLastCycle',r.last||'—');
+  var lines=document.getElementById('syncHealthLines');
+  if(lines){
+    if(!r.quantidade){
+      lines.innerHTML='<div><strong>Fila limpa:</strong> não há registros avulsos aguardando sincronização local.</div>';
+    }else{
+      var tipos={};
+      r.pendentes.forEach(function(x){var t=x.tipo||'servico-avulso';tipos[t]=(tipos[t]||0)+1;});
+      lines.innerHTML='<div><strong>Atenção:</strong> '+r.quantidade+' item(ns) aguardando envio ao Apps Script.</div>'+
+        '<div>Mais antigo: '+r.idade+'. Tipos: '+Object.keys(tipos).map(function(k){return k+' '+tipos[k];}).join(', ')+'</div>'+
+        '<div>Use sincronizar quando a conexão estiver online. A fila não altera CLIENTES/OS enquanto não confirmar no backend.</div>';
+    }
+  }
+}
+function atualizarBadgePendentes(){var p=getPendentes();var n=p.length;var badge=document.getElementById('pendenteBadge');var syncBtn=document.getElementById('syncBtn');var syncCount=document.getElementById('syncCount');if(badge){badge.textContent=n>0?n:'';badge.style.display=n>0?'flex':'none';}if(syncBtn){syncBtn.style.display=n>0?'flex':'none';} if(syncCount){syncCount.textContent=n;}renderSyncHealth_();}
+function sincronizarPendentes(){var p=getPendentes();if(!p.length){showToast('✅ Tudo sincronizado!');renderSyncHealth_();return;}showToast('🔄 Sincronizando '+p.length+'...','orange');_syncNext(p,0,p.length);}
+function _syncNext(p,idx,total){if(idx>=p.length){var r=getPendentes();localStorage.setItem('zapLastSyncCycle',dataHoraLocal_());if(!r.length)showToast('✅ '+(total||p.length)+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];apiGet('salvar',{svcs:item.svcs,vals:item.vals},15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1,total);},500);}else{var pend=getPendentes();if(pend[0])pend[0].tentativas=(parseInt(pend[0].tentativas||0,10)||0)+1;setPendentes(pend);showToast('❌ Erro ao sincronizar','error');atualizarBadgePendentes();}}).catch(function(){var pend=getPendentes();if(pend[0])pend[0].tentativas=(parseInt(pend[0].tentativas||0,10)||0)+1;setPendentes(pend);showToast('⚠️ Sem conexão.','orange');atualizarBadgePendentes();});}
 
 // ═══ WHATSAPP ═══
 // [v4.8.2 ALTERAÇÃO]
@@ -3270,6 +3332,7 @@ function carregarPainelAdmin(){
   var localKpis=calcularKpisAdminLocal_();
   aplicarKpisAdmin_(localKpis,'local');
   renderConsistenciaOperacional_();
+  renderSyncHealth_();
   apiGet('buscarKpisAdmin',{},12000)
     .then(function(r){
       if(isKpisAdminServerValido_(r,localKpis)){
@@ -4533,7 +4596,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.26.5',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.26.6',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

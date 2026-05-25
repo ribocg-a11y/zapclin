@@ -83,6 +83,7 @@ Status: concluida em `v4.17.0`.
 - Hotfix v4.26.3 + backend v3.44: lancamentos avulsos passam a ser sinalizados como validos. Eles contam em Home/Vendas/Relatorio, mas ficam separados de OS/clientes e nao entram na Operacao.
 - Hotfix v4.26.4: Painel Admin ganha diagnostico de consistencia LANCAMENTOS vs CLIENTES/OS, sem alterar dados, para indicar servicos do dia, OS ativas, lancamentos vinculados, avulsos e backend antigo sem `clienteId`.
 - Hotfix v4.26.5: Painel Admin ganha diagnostico backend manual via `diagnosticoSistema`, exibindo checks de planilha, triggers, Drive, Gmail, logs e deployment sem alterar fluxos operacionais.
+- Hotfix v4.26.6: Painel Admin ganha saude da sincronizacao local, mostrando pendencias offline, idade da fila, conexao e atalho para sincronizar pendentes sem alterar backend.
 
 ## Fase 23D2 - Cliente E Recorrencia Avancada
 
@@ -203,7 +204,7 @@ Status: backend preparado em `v3.40`; hotfixes em `v3.41`, `v3.42` e `v3.43`.
 
 ## Fase 26 - Estabilidade Multiusuario E Sincronizacao
 
-Status: iniciada em `v4.26.0`, reforcada em `v4.26.1`, corrigida em `v4.26.2`, explicitada em `v4.26.3` e instrumentada em `v4.26.4`/`v4.26.5`, com backend preparado em `v3.44`.
+Status: iniciada em `v4.26.0`, reforcada em `v4.26.1`, corrigida em `v4.26.2`, explicitada em `v4.26.3` e instrumentada em `v4.26.4`/`v4.26.5`/`v4.26.6`, com backend preparado em `v3.44`.
 
 - O Apps Script `v3.44` mantem `LockService` centralizado nas escritas criticas e adiciona apenas a leitura do vinculo CLIENTE/OS em `listar`.
 - O frontend passa a agendar uma reconciliacao curta apos escritas criticas confirmadas pela API.
@@ -214,3 +215,4 @@ Status: iniciada em `v4.26.0`, reforcada em `v4.26.1`, corrigida em `v4.26.2`, e
 - Hotfix `v4.26.3`: Registrar servico sem cliente cria lancamento avulso valido; Vendas/Home contam normalmente; Clientes/Operacao continuam restritos a OS/cadastro; backend `v3.44` expõe `clienteId` na action `listar`.
 - Hotfix `v4.26.4`: Painel Admin passa a exibir diagnostico local de consistencia operacional, apontando quando a leitura ainda nao diferencia OS/avulso porque o Apps Script `v3.44` nao foi reimplantado.
 - Hotfix `v4.26.5`: Painel Admin passa a executar diagnostico backend sob demanda, com aviso de que a action registra evento em LOGS.
+- Hotfix `v4.26.6`: Painel Admin passa a exibir saude da fila offline local e permite sincronizar pendentes a partir da area administrativa.
