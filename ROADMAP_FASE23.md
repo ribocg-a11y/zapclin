@@ -195,3 +195,12 @@ Status: backend preparado em `v3.40`; hotfixes em `v3.41`, `v3.42` e `v3.43`.
 - Hotfix `v3.41`: `testarEnvioEmail()` deixa de chamar alerta de interface e passa a registrar sucesso em log/retorno, evitando erro `Cannot call SpreadsheetApp.getUi() from this context`.
 - Hotfix `v3.42`: o PDF oficial trata Abril/2026 como mes de referencia quando nao existe base anterior, melhora a nota de governanca da base consolidada e reduz quebras visuais nas secoes finais.
 - Hotfix `v3.43`: para o mes base Abril/2026, remove os cards de comparativo sem base anterior e mostra um bloco unico de base de referencia historica.
+
+## Fase 26 - Estabilidade Multiusuario E Sincronizacao
+
+Status: iniciada em `v4.26.0` com backend mantido em `v3.43`.
+
+- O Apps Script `v3.43` ja possui `LockService` centralizado nas escritas criticas, entao esta primeira entrega nao altera o backend.
+- O frontend passa a agendar uma reconciliacao curta apos escritas criticas confirmadas pela API.
+- A reconciliacao forca `refreshDados(true)` apos salvar servico, custo, cadastro, status, edicoes e cancelamentos principais.
+- O objetivo e reduzir diferencas temporarias entre celular/desktop e entre operadores usando o app ao mesmo tempo, preservando o baseline funcional.
