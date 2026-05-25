@@ -1,7 +1,11 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.26.4 | Data: 25/05/2026
+  Versão : 4.26.5 | Data: 25/05/2026
+  HOTFIX v4.26.5:
+    - Adiciona diagnostico backend manual no Painel Admin usando action=diagnosticoSistema
+    - Mostra checks de planilha, triggers, Drive, Gmail, logs e deployment sem alterar fluxos
+  HOTFIX v4.26.4:
   HOTFIX v4.26.4:
     - Adiciona diagnostico de consistencia no Painel Admin para LANCAMENTOS vs CLIENTES/OS
     - Mostra lancamentos avulsos, vinculados e pendencia de backend v3.44 sem alterar dados
@@ -866,6 +870,14 @@
   .consistency-value{font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--cyan);margin-top:3px}
   .consistency-lines{display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--muted);line-height:1.35}
   .consistency-lines strong{color:var(--text)}
+  .diag-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px}
+  .diag-list{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+  .diag-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 10px;background:rgba(0,0,0,.12)}
+  .diag-name{font-size:11px;font-weight:800;color:var(--text);line-height:1.25}
+  .diag-detail{font-size:10px;color:var(--muted);line-height:1.35;margin-top:2px}
+  .diag-pill{font-family:var(--font-head);font-size:10px;font-weight:900;border-radius:999px;padding:3px 7px;white-space:nowrap}
+  .diag-pill.ok{background:rgba(25,210,127,.14);color:var(--green)}
+  .diag-pill.fail{background:rgba(255,68,68,.14);color:var(--red)}
   @media(max-width:760px){.consistency-grid{grid-template-columns:repeat(2,1fr)}}
   .aceite-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .aceite-list{display:flex;flex-direction:column;gap:10px}
@@ -1700,6 +1712,20 @@
       <div>Carregando leitura local...</div>
     </div>
   </div>
+  <div class="section-title">Diagnóstico backend</div>
+  <div class="consistency-card warn" id="adminDiagnostico">
+    <div class="consistency-head">
+      <div class="consistency-title">Planilha, Drive, Gmail, triggers e logs</div>
+      <div class="consistency-status" id="diagStatus">Não executado</div>
+    </div>
+    <div class="consistency-lines" id="diagResumo">
+      <div>Execute manualmente quando quiser verificar a saúde do backend. Esta ação grava um evento em LOGS.</div>
+    </div>
+    <div class="diag-list" id="diagList"></div>
+    <div class="diag-actions">
+      <button class="logs-refresh" id="diagBtn" onclick="executarDiagnosticoBackend_()">Executar diagnóstico</button>
+    </div>
+  </div>
   <div class="section-title">Gestão</div>
   <div class="admin-atalhos">
     <div class="atalho-card" onclick="goTo('dashboard',null)">
@@ -1913,7 +1939,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.26.4';
+const APP_VERSION='v4.26.5';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3165,6 +3191,55 @@ function renderConsistenciaOperacional_(){
   });
   var linhas=document.getElementById('consLinhas');
   if(linhas)linhas.innerHTML=c.linhas.map(function(l){return'<div>'+l+'</div>';}).join('');
+}
+
+function renderDiagnosticoBackend_(r, erro){
+  var card=document.getElementById('adminDiagnostico');
+  var status=document.getElementById('diagStatus');
+  var resumo=document.getElementById('diagResumo');
+  var list=document.getElementById('diagList');
+  var btn=document.getElementById('diagBtn');
+  if(btn){btn.disabled=false;btn.textContent='Executar diagnóstico';}
+  if(erro||!r){
+    if(card)card.className='consistency-card error';
+    if(status)status.textContent='Falhou';
+    if(resumo)resumo.innerHTML='<div>Não foi possível executar o diagnóstico agora.</div><div>'+escapeHtml_(String(erro||''))+'</div>';
+    if(list)list.innerHTML='';
+    return;
+  }
+  var checks=Array.isArray(r.checks)?r.checks:[];
+  var falhas=checks.filter(function(c){return !c.ok;}).length;
+  if(card)card.className='consistency-card '+(r.ok&&falhas===0?'ok':'warn');
+  if(status)status.textContent=r.ok&&falhas===0?'OK':'Atenção';
+  if(resumo){
+    var total=(r.resumo&&r.resumo.totalChecks)||checks.length||0;
+    var ok=(r.resumo&&r.resumo.ok)||(total-falhas);
+    resumo.innerHTML='<div><strong>Resultado:</strong> '+ok+'/'+total+' checks OK · backend '+escapeHtml_(r.version||'—')+'</div>'+
+      '<div><strong>Fonte:</strong> '+escapeHtml_(r.fonte||'diagnosticoSistema')+' · '+escapeHtml_(r.timestamp||'agora')+'</div>';
+  }
+  if(list){
+    list.innerHTML=checks.slice(0,18).map(function(c){
+      return '<div class="diag-item"><div><div class="diag-name">'+escapeHtml_(c.nome||'Check')+'</div><div class="diag-detail">'+escapeHtml_(c.detalhe||'')+'</div></div><span class="diag-pill '+(c.ok?'ok':'fail')+'">'+(c.ok?'OK':'Falha')+'</span></div>';
+    }).join('') || '<div class="diag-item"><div class="diag-name">Sem checks retornados</div><span class="diag-pill fail">Atenção</span></div>';
+  }
+}
+
+function executarDiagnosticoBackend_(){
+  atualizarTimerAdmin();
+  var btn=document.getElementById('diagBtn');
+  var status=document.getElementById('diagStatus');
+  var resumo=document.getElementById('diagResumo');
+  var list=document.getElementById('diagList');
+  if(btn){btn.disabled=true;btn.textContent='Executando...';}
+  if(status)status.textContent='Executando';
+  if(resumo)resumo.innerHTML='<div>Consultando Apps Script e registrando evento em LOGS...</div>';
+  if(list)list.innerHTML='<div class="skeleton-card sm"></div>';
+  apiGet('diagnosticoSistema',{},18000)
+    .then(function(r){
+      if(r&&r.ok!==undefined){renderDiagnosticoBackend_(r);return;}
+      renderDiagnosticoBackend_(null,'Resposta inválida do backend');
+    })
+    .catch(function(err){renderDiagnosticoBackend_(null,err&&err.message?err.message:err);});
 }
 
 function isKpisAdminServerValido_(r, localKpis){
@@ -4458,7 +4533,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.26.4',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.26.5',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
