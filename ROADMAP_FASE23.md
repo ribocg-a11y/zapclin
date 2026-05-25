@@ -226,3 +226,4 @@ Status: iniciada em `v4.27.0`, sem mudanca de backend.
 - O fechamento gera pendencias acionaveis antes de encerrar o dia: atraso, retirada, aceite e sincronizacao.
 - Botao `Copiar fechamento` monta um resumo textual para controle interno sem gravar nada na planilha.
 - Mantem a regra da Fase 26: Home/Vendas por LANCAMENTOS; Clientes/Operacao por CLIENTES/OS.
+- Hotfix `v4.27.1`: Dashboard ganha grafico combinado de receita e atendimentos por Semana 01 a 05, permitindo comparar desempenho semanal do mes selecionado.
