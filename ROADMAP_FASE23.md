@@ -187,6 +187,7 @@ Status: concluida em `v4.25.0`.
 Status: backend preparado em `v3.40`; hotfixes em `v3.41`, `v3.42` e `v3.43`.
 
 - O Apps Script passa a montar o e-mail e o PDF oficial com o mesmo modelo Golden v2 aprovado no preview do app.
+- O frontend `v4.25.1` ajusta a visualizacao mobile do preview, abrindo em tela cheia e sem miniaturizar o relatorio.
 - O PDF salvo em `ZapClin_Relatorios/ANO` agora inclui evolucao do negocio e nota de governanca quando houver base historica consolidada.
 - O envio mensal continua usando `enviarRelatorioMensal()`, preservando destinatarios, CC, percentual e vencimento configurados na aba `EMAIL`.
 - O teste manual continua em `testarEnvioEmail()`, enviando para o e-mail de teste e salvando PDF no Drive.

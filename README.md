@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.25.0`
-- Service Worker/PWA: `v4.25.0`
+- Frontend GitHub Pages: `v4.25.1`
+- Service Worker/PWA: `v4.25.1`
 - Backend Apps Script: `v3.43` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 

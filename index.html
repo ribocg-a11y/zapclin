@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.25.0 | Data: 24/05/2026
+  Versão : 4.25.1 | Data: 25/05/2026
+  v4.25.1:
+    - Ajusta preview mobile do Relatorio Golden para abrir em tela cheia e sem miniaturizar o documento
   v4.25.0:
     - Fecha Fase 25B com Relatorio Golden v2 mais institucional e gerencial
     - Separa leitura oficial de governanca para bases historicas consolidadas
@@ -623,6 +625,43 @@
     .rel-actions{grid-template-columns:1fr}
     .rel-preview-body{padding:10px}
     .golden-report{width:794px;transform-origin:top left;transform:scale(.43);margin:0;height:1123px}
+  }
+  @media (max-width:560px){
+    .rel-preview-overlay{padding:0;align-items:stretch;justify-content:stretch;background:#05070b}
+    .rel-preview-box{width:100vw;height:100dvh;max-height:none;border:0;border-radius:0;box-shadow:none;background:#0f1420}
+    .rel-preview-head{position:sticky;top:0;z-index:2;align-items:flex-start;gap:10px;padding:12px;background:rgba(15,20,32,.96);backdrop-filter:blur(12px)}
+    .rel-preview-title{font-size:15px;line-height:1.05;max-width:128px}
+    .rel-preview-sub{font-size:10px;line-height:1.25}
+    .rel-preview-tools{margin-left:auto;gap:6px}
+    .rel-preview-btn{border-radius:11px;padding:10px 11px;font-size:11px;line-height:1.05;min-height:40px}
+    .rel-preview-body{padding:8px;background:#e9edf5;overflow:auto;-webkit-overflow-scrolling:touch}
+    .golden-report{width:auto;min-width:0;min-height:auto;height:auto;transform:none;margin:0;background:#fff;padding:16px 10px;box-shadow:none}
+    .gr-header{grid-template-columns:1fr;gap:8px;padding:14px 12px 12px}
+    .gr-brand{font-size:10px;margin-bottom:5px;letter-spacing:.03em}
+    .gr-title{font-size:19px;margin-bottom:6px}
+    .gr-meta,.gr-ref{font-size:10px;line-height:1.35;text-align:left}
+    .gr-section{font-size:13px;margin:13px 0 6px}
+    .gr-summary{grid-template-columns:1fr 1fr}
+    .gr-kpi{padding:8px;min-height:58px}
+    .gr-kpi.due{border-left:0;border-top:3px solid #378add}
+    .gr-kpi-label{font-size:10px;margin-bottom:4px}
+    .gr-kpi-val,.gr-kpi.center .gr-kpi-val{font-size:13px}
+    .gr-kpi.due .gr-kpi-val{font-size:14px}
+    .gr-kpi-sub{font-size:9px}
+    .gr-evolution{grid-template-columns:1fr}
+    .gr-evolution>div{border-right:0;border-bottom:1px solid #cfe0f2}
+    .gr-evolution>div:last-child{border-bottom:0}
+    .gr-evo-val{font-size:13px}
+    .gr-business,.gr-governance{font-size:10px;padding:8px 9px}
+    .gr-table{font-size:9px;table-layout:fixed}
+    .gr-table th,.gr-table td{padding:5px 4px;word-break:break-word}
+    .gr-table th:nth-child(1),.gr-table td:nth-child(1){width:20%}
+    .gr-table th:nth-child(2),.gr-table td:nth-child(2){width:24%}
+    .gr-table th:nth-child(3),.gr-table td:nth-child(3){width:12%}
+    .gr-table th:nth-child(4),.gr-table td:nth-child(4){width:22%}
+    .gr-table th:nth-child(5),.gr-table td:nth-child(5){width:22%}
+    .gr-footer{grid-template-columns:1fr;gap:8px;font-size:9px;padding:10px}
+    .gr-footer .right{text-align:left}
   }
   /* Modais */
   .vp-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
@@ -1823,7 +1862,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.25.0';
+const APP_VERSION='v4.25.1';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -4268,7 +4307,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.25.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.25.1',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
