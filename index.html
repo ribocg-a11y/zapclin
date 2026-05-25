@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.26.2 | Data: 25/05/2026
+  Versão : 4.26.3 | Data: 25/05/2026
+  HOTFIX v4.26.3:
+    - Sinaliza lancamentos avulsos como validos e separados de OS/clientes
+    - Prepara leitura do vinculo CLIENTE retornado pelo backend v3.44
   HOTFIX v4.26.2:
     - Restaura Home para contar atendimentos do dia pela aba LANCAMENTOS
     - Alinha KPI Em producao da Operacao com a coluna Em producao, separando Atencao
@@ -554,6 +557,8 @@
   .hs-val.green{color:var(--green)}
   .hs-val.orange{color:var(--orange)}
   .hs-sub{font-size:10px;color:var(--muted);margin-top:4px}
+  .home-source-note{display:none;margin:-8px 0 20px;padding:10px 12px;border:1px solid rgba(0,212,238,.18);background:rgba(0,212,238,.06);border-radius:14px;color:#b8c7ff;font-size:11px;line-height:1.35}
+  .home-source-note.show{display:block}
   .hs-orange::after{background:var(--orange);box-shadow:0 0 14px var(--orange)}
   .home-sec-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
   .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -714,6 +719,7 @@
   .info-badge.pagamento{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25)}
   .info-badge.desconto{background:rgba(255,82,82,.12);color:var(--red);border:1px solid rgba(255,82,82,.25)}
   .info-badge.vip-beneficio{background:rgba(184,108,255,.15);color:#d7b3ff;border:1px solid rgba(184,108,255,.35)}
+  .info-badge.avulso{background:rgba(0,212,238,.10);color:var(--cyan);border:1px solid rgba(0,212,238,.28)}
   /* Misc */
   .empty{text-align:center;padding:40px 20px;color:var(--muted)}
   .empty-icon{font-size:40px;margin-bottom:12px;opacity:.4}
@@ -1247,6 +1253,7 @@
         <div class="hs-sub">em andamento ou pronto</div>
       </div>
     </div>
+    <div class="home-source-note" id="homeLancInfo"></div>
 
     <!-- Grid de menu -->
     <div class="home-sec-label">Menu principal</div>
@@ -1872,7 +1879,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.26.2';
+const APP_VERSION='v4.26.3';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1956,15 +1963,31 @@ function animarCardsHome(){
   });
 }
 
+function lancamentoClienteId_(l){
+  return String((l&&(l.clienteId!==undefined?l.clienteId:l.cliente!==undefined?l.cliente:l.os))||'').trim();
+}
+function lancamentoTemInfoCliente_(l){
+  return !!(l&&('clienteId' in l||'cliente' in l||'os' in l));
+}
+function lancamentoAvulso_(l){
+  return lancamentoTemInfoCliente_(l)&&!lancamentoClienteId_(l);
+}
+function lancamentoVinculoBadge_(l){
+  if(!lancamentoTemInfoCliente_(l))return '';
+  var id=lancamentoClienteId_(l);
+  return id?'<span class="info-badge vinculo">OS '+formatarOS_(id)+'</span>':'<span class="info-badge avulso">Avulso válido</span>';
+}
+
 function _calcStatsHome(){
   // Atendimentos hoje = servicos lancados hoje em LANCAMENTOS (soma QTD), nao OS cadastradas.
   var src=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
   var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
   var hoje=hojeBR_();
-  var atd=src.filter(function(l){
+  var validosHoje=src.filter(function(l){
     var svc=String(l&&l.svc||'');
     return fmtData(l&&l.data)===hoje&&!l.cancelado&&!/^CANCELADO\b/i.test(svc);
-  }).reduce(function(total,l){
+  });
+  var atd=validosHoje.reduce(function(total,l){
     var qtd=parseInt(l&&l.qtd||1,10);
     return total+(qtd>0?qtd:1);
   },0);
@@ -1973,6 +1996,19 @@ function _calcStatsHome(){
   var avEl=document.getElementById('homeAtivos');
   if(aEl)aEl.textContent=atd;
   if(avEl)avEl.textContent=ativos;
+  var info=document.getElementById('homeLancInfo');
+  if(info){
+    var temInfo=validosHoje.some(lancamentoTemInfoCliente_);
+    if(temInfo){
+      var avulsos=validosHoje.filter(lancamentoAvulso_).reduce(function(total,l){var qtd=parseInt(l&&l.qtd||1,10);return total+(qtd>0?qtd:1);},0);
+      var vinculados=Math.max(0,atd-avulsos);
+      info.textContent=atd+' serviço(s) lançados hoje: '+vinculados+' vinculado(s) a OS e '+avulsos+' avulso(s) válido(s).';
+      info.classList.add('show');
+    }else{
+      info.textContent='';
+      info.classList.remove('show');
+    }
+  }
 }
 function atualizarStatsHome(){
   // Mostra cache imediatamente
@@ -3636,7 +3672,7 @@ function dataHoraAgoraParts_(){
 function lancamentosDaOs_(num,servicos){
   var dh=dataHoraAgoraParts_();
   return (servicos||[]).filter(Boolean).map(function(s){
-    return {svc:s,data:dh.data,hora:dh.hora,qtd:1,val:precoServico_(s),num:num};
+    return {svc:s,data:dh.data,hora:dh.hora,qtd:1,val:precoServico_(s),num:num,clienteId:String(num||'')};
   });
 }
 
@@ -3932,7 +3968,7 @@ function renderServices(){document.getElementById('serviceList').innerHTML=SERVI
 function toggle(i){var c=document.getElementById('svc'+i);if(selected.has(i)){selected.delete(i);c.classList.remove('selected');}else{selected.add(i);c.classList.add('selected');}updateTotal();}
 function updateTotal(){var t=0;selected.forEach(function(i){t+=SERVICES[i].price;});document.getElementById('totalValue').textContent='R$ '+t.toFixed(2).replace('.',',');document.getElementById('selectedCount').textContent=selected.size+' serviço(s) selecionado(s)';document.getElementById('saveBtn').disabled=selected.size===0;}
 
-function salvar(){if(selected.size===0){showToast('Selecione ao menos um serviço','error');return;}var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='⏳ Salvando...';var svcs=Array.from(selected).map(function(i){return SERVICES[i].name;}).join('|');var vals=Array.from(selected).map(function(i){return SERVICES[i].price;}).join('|');var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var qtdSel=selected.size;Array.from(selected).forEach(function(i){lancamentos.unshift({svc:SERVICES[i].name,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,qtd:1,val:SERVICES[i].price});});localStorage.setItem('zapLanc',JSON.stringify(lancamentos.slice(0,500)));_calcStatsHome();selected.clear();renderServices();updateTotal();apiGet('salvar',{svcs:svcs,vals:vals},15000).then(function(resp){if(resp&&resp.ok){showToast('✅ '+qtdSel+' serviço(s) salvo(s) na planilha!');logEventoSistema_('OPERACAO','salvar','OK','Serviço salvo',{qtd:qtdSel,servicos:svcs});agendarRefreshAposEscrita_(700);}else{showToast('⚠️ Erro — na fila de sync','orange');logEventoSistema_('OPERACAO','salvar','ALERTA','Serviço enviado para fila',{qtd:qtdSel,servicos:svcs});addPendente(svcs,vals);}}).catch(function(){showToast('⚠️ Sem conexão — na fila de sync','orange');logEventoSistema_('OPERACAO','salvar','ERRO','Sem conexão: serviço enviado para fila',{qtd:qtdSel,servicos:svcs});addPendente(svcs,vals);}).finally(function(){btn.disabled=false;btn.innerHTML='▶ SALVAR REGISTRO';atualizarBadgePendentes();});}
+function salvar(){if(selected.size===0){showToast('Selecione ao menos um serviço','error');return;}var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='⏳ Salvando...';var svcs=Array.from(selected).map(function(i){return SERVICES[i].name;}).join('|');var vals=Array.from(selected).map(function(i){return SERVICES[i].price;}).join('|');var a=new Date();var dd=String(a.getDate()).padStart(2,'0'),mm=String(a.getMonth()+1).padStart(2,'0'),yyyy=a.getFullYear(),hh=String(a.getHours()).padStart(2,'0'),mi=String(a.getMinutes()).padStart(2,'0');var qtdSel=selected.size;Array.from(selected).forEach(function(i){lancamentos.unshift({svc:SERVICES[i].name,data:dd+'/'+mm+'/'+yyyy,hora:hh+':'+mi,qtd:1,val:SERVICES[i].price,clienteId:''});});localStorage.setItem('zapLanc',JSON.stringify(lancamentos.slice(0,500)));_calcStatsHome();selected.clear();renderServices();updateTotal();apiGet('salvar',{svcs:svcs,vals:vals},15000).then(function(resp){if(resp&&resp.ok){showToast('✅ '+qtdSel+' serviço(s) avulso(s) salvo(s) na planilha!');logEventoSistema_('OPERACAO','salvar','OK','Serviço avulso salvo',{qtd:qtdSel,servicos:svcs});agendarRefreshAposEscrita_(700);}else{showToast('⚠️ Erro — na fila de sync','orange');logEventoSistema_('OPERACAO','salvar','ALERTA','Serviço enviado para fila',{qtd:qtdSel,servicos:svcs});addPendente(svcs,vals);}}).catch(function(){showToast('⚠️ Sem conexão — na fila de sync','orange');logEventoSistema_('OPERACAO','salvar','ERRO','Sem conexão: serviço enviado para fila',{qtd:qtdSel,servicos:svcs});addPendente(svcs,vals);}).finally(function(){btn.disabled=false;btn.innerHTML='▶ SALVAR REGISTRO';atualizarBadgePendentes();});}
 
 // ═══ CUSTOS ═══
 function atualizarCategoria(){var desc=document.getElementById('custoDesc').value;var badge=document.getElementById('catBadge');if(desc.length>2){badge.textContent=getCatIcon(detectCat(desc))+' '+detectCat(desc);badge.style.display='inline-block';}else{badge.style.display='none';}}
@@ -4180,6 +4216,8 @@ function renderVendasGerencial(){
   var fat=validos.reduce(function(s,l){return s+(parseFloat(l.val)||0);},0);
   var qtd=validos.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
   var ticket=qtd?fat/qtd:0;
+  var temVinculoInfo=validos.some(lancamentoTemInfoCliente_);
+  var avulsos=temVinculoInfo?validos.filter(lancamentoAvulso_).reduce(function(s,l){return s+qtdLancamentoRel_(l);},0):0;
   var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
   set('vendaFat',fmtBRL(fat));set('vendaQtd',qtd);set('vendaTicket',fmtBRL(ticket));set('vendaCancel',cancelados);
   var sub=document.getElementById('vendaFatSub');if(sub)sub.textContent=labelPeriodoVendas_();
@@ -4194,11 +4232,12 @@ function renderVendasGerencial(){
     var topVol=arr.slice().sort(function(a,b){return b.qtd-a.qtd;})[0];if(topVol&&topVol.name!==(arr[0]&&arr[0].name))insights.push(topVol.name+' lidera em volume, mas não em receita.');
     if(ticket<20)insights.push('Ticket médio baixo: avalie estimular serviços de maior valor.');
     else if(ticket>=30)insights.push('Ticket médio saudável: serviços de maior valor estão aparecendo bem.');
+    if(temVinculoInfo&&avulsos>0)insights.push(avulsos+' serviço(s) avulso(s) válido(s) no período. Conta no faturamento, mas não entra na fila de OS/produção.');
     if(cancelados>0)insights.push(cancelados+' lançamento(s) cancelado(s) no período. Confira se são correções pontuais ou padrão recorrente.');
   }
   var insEl=document.getElementById('vendaInsights');if(insEl)insEl.innerHTML=insights.map(function(t){return'<div class="venda-insight"><span>•</span><span>'+escapeHtml_(t)+'</span></div>';}).join('');
   if(!periodo.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Nenhum registro no período.</div></div>';return;}
-  list.innerHTML=periodo.slice(0,100).map(function(l,i){var id='menuLanc'+(l.row||i);return'<div class="lanc-item'+(l.cancelado?' cancelado':'')+'"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+escapeHtml_(l.svc)+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+(l.num?' · #'+l.num:'')+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div>'+(l.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarLancamento('+l.row+')">Editar lançamento</button><button class="danger" onclick="cancelarLancamento('+l.row+')">Cancelar lançamento</button></div></div>':'')+'</div>';}).join('');
+  list.innerHTML=periodo.slice(0,100).map(function(l,i){var id='menuLanc'+(l.row||i),badge=lancamentoVinculoBadge_(l);return'<div class="lanc-item'+(l.cancelado?' cancelado':'')+'"><div class="lanc-dot"></div><div class="lanc-info"><div class="lanc-svc">'+escapeHtml_(l.svc)+'</div><div class="lanc-meta">'+fmtData(l.data)+' · '+fmtHora(l.hora)+(l.num?' · #'+l.num:'')+(badge?' · '+badge:'')+'</div></div><div class="lanc-val">'+fmtBRL(l.val)+'</div>'+(l.row?'<div class="item-menu-wrap"><button class="icon-action" onclick="event.stopPropagation();toggleMenuOperacional(\''+id+'\')">⋯</button><div class="item-menu" id="'+id+'"><button onclick="abrirEditarLancamento('+l.row+')">Editar lançamento</button><button class="danger" onclick="cancelarLancamento('+l.row+')">Cancelar lançamento</button></div></div>':'')+'</div>';}).join('');
 }
 function skeletonList_(rows,kind){rows=rows||3;var cls=kind==='sm'?' sm':kind==='lg'?' lg':'';var h='<div class="skeleton-list">';for(var i=0;i<rows;i++)h+='<div class="skeleton-card'+cls+'"></div>';return h+'</div>';}
 function carregarLancamentos(){var list=document.getElementById('lancList');if(list)list.innerHTML=skeletonList_(4,'sm');buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');renderVendasGerencial();});}
@@ -4332,7 +4371,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.26.2',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.26.3',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
