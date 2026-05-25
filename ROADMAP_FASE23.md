@@ -184,7 +184,7 @@ Status: concluida em `v4.25.0`.
 
 ## Fase 25C - Backend Do Relatorio Golden Oficial
 
-Status: backend preparado em `v3.40`; hotfix de teste em `v3.41`.
+Status: backend preparado em `v3.40`; hotfixes em `v3.41` e `v3.42`.
 
 - O Apps Script passa a montar o e-mail e o PDF oficial com o mesmo modelo Golden v2 aprovado no preview do app.
 - O PDF salvo em `ZapClin_Relatorios/ANO` agora inclui evolucao do negocio e nota de governanca quando houver base historica consolidada.
@@ -192,3 +192,4 @@ Status: backend preparado em `v3.40`; hotfix de teste em `v3.41`.
 - O teste manual continua em `testarEnvioEmail()`, enviando para o e-mail de teste e salvando PDF no Drive.
 - O modelo antigo de PDF por planilha temporaria fica preservado no codigo como fallback historico, mas a emissao principal usa HTML institucional em PDF.
 - Hotfix `v3.41`: `testarEnvioEmail()` deixa de chamar alerta de interface e passa a registrar sucesso em log/retorno, evitando erro `Cannot call SpreadsheetApp.getUi() from this context`.
+- Hotfix `v3.42`: o PDF oficial trata Abril/2026 como mes de referencia quando nao existe base anterior, melhora a nota de governanca da base consolidada e reduz quebras visuais nas secoes finais.

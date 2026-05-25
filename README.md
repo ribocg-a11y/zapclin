@@ -6,7 +6,7 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 - Frontend GitHub Pages: `v4.25.0`
 - Service Worker/PWA: `v4.25.0`
-- Backend Apps Script: `v3.41` pronto para reimplantacao
+- Backend Apps Script: `v3.42` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
 ## Fase Antecipada
@@ -52,7 +52,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
    - Ajuste v4.24.4: substitui Abril pela base oficial do PDF na planilha exportada e ajusta Relatorio/Dashboard/Vendas para contar atendimentos pela coluna `QTD`, nao por quantidade de linhas.
    - Ajuste v4.24.5: reforca o aceite digital na mensagem de recebimento com link destacado para a tela onde o cliente toca no botao de confirmacao.
 15. `Fase 25B` - concluida em v4.25.0 com Relatorio Golden v2: leitura oficial mais institucional, bloco de evolucao do negocio, nota de governanca para base historica consolidada e protecao contra composicao por servico falsa quando a importacao vem agregada do PDF.
-16. `Fase 25C` - backend preparado em v3.40 para enviar e salvar no Drive o Relatorio Golden v2, alinhando o PDF oficial/e-mail ao preview validado no app. Hotfix v3.41 remove alerta UI do teste para permitir execucao segura pelo editor.
+16. `Fase 25C` - backend preparado em v3.40 para enviar e salvar no Drive o Relatorio Golden v2, alinhando o PDF oficial/e-mail ao preview validado no app. Hotfix v3.41 remove alerta UI do teste para permitir execucao segura pelo editor. Hotfix v3.42 melhora texto de mes de referencia e acabamento de base consolidada no PDF.
 
 ## Regra De Evolucao
 
