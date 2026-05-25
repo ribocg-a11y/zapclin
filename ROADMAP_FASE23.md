@@ -79,6 +79,7 @@ Status: concluida em `v4.17.0`.
 - Alertas de atraso e proximidade do prazo.
 - Leitura fica na propria Fila de Producao para apoiar decisao operacional sem abrir relatorio.
 - Hotfix v4.26.1: Operacao passa a calcular inteligencia apenas sobre a fila ativa, evitando misturar historico entregue antigo com os cards atuais de producao/prontos.
+- Hotfix v4.26.2: Home volta a contar atendimentos reais do dia pela aba LANCAMENTOS, somando QTD dos servicos lancados; Operacao separa o KPI Em producao da coluna Atencao para evitar duas leituras diferentes da mesma fila.
 
 ## Fase 23D2 - Cliente E Recorrencia Avancada
 
@@ -199,10 +200,11 @@ Status: backend preparado em `v3.40`; hotfixes em `v3.41`, `v3.42` e `v3.43`.
 
 ## Fase 26 - Estabilidade Multiusuario E Sincronizacao
 
-Status: iniciada em `v4.26.0`, reforcada em `v4.26.1`, com backend mantido em `v3.43`.
+Status: iniciada em `v4.26.0`, reforcada em `v4.26.1` e corrigida em `v4.26.2`, com backend mantido em `v3.43`.
 
 - O Apps Script `v3.43` ja possui `LockService` centralizado nas escritas criticas, entao esta primeira entrega nao altera o backend.
 - O frontend passa a agendar uma reconciliacao curta apos escritas criticas confirmadas pela API.
 - A reconciliacao forca `refreshDados(true)` apos salvar servico, custo, cadastro, status, edicoes e cancelamentos principais.
 - O objetivo e reduzir diferencas temporarias entre celular/desktop e entre operadores usando o app ao mesmo tempo, preservando o baseline funcional.
 - Hotfix `v4.26.1`: Home, Clientes e Operacao passam a usar a mesma definicao de fila ativa. Home conta OS/clientes de hoje; Clientes ativos exclui Entregue/Cancelado; cards de inteligencia da Operacao usam apenas a fila ativa para nao inflar tempos com historico entregue.
+- Hotfix `v4.26.2`: regra refinada por tela: Home mede movimento real do dia por LANCAMENTOS; Clientes lista OS/cadastros; Operacao gerencia fila ativa separando Atencao, Em producao e Prontos.

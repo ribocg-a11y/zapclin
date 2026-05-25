@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.26.1`
-- Service Worker/PWA: `v4.26.1`
+- Frontend GitHub Pages: `v4.26.2`
+- Service Worker/PWA: `v4.26.2`
 - Backend Apps Script: `v3.43` pronto para reimplantacao
 - URL: https://ribocg-a11y.github.io/zapclin/
 
@@ -53,7 +53,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
    - Ajuste v4.24.5: reforca o aceite digital na mensagem de recebimento com link destacado para a tela onde o cliente toca no botao de confirmacao.
 15. `Fase 25B` - concluida em v4.25.0 com Relatorio Golden v2: leitura oficial mais institucional, bloco de evolucao do negocio, nota de governanca para base historica consolidada e protecao contra composicao por servico falsa quando a importacao vem agregada do PDF.
 16. `Fase 25C` - backend preparado em v3.40 para enviar e salvar no Drive o Relatorio Golden v2, alinhando o PDF oficial/e-mail ao preview validado no app. Hotfix v3.41 remove alerta UI do teste para permitir execucao segura pelo editor. Hotfix v3.42 melhora texto de mes de referencia e acabamento de base consolidada no PDF. Hotfix v3.43 troca comparativo sem base anterior por bloco de base de referencia historica.
-17. `Fase 26` - iniciada em v4.26.0 com reconciliacao curta apos escritas criticas no frontend, usando refresh forcado depois de salvar servico, custo, cadastro, status e edicoes. Hotfix v4.26.1 unifica as regras de fila ativa entre Home, Clientes e Operacao: Home conta OS/clientes de hoje, clientes ativos excluem Entregue/Cancelado, e a inteligencia da Operacao deixa de misturar historico entregue com a fila atual. Backend permanece em v3.43 porque o LockService central ja protege as escritas criticas.
+17. `Fase 26` - iniciada em v4.26.0 com reconciliacao curta apos escritas criticas no frontend, usando refresh forcado depois de salvar servico, custo, cadastro, status e edicoes. Hotfix v4.26.1 unifica as regras de fila ativa entre Home, Clientes e Operacao; hotfix v4.26.2 restaura a Home para contar atendimentos reais do dia pela aba LANCAMENTOS, enquanto Clientes continua exibindo OS/cadastros e Operacao separa Em producao de Atencao. Backend permanece em v3.43 porque o LockService central ja protege as escritas criticas.
 
 ## Regra De Evolucao
 

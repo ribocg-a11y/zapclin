@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.26.1 | Data: 25/05/2026
+  Versão : 4.26.2 | Data: 25/05/2026
+  HOTFIX v4.26.2:
+    - Restaura Home para contar atendimentos do dia pela aba LANCAMENTOS
+    - Alinha KPI Em producao da Operacao com a coluna Em producao, separando Atencao
   HOTFIX v4.26.1:
     - Unifica regras de fila ativa entre Home, Clientes e Operacao
     - Home passa a contar OS/clientes de hoje em vez de linhas de lancamentos
@@ -1236,7 +1239,7 @@
       <div class="home-stat hs-cyan">
         <div class="hs-label">Atendimentos hoje</div>
         <div class="hs-val cyan" id="homeAtend">—</div>
-        <div class="hs-sub">OS registradas hoje</div>
+        <div class="hs-sub">serviços lançados hoje</div>
       </div>
       <div class="home-stat hs-orange">
         <div class="hs-label">Clientes ativos</div>
@@ -1347,7 +1350,7 @@
   </div>
 
   <div class="op-kpis">
-    <div class="op-kpi" style="--c:var(--cyan)"><div class="op-kpi-lbl">Em produção</div><div class="op-kpi-val" id="opKpiProducao">—</div><div class="op-kpi-sub">aguardando pronto</div></div>
+    <div class="op-kpi" style="--c:var(--cyan)"><div class="op-kpi-lbl">Em produção</div><div class="op-kpi-val" id="opKpiProducao">—</div><div class="op-kpi-sub">no prazo</div></div>
     <div class="op-kpi" style="--c:var(--red)"><div class="op-kpi-lbl">Atenção</div><div class="op-kpi-val" id="opKpiAtraso">—</div><div class="op-kpi-sub">risco ou atraso</div></div>
     <div class="op-kpi" style="--c:var(--green)"><div class="op-kpi-lbl">Prontos</div><div class="op-kpi-val" id="opKpiProntos">—</div><div class="op-kpi-sub">retirada/aviso</div></div>
     <div class="op-kpi" style="--c:var(--blue)"><div class="op-kpi-lbl">SLA</div><div class="op-kpi-val" id="opKpiSla">—</div><div class="op-kpi-sub">em andamento</div></div>
@@ -1869,7 +1872,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.26.1';
+const APP_VERSION='v4.26.2';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -1954,10 +1957,17 @@ function animarCardsHome(){
 }
 
 function _calcStatsHome(){
-  // Atendimentos hoje = OS/clientes cadastrados hoje, para alinhar Home com Clientes e Operacao.
+  // Atendimentos hoje = servicos lancados hoje em LANCAMENTOS (soma QTD), nao OS cadastradas.
+  var src=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
   var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
   var hoje=hojeBR_();
-  var atd=cli.filter(function(c){return !clienteCancelado_(c)&&fmtData(c.data)===hoje;}).length;
+  var atd=src.filter(function(l){
+    var svc=String(l&&l.svc||'');
+    return fmtData(l&&l.data)===hoje&&!l.cancelado&&!/^CANCELADO\b/i.test(svc);
+  }).reduce(function(total,l){
+    var qtd=parseInt(l&&l.qtd||1,10);
+    return total+(qtd>0?qtd:1);
+  },0);
   var ativos=cli.filter(clienteAberto_).length;
   var aEl=document.getElementById('homeAtend');
   var avEl=document.getElementById('homeAtivos');
@@ -4270,7 +4280,7 @@ function opRenderPicos_(base){
   el.innerHTML=arr.map(function(x){var pct=max?Math.round(x.qtd/max*100):0;return'<div class="op-peak-row"><div><div class="op-peak-hora">'+String(x.h).padStart(2,'0')+'h</div><div class="op-mini-bar"><div class="op-mini-fill" style="width:'+pct+'%"></div></div></div><div class="op-peak-meta">'+x.qtd+' atend.</div><div class="op-svc-sla ok">'+pct+'%</div></div>';}).join('');
 }
 function opRenderInteligencia_(src){opRenderRiscos_(src);opRenderServicoSla_(src);opRenderPicos_(src);}
-function renderOperacaoPainel(){var base=(clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]')).filter(function(c){return c&&!clienteCancelado_(c);});var src=base.filter(clienteAberto_).map(classificarOperacao_);var atencao=src.filter(function(i){return i.tipo==='atencao';}).sort(function(a,b){return a.prioridade-b.prioridade;});var andamento=src.filter(function(i){return i.tipo==='andamento';}).sort(function(a,b){return a.prioridade-b.prioridade;});var prontos=src.filter(function(i){return i.tipo==='prontos';}).sort(function(a,b){return (a.c.encerradoEm||'')<(b.c.encerradoEm||'')?1:-1;});var producao=atencao.length+andamento.length,totalAnd=producao,ok=andamento.length,pct=totalAnd?Math.round(ok/totalAnd*100):100;var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};set('opKpiProducao',producao);set('opKpiAtraso',atencao.length);set('opKpiProntos',prontos.length);set('opKpiSla',pct+'%');set('opCountAtencao',atencao.length);set('opCountAndamento',andamento.length);set('opCountProntos',prontos.length);var sub=document.getElementById('opSub');if(sub)sub.textContent=src.length+' atendimento(s) ativo(s) · atualizado agora';var alert=document.getElementById('opAlert');if(alert){if(atencao.length){var p=atencao[0];alert.classList.add('show');alert.textContent='Prioridade: '+(p.c.nome||'Cliente')+' · OS '+formatarOS_(p.c.num)+' · '+p.st.label;}else{alert.classList.remove('show');alert.textContent='';}}opRenderInteligencia_(src);var show=function(wrap,on){var el=document.getElementById(wrap);if(el)el.style.display=on?'block':'none';};show('opLaneAtencaoWrap',operacaoFiltro==='todos'||operacaoFiltro==='atencao');show('opLaneAndamentoWrap',operacaoFiltro==='todos'||operacaoFiltro==='andamento');show('opLaneProntosWrap',operacaoFiltro==='todos'||operacaoFiltro==='prontos');renderOperacaoLista_('opListAtencao',atencao,'Nenhum atendimento em risco agora.');renderOperacaoLista_('opListAndamento',andamento,'Fila de produção vazia.');renderOperacaoLista_('opListProntos',prontos,'Nenhum capacete pronto para retirada.');}
+function renderOperacaoPainel(){var base=(clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]')).filter(function(c){return c&&!clienteCancelado_(c);});var src=base.filter(clienteAberto_).map(classificarOperacao_);var atencao=src.filter(function(i){return i.tipo==='atencao';}).sort(function(a,b){return a.prioridade-b.prioridade;});var andamento=src.filter(function(i){return i.tipo==='andamento';}).sort(function(a,b){return a.prioridade-b.prioridade;});var prontos=src.filter(function(i){return i.tipo==='prontos';}).sort(function(a,b){return (a.c.encerradoEm||'')<(b.c.encerradoEm||'')?1:-1;});var producao=andamento.length,totalAnd=atencao.length+andamento.length,ok=andamento.length,pct=totalAnd?Math.round(ok/totalAnd*100):100;var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};set('opKpiProducao',producao);set('opKpiAtraso',atencao.length);set('opKpiProntos',prontos.length);set('opKpiSla',pct+'%');set('opCountAtencao',atencao.length);set('opCountAndamento',andamento.length);set('opCountProntos',prontos.length);var sub=document.getElementById('opSub');if(sub)sub.textContent=src.length+' atendimento(s) ativo(s) · atualizado agora';var alert=document.getElementById('opAlert');if(alert){if(atencao.length){var p=atencao[0];alert.classList.add('show');alert.textContent='Prioridade: '+(p.c.nome||'Cliente')+' · OS '+formatarOS_(p.c.num)+' · '+p.st.label;}else{alert.classList.remove('show');alert.textContent='';}}opRenderInteligencia_(src);var show=function(wrap,on){var el=document.getElementById(wrap);if(el)el.style.display=on?'block':'none';};show('opLaneAtencaoWrap',operacaoFiltro==='todos'||operacaoFiltro==='atencao');show('opLaneAndamentoWrap',operacaoFiltro==='todos'||operacaoFiltro==='andamento');show('opLaneProntosWrap',operacaoFiltro==='todos'||operacaoFiltro==='prontos');renderOperacaoLista_('opListAtencao',atencao,'Nenhum atendimento em risco agora.');renderOperacaoLista_('opListAndamento',andamento,'Fila de produção vazia.');renderOperacaoLista_('opListProntos',prontos,'Nenhum capacete pronto para retirada.');}
 function salvarConfig(){webAppUrl=document.getElementById('webAppUrl').value.trim();localStorage.setItem('zapWebApp',webAppUrl);showToast('✅ Configuração salva!');checkConexao();}
 function checkConexao(){var el=document.getElementById('statusConexao');el.textContent='Verificando...';apiGet('ping',{},5000).then(function(r){if(r&&r.ok){el.textContent='🟢 Conectado v'+r.version;el.className='info-val green';}else{el.textContent='🔴 Erro: '+(r&&r.error||'?');el.className='info-val';}}).catch(function(){el.textContent='🔴 Sem conexão';el.className='info-val';});}
 
@@ -4322,7 +4332,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.26.1',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.26.2',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
