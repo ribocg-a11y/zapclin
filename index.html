@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.26.6 | Data: 25/05/2026
+  Versão : 4.27.0 | Data: 25/05/2026
+  FASE 27:
+    - Adiciona checklist de fechamento diario no Painel Admin
+    - Cruza lancamentos, OS, aceites, custos e sincronizacao local sem alterar backend
   HOTFIX v4.26.6:
     - Adiciona saude da sincronizacao local no Painel Admin
     - Mostra pendencias offline, idade da fila e atalho seguro para sincronizar
@@ -803,6 +806,15 @@
   .strategy-line .ok{color:var(--green)} .strategy-line .warn{color:var(--orange)} .strategy-line .bad{color:var(--red)} .strategy-line .info{color:var(--cyan)}
   .daily-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
   .daily-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);border-radius:999px;padding:6px 9px;font-size:11px;color:var(--muted)}
+  .closing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+  .closing-metric{border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;background:rgba(0,0,0,.12)}
+  .closing-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .closing-value{font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--cyan);margin-top:3px}
+  .closing-list{display:grid;gap:7px}
+  .closing-item{display:flex;gap:9px;align-items:flex-start;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px 10px;background:rgba(255,255,255,.03);font-size:12px;line-height:1.38;color:var(--text)}
+  .closing-dot{font-family:var(--font-head);font-weight:900}
+  .closing-dot.ok{color:var(--green)}.closing-dot.warn{color:var(--orange)}.closing-dot.bad{color:var(--red)}.closing-dot.info{color:var(--cyan)}
+  @media(max-width:760px){.closing-grid{grid-template-columns:repeat(2,1fr)}}
   .donut-legend-item{display:flex;align-items:center;gap:7px;margin-bottom:7px}
   .donut-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
   .donut-legend-name{font-size:10px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1701,6 +1713,20 @@
     </div>
     <div class="strategy-lines"><div class="skeleton-card sm"></div></div>
   </div>
+  <div class="section-title">Fechamento diário</div>
+  <div class="strategy-card" id="adminFechamentoDiario">
+    <div class="strategy-head">
+      <div class="strategy-title">Checklist antes de encerrar</div>
+      <button class="strategy-copy" onclick="copiarFechamentoDiarioAdmin_()">Copiar fechamento</button>
+    </div>
+    <div class="closing-grid">
+      <div class="closing-metric"><div class="closing-label">Serviços hoje</div><div class="closing-value" id="closeServicos">—</div></div>
+      <div class="closing-metric"><div class="closing-label">Faturamento</div><div class="closing-value" id="closeReceita">—</div></div>
+      <div class="closing-metric"><div class="closing-label">OS abertas</div><div class="closing-value" id="closeOsAbertas">—</div></div>
+      <div class="closing-metric"><div class="closing-label">Pendências</div><div class="closing-value" id="closePendencias">—</div></div>
+    </div>
+    <div class="closing-list" id="closeChecklist"><div class="skeleton-card sm"></div></div>
+  </div>
   <div class="section-title">Consistência operacional</div>
   <div class="consistency-card warn" id="adminConsistencia">
     <div class="consistency-head">
@@ -1964,7 +1990,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.26.6';
+const APP_VERSION='v4.27.0';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3000,6 +3026,60 @@ function renderResumoDiarioAdmin_(kpis){
 
 function copiarResumoDiarioAdmin_(){copiarTexto_(_resumoDiarioAdminTexto||'Resumo diário ainda não carregado.','Resumo diário copiado.');}
 
+var _fechamentoDiarioAdminTexto='';
+
+function fechamentoDiarioAdmin_(kpis){
+  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var hoje=hojeBR_();
+  var lancHoje=lanc.filter(function(l){
+    var svc=String(l&&l.svc||'');
+    return fmtData(l&&l.data)===hoje&&!l.cancelado&&!/^CANCELADO\b/i.test(svc);
+  });
+  var servicosHoje=lancHoje.reduce(function(s,l){return s+qtdLancamentoRel_(l);},0);
+  var receitaHoje=kpis&&typeof kpis.recHoje==='number'?kpis.recHoje:lancHoje.reduce(function(s,l){return s+parseFloat(l.val||0);},0);
+  var osAtivas=cli.filter(clienteAberto_);
+  var emProducao=osAtivas.filter(function(c){return String(c.status||'')!=='Pronto';});
+  var prontos=osAtivas.filter(function(c){return String(c.status||'')==='Pronto';});
+  var atrasados=emProducao.filter(function(c){return statusPrazoCliente_(c).cls==='late';});
+  var aceitesPend=osAtivas.filter(function(c){return aceiteStatus_(c)!=='CONFIRMADO';});
+  var pendLocal=getPendentes();
+  var custosHoje=kpis&&typeof kpis.cusHoje==='number'?kpis.cusHoje:0;
+  var pendencias=atrasados.length+prontos.length+aceitesPend.length+pendLocal.length;
+  var itens=[
+    {cls:servicosHoje>0?'ok':'warn',txt:servicosHoje>0?'Lancamentos do dia registrados: '+servicosHoje+' servico(s).':'Nenhum lancamento encontrado hoje. Conferir antes de encerrar.'},
+    {cls:receitaHoje>0?'ok':'warn',txt:'Faturamento do dia: '+fmtBRL(receitaHoje)+(custosHoje>0?' | custos: '+fmtBRL(custosHoje):'')+'.'},
+    {cls:atrasados.length?'bad':'ok',txt:atrasados.length?atrasados.length+' OS em atraso na fila. Priorizar contato/conclusao antes do fechamento.':'Sem OS atrasada na leitura atual.'},
+    {cls:prontos.length?'warn':'ok',txt:prontos.length?prontos.length+' OS pronta(s) ainda aguardando retirada/entrega.':'Sem OS pronta pendente de retirada.'},
+    {cls:aceitesPend.length?'warn':'ok',txt:aceitesPend.length?aceitesPend.length+' OS ativa(s) sem aceite confirmado. Enviar link antes de avancar.':'Aceites das OS ativas em dia.'},
+    {cls:pendLocal.length?'bad':'ok',txt:pendLocal.length?pendLocal.length+' registro(s) local(is) pendente(s) de sincronizacao neste aparelho.':'Fila offline local limpa neste aparelho.'}
+  ];
+  _fechamentoDiarioAdminTexto='Fechamento diario ZapClin - '+hoje+'\n'+
+    'Servicos hoje: '+servicosHoje+'\n'+
+    'Faturamento: '+fmtBRL(receitaHoje)+'\n'+
+    'OS abertas/prontas: '+emProducao.length+'/'+prontos.length+'\n'+
+    'Pendencias: '+pendencias+'\n\n'+
+    itens.map(function(i){return'- '+stripHtml_(i.txt);}).join('\n');
+  return {servicosHoje:servicosHoje,receitaHoje:receitaHoje,osAbertas:emProducao.length,prontos:prontos.length,pendencias:pendencias,itens:itens};
+}
+
+function renderFechamentoDiarioAdmin_(kpis){
+  var card=document.getElementById('adminFechamentoDiario');
+  if(!card)return;
+  var f=fechamentoDiarioAdmin_(kpis||calcularKpisAdminLocal_());
+  [['closeServicos',f.servicosHoje],['closeReceita',fmtBRL(f.receitaHoje)],['closeOsAbertas',f.osAbertas+'/'+f.prontos],['closePendencias',f.pendencias]].forEach(function(x){
+    var el=document.getElementById(x[0]);if(el)el.textContent=x[1];
+  });
+  var list=document.getElementById('closeChecklist');
+  if(list)list.innerHTML=f.itens.map(function(i){
+    return '<div class="closing-item"><span class="closing-dot '+i.cls+'">•</span><span>'+escapeHtml_(stripHtml_(i.txt))+'</span></div>';
+  }).join('');
+}
+
+function copiarFechamentoDiarioAdmin_(){
+  copiarTexto_(_fechamentoDiarioAdminTexto||'Fechamento diario ainda nao carregado.','Fechamento diario copiado.');
+}
+
 function abrirAdmin(){
   // [v4.8 ALTERAÇÃO]
   // Antes de abrir o PIN, verifica bloqueio temporário por excesso de tentativas incorretas.
@@ -3176,6 +3256,7 @@ function aplicarKpisAdmin_(kpis, origem){
   var td1=document.getElementById('adminTimerDisplay');
   if(td2&&td1)td2.textContent=td1.textContent;
   renderResumoDiarioAdmin_(kpis);
+  renderFechamentoDiarioAdmin_(kpis);
 }
 
 function calcularKpisAdminLocal_(){
@@ -4596,7 +4677,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.26.6',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.27.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

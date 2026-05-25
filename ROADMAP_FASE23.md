@@ -216,3 +216,13 @@ Status: iniciada em `v4.26.0`, reforcada em `v4.26.1`, corrigida em `v4.26.2`, e
 - Hotfix `v4.26.4`: Painel Admin passa a exibir diagnostico local de consistencia operacional, apontando quando a leitura ainda nao diferencia OS/avulso porque o Apps Script `v3.44` nao foi reimplantado.
 - Hotfix `v4.26.5`: Painel Admin passa a executar diagnostico backend sob demanda, com aviso de que a action registra evento em LOGS.
 - Hotfix `v4.26.6`: Painel Admin passa a exibir saude da fila offline local e permite sincronizar pendentes a partir da area administrativa.
+
+## Fase 27 - Fechamento Diario E Controle De Pendencias
+
+Status: iniciada em `v4.27.0`, sem mudanca de backend.
+
+- Painel Admin ganha bloco `Fechamento diario`, somente leitura.
+- Checklist cruza servicos do dia em LANCAMENTOS, faturamento, OS em producao/prontas, aceites pendentes e fila offline local.
+- O fechamento gera pendencias acionaveis antes de encerrar o dia: atraso, retirada, aceite e sincronizacao.
+- Botao `Copiar fechamento` monta um resumo textual para controle interno sem gravar nada na planilha.
+- Mantem a regra da Fase 26: Home/Vendas por LANCAMENTOS; Clientes/Operacao por CLIENTES/OS.
