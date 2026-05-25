@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.27.1 | Data: 25/05/2026
+  Versão : 4.27.2 | Data: 25/05/2026
+  HOTFIX v4.27.2:
+    - Melhora leitura mobile do grafico semanal do Dashboard com resumo em linhas
+    - Corrige donut de servicos para legenda cobrir todas as fatias desenhadas
   HOTFIX v4.27.1:
     - Adiciona grafico semanal no Dashboard com receita e atendimentos no mesmo painel
     - Permite comparar Semana 01 a 05 do mes selecionado para analise de comportamento
@@ -804,6 +807,14 @@
   .dash-week-dot.receita{background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.55)}
   .dash-week-dot.atend{background:var(--green);box-shadow:0 0 8px rgba(25,210,127,.45)}
   .dash-week-note{font-size:11px;color:var(--muted);line-height:1.4;margin-top:8px}
+  .dash-week-list{display:grid;gap:7px;margin-top:11px}
+  .dash-week-row{display:grid;grid-template-columns:58px minmax(0,1fr) 58px;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.03);border-radius:12px;padding:8px 9px}
+  .dash-week-row.best{border-color:rgba(0,229,255,.32);background:rgba(0,229,255,.065)}
+  .dash-week-label{font-family:var(--font-head);font-size:11px;font-weight:850;color:var(--text)}
+  .dash-week-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.065);overflow:hidden}
+  .dash-week-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+  .dash-week-metrics{text-align:right;font-size:10px;color:var(--muted);line-height:1.25;white-space:nowrap}
+  .dash-week-metrics b{display:block;color:var(--cyan);font-size:11px}
   .dash-insights{display:grid;gap:8px}
   .dash-insight{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075);border-radius:13px;padding:10px 12px;color:var(--text);font-size:12px;line-height:1.4}
   .dash-insight b{font-weight:800}
@@ -831,6 +842,18 @@
   .donut-legend-name{font-size:10px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .donut-legend-pct{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
   .dash-empty{text-align:center;padding:30px 0;color:var(--muted);font-size:13px}
+  @media(max-width:640px){
+    .dash-chart-card{padding:13px}
+    .dash-chart-title{font-size:11px;line-height:1.25;margin-bottom:10px}
+    .dash-week-wrap .dash-chart-canvas{height:148px}
+    .dash-week-legend{font-size:10px;margin-top:8px}
+    .dash-week-note{font-size:10px}
+    .dash-donut-wrap{align-items:flex-start;gap:12px}
+    .dash-donut-canvas{width:128px;height:128px}
+    .donut-legend-item{gap:6px;margin-bottom:6px}
+    .donut-legend-name{font-size:9.5px}
+    .donut-legend-pct{font-size:10px}
+  }
 
   /* ═══ HISTÓRICO ═══ */
   .hist-filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
@@ -1608,6 +1631,7 @@
         <span><i class="dash-week-dot receita"></i>Receita</span>
         <span><i class="dash-week-dot atend"></i>Atendimentos</span>
       </div>
+      <div class="dash-week-list" id="dashSemanaLista"></div>
       <div class="dash-week-note" id="dashSemanaNota">Semanas calculadas dentro do mês selecionado.</div>
     </div>
   </div>
@@ -2013,7 +2037,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.27.1';
+const APP_VERSION='v4.27.2';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3641,9 +3665,10 @@ function drawWeeklyComboChart(canvasId,semanas){
   var canvas=document.getElementById(canvasId);if(!canvas)return;
   var container=canvas.parentElement;
   var W=container.offsetWidth-32;if(W<280)W=300;
-  canvas.width=W;canvas.height=220;
+  var isMobile=W<460;
+  canvas.width=W;canvas.height=isMobile?148:220;
   var ctx=canvas.getContext('2d');
-  var pad={top:22,right:42,bottom:38,left:58};
+  var pad=isMobile?{top:12,right:8,bottom:24,left:8}:{top:22,right:42,bottom:38,left:58};
   var cW=W-pad.left-pad.right,cH=canvas.height-pad.top-pad.bottom;
   var maxRec=Math.max.apply(null,semanas.map(function(s){return s.receita;}));if(!maxRec)maxRec=1;
   var maxAt=Math.max.apply(null,semanas.map(function(s){return s.atend;}));if(!maxAt)maxAt=1;
@@ -3653,10 +3678,12 @@ function drawWeeklyComboChart(canvasId,semanas){
   for(var g=0;g<=4;g++){
     var y=pad.top+(cH/4)*g;
     ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cW,y);ctx.stroke();
-    ctx.textAlign='right';ctx.fillText('R$ '+Math.round(maxRec*(1-g/4)),pad.left-6,y+3);
-    ctx.textAlign='left';ctx.fillText(Math.round(maxAt*(1-g/4)),pad.left+cW+8,y+3);
+    if(!isMobile){
+      ctx.textAlign='right';ctx.fillText('R$ '+Math.round(maxRec*(1-g/4)),pad.left-6,y+3);
+      ctx.textAlign='left';ctx.fillText(Math.round(maxAt*(1-g/4)),pad.left+cW+8,y+3);
+    }
   }
-  var gap=10, slot=cW/semanas.length, barW=Math.max(24,Math.min(52,slot-gap*2));
+  var gap=isMobile?7:10, slot=cW/semanas.length, barW=Math.max(isMobile?18:24,Math.min(isMobile?38:52,slot-gap*2));
   var pts=[];
   semanas.forEach(function(s,i){
     var x=pad.left+slot*i+slot/2;
@@ -3672,22 +3699,42 @@ function drawWeeklyComboChart(canvasId,semanas){
     pts.push({x:x,y:py,s:s});
     ctx.fillStyle='#a8b3d6';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='center';
     ctx.fillText(s.label,x,pad.top+cH+18);
-    ctx.fillStyle='#00e5ff';ctx.font='bold 10px DM Sans,sans-serif';
-    if(s.receita>0)ctx.fillText(fmtBRL(s.receita).replace('R$ ',''),x,y-6);
+    if(!isMobile){
+      ctx.fillStyle='#00e5ff';ctx.font='bold 10px DM Sans,sans-serif';
+      if(s.receita>0)ctx.fillText(fmtBRL(s.receita).replace('R$ ',''),x,y-6);
+    }
   });
   ctx.beginPath();ctx.strokeStyle='#19d27f';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
   pts.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});
   ctx.stroke();
   pts.forEach(function(p){
     ctx.beginPath();ctx.arc(p.x,p.y,4.5,0,Math.PI*2);ctx.fillStyle='#19d27f';ctx.fill();ctx.strokeStyle='#071018';ctx.lineWidth=2;ctx.stroke();
-    ctx.fillStyle='#19d27f';ctx.font='bold 10px DM Sans,sans-serif';ctx.textAlign='center';
-    if(p.s.atend>0)ctx.fillText(p.s.atend+' atend.',p.x,p.y-10);
+    if(!isMobile){
+      ctx.fillStyle='#19d27f';ctx.font='bold 10px DM Sans,sans-serif';ctx.textAlign='center';
+      if(p.s.atend>0)ctx.fillText(p.s.atend+' atend.',p.x,p.y-10);
+    }
   });
+  renderWeeklySummary_(semanas,maxRec);
   var nota=document.getElementById('dashSemanaNota');
   if(nota){
     var best=semanas.slice().sort(function(a,b){return b.receita-a.receita;})[0];
     nota.textContent=best&&best.receita>0?'Melhor semana: '+best.label+' com '+fmtBRL(best.receita)+' e '+best.atend+' atendimento(s).':'Sem receita semanal no mês selecionado.';
   }
+}
+
+function renderWeeklySummary_(semanas,maxRec){
+  var el=document.getElementById('dashSemanaLista');if(!el)return;
+  maxRec=maxRec||Math.max.apply(null,semanas.map(function(s){return s.receita;}))||1;
+  var best=semanas.slice().sort(function(a,b){return b.receita-a.receita;})[0]||{};
+  el.innerHTML=semanas.map(function(s){
+    var pct=Math.max(3,Math.round((s.receita/maxRec)*100));
+    var cls=(s.label===best.label&&s.receita>0)?' dash-week-row best':'dash-week-row';
+    return '<div class="'+cls+'">'+
+      '<div class="dash-week-label">'+s.label+'</div>'+
+      '<div class="dash-week-bar"><div class="dash-week-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="dash-week-metrics"><b>'+fmtBRL(s.receita).replace('R$ ','')+'</b>'+s.atend+' atend.</div>'+
+      '</div>';
+  }).join('');
 }
 
 // ── GRÁFICO 1: Linha + Área (Faturamento Diário) com tooltip ──
@@ -3922,7 +3969,11 @@ function drawDonutChart(canvasId, lancMes) {
 
   var totals = {};
   lancMes.forEach(function(l) {
-    totals[l.svc] = (totals[l.svc] || 0) + parseFloat(l.val || 0);
+    var svc=String(l.svc||'').trim();
+    var val=parseFloat(l.val||0)||0;
+    if(!svc||val<=0||/^CANCELADO\b/i.test(svc)||/^Desconto\b/i.test(svc))return;
+    if(!SVC_COLORS[svc])return;
+    totals[svc] = (totals[svc] || 0) + val;
   });
 
   var slices = Object.keys(totals).map(function(k) {
@@ -3982,10 +4033,10 @@ function drawDonutChart(canvasId, lancMes) {
   }
   draw();
 
-  // Legenda
+  // Legenda: deve cobrir exatamente as mesmas fatias desenhadas no donut.
   var legendEl = document.getElementById('dashDonutLegend');
   if (legendEl) {
-    legendEl.innerHTML = slices.slice(0, 6).map(function(sl) {
+    legendEl.innerHTML = slices.map(function(sl) {
       var pct = Math.round(sl.val / total * 100);
       var shortName = sl.name.replace('Limpeza + ', 'L+').replace('Higienização ', 'Hig. ');
       return '<div class="donut-legend-item">' +
@@ -4772,7 +4823,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.27.1',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.27.2',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
