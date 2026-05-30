@@ -174,7 +174,7 @@ Status: iniciada em `v4.24.0`; reforcada em `v4.24.2/v3.39`.
 - Adicionada secao `Evolucao do negocio`, comparando receita e atendimentos contra o mes anterior para demonstrar crescimento, tracao comercial e relevancia da operacao para o Golden.
 - Regra de governanca: historico importado de PDF deve ter aba de conciliacao e prova de total, para nao duplicar valores existentes nem inventar mix de servicos quando o PDF antigo so informa total diario.
 - Correcao `v4.24.3`: se abril ainda estiver parcial na planilha/app, a previa usa a base oficial do PDF Abril/2026 como comparativo anterior, evitando percentuais artificiais como comparar Maio contra apenas R$ 348,00. A tipografia numerica do relatorio tambem foi reduzida.
-- Correcao `v4.24.4`: Abril pode ser substituido integralmente na aba `LANÃ‡AMENTOS` pelos dados oficiais do PDF; telas gerenciais passam a contar a coluna `QTD` para que linhas consolidadas por dia representem todos os atendimentos reais.
+- Correcao `v4.24.4`: Abril pode ser substituido integralmente na aba `LANÃƒâ€¡AMENTOS` pelos dados oficiais do PDF; telas gerenciais passam a contar a coluna `QTD` para que linhas consolidadas por dia representem todos os atendimentos reais.
 - Correcao `v4.24.5`: mensagem de recebimento destaca o aceite digital como acao principal; o cliente abre o link e confirma no botao verde da pagina de aceite.
 
 ## Fase 25B - Relatorio Golden V2 Oficial E Gerencial
@@ -212,7 +212,7 @@ Status: iniciada em `v4.26.0`, reforcada em `v4.26.1`, corrigida em `v4.26.2`, e
 - O objetivo e reduzir diferencas temporarias entre celular/desktop e entre operadores usando o app ao mesmo tempo, preservando o baseline funcional.
 - Hotfix `v4.26.1`: Home, Clientes e Operacao passam a usar a mesma definicao de fila ativa. Home conta OS/clientes de hoje; Clientes ativos exclui Entregue/Cancelado; cards de inteligencia da Operacao usam apenas a fila ativa para nao inflar tempos com historico entregue.
 - Hotfix `v4.26.2`: regra refinada por tela: Home mede movimento real do dia por LANCAMENTOS; Clientes lista OS/cadastros; Operacao gerencia fila ativa separando Atencao, Em producao e Prontos.
-- Hotfix `v4.26.3`: Registrar servico sem cliente cria lancamento avulso valido; Vendas/Home contam normalmente; Clientes/Operacao continuam restritos a OS/cadastro; backend `v3.44` expÃµe `clienteId` na action `listar`.
+- Hotfix `v4.26.3`: Registrar servico sem cliente cria lancamento avulso valido; Vendas/Home contam normalmente; Clientes/Operacao continuam restritos a OS/cadastro; backend `v3.44` expÃƒÂµe `clienteId` na action `listar`.
 - Hotfix `v4.26.4`: Painel Admin passa a exibir diagnostico local de consistencia operacional, apontando quando a leitura ainda nao diferencia OS/avulso porque o Apps Script `v3.44` nao foi reimplantado.
 - Hotfix `v4.26.5`: Painel Admin passa a executar diagnostico backend sob demanda, com aviso de que a action registra evento em LOGS.
 - Hotfix `v4.26.6`: Painel Admin passa a exibir saude da fila offline local e permite sincronizar pendentes a partir da area administrativa.
@@ -228,3 +228,4 @@ Status: iniciada em `v4.27.0`, sem mudanca de backend.
 - Mantem a regra da Fase 26: Home/Vendas por LANCAMENTOS; Clientes/Operacao por CLIENTES/OS.
 - Hotfix `v4.27.1`: Dashboard ganha grafico combinado de receita e atendimentos por Semana 01 a 05, permitindo comparar desempenho semanal do mes selecionado.
 - Hotfix `v4.27.2`: leitura mobile do grafico semanal passa a usar resumo em linhas e o donut de servicos passa a exibir legenda para todas as fatias desenhadas.
+- Hotfix `v4.27.3`: grafico semanal deixa de ser canvas estatico e passa a ser bloco interativo por semana, com hover/click, fontes padronizadas e painel de receita, atendimentos e ticket medio.

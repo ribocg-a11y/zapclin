@@ -4,8 +4,8 @@ PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.27.2`
-- Service Worker/PWA: `v4.27.2`
+- Frontend GitHub Pages: `v4.27.3`
+- Service Worker/PWA: `v4.27.3`
 - Backend Apps Script: `v3.44` preparado para reimplantacao manual
 - URL: https://ribocg-a11y.github.io/zapclin/
 
@@ -54,7 +54,7 @@ A frente **Design System + Inteligencia Gerencial + Automacoes** foi antecipada 
 15. `Fase 25B` - concluida em v4.25.0 com Relatorio Golden v2: leitura oficial mais institucional, bloco de evolucao do negocio, nota de governanca para base historica consolidada e protecao contra composicao por servico falsa quando a importacao vem agregada do PDF.
 16. `Fase 25C` - backend preparado em v3.40 para enviar e salvar no Drive o Relatorio Golden v2, alinhando o PDF oficial/e-mail ao preview validado no app. Hotfix v3.41 remove alerta UI do teste para permitir execucao segura pelo editor. Hotfix v3.42 melhora texto de mes de referencia e acabamento de base consolidada no PDF. Hotfix v3.43 troca comparativo sem base anterior por bloco de base de referencia historica.
 17. `Fase 26` - iniciada em v4.26.0 com reconciliacao curta apos escritas criticas no frontend, usando refresh forcado depois de salvar servico, custo, cadastro, status e edicoes. Hotfix v4.26.1 unifica as regras de fila ativa entre Home, Clientes e Operacao; hotfix v4.26.2 restaura a Home para contar atendimentos reais do dia pela aba LANCAMENTOS; hotfix v4.26.3 explicita que lancamento avulso e valido, conta no faturamento/Home/Vendas, mas nao entra em Clientes/Operacao. Backend v3.44 passa a devolver o vinculo CLIENTE/OS na action listar para essa leitura. Hotfix v4.26.4 adiciona diagnostico de consistencia no Painel Admin para mostrar servicos do dia, OS ativas, lancamentos vinculados, avulsos e pendencia de reimplantacao v3.44. Hotfix v4.26.5 adiciona diagnostico backend manual no Admin, usando `diagnosticoSistema` para checar planilha, triggers, Drive, Gmail, logs e deployment. Hotfix v4.26.6 adiciona saude da sincronizacao local, com pendencias offline, idade da fila, conexao e atalho seguro para sincronizar.
-18. `Fase 27` - iniciada em v4.27.0 com fechamento diario no Painel Admin. O checklist cruza LANCAMENTOS, CLIENTES/OS, aceites, custos e fila offline local, gera pendencias acionaveis e permite copiar um resumo de encerramento sem alterar backend ou dados operacionais. Hotfix v4.27.1 adiciona no Dashboard um grafico semanal combinado, com receita e quantidade de atendimentos por Semana 01 a 05 do mes selecionado. Hotfix v4.27.2 melhora a leitura no celular com resumo semanal em linhas e corrige o donut de servicos para a legenda cobrir todas as fatias.
+18. `Fase 27` - iniciada em v4.27.0 com fechamento diario no Painel Admin. O checklist cruza LANCAMENTOS, CLIENTES/OS, aceites, custos e fila offline local, gera pendencias acionaveis e permite copiar um resumo de encerramento sem alterar backend ou dados operacionais. Hotfix v4.27.1 adiciona no Dashboard um grafico semanal combinado, com receita e quantidade de atendimentos por Semana 01 a 05 do mes selecionado. Hotfix v4.27.2 melhora a leitura no celular com resumo semanal em linhas e corrige o donut de servicos para a legenda cobrir todas as fatias. Hotfix v4.27.3 substitui o canvas semanal por cards interativos com hover/click, usando fonte padrao do ZapClin e painel de leitura por semana.
 
 ## Regra De Evolucao
 
