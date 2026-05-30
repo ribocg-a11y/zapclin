@@ -1,16 +1,16 @@
 ﻿// ============================================================
 // ZAPCLIN â€” SERVICE WORKER
-// VersÃ£o: 4.27.3 | Data: 30/05/2026
-// [v4.27.3 CACHE]
-// Substitui grafico semanal por bloco interativo.
+// VersÃ£o: 4.27.4 | Data: 30/05/2026
+// [v4.27.4 CACHE]
+// Corrige semanas do Dashboard para segunda a domingo.
 // [v4.26.0 CACHE]
 // Cache PWA versionado para reduzir inconsistÃªncia entre celular/desktop.
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.27.3';
-const STATIC_CACHE = 'zapclin-static-v4.27.3';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.27.3';
+const ZAPCLIN_SW_VERSION = 'v4.27.4';
+const STATIC_CACHE = 'zapclin-static-v4.27.4';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.27.4';
 
 // [v4.26.0 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.

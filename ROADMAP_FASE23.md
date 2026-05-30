@@ -229,3 +229,4 @@ Status: iniciada em `v4.27.0`, sem mudanca de backend.
 - Hotfix `v4.27.1`: Dashboard ganha grafico combinado de receita e atendimentos por Semana 01 a 05, permitindo comparar desempenho semanal do mes selecionado.
 - Hotfix `v4.27.2`: leitura mobile do grafico semanal passa a usar resumo em linhas e o donut de servicos passa a exibir legenda para todas as fatias desenhadas.
 - Hotfix `v4.27.3`: grafico semanal deixa de ser canvas estatico e passa a ser bloco interativo por semana, com hover/click, fontes padronizadas e painel de receita, atendimentos e ticket medio.
+- Hotfix `v4.27.4`: semanas do Dashboard passam a respeitar segunda a domingo, preservando a primeira e a ultima semana parciais do mes selecionado.

@@ -1,6 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
+  Versão : 4.27.4 | Data: 30/05/2026
+  HOTFIX v4.27.4:
+    - Corrige semanas do Dashboard para calendario operacional de segunda a domingo
+    - Mantem primeira e ultima semana parciais dentro do mes selecionado
   Versão : 4.27.3 | Data: 30/05/2026
   HOTFIX v4.27.3:
     - Substitui canvas semanal por grafico DOM interativo com hover/click
@@ -2053,7 +2057,7 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.27.3';
+const APP_VERSION='v4.27.4';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
@@ -3548,14 +3552,21 @@ function dashMelhorDia_(diaData){
 function dashSemanasMes_(lancMes,target){
   var diasMes=new Date(target.getFullYear(),target.getMonth()+1,0).getDate();
   var semanas=[];
-  for(var ini=1;ini<=diasMes;ini+=7){
-    var fim=Math.min(ini+6,diasMes);
+  var inicio=new Date(target.getFullYear(),target.getMonth(),1);
+  while(inicio.getMonth()===target.getMonth()){
+    var diaSemana=inicio.getDay(); // 0 domingo, 1 segunda ... 6 sabado
+    var diasAteDomingo=(7-diaSemana)%7;
+    var fimData=new Date(inicio.getFullYear(),inicio.getMonth(),inicio.getDate()+diasAteDomingo);
+    if(fimData.getMonth()!==target.getMonth())fimData=new Date(target.getFullYear(),target.getMonth(),diasMes);
+    var ini=inicio.getDate();
+    var fim=fimData.getDate();
     semanas.push({label:'Sem '+String(semanas.length+1).padStart(2,'0'),ini:ini,fim:fim,receita:0,atend:0});
+    inicio=new Date(target.getFullYear(),target.getMonth(),fim+1);
   }
   lancMes.forEach(function(l){
     var d=dashData_(l.data);if(!d)return;
     var dia=d.getDate();
-    var idx=Math.floor((dia-1)/7);
+    var idx=semanas.findIndex(function(s){return dia>=s.ini&&dia<=s.fim;});
     if(!semanas[idx])return;
     semanas[idx].receita+=parseFloat(l.val||0)||0;
     semanas[idx].atend+=qtdLancamentoRel_(l);
@@ -4820,7 +4831,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.27.3',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.27.4',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
