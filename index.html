@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.28.1 | Data: 11/06/2026
+  Versão : 4.28.2 | Data: 11/06/2026
+  Pacote Z.3:
+    - Extrai zc-whatsapp.js — mensagens WA, modal, OS helpers, aceite
   Pacote Z.2:
     - Extrai zc-sync.js — fila offline, buscar listar, refresh automático
   Pacote Z.1:
@@ -2013,14 +2015,15 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.28.1"></script>
-<script src="zc-globals.js?v=v4.28.1"></script>
-<script src="zc-api.js?v=v4.28.1"></script>
-<script src="zc-core.js?v=v4.28.1"></script>
-<script src="zc-sync.js?v=v4.28.1"></script>
+<script src="zc-version.js?v=v4.28.2"></script>
+<script src="zc-globals.js?v=v4.28.2"></script>
+<script src="zc-api.js?v=v4.28.2"></script>
+<script src="zc-core.js?v=v4.28.2"></script>
+<script src="zc-sync.js?v=v4.28.2"></script>
+<script src="zc-whatsapp.js?v=v4.28.2"></script>
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN — app inline (Pacote Z.2: zc-sync extraído)
+// ZAPCLIN — app inline (Pacote Z.3: zc-whatsapp extraído)
 // ═══════════════════════════════════════════════════════
 
 // ZAPCLIN v4.20.0 | 23/05/2026 — Ficha CRM e nova OS por Relacionamento
@@ -4466,7 +4469,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.28.1',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.28.2',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

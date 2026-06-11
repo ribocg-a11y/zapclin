@@ -52,8 +52,8 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.28.1** | GitHub Pages |
-| Service Worker | **v4.28.1** | `sw.js` |
+| Frontend | **v4.28.2** | GitHub Pages |
+| Service Worker | **v4.28.2** | `sw.js` |
 | GAS (código repo) | **v3.45** | Nova versão Web pendente |
 | GAS (ping alvo) | **3.45** | ✅ produção |
 
