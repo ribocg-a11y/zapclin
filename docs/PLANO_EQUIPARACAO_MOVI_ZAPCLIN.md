@@ -188,21 +188,23 @@ Evitar scope creep e regressão operacional:
 
 ---
 
-### Fase 1 — Governança ZapClin (espelhar Movi)
+### Fase 1 — Governança ZapClin (espelhar Movi) ✅ repo 11/06/2026
 
 **Esforço:** modular docs + scripts, sem mudar UX operacional.
 
-| ID | Entrega | Origem Movi |
-|----|---------|-------------|
-| 1.1 | `AGENTS.md` ZapClin | Copiar estrutura Movi |
-| 1.2 | `docs/ativos/HANDOFF_NOVO_CHAT.md` | Estado, links, próximo passo |
-| 1.3 | `docs/ativos/ESTADO_ATUAL.md` | Versões FE/GAS/ping |
-| 1.4 | `docs/ativos/REGRAS_DE_PUBLICACAO_SEGURA.md` | Nova versão Web, tablet/PC |
-| 1.5 | `scripts/pre-push-check.ps1` | Valida versões, ping GAS |
-| 1.6 | `scripts/testes/TESTE_PING_READONLY.ps1` | Ping + listar smoke |
-| 1.7 | `scripts/testes/TESTE_KPI_PARIDADE_READONLY.ps1` | Home vs Admin KPI |
+| ID | Entrega | Status |
+|----|---------|--------|
+| 1.1 | `AGENTS.md` ZapClin | ✅ |
+| 1.2 | `docs/ativos/HANDOFF_NOVO_CHAT.md` | ✅ |
+| 1.3 | `docs/ativos/ESTADO_ATUAL.md` | ✅ |
+| 1.4 | `docs/ativos/REGRAS_DE_PUBLICACAO_SEGURA.md` | ✅ |
+| 1.5 | `docs/ativos/ACESSOS_E_AUTORIZACOES.md` | ✅ |
+| 1.6 | `scripts/pre-push-check.ps1` | ✅ |
+| 1.7 | `scripts/testes/TESTE_PING_READONLY.ps1` | ✅ |
+| 1.8 | `scripts/testes/TESTE_KPI_PARIDADE_READONLY.ps1` | ✅ |
+| 1.9 | `docs/INDICE.md` + `PLANO_PRIORIDADES_2026-06.md` | ✅ |
 
-**Critério de saída:** agente retoma ZapClin só lendo 4 docs + pre-push verde.
+**Critério de saída:** agente retoma ZapClin só lendo 4 docs + pre-push verde — **atingido no repo**; falta merge PR e uso rotineiro.
 
 ---
 

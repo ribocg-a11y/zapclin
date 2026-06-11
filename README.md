@@ -2,6 +2,16 @@
 
 PWA operacional para gerenciamento da ZapClin Higienizacao de Capacetes.
 
+## Continuidade do projeto (agentes e dev)
+
+Leia primeiro: [`AGENTS.md`](AGENTS.md) → [`docs/ativos/HANDOFF_NOVO_CHAT.md`](docs/ativos/HANDOFF_NOVO_CHAT.md)
+
+| Doc | Uso |
+|-----|-----|
+| [`docs/INDICE.md`](docs/INDICE.md) | Mapa de documentação |
+| [`docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md) | Equiparação com Movi Kids |
+| [`scripts/pre-push-check.ps1`](scripts/pre-push-check.ps1) | Gate antes de `git push` |
+
 ## Estado Atual
 
 - Frontend GitHub Pages: `v4.27.4`
