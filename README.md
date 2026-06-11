@@ -14,8 +14,8 @@ Leia primeiro: [`AGENTS.md`](AGENTS.md) → [`docs/ativos/HANDOFF_NOVO_CHAT.md`]
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.27.4`
-- Service Worker/PWA: `v4.27.4`
+- Frontend GitHub Pages: `v4.28.0` (Pacote Z.1 modular)
+- Service Worker/PWA: `v4.28.0`
 - Backend Apps Script: `v3.44` preparado para reimplantacao manual
 - URL: https://ribocg-a11y.github.io/zapclin/
 

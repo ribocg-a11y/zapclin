@@ -51,8 +51,8 @@ Checklist vivo — marcar ao concluir.
 
 | # | Item | Status |
 |---|------|--------|
-| F3.1 | Extrair `zc-version.js`, `zc-api.js` | ⬜ |
-| F3.2 | Shell `index.html` enxuto | ⬜ |
+| F3.1 | Extrair `zc-version.js`, `zc-api.js`, `zc-core.js`, `zc-globals.js` | ✅ v4.28.0 |
+| F3.2 | `zc-sync.js`, `zc-admin.js` … | ⬜ |
 | F3.3 | Paridade funcional 100% antes de merge | ⬜ |
 
 ---

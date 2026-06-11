@@ -30,9 +30,16 @@ function Add-Check {
 function Read-AppVersion {
   param([string]$Path)
   if (-not (Test-Path $Path)) { return $null }
-  $m = Select-String -Path $Path -Pattern "const APP_VERSION='([^']+)'" | Select-Object -First 1
+  $m = Select-String -Path $Path -Pattern "APP_VERSION\s*=\s*'([^']+)'" | Select-Object -First 1
   if (-not $m) { return $null }
   return $m.Matches.Groups[1].Value
+}
+
+function Read-ZcCacheBust {
+  param([string]$Html, [string]$ExpectedVer)
+  $scriptTags = [regex]::Matches($Html, 'zc-[a-z]+\.js\?v=([^"''&]+)')
+  $bad = @($scriptTags | ForEach-Object { $_.Groups[1].Value } | Where-Object { $_ -ne $ExpectedVer } | Select-Object -Unique)
+  return $bad
 }
 
 function Read-SwVersion {
@@ -54,9 +61,10 @@ function Read-GasVersion {
 Write-Host "ZapClin pre-push-check" -ForegroundColor Cyan
 
 try {
-  $appVer = Read-AppVersion (Join-Path $root "index.html")
+  $appVer = Read-AppVersion (Join-Path $root "zc-version.js")
+  if (-not $appVer) { $appVer = Read-AppVersion (Join-Path $root "index.html") }
   $swVer = Read-SwVersion (Join-Path $root "sw.js")
-  if (-not $appVer) { throw "index.html sem APP_VERSION" }
+  if (-not $appVer) { throw "zc-version.js sem APP_VERSION" }
   if (-not $swVer) { throw "sw.js sem ZAPCLIN_SW_VERSION" }
 
   if ($appVer -ne $swVer) {
@@ -82,13 +90,20 @@ try {
   }
 
   $indexRaw = Get-Content -Path (Join-Path $root "index.html") -Raw -Encoding UTF8
+  $badTags = Read-ZcCacheBust $indexRaw $appVer
+  if ($badTags.Count -gt 0) {
+    Add-Check "versao.index-cache-bust" "fail" ("zc-*.js desalinhado: " + ($badTags -join ", "))
+  } else {
+    Add-Check "versao.index-cache-bust" "ok" ("zc-* ?v=" + $appVer)
+  }
+
   if ($indexRaw -notmatch 'AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg') {
     Add-Check "gas.deploy-id" "fail" "WEB_APP Deploy ID ausente ou alterado"
   } else {
     Add-Check "gas.deploy-id" "ok" "Deploy ID canonico"
   }
 
-  if ($indexRaw -notmatch "function apiGet\(") {
+  if ($indexRaw -notmatch "function apiGet\\(" -and -not (Test-Path (Join-Path $root "zc-api.js"))) {
     Add-Check "api.get-pattern" "warn" "apiGet nao encontrado"
   } else {
     Add-Check "api.get-pattern" "ok" "apiGet presente"

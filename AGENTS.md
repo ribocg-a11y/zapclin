@@ -52,8 +52,8 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.27.4** | GitHub Pages |
-| Service Worker | **v4.27.4** | `sw.js` |
+| Frontend | **v4.28.0** | GitHub Pages |
+| Service Worker | **v4.28.0** | `sw.js` |
 | GAS (código repo) | **v3.45** | Nova versão Web pendente |
 | GAS (ping alvo) | **3.45** | Após deploy manual |
 
@@ -67,7 +67,7 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `index.html`, `ZAPCLIN_SW_VE
 ## Código canônico
 
 - **GAS:** `AppsScript_v3.45_ATUAL.gs`
-- **Frontend:** `index.html` (monolito — modularização = Fase 3 equiparação)
+- **Frontend:** `index.html` + `zc-*.js` (Pacote Z — ver `PACOTE_Z_MODULARIZACAO.md`)
 - **PWA:** `sw.js`, `manifest.json`
 - **Testes:** `scripts/testes/`
 - **CI local:** `scripts/pre-push-check.ps1` — rodar antes de push (Windows)
@@ -85,7 +85,8 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `index.html`, `ZAPCLIN_SW_VE
 - **Fase 1 governança:** ✅ AGENTS + docs + pre-push + testes readonly
 - **Fase 2 padrões GAS:** ✅ MAPA + PROTOCOLO + v3.45 + diagnostico ranges
 - **Deploy pendente:** Nova versão Web GAS v3.45 + merge PRs
-- **Próximo:** Fase 3 Pacote Z (modular FE)
+- **Pacote Z.1:** ✅ `zc-version`, `zc-globals`, `zc-api`, `zc-core` (v4.28.0)
+- **Próximo:** Pacote Z.2 sync · deploy GAS v3.45
 
 ## Ao encerrar sessão
 

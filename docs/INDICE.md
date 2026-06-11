@@ -15,7 +15,7 @@
 | [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy |
 | [`ativos/MAPA_CODIGO_ARQUITETURA.md`](ativos/MAPA_CODIGO_ARQUITETURA.md) | Anatomia código |
 | [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
-| [`ativos/AUDITORIA_RANGES_GAS.md`](ativos/AUDITORIA_RANGES_GAS.md) | Ranges v3.44→v3.45 |
+| [`ativos/PACOTE_Z_MODULARIZACAO.md`](ativos/PACOTE_Z_MODULARIZACAO.md) | Modularização frontend |
 
 ---
 

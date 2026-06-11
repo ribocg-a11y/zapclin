@@ -8,9 +8,9 @@
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.27.4';
-const STATIC_CACHE = 'zapclin-static-v4.27.4';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.27.4';
+const ZAPCLIN_SW_VERSION = 'v4.28.0';
+const STATIC_CACHE = 'zapclin-static-v4.28.0';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.28.0';
 
 // [v4.26.0 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
@@ -24,7 +24,11 @@ const APP_SHELL = [
   './apple-touch-icon.png',
   './icon-192.png',
   './icon-512.png',
-  './maskable-icon-512.png'
+  './maskable-icon-512.png',
+  './zc-version.js',
+  './zc-globals.js',
+  './zc-api.js',
+  './zc-core.js'
 ];
 
 self.addEventListener('install', event => {
