@@ -54,7 +54,8 @@ Checklist vivo — marcar ao concluir.
 | F3.1 | Extrair `zc-version.js`, `zc-api.js`, `zc-core.js`, `zc-globals.js` | ✅ v4.28.0 |
 | F3.2 | `zc-sync.js` | ✅ v4.28.1 |
 | F3.3 | `zc-whatsapp.js` | ✅ v4.28.2 |
-| F3.4 | `zc-admin.js` … | ⬜ |
+| F3.4 | `zc-admin.js` | ✅ v4.29.0 |
+| F3.5 | `zc-nav.js` … | ⬜ |
 
 ---
 

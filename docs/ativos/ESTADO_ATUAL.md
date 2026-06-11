@@ -12,8 +12,8 @@ Referência única para alinhamento repo × produção.
 
 | Camada | Versão repo | URL / ID |
 |--------|-------------|----------|
-| **Frontend** | **v4.28.2** | https://ribocg-a11y.github.io/zapclin/?force=v4.28.2 |
-| **Service Worker** | **v4.28.2** | `sw.js` → `ZAPCLIN_SW_VERSION` |
+| **Frontend** | **v4.29.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.29.0 |
+| **Service Worker** | **v4.29.0** | `sw.js` → `ZAPCLIN_SW_VERSION` |
 | **Apps Script (código repo)** | **v3.45.1** | `AppsScript_v3.45_ATUAL.gs` |
 | **Apps Script (ping prod.)** | **3.45** → alvo **3.45.1** | Redeploy `.gs` fecha check truncamento 25/25 |
 
@@ -36,7 +36,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
 | GAS fix KPI | ~~v3.44~~ removido — v3.45 unificado |
 | Frontend | `index.html` + `zc-*.js` (Pacote Z.1) |
-| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js`, `zc-sync.js`, `zc-whatsapp.js` |
+| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js`, `zc-sync.js`, `zc-whatsapp.js`, `zc-admin.js` |
 | PWA | `sw.js`, `manifest.json` |
 | Roadmap | `ROADMAP_FASE23.md` |
 | QA | `AUDITORIA_QA_v4.19.1.md` |
