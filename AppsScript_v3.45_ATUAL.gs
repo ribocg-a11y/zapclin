@@ -1,6 +1,10 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.44 | Data: 25/05/2026
+// VersÃ£o: 3.45 | Data: 11/06/2026
+// HOTFIX v3.45:
+//   - Corrige listar/listarCustos/listarClientes para ler ate getLastRow (antes truncava na linha 600)
+//   - Alinha buscarKpisAdmin com America/Sao_Paulo e soma QTD como o frontend
+//   - Unifica leitura operacional em helpers de range dinamico ate linha 2000
 // HOTFIX v3.44:
 //   - Expõe coluna CLIENTE/OS na action listar para diferenciar lancamento vinculado de avulso valido
 // HOTFIX v3.43:
@@ -108,7 +112,9 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.44';
+var VERSION           = '3.45';
+var DATA_ROW_START    = 10;
+var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
 var VIP_ANIVERSARIO_PERCENTUAL = 0.30;
 var VIP_ANIVERSARIO_TETO = 15;
@@ -199,6 +205,35 @@ function fmtHora_(h) {
   if (!h) return '';
   if (h instanceof Date) return Utilities.formatDate(h, 'Etc/GMT+8', 'HH:mm');
   return String(h);
+}
+
+// [v3.45 NOVO] Limites compartilhados para leituras operacionais sem truncar dados recentes.
+function ultimaLinhaDados_(sheet, colNum) {
+  if (!sheet) return DATA_ROW_START;
+  var last = sheet.getLastRow();
+  if (last < DATA_ROW_START) return DATA_ROW_START;
+  if (last > DATA_ROW_MAX) last = DATA_ROW_MAX;
+  return last;
+}
+
+function numLinhasDados_(sheet, colNum) {
+  return ultimaLinhaDados_(sheet, colNum) - DATA_ROW_START + 1;
+}
+
+function getLancamentosListaValues_(lanc) {
+  return lanc.getRange(DATA_ROW_START, 2, numLinhasDados_(lanc, 2), 8).getValues();
+}
+
+function getCustosListaValues_(custos) {
+  return custos.getRange(DATA_ROW_START, 1, numLinhasDados_(custos, 2), 6).getValues();
+}
+
+function getClientesListaValues_(clientes) {
+  return clientes.getRange(DATA_ROW_START, 1, numLinhasDados_(clientes, 1), 16).getValues();
+}
+
+function getClientesOsColValues_(clientes) {
+  return clientes.getRange(DATA_ROW_START, 1, numLinhasDados_(clientes, 1), 1).getValues();
 }
 
 
@@ -487,7 +522,7 @@ function minutosDesdeRecebimento_(dataValor, horaValor) {
 function gerarOsPdf_(ss, numCliente) {
   if (!numCliente) throw new Error('OS invalida');
   var clientes = getOrCreateClientesSheet(ss);
-  var rows = clientes.getRange('A10:P600').getValues();
+  var rows = getClientesListaValues_(clientes);
   var row = null;
   for (var i = 0; i < rows.length; i++) {
     if (!rows[i][0]) break;
@@ -982,7 +1017,7 @@ function doGet(e) {
     } else if (action === 'listar') {
       var lanc = getLancamentosSheet_(ss);
       if (!lanc) throw new Error('Aba LANÃ‡AMENTOS nÃ£o encontrada');
-      var rows  = lanc.getRange('B10:I600').getValues();
+      var rows  = getLancamentosListaValues_(lanc);
       var items = [];
       for (var i = 0; i < rows.length; i++) {
         if (!rows[i][1]) break;
@@ -1046,7 +1081,7 @@ function doGet(e) {
     } else if (action === 'listarCustos') {
       var custos = ss.getSheetByName(SHEET_CUSTOS);
       if (!custos) throw new Error('Aba CUSTOS nÃ£o encontrada');
-      var rows  = custos.getRange('A10:F600').getValues();
+      var rows  = getCustosListaValues_(custos);
       var items = [];
       for (var i = 0; i < rows.length; i++) {
         if (!rows[i][1]) break;
@@ -1088,7 +1123,7 @@ function doGet(e) {
 
     } else if (action === 'listarClientes') {
       var clientes = getOrCreateClientesSheet(ss);
-      var rows     = clientes.getRange('A10:P600').getValues();
+      var rows     = getClientesListaValues_(clientes);
       var phoneCounts = {};
       for (var i = 0; i < rows.length; i++) {
         if (!rows[i][0]) break;
@@ -1152,7 +1187,7 @@ function doGet(e) {
 
     } else if (action === 'listarFotosCliente') {
       var clientesFotos = getOrCreateClientesSheet(ss);
-      var rowsFotos = clientesFotos.getRange('A10:P600').getValues();
+      var rowsFotos = getClientesListaValues_(clientesFotos);
       var telBusca = telDigits_(p.tel || p.telefone || '');
       var pastaBusca = String(p.pasta || '');
       var fotosItems = [];
@@ -1177,7 +1212,7 @@ function doGet(e) {
       var clientes    = getOrCreateClientesSheet(ss);
       var numCliente  = parseInt(p.num || 0);
       var novoStatus  = p.status || 'Em andamento';
-      var allNums     = clientes.getRange('A10:A600').getValues();
+      var allNums     = getClientesOsColValues_(clientes);
       var linhaAlvo   = -1;
       for (var i = 0; i < allNums.length; i++) {
         if (allNums[i][0] == numCliente) { linhaAlvo = 10 + i; break; }
@@ -1200,7 +1235,7 @@ function doGet(e) {
     } else if (action === 'editarCliente') {
       var clientesEdit = getOrCreateClientesSheet(ss);
       var numClienteEdit = parseInt(p.num || 0, 10);
-      var numsEdit = clientesEdit.getRange('A10:A600').getValues();
+      var numsEdit = getClientesOsColValues_(clientesEdit);
       var linhaClienteEdit = -1;
       for (var i = 0; i < numsEdit.length; i++) {
         if (numsEdit[i][0] == numClienteEdit) { linhaClienteEdit = 10 + i; break; }
@@ -1226,7 +1261,7 @@ function doGet(e) {
     } else if (action === 'cancelarCliente') {
       var clientesCancel = getOrCreateClientesSheet(ss);
       var numClienteCancel = parseInt(p.num || 0, 10);
-      var numsCancel = clientesCancel.getRange('A10:A600').getValues();
+      var numsCancel = getClientesOsColValues_(clientesCancel);
       var linhaClienteCancel = -1;
       for (var i = 0; i < numsCancel.length; i++) {
         if (numsCancel[i][0] == numClienteCancel) { linhaClienteCancel = 10 + i; break; }
@@ -1312,15 +1347,15 @@ function buscarKpisAdmin_(ss) {
     if (!CST) throw new Error('Aba CUSTOS nÃ£o encontrada');
 
     var agora    = new Date();
-    var hojeKey  = kpiDateKey_(agora);
-    var mesAtual = agora.getMonth() + 1;
-    var anoAtual = agora.getFullYear();
+    var hojeKey  = Utilities.formatDate(agora, FUSO, 'dd/MM/yyyy');
+    var mesAtual = parseInt(Utilities.formatDate(agora, FUSO, 'M'), 10);
+    var anoAtual = parseInt(Utilities.formatDate(agora, FUSO, 'yyyy'), 10);
 
     var lLast = LN.getLastRow();
     var recHoje = 0, atHoje = 0, recMes = 0, atMes = 0;
 
-    if (lLast >= 10) {
-      var lDados = LN.getRange(10, 3, lLast - 9, 5).getValues();
+    if (lLast >= DATA_ROW_START) {
+      var lDados = LN.getRange(DATA_ROW_START, 3, numLinhasDados_(LN, 3), 5).getValues();
       for (var i = 0; i < lDados.length; i++) {
         var row = lDados[i];
         if (!row[0]) break;
@@ -1333,17 +1368,18 @@ function buscarKpisAdmin_(ss) {
         var dp        = kpiDateParts_(dataBruta);
         var dataKey   = kpiDateKey_(dataBruta);
         var val       = kpiNumber_(row[4]);
+        var qtdAt     = kpiQtdAtendimento_(row[0], row[3], val);
 
-        if (!dp || val <= 0) continue;
+        if (!dp || val <= 0 || qtdAt <= 0) continue;
 
         if (dataKey === hojeKey) {
           recHoje += val;
-          atHoje++;
+          atHoje += qtdAt;
         }
 
         if (dp.mes === mesAtual && dp.ano === anoAtual) {
           recMes += val;
-          atMes++;
+          atMes += qtdAt;
         }
       }
     }
@@ -1351,8 +1387,8 @@ function buscarKpisAdmin_(ss) {
     var cLast = CST.getLastRow();
     var cusHoje = 0, cusMes = 0;
 
-    if (cLast >= 10) {
-      var cDados = CST.getRange(10, 1, cLast - 9, 6).getValues();
+    if (cLast >= DATA_ROW_START) {
+      var cDados = CST.getRange(DATA_ROW_START, 1, numLinhasDados_(CST, 2), 6).getValues();
       for (var j = 0; j < cDados.length; j++) {
         var crow = cDados[j];
         if (!crow[1]) break;
@@ -1393,7 +1429,7 @@ function buscarKpisAdmin_(ss) {
       resultado: resultado,
       margem: margem,
       ticket: ticket,
-      fonte: 'server-side-v3.18'
+      fonte: 'server-side-v3.45'
     };
 
   } catch(err) {
@@ -1408,10 +1444,14 @@ function kpiDateParts_(d) {
   if (!d) return null;
 
   if (d instanceof Date) {
+    // [v3.45] Usa o mesmo fuso operacional do fmtData_/frontend.
+    var s = Utilities.formatDate(d, FUSO, 'dd/MM/yyyy');
+    var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (!m) return null;
     return {
-      dia: d.getDate(),
-      mes: d.getMonth() + 1,
-      ano: d.getFullYear()
+      dia: parseInt(m[1], 10),
+      mes: parseInt(m[2], 10),
+      ano: parseInt(m[3], 10)
     };
   }
 
@@ -1453,6 +1493,15 @@ function kpiNumber_(v) {
 
   var n = parseFloat(s);
   return isNaN(n) ? 0 : n;
+}
+
+// [v3.45 NOVO] Contagem de atendimentos alinhada ao frontend (QTD, ignora cancelado/desconto).
+function kpiQtdAtendimento_(svc, qtd, val) {
+  var nome = String(svc || '');
+  if (/^CANCELADO\b/i.test(nome) || /^Desconto$/i.test(nome)) return 0;
+  if (!(parseFloat(val || 0) > 0)) return 0;
+  var q = parseInt(qtd || 1, 10);
+  return q > 0 ? q : 1;
 }
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  doPost â€” fotos â†’ Drive â†’ CLIENTES (+ lanÃ§amentos automÃ¡ticos)
