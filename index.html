@@ -1,6 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
+  Versão : 4.27.5 | Data: 11/06/2026
+  HOTFIX v4.27.5:
+    - Alinha Home/Admin/Vendas ao backend v3.45 (listar sem truncar linha 600)
+    - Alerta quando Apps Script desatualizado (< v3.45)
   Versão : 4.27.4 | Data: 30/05/2026
   HOTFIX v4.27.4:
     - Corrige semanas do Dashboard para calendario operacional de segunda a domingo
@@ -2057,13 +2061,15 @@ const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oy
 const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
 // [v4.4 NOVO]
 // Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.27.4';
+const APP_VERSION='v4.27.5';
+const BACKEND_MIN_VERSION='3.45';
 // [v4.7 NOVO]
 // Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
 const APP_VERSION_KEY='zapAppVersion';
 const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer','zapAdminLogs'];
 
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
+var backendVersao='';
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
 var logsAdmin=[], logsAdminFiltrados=[];
 var vendasPeriodo='hoje';
@@ -3291,15 +3297,24 @@ function fecharSidebar(){
   document.getElementById('sbOverlay').classList.remove('open');
 }
 // abrirAdmin() definida no bloco ADMIN/PIN acima
+function backendDesatualizado_(){
+  var v=parseFloat(String(backendVersao||'0'));
+  var min=parseFloat(String(BACKEND_MIN_VERSION||'0'));
+  return !(v>=min);
+}
 function verificarStatusConexao(){
   var dot=document.getElementById('sbDot');
   var txt=document.getElementById('sbStatusTxt');
   apiGet('ping',{},5000)
     .then(function(r){
       if(r&&r.ok){
+        backendVersao=String(r.version||'');
         dot.className='sb-dot sb-online';txt.textContent='Online · '+APP_VERSION;
         var scEl=document.getElementById('statusConexao');
-        if(scEl){scEl.textContent='🟢 Conectado v'+r.version;scEl.className='info-val green';}
+        if(scEl){
+          scEl.textContent=backendDesatualizado_()?('🟡 Backend v'+backendVersao+' · reimplantar v'+BACKEND_MIN_VERSION):('🟢 Conectado v'+backendVersao);
+          scEl.className='info-val '+(backendDesatualizado_()?'orange':'green');
+        }
       }else{dot.className='sb-dot sb-offline';txt.textContent='Offline · '+APP_VERSION;}
     }).catch(function(){dot.className='sb-dot sb-offline';txt.textContent='Offline · '+APP_VERSION;});
 }
@@ -3372,9 +3387,18 @@ function calcularConsistenciaOperacional_(){
   ];
   if(!temInfo&&lancHoje.length){
     status='warn';
-    linhas.push('Backend ainda não trouxe vínculo CLIENTE/OS em listar. Reimplantar Apps Script v3.44 para distinguir OS e avulso.');
+    linhas.push('Backend ainda não trouxe vínculo CLIENTE/OS em listar. Reimplantar Apps Script v'+BACKEND_MIN_VERSION+' ou superior.');
   }else{
     linhas.push('Hoje: '+servicosHoje+' serviço(s), '+vinculados+' vinculado(s) a OS e '+avulsos+' avulso(s) válido(s).');
+  }
+  if(backendDesatualizado_()){
+    status='warn';
+    linhas.push('Apps Script v'+String(backendVersao||'?')+' detectado. Reimplantar v'+BACKEND_MIN_VERSION+' para corrigir listar truncado na linha 600 e alinhar KPIs.');
+  }
+  var maxRowLanc=lanc.reduce(function(m,l){return Math.max(m,parseInt(l&&l.row||0,10)||0);},0);
+  if(maxRowLanc>=600&&backendDesatualizado_()){
+    status='warn';
+    linhas.push('Cache de lançamentos chegou na linha '+maxRowLanc+'. Backend antigo pode ocultar registros mais recentes.');
   }
   if(servicosHoje>0&&osHoje===0){
     linhas.push('Existem serviços hoje sem OS cadastrada hoje. Isso pode ser normal quando o registro foi avulso.');
