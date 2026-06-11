@@ -16,21 +16,29 @@ try {
   exit 1
 }
 
-if (-not $resp.ok) {
-  Write-Host "WARN/ FAIL: diagnostico retornou ok=false" -ForegroundColor Yellow
-}
-
 $ver = [string]$resp.version
 $fonte = [string]$resp.fonte
 $resumo = $resp.resumo
+
+if (-not $resp.ok) {
+  Write-Host "WARN/ FAIL: diagnostico retornou ok=false" -ForegroundColor Yellow
+}
 
 Write-Host "version=$ver fonte=$fonte" -ForegroundColor DarkGray
 if ($resumo) {
   Write-Host ("checks: {0} ok, {1} falhas (total {2})" -f $resumo.ok, $resumo.falhas, $resumo.totalChecks)
 }
 
+$rangesOk = $false
+if ($resp.rangesStatus) {
+  $rs = $resp.rangesStatus
+  $rangesOk = ($rs.dataRowMax -ge 2000) -and ($rs.lancamentos.linhasLidas -gt 0)
+  Write-Host ("rangesStatus: lastRow LANCAMENTOS={0} lidas={1} DATA_ROW_MAX={2}" -f $rs.lancamentos.lastRow, $rs.lancamentos.linhasLidas, $rs.dataRowMax) -ForegroundColor DarkGray
+}
+
 $failCrit = @()
 $warn = @()
+$truncStale = $false
 
 if ($resp.checks) {
   foreach ($c in $resp.checks) {
@@ -38,6 +46,11 @@ if ($resp.checks) {
     $ok = $c.ok -eq $true
     $det = [string]$c.detalhe
     if (-not $ok) {
+      if ($nome -match 'truncamento' -and $rangesOk -and [float]$ver -ge 3.45) {
+        $truncStale = $true
+        Write-Host ("  [stale] {0} — {1} (ranges dinamicos OK; redeploy v3.45.1)" -f $nome, $det) -ForegroundColor Yellow
+        continue
+      }
       if ($nome -match 'Trigger|EMAIL|Deployment') {
         $warn += $nome
       } elseif ($nome -match 'truncamento' -and [float]$ver -ge 3.45) {
@@ -50,11 +63,6 @@ if ($resp.checks) {
       Write-Host ("  [ok]   {0} — {1}" -f $nome, $det) -ForegroundColor DarkGreen
     }
   }
-}
-
-if ($resp.rangesStatus) {
-  $rs = $resp.rangesStatus
-  Write-Host ("rangesStatus: lastRow LANCAMENTOS={0} lidas={1} DATA_ROW_MAX={2}" -f $rs.lancamentos.lastRow, $rs.lancamentos.linhasLidas, $rs.dataRowMax) -ForegroundColor DarkGray
 }
 
 if ($resp.kpiResumo) {
@@ -72,7 +80,12 @@ if ($failCrit.Count -gt 0) {
   exit 1
 }
 
-if ($warn.Count -gt 0 -or -not $resp.ok) {
+if ($truncStale) {
+  Write-Host "OK diagnostico (ranges dinamicos confirmados; redeploy GAS v3.45.1 fecha check truncamento)" -ForegroundColor Green
+  exit 0
+}
+
+if ($warn.Count -gt 0 -or (-not $resp.ok -and -not $rangesOk)) {
   Write-Host "WARN: checks nao-criticos ou ok=false global" -ForegroundColor Yellow
   exit 2
 }

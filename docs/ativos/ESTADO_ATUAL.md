@@ -14,8 +14,8 @@ Referência única para alinhamento repo × produção.
 |--------|-------------|----------|
 | **Frontend** | **v4.28.2** | https://ribocg-a11y.github.io/zapclin/?force=v4.28.2 |
 | **Service Worker** | **v4.28.2** | `sw.js` → `ZAPCLIN_SW_VERSION` |
-| **Apps Script (código repo)** | **v3.45** | `AppsScript_v3.45_ATUAL.gs` |
-| **Apps Script (ping prod.)** | **3.45** | Confirmado 11/06/2026 |
+| **Apps Script (código repo)** | **v3.45.1** | `AppsScript_v3.45_ATUAL.gs` |
+| **Apps Script (ping prod.)** | **3.45** → alvo **3.45.1** | Redeploy `.gs` fecha check truncamento 25/25 |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit
 

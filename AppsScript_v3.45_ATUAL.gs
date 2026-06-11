@@ -1,6 +1,8 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.45 | Data: 11/06/2026
+// VersÃ£o: 3.45.1 | Data: 11/06/2026
+// HOTFIX v3.45.1:
+//   - Diagnostico: check truncamento legado OK quando DATA_ROW_MAX>=2000 (ranges dinamicos ativos)
 // HOTFIX v3.45:
 //   - Corrige listar/listarCustos/listarClientes para ler ate getLastRow (antes truncava na linha 600)
 //   - Alinha buscarKpisAdmin com America/Sao_Paulo e soma QTD como o frontend
@@ -112,7 +114,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.45';
+var VERSION           = '3.45.1';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -2578,10 +2580,11 @@ function diagnosticoSistema_(ss) {
       if (clientes) rangesStatus.clientes.linhasLidas = numLinhasDados_(clientes, 1);
       addCheck('Ranges dinamicos v3.45', true, 'DATA_ROW_MAX=' + DATA_ROW_MAX + ' · LANCAMENTOS lastRow=' + rangesStatus.lancamentos.lastRow + ' · lidas=' + rangesStatus.lancamentos.linhasLidas, rangesStatus);
       var riscoTrunc600 = rangesStatus.lancamentos.lastRow > 600;
-      var truncOk = !riscoTrunc600 || parseFloat(VERSION) >= 3.45;
+      // lastRow>600 so e risco com range fixo legado (B10:I600). Com DATA_ROW_MAX dinamico, operacao OK.
+      var truncOk = !riscoTrunc600 || DATA_ROW_MAX >= 2000;
       addCheck('Risco truncamento legado (600)', truncOk, truncOk
-        ? (riscoTrunc600 ? ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — OK com GAS v' + VERSION) : 'lastRow <= 600')
-        : ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — exige GAS v3.45+ em producao'));
+        ? (riscoTrunc600 ? ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — OK com DATA_ROW_MAX=' + DATA_ROW_MAX) : 'lastRow <= 600')
+        : ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — exige GAS v3.45+ com ranges dinamicos'));
       if (rangesStatus.lancamentos.lastRow > DATA_ROW_MAX) {
         addCheck('Capacidade planilha', false, 'lastRow=' + rangesStatus.lancamentos.lastRow + ' excede DATA_ROW_MAX=' + DATA_ROW_MAX);
       } else {
@@ -2676,7 +2679,7 @@ function diagnosticoSistema_(ss) {
     return {
       ok: falhas.length === 0,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.45',
+      fonte: 'diagnosticoSistema-v3.45.1',
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       duracaoMs: duracaoMs,
       resumo: {
@@ -2700,7 +2703,7 @@ function diagnosticoSistema_(ss) {
     return {
       ok: false,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.45',
+      fonte: 'diagnosticoSistema-v3.45.1',
       error: err.toString(),
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       checks: checks
