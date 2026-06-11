@@ -54,19 +54,19 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 |--------|-------------|---------------|
 | Frontend | **v4.27.4** | GitHub Pages |
 | Service Worker | **v4.27.4** | `sw.js` |
-| GAS (código repo) | **v3.44** | Nova versão Web pendente |
-| GAS (ping alvo pós-fix) | **v3.45** | PR #1 — ranges dinâmicos + KPI QTD |
+| GAS (código repo) | **v3.45** | Nova versão Web pendente |
+| GAS (ping alvo) | **3.45** | Após deploy manual |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico (sempre informar se alterou):** `AppsScript_v3.44_ATUAL.gs` (main) · `AppsScript_v3.45_ATUAL.gs` (branch fix PR #1)
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs`
 
 Fonte de verdade: header do `.gs`, `APP_VERSION` em `index.html`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
 ## Código canônico
 
-- **GAS:** `AppsScript_v3.44_ATUAL.gs` na raiz (atualizar nome ao subir versão)
+- **GAS:** `AppsScript_v3.45_ATUAL.gs`
 - **Frontend:** `index.html` (monolito — modularização = Fase 3 equiparação)
 - **PWA:** `sw.js`, `manifest.json`
 - **Testes:** `scripts/testes/`
@@ -83,8 +83,9 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `index.html`, `ZAPCLIN_SW_VE
 
 - **Fase 23A–27:** ✅ repo (design system, dashboard, SLA, CRM, aceite OS, Golden, fechamento diário)
 - **Fase 1 governança:** ✅ AGENTS + docs + pre-push + testes readonly
-- **Fix KPI truncamento:** PR #1 v3.45/v4.27.5 — aguardando deploy manual GAS + merge
-- **Próximo:** deploy v3.45 · Fase 2 padrões GAS · Fase 3 Pacote Z (modular FE)
+- **Fase 2 padrões GAS:** ✅ MAPA + PROTOCOLO + v3.45 + diagnostico ranges
+- **Deploy pendente:** Nova versão Web GAS v3.45 + merge PRs
+- **Próximo:** Fase 3 Pacote Z (modular FE)
 
 ## Ao encerrar sessão
 

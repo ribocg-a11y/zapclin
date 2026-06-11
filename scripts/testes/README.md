@@ -10,12 +10,17 @@ Requer Windows + PowerShell 5.1+ (mesmo ambiente do Movi Kids).
 |--------|-----------|
 | `TESTE_PING_READONLY.ps1` | Ping GAS — ok + versão |
 | `TESTE_KPI_PARIDADE_READONLY.ps1` | Compara KPI hoje: listar vs buscarKpisAdmin |
+| `TESTE_DIAGNOSTICO_READONLY.ps1` | Action `diagnosticoSistema` + rangesStatus |
+| `TESTE_PROTOCOLO_DIAGNOSTICO.ps1` | Orquestra Z0+Z1 (pre-push + ping + diag + KPI) |
 
 ## Uso
 
 ```powershell
 cd C:\caminho\para\zapclin
+.\scripts\testes\TESTE_PROTOCOLO_DIAGNOSTICO.ps1
+# ou individualmente:
 .\scripts\testes\TESTE_PING_READONLY.ps1
+.\scripts\testes\TESTE_DIAGNOSTICO_READONLY.ps1
 .\scripts\testes\TESTE_KPI_PARIDADE_READONLY.ps1
 .\scripts\pre-push-check.ps1
 ```

@@ -77,7 +77,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | Deploy GAS | `../../APPSCRIPT_DEPLOY.md` (branch fix) · header do `.gs` |
 | Roadmap funcional | `../../ROADMAP_FASE23.md` |
 | QA | `../../AUDITORIA_QA_v4.19.1.md` |
-| Teste ping/KPI | `../../scripts/testes/TESTE_PING_READONLY.ps1` |
+| Teste ping/KPI/diagnóstico | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` → `TESTE_PROTOCOLO_DIAGNOSTICO.ps1` |
+| Arquitetura | `MAPA_CODIGO_ARQUITETURA.md` |
+| Ranges GAS | `AUDITORIA_RANGES_GAS.md` |
 | Equiparação Movi | `../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md` |
 
 ---
@@ -89,8 +91,8 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | 1 | Merge PR #1 + deploy GAS **v3.45** + validar Home = Admin | **Você** (GAS + merge) |
 | 2 | Confirmar ping `"version":"3.45"` | Agente + você |
 | 3 | Rodar `TESTE_KPI_PARIDADE_READONLY.ps1` — deve passar sem divergência | Agente (PC) |
-| 4 | Fase 2 equiparação — padrões GAS (`diagnosticoSistema` padronizado) | Backlog |
-| 5 | Fase 3 — modularizar frontend (Pacote Z) | Backlog |
+| 4 | Fase 3 — Pacote Z modular FE | Backlog |
+| 5 | Rodar `TESTE_PROTOCOLO_DIAGNOSTICO.ps1` após deploy v3.45 | Agente PC |
 
 ### Incidente conhecido (Home vs Admin)
 

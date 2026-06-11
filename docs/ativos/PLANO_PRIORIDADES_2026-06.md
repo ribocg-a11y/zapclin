@@ -35,13 +35,15 @@ Checklist vivo — marcar ao concluir.
 
 ---
 
-## P1 — Padrões GAS (Fase 2 equiparação)
+## P1 — Padrões GAS (Fase 2 equiparação) ✅ repo
 
 | # | Item | Status |
 |---|------|--------|
-| F2.1 | `diagnosticoSistema` documentado + teste readonly | ⬜ |
-| F2.2 | Auditar todos ranges fixos no `.gs` | ⬜ |
-| F2.3 | `MAPA_CODIGO_ARQUITETURA.md` ZapClin | ⬜ |
+| F2.1 | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` + orquestrador | ✅ |
+| F2.2 | `AUDITORIA_RANGES_GAS.md` + diagnostico rangesStatus | ✅ |
+| F2.3 | `MAPA_CODIGO_ARQUITETURA.md` | ✅ |
+| F2.4 | `AppsScript_v3.45_ATUAL.gs` canônico no repo | ✅ |
+| F2.5 | Deploy v3.45 produção | ⬜ humano |
 
 ---
 

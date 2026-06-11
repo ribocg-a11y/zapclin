@@ -14,8 +14,7 @@ Referência única para alinhamento repo × produção.
 |--------|-------------|----------|
 | **Frontend** | **v4.27.4** | https://ribocg-a11y.github.io/zapclin/?force=v4.27.4 |
 | **Service Worker** | **v4.27.4** | `sw.js` → `ZAPCLIN_SW_VERSION` |
-| **Apps Script (código repo main)** | **v3.44** | `AppsScript_v3.44_ATUAL.gs` |
-| **Apps Script (fix pendente)** | **v3.45** | PR #1 · `AppsScript_v3.45_ATUAL.gs` |
+| **Apps Script (código repo)** | **v3.45** | `AppsScript_v3.45_ATUAL.gs` |
 | **Apps Script (ping prod.)** | verificar | Ping abaixo — alvo **3.45** |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit
@@ -34,16 +33,20 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | Artefato | Arquivo |
 |----------|---------|
-| GAS | `AppsScript_v3.44_ATUAL.gs` (main) |
-| GAS fix KPI | `AppsScript_v3.45_ATUAL.gs` (branch `cursor/fix-listar-range-kpis-f0f3`) |
+| GAS | `AppsScript_v3.45_ATUAL.gs` |
+| GAS fix KPI | ~~v3.44~~ removido — v3.45 unificado |
 | Frontend | `index.html` — `APP_VERSION`, `WEB_APP` |
 | PWA | `sw.js`, `manifest.json` |
 | Roadmap | `ROADMAP_FASE23.md` |
 | QA | `AUDITORIA_QA_v4.19.1.md` |
-| Deploy GAS | `APPSCRIPT_DEPLOY.md` (branch fix) |
+| Deploy GAS | `APPSCRIPT_DEPLOY.md` |
 | Governança | `AGENTS.md`, `docs/ativos/*` |
 | Pre-push | `scripts/pre-push-check.ps1` |
-| Testes | `scripts/testes/TESTE_PING_READONLY.ps1`, `TESTE_KPI_PARIDADE_READONLY.ps1` |
+| `scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1` | diagnosticoSistema |
+| `scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1` | Orquestrador Z0+Z1 |
+| `docs/ativos/MAPA_CODIGO_ARQUITETURA.md` | Anatomia |
+| `docs/ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md` | Protocolo testes |
+| `docs/ativos/AUDITORIA_RANGES_GAS.md` | Ranges GAS |
 
 ---
 
@@ -57,23 +60,19 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | **v4.24–25** | Relatório Golden v2, aceite digital OS |
 | **v4.21–23** | Nova OS CRM, fotos Drive, aceite OS |
 | **v4.17–19** | SLA operação, resumo diário, gate QA |
+| **v3.45** | Ranges dinâmicos, KPI QTD, diagnostico rangesStatus |
 | **v3.44** | Vínculo CLIENTE/OS em `listar` |
 | **v3.36** | LockService multioperador |
 
 ---
 
-## Governança (Fase 1 equiparação — 11/06/2026)
+## Governança (Fases 1–2 equiparação — 11/06/2026)
 
 | Item | Status |
 |------|--------|
-| `AGENTS.md` | ✅ |
-| `docs/ativos/HANDOFF_NOVO_CHAT.md` | ✅ |
-| `docs/ativos/ESTADO_ATUAL.md` | ✅ |
-| `docs/ativos/REGRAS_DE_PUBLICACAO_SEGURA.md` | ✅ |
-| `docs/ativos/ACESSOS_E_AUTORIZACOES.md` | ✅ |
-| `scripts/pre-push-check.ps1` | ✅ |
-| Testes readonly ping + KPI | ✅ |
-| `docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md` | ✅ PR #2 |
+| Fase 1 — AGENTS, docs, pre-push, ping/KPI | ✅ |
+| Fase 2 — MAPA, PROTOCOLO, AUDITORIA, v3.45 | ✅ |
+| `docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md` | ✅ |
 
 ---
 

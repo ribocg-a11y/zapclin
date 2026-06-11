@@ -208,16 +208,17 @@ Evitar scope creep e regressão operacional:
 
 ---
 
-### Fase 2 — Backend compartilhado (padrões GAS)
+### Fase 2 — Backend compartilhado (padrões GAS) ✅ repo 11/06/2026
 
-**Esforço:** extrair padrões, não biblioteca npm.
+| ID | Entrega | Status |
+|----|---------|--------|
+| 2.1 | Helpers ranges documentados (`AUDITORIA_RANGES_GAS.md`) | ✅ |
+| 2.2 | `diagnosticoSistema` + `rangesStatus` v3.45 | ✅ |
+| 2.3 | `MAPA_CODIGO_ARQUITETURA.md` | ✅ |
+| 2.4 | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` + testes PS1 | ✅ |
+| 2.5 | Deploy v3.45 produção | ⬜ humano |
 
-| ID | Entrega | Onde |
-|----|---------|------|
-| 2.1 | Helpers `ultimaLinhaDados_`, ranges dinâmicos | Zap ✅ v3.45; auditar Movi |
-| 2.2 | Fuso `America/Sao_Paulo` + QTD em todos KPIs server-side | Ambos |
-| 2.3 | Action `diagnosticoSistema` padronizada (versão, abas, lastRow) | Zap ← protocolo Movi |
-| 2.4 | Documento `MAPA_CODIGO_ARQUITETURA.md` por repo | Cada repo |
+**Critério de saída:** protocolo Z0+Z1 verde após deploy v3.45.
 
 ---
 

@@ -13,7 +13,9 @@
 | [`ativos/PLANO_PRIORIDADES_2026-06.md`](ativos/PLANO_PRIORIDADES_2026-06.md) | Checklist vivo |
 | [`ativos/ESTADO_ATUAL.md`](ativos/ESTADO_ATUAL.md) | Versões e links |
 | [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy |
-| [`ativos/ACESSOS_E_AUTORIZACOES.md`](ativos/ACESSOS_E_AUTORIZACOES.md) | Papéis e permissões |
+| [`ativos/MAPA_CODIGO_ARQUITETURA.md`](ativos/MAPA_CODIGO_ARQUITETURA.md) | Anatomia código |
+| [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
+| [`ativos/AUDITORIA_RANGES_GAS.md`](ativos/AUDITORIA_RANGES_GAS.md) | Ranges v3.44→v3.45 |
 
 ---
 
@@ -46,7 +48,8 @@
 |--------|-----------|
 | [`../scripts/pre-push-check.ps1`](../scripts/pre-push-check.ps1) | Gate antes de push |
 | [`../scripts/testes/TESTE_PING_READONLY.ps1`](../scripts/testes/TESTE_PING_READONLY.ps1) | Ping GAS |
-| [`../scripts/testes/TESTE_KPI_PARIDADE_READONLY.ps1`](../scripts/testes/TESTE_KPI_PARIDADE_READONLY.ps1) | Home vs Admin KPI |
+| [`../scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1`](../scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1) | diagnosticoSistema |
+| [`../scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1`](../scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1) | Orquestrador Z0+Z1 |
 | [`../scripts/testes/README.md`](../scripts/testes/README.md) | Como rodar testes |
 
 ---
