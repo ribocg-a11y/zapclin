@@ -12,10 +12,10 @@ Checklist vivo — marcar ao concluir.
 | # | Item | Status | Quem |
 |---|------|--------|------|
 | P0.1 | Merge [PR #1](https://github.com/ribocg-a11y/zapclin/pull/1) v3.45/v4.27.5 | ⬜ | Humano |
-| P0.2 | Colar `AppsScript_v3.45_ATUAL.gs` → Nova versão Web GAS | ⬜ | Humano |
-| P0.3 | Ping retorna `"version":"3.45"` | ⬜ | Agente |
+| P0.2 | Colar `AppsScript_v3.45_ATUAL.gs` → Nova versão Web GAS | ✅ | Humano |
+| P0.3 | Ping retorna `"version":"3.45"` | ✅ | Agente |
 | P0.4 | Home atendimentos hoje = Admin serviços hoje | ⬜ | Humano (loja) |
-| P0.5 | `TESTE_KPI_PARIDADE_READONLY.ps1` passa | ⬜ | Agente (PC) |
+| P0.5 | `TESTE_KPI_PARIDADE_READONLY.ps1` passa | ✅ | Agente |
 
 ---
 
@@ -43,7 +43,7 @@ Checklist vivo — marcar ao concluir.
 | F2.2 | `AUDITORIA_RANGES_GAS.md` + diagnostico rangesStatus | ✅ |
 | F2.3 | `MAPA_CODIGO_ARQUITETURA.md` | ✅ |
 | F2.4 | `AppsScript_v3.45_ATUAL.gs` canônico no repo | ✅ |
-| F2.5 | Deploy v3.45 produção | ⬜ humano |
+| F2.5 | Deploy v3.45 produção | ✅ humano |
 
 ---
 
@@ -52,8 +52,8 @@ Checklist vivo — marcar ao concluir.
 | # | Item | Status |
 |---|------|--------|
 | F3.1 | Extrair `zc-version.js`, `zc-api.js`, `zc-core.js`, `zc-globals.js` | ✅ v4.28.0 |
-| F3.2 | `zc-sync.js`, `zc-admin.js` … | ⬜ |
-| F3.3 | Paridade funcional 100% antes de merge | ⬜ |
+| F3.2 | `zc-sync.js` | ✅ v4.28.1 |
+| F3.3 | `zc-whatsapp.js`, `zc-admin.js` … | ⬜ |
 
 ---
 

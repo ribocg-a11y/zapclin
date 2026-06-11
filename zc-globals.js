@@ -39,16 +39,6 @@ const PAGE_TITLES={
   relacionamento:'Relacionamento',
   config:'⚙️ Config'
 };
-const WEB_APP='https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
-const GOOGLE_REVIEW_URL='https://g.page/r/CcTInX7dYxLwEBM/review';
-// [v4.4 NOVO]
-// Versão visível do frontend. Use este valor para confirmar se o GitHub Pages carregou a atualização correta.
-const APP_VERSION='v4.27.4';
-// [v4.7 NOVO]
-// Chave única para detectar troca de versão no navegador/PWA sem apagar dados operacionais.
-const APP_VERSION_KEY='zapAppVersion';
-const APP_TRANSIENT_CACHE_KEYS=['zapKpisAdminServer','zapAdminLogs'];
-
 var selected=new Set(), webAppUrl=localStorage.getItem('zapWebApp')||WEB_APP;
 var lancamentos=[], custos=[], clientes=[], clientesFiltrados=[];
 var logsAdmin=[], logsAdminFiltrados=[];

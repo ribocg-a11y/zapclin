@@ -12,10 +12,10 @@ Referência única para alinhamento repo × produção.
 
 | Camada | Versão repo | URL / ID |
 |--------|-------------|----------|
-| **Frontend** | **v4.28.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.28.0 |
-| **Service Worker** | **v4.28.0** | `sw.js` → `ZAPCLIN_SW_VERSION` |
+| **Frontend** | **v4.28.1** | https://ribocg-a11y.github.io/zapclin/?force=v4.28.1 |
+| **Service Worker** | **v4.28.1** | `sw.js` → `ZAPCLIN_SW_VERSION` |
 | **Apps Script (código repo)** | **v3.45** | `AppsScript_v3.45_ATUAL.gs` |
-| **Apps Script (ping prod.)** | verificar | Ping abaixo — alvo **3.45** |
+| **Apps Script (ping prod.)** | **3.45** | Confirmado 11/06/2026 |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit
 
@@ -36,7 +36,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
 | GAS fix KPI | ~~v3.44~~ removido — v3.45 unificado |
 | Frontend | `index.html` + `zc-*.js` (Pacote Z.1) |
-| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js` |
+| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js`, `zc-sync.js` |
 | PWA | `sw.js`, `manifest.json` |
 | Roadmap | `ROADMAP_FASE23.md` |
 | QA | `AUDITORIA_QA_v4.19.1.md` |

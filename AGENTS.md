@@ -52,10 +52,10 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.28.0** | GitHub Pages |
-| Service Worker | **v4.28.0** | `sw.js` |
+| Frontend | **v4.28.1** | GitHub Pages |
+| Service Worker | **v4.28.1** | `sw.js` |
 | GAS (código repo) | **v3.45** | Nova versão Web pendente |
-| GAS (ping alvo) | **3.45** | Após deploy manual |
+| GAS (ping alvo) | **3.45** | ✅ produção |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`

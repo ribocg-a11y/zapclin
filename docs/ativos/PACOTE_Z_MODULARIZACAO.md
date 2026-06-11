@@ -5,7 +5,7 @@
 
 ---
 
-## Panorama (v4.28.0 — Z.1 entregue)
+## Panorama (v4.28.1 — Z.2 entregue)
 
 | Artefato | Papel |
 |----------|-------|
@@ -13,9 +13,10 @@
 | `zc-globals.js` | `SERVICES`, catálogos, estado global |
 | `zc-api.js` | `jsonp`, `apiGet`, `logEventoSistema_` |
 | `zc-core.js` | Home, formatadores, toast, cache inicial |
-| `index.html` | HTML + CSS inline + restante do JS (~4.600 linhas) |
+| `zc-sync.js` | Fila offline, `buscar*`, refresh automático |
+| `index.html` | HTML + CSS inline + restante do JS (~4.500 linhas) |
 
-**Progresso:** ~5% — 4 módulos extraídos; meta final shell HTML < 200 linhas JS inline.
+**Progresso:** ~8% — 5 módulos extraídos; meta final shell HTML < 200 linhas JS inline.
 
 ---
 
@@ -24,7 +25,7 @@
 | Fase | Entrega | Versão | Status |
 |------|---------|--------|--------|
 | **Z.1** | version + globals + api + core | v4.28.0 | ✅ |
-| **Z.2** | `zc-sync.js` — fila pendentes, refresh | v4.28.1 | ⬜ |
+| **Z.2** | `zc-sync.js` — fila pendentes, refresh | v4.28.1 | ✅ |
 | **Z.3** | `zc-whatsapp.js` | v4.28.2 | ⬜ |
 | **Z.4** | `zc-admin.js` — PIN, KPIs, fechamento | v4.29.0 | ⬜ |
 | **Z.5** | `zc-nav.js` + `zc-home.js` | v4.29.1 | ⬜ |
@@ -49,6 +50,7 @@
 <script src="zc-globals.js?v=…"></script>
 <script src="zc-api.js?v=…"></script>
 <script src="zc-core.js?v=…"></script>
+<script src="zc-sync.js?v=…"></script>
 <!-- futuros zc-*.js por domínio -->
 <script> /* restante inline até Z.10 */ </script>
 ```
