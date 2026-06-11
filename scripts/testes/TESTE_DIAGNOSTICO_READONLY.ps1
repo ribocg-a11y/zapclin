@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Stop"
 
 $WEB_APP = "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec"
-$url = "$WEB_APP?action=diagnosticoSistema"
+$url = "${WEB_APP}?action=diagnosticoSistema"
 
 Write-Host "ZapClin TESTE_DIAGNOSTICO_READONLY" -ForegroundColor Cyan
 Write-Host "GET $url"
@@ -38,7 +38,9 @@ if ($resp.checks) {
     $ok = $c.ok -eq $true
     $det = [string]$c.detalhe
     if (-not $ok) {
-      if ($nome -match 'Trigger|EMAIL|Drive|Deployment') {
+      if ($nome -match 'Trigger|EMAIL|Deployment') {
+        $warn += $nome
+      } elseif ($nome -match 'truncamento' -and [float]$ver -ge 3.45) {
         $warn += $nome
       } else {
         $failCrit += $nome

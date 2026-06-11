@@ -8,7 +8,7 @@ $WEB_APP = "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24
 
 function Get-GasJson {
   param([string]$Action)
-  $url = "$WEB_APP?action=$Action"
+  $url = "${WEB_APP}?action=$Action"
   Write-Host "GET $url"
   return Invoke-RestMethod -Uri $url -Method Get -TimeoutSec 45
 }

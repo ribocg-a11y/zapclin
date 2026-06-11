@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Stop"
 
 $WEB_APP = "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec"
-$pingUrl = "$WEB_APP?action=ping"
+$pingUrl = "${WEB_APP}?action=ping"
 
 Write-Host "ZapClin TESTE_PING_READONLY" -ForegroundColor Cyan
 Write-Host "GET $pingUrl"

@@ -103,10 +103,10 @@ try {
     Add-Check "gas.deploy-id" "ok" "Deploy ID canonico"
   }
 
-  if ($indexRaw -notmatch "function apiGet\\(" -and -not (Test-Path (Join-Path $root "zc-api.js"))) {
+  if ($indexRaw -notmatch 'function apiGet\(' -and -not (Test-Path (Join-Path $root "zc-api.js"))) {
     Add-Check "api.get-pattern" "warn" "apiGet nao encontrado"
   } else {
-    Add-Check "api.get-pattern" "ok" "apiGet presente"
+    Add-Check "api.get-pattern" "ok" "apiGet presente (zc-api.js ou inline)"
   }
 
   foreach ($doc in @("AGENTS.md", "docs/ativos/HANDOFF_NOVO_CHAT.md", "docs/ativos/ESTADO_ATUAL.md")) {
@@ -115,18 +115,19 @@ try {
       Add-Check ("docs." + ($doc -replace '[/\\]', '.')) "fail" "ausente: $doc"
     }
   }
-  if ($result.checks | Where-Object { $_.name -like "docs.*" -and $_.status -eq "fail" }).Count -eq 0 {
+  $docFails = @($result.checks | Where-Object { $_.name -like 'docs.*' -and $_.status -eq 'fail' })
+  if ($docFails.Count -eq 0) {
     Add-Check "docs.governanca" "ok" "AGENTS + HANDOFF + ESTADO"
   }
 
   if (-not $SkipNetworkTests) {
-    $pingScript = Join-Path $root "scripts\testes\TESTE_PING_READONLY.ps1"
+    $pingScript = Join-Path $root "scripts/testes/TESTE_PING_READONLY.ps1"
     if (Test-Path $pingScript) {
       $pingOut = & $pingScript 2>&1 | Out-String
       if ($LASTEXITCODE -ne 0) {
         Add-Check "network.ping" "fail" "exit=$LASTEXITCODE"
       } else {
-        Add-Check "network.ping" "ok" ($pingOut -split "`n" | Select-Object -Last 3) -join " | "
+        Add-Check "network.ping" "ok" (($pingOut -split "`n" | Select-Object -Last 3) -join " | ")
       }
     } else {
       Add-Check "network.ping" "warn" "TESTE_PING_READONLY.ps1 ausente"

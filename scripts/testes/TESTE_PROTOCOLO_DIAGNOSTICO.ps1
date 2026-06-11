@@ -44,9 +44,12 @@ function Run-Test {
 Write-Host "ZapClin - Protocolo diagnostico" -ForegroundColor Cyan
 
 # Z0 — infra
-$preArgs = @("-NoProfile", "-File", (Join-Path $root "scripts\pre-push-check.ps1"))
-if ($SkipNetworkTests) { $preArgs += "-SkipNetworkTests" }
-$preOut = & powershell @preArgs 2>&1 | Out-String
+$preScript = Join-Path $root "scripts/pre-push-check.ps1"
+if ($SkipNetworkTests) {
+  & $preScript -SkipNetworkTests 2>&1 | Out-Null
+} else {
+  & $preScript 2>&1 | Out-Null
+}
 Add-Fase "Z0" "pre-push-check" $(if ($LASTEXITCODE -eq 0) { "ok" } else { "fail" }) "exit=$LASTEXITCODE"
 
 if (-not $SkipNetworkTests) {

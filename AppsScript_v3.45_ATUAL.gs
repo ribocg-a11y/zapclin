@@ -2578,7 +2578,10 @@ function diagnosticoSistema_(ss) {
       if (clientes) rangesStatus.clientes.linhasLidas = numLinhasDados_(clientes, 1);
       addCheck('Ranges dinamicos v3.45', true, 'DATA_ROW_MAX=' + DATA_ROW_MAX + ' · LANCAMENTOS lastRow=' + rangesStatus.lancamentos.lastRow + ' · lidas=' + rangesStatus.lancamentos.linhasLidas, rangesStatus);
       var riscoTrunc600 = rangesStatus.lancamentos.lastRow > 600;
-      addCheck('Risco truncamento legado (600)', !riscoTrunc600, riscoTrunc600 ? ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — exige GAS v3.45+ em producao') : 'lastRow <= 600 ou backend atualizado');
+      var truncOk = !riscoTrunc600 || parseFloat(VERSION) >= 3.45;
+      addCheck('Risco truncamento legado (600)', truncOk, truncOk
+        ? (riscoTrunc600 ? ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — OK com GAS v' + VERSION) : 'lastRow <= 600')
+        : ('lastRow=' + rangesStatus.lancamentos.lastRow + ' — exige GAS v3.45+ em producao'));
       if (rangesStatus.lancamentos.lastRow > DATA_ROW_MAX) {
         addCheck('Capacidade planilha', false, 'lastRow=' + rangesStatus.lancamentos.lastRow + ' excede DATA_ROW_MAX=' + DATA_ROW_MAX);
       } else {
