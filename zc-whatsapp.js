@@ -7,6 +7,8 @@ function precoServico_(nomeServico){
   for(var i=0;i<SERVICES.length;i++){
     if(SERVICES[i].name===nomeServico)return parseFloat(SERVICES[i].price)||0;
   }
+  var leg=LEGACY_SERVICE_ALIASES[nomeServico];
+  if(leg)return parseFloat(leg.price)||0;
   return 0;
 }
 function normalizarObsLista_(obs){

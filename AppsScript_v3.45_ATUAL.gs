@@ -1,6 +1,10 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.45.1 | Data: 11/06/2026
+// VersÃ£o: 3.46 | Data: 11/06/2026
+// NOVO v3.46:
+//   - CatÃ¡logo jun/2026: 6 serviÃ§os (preÃ§os, tempos e nomes do flyer ZapClin)
+//   - Limpeza + HigienizaÃ§Ã£o unificada, HigienizaÃ§Ã£o + Lavagem, RevitalizaÃ§Ã£o Premium (4h)
+//   - Aliases legados para lanÃ§amentos histÃ³ricos (Limpeza + Hig. *, RevitalizaÃ§Ã£o)
 // HOTFIX v3.45.1:
 //   - Diagnostico: check truncamento legado OK quando DATA_ROW_MAX>=2000 (ranges dinamicos ativos)
 // HOTFIX v3.45:
@@ -114,7 +118,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.45.1';
+var VERSION           = '3.46';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -122,10 +126,11 @@ var VIP_ANIVERSARIO_PERCENTUAL = 0.30;
 var VIP_ANIVERSARIO_TETO = 15;
 
 var PRECOS = {
-  'HigienizaÃ§Ã£o RÃ¡pida': 15, 'HigienizaÃ§Ã£o Essencial': 18,
-  'HigienizaÃ§Ã£o Profunda': 23, 'Limpeza + Hig. RÃ¡pida': 18,
-  'Limpeza + Hig. Essencial': 21, 'Limpeza + Hig. Profunda': 30,
-  'RevitalizaÃ§Ã£o': 70
+  'Higieniza\u00e7\u00e3o R\u00e1pida': 15, 'Higieniza\u00e7\u00e3o Essencial': 18,
+  'Higieniza\u00e7\u00e3o Profunda': 23, 'Limpeza + Higieniza\u00e7\u00e3o': 30,
+  'Higieniza\u00e7\u00e3o + Lavagem': 45, 'Revitaliza\u00e7\u00e3o Premium': 70,
+  'Limpeza + Hig. R\u00e1pida': 18, 'Limpeza + Hig. Essencial': 21,
+  'Limpeza + Hig. Profunda': 30, 'Revitaliza\u00e7\u00e3o': 70
 };
 
 function actionPrecisaLock_(action) {
@@ -155,6 +160,9 @@ function precoServicoOs_(nome) {
     'higienizacao rapida': 15,
     'higienizacao essencial': 18,
     'higienizacao profunda': 23,
+    'limpeza + higienizacao': 30,
+    'higienizacao + lavagem': 45,
+    'revitalizacao premium': 70,
     'limpeza + hig. rapida': 18,
     'limpeza + hig. essencial': 21,
     'limpeza + hig. profunda': 30,
@@ -484,6 +492,9 @@ function tempoServicoOsMin_(nome) {
     'higienizacao rapida': 8,
     'higienizacao essencial': 10,
     'higienizacao profunda': 12,
+    'limpeza + higienizacao': 20,
+    'higienizacao + lavagem': 45,
+    'revitalizacao premium': 240,
     'limpeza + hig. rapida': 16,
     'limpeza + hig. essencial': 20,
     'limpeza + hig. profunda': 30,
@@ -920,10 +931,10 @@ function salvarRegistro() {
   var ss   = SpreadsheetApp.getActiveSpreadsheet();
   var reg  = getRegistrarSheet_(ss);
   var lanc = getLancamentosSheet_(ss);
-  var svcs    = ['HigienizaÃ§Ã£o RÃ¡pida','HigienizaÃ§Ã£o Essencial','HigienizaÃ§Ã£o Profunda',
-                 'Limpeza + Hig. RÃ¡pida','Limpeza + Hig. Essencial','Limpeza + Hig. Profunda','RevitalizaÃ§Ã£o'];
-  var vals    = [15,18,23,18,21,30,70];
-  var chkRows = [12,15,18,21,24,27,30];
+  var svcs    = ['Higieniza\u00e7\u00e3o R\u00e1pida','Higieniza\u00e7\u00e3o Essencial','Higieniza\u00e7\u00e3o Profunda',
+                 'Limpeza + Higieniza\u00e7\u00e3o','Higieniza\u00e7\u00e3o + Lavagem','Revitaliza\u00e7\u00e3o Premium'];
+  var vals    = [15,18,23,30,45,70];
+  var chkRows = [12,15,18,21,24,27];
   var agora   = new Date();
   var dataStr = Utilities.formatDate(agora, FUSO, 'dd/MM/yyyy');
   var horaStr = Utilities.formatDate(agora, FUSO, 'HH:mm');
@@ -1850,6 +1861,9 @@ var PRECOS_SERVICOS_REL_ = {
   'Higieniza\u00e7\u00e3o R\u00e1pida':15,
   'Higieniza\u00e7\u00e3o Essencial':18,
   'Higieniza\u00e7\u00e3o Profunda':23,
+  'Limpeza + Higieniza\u00e7\u00e3o':30,
+  'Higieniza\u00e7\u00e3o + Lavagem':45,
+  'Revitaliza\u00e7\u00e3o Premium':70,
   'Limpeza + Hig. R\u00e1pida':18,
   'Limpeza + Hig. Essencial':21,
   'Limpeza + Hig. Profunda':30,
@@ -2043,8 +2057,10 @@ function gerarESalvarPDF_(mesRef, mesNome, anoRef, agora, d, aluguel, pct, diaVe
   return pdfFileV2;
   var PRECOS_UNIT = {
     'Higieniza\u00e7\u00e3o R\u00e1pida':15,'Higieniza\u00e7\u00e3o Essencial':18,
-    'Higieniza\u00e7\u00e3o Profunda':23,'Limpeza + Hig. R\u00e1pida':18,
-    'Limpeza + Hig. Essencial':21,'Limpeza + Hig. Profunda':30,'Revitaliza\u00e7\u00e3o':70
+    'Higieniza\u00e7\u00e3o Profunda':23,'Limpeza + Higieniza\u00e7\u00e3o':30,
+    'Higieniza\u00e7\u00e3o + Lavagem':45,'Revitaliza\u00e7\u00e3o Premium':70,
+    'Limpeza + Hig. R\u00e1pida':18,'Limpeza + Hig. Essencial':21,
+    'Limpeza + Hig. Profunda':30,'Revitaliza\u00e7\u00e3o':70
   };
   var tempName = 'PDF_RELATORIO_TEMP';
   var oldTemp  = ss.getSheetByName(tempName);
@@ -2480,7 +2496,9 @@ function criarAnalise() {
     dash.getRange(r,DC+5).setFormula('=SUMPRODUCT((MONTH(CUSTOS!B$10:B$500)='+MF+')*(YEAR(CUSTOS!B$10:B$500)='+AF+')*(DAY(CUSTOS!B$10:B$500)='+d+')*CUSTOS!F$10:F$500)');
     dash.getRange(r,DC+5).setNumberFormat('#,##0.00');
   }
-  var SVCS = ['HigienizaÃ§Ã£o RÃ¡pida','HigienizaÃ§Ã£o Essencial','HigienizaÃ§Ã£o Profunda','Limpeza + Hig. RÃ¡pida','Limpeza + Hig. Essencial','Limpeza + Hig. Profunda','RevitalizaÃ§Ã£o'];
+  var SVCS = ['Higieniza\u00e7\u00e3o R\u00e1pida','Higieniza\u00e7\u00e3o Essencial','Higieniza\u00e7\u00e3o Profunda',
+              'Limpeza + Higieniza\u00e7\u00e3o','Higieniza\u00e7\u00e3o + Lavagem','Revitaliza\u00e7\u00e3o Premium',
+              'Limpeza + Hig. R\u00e1pida','Limpeza + Hig. Essencial','Limpeza + Hig. Profunda','Revitaliza\u00e7\u00e3o'];
   dash.getRange(5,DC+8).setValue('Servico'); dash.getRange(5,DC+9).setValue('Execucoes'); dash.getRange(5,DC+10).setValue('Receita (R$)');
   for (var s = 0; s < SVCS.length; s++) {
     var r = 6 + s;
@@ -2500,7 +2518,7 @@ function criarAnalise() {
   SpreadsheetApp.flush();
   dash.insertChart(dash.newChart().setChartType(Charts.ChartType.COMBO).addRange(dash.getRange(5,DC+0,33,3)).setOption('title','Atendimentos e Receita por Dia').setOption('titleTextStyle',{fontSize:13,bold:true,color:'#e0e0ff'}).setOption('backgroundColor',{fill:'#0c0c1e'}).setOption('seriesType','bars').setOption('focusTarget','category').setOption('legend',{position:'bottom',textStyle:{color:'#8080b0',fontSize:10}}).setOption('hAxis',{title:'Dia',textStyle:{color:'#5050a0'},titleTextStyle:{color:'#5050a0'},gridlines:{color:'#141428'},baselineColor:'#202040'}).setOption('vAxes',{0:{title:'Atendimentos',textStyle:{color:'#00b8d4'},titleTextStyle:{color:'#00b8d4'},gridlines:{color:'#141428'},minValue:0,format:'0'},1:{title:'Receita',textStyle:{color:'#00c853'},titleTextStyle:{color:'#00c853'},gridlines:{count:0},minValue:0,format:'#,##0'}}).setOption('series',{0:{type:'bars',color:'#0288d1',targetAxisIndex:0,labelInLegend:'Atendimentos'},1:{type:'line',color:'#00e676',targetAxisIndex:1,lineWidth:3,pointSize:5,labelInLegend:'Receita (R$)'}}).setOption('width',720).setOption('height',400).setPosition(8,1,8,5).build());
   dash.insertChart(dash.newChart().setChartType(Charts.ChartType.LINE).addRange(dash.getRange(5,DC+4,33,2)).setOption('title','Custos por Dia').setOption('titleTextStyle',{fontSize:13,bold:true,color:'#e0e0ff'}).setOption('backgroundColor',{fill:'#0c0c1e'}).setOption('focusTarget','category').setOption('legend',{position:'bottom',textStyle:{color:'#8080b0',fontSize:10}}).setOption('hAxis',{title:'Dia',textStyle:{color:'#5050a0'},titleTextStyle:{color:'#5050a0'},gridlines:{color:'#141428'},baselineColor:'#202040'}).setOption('vAxis',{title:'Custo (R$)',textStyle:{color:'#ff6060'},titleTextStyle:{color:'#ff6060'},gridlines:{color:'#141428'},minValue:0,format:'#,##0'}).setOption('series',{0:{color:'#ff4444',pointSize:4,lineWidth:3,labelInLegend:'Custo (R$)'}}).setOption('curveType','function').setOption('width',720).setOption('height',400).setPosition(8,10,8,5).build());
-  dash.insertChart(dash.newChart().setChartType(Charts.ChartType.COLUMN).addRange(dash.getRange(6,DC+8,7,3)).setOption('title','Execucoes e Receita por Servico').setOption('titleTextStyle',{fontSize:13,bold:true,color:'#e0e0ff'}).setOption('backgroundColor',{fill:'#0c0c1e'}).setOption('focusTarget','category').setOption('useFirstColumnAsDomain',true).setOption('legend',{position:'bottom',textStyle:{color:'#8080b0',fontSize:10}}).setOption('hAxis',{textStyle:{color:'#5050a0',fontSize:9},gridlines:{color:'#141428'},baselineColor:'#202040',slantedText:true,slantedTextAngle:30}).setOption('vAxes',{0:{title:'Execucoes',textStyle:{color:'#00b8d4'},titleTextStyle:{color:'#00b8d4'},gridlines:{color:'#141428'},minValue:0,format:'0'},1:{title:'Receita (R$)',textStyle:{color:'#00c853'},titleTextStyle:{color:'#00c853'},gridlines:{count:0},minValue:0,format:'#,##0'}}).setOption('series',{0:{color:'#0288d1',targetAxisIndex:0,labelInLegend:'Execucoes'},1:{color:'#00e676',targetAxisIndex:1,labelInLegend:'Receita (R$)'}}).setOption('width',720).setOption('height',400).setPosition(30,1,8,5).build());
+  dash.insertChart(dash.newChart().setChartType(Charts.ChartType.COLUMN).addRange(dash.getRange(6,DC+8,SVCS.length,3)).setOption('title','Execucoes e Receita por Servico').setOption('titleTextStyle',{fontSize:13,bold:true,color:'#e0e0ff'}).setOption('backgroundColor',{fill:'#0c0c1e'}).setOption('focusTarget','category').setOption('useFirstColumnAsDomain',true).setOption('legend',{position:'bottom',textStyle:{color:'#8080b0',fontSize:10}}).setOption('hAxis',{textStyle:{color:'#5050a0',fontSize:9},gridlines:{color:'#141428'},baselineColor:'#202040',slantedText:true,slantedTextAngle:30}).setOption('vAxes',{0:{title:'Execucoes',textStyle:{color:'#00b8d4'},titleTextStyle:{color:'#00b8d4'},gridlines:{color:'#141428'},minValue:0,format:'0'},1:{title:'Receita (R$)',textStyle:{color:'#00c853'},titleTextStyle:{color:'#00c853'},gridlines:{count:0},minValue:0,format:'#,##0'}}).setOption('series',{0:{color:'#0288d1',targetAxisIndex:0,labelInLegend:'Execucoes'},1:{color:'#00e676',targetAxisIndex:1,labelInLegend:'Receita (R$)'}}).setOption('width',720).setOption('height',400).setPosition(30,1,8,5).build());
   dash.insertChart(dash.newChart().setChartType(Charts.ChartType.BAR).addRange(dash.getRange(6,DC+12,8,2)).setOption('title','Custos por Categoria').setOption('titleTextStyle',{fontSize:13,bold:true,color:'#e0e0ff'}).setOption('backgroundColor',{fill:'#0c0c1e'}).setOption('focusTarget','category').setOption('useFirstColumnAsDomain',true).setOption('legend',{position:'none'}).setOption('hAxis',{title:'Total (R$)',textStyle:{color:'#5050a0'},titleTextStyle:{color:'#ff8040'},gridlines:{color:'#141428'},baselineColor:'#202040',minValue:0,format:'#,##0'}).setOption('vAxis',{textStyle:{color:'#ccccdd',fontSize:10}}).setOption('series',{0:{color:'#ff6d00',labelInLegend:'Total (R$)'}}).setOption('width',720).setOption('height',400).setPosition(30,10,8,5).build());
   SpreadsheetApp.getUi().alert('Dashboard criado! Mude B2 (mes) e D2 (ano) para filtrar. [v'+VERSION+']');
 }
@@ -2679,7 +2697,7 @@ function diagnosticoSistema_(ss) {
     return {
       ok: falhas.length === 0,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.45.1',
+      fonte: 'diagnosticoSistema-v3.46',
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       duracaoMs: duracaoMs,
       resumo: {
@@ -2703,7 +2721,7 @@ function diagnosticoSistema_(ss) {
     return {
       ok: false,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.45.1',
+      fonte: 'diagnosticoSistema-v3.46',
       error: err.toString(),
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       checks: checks
