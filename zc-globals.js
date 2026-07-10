@@ -55,6 +55,7 @@ const PAGE_TITLES={
   admin:'📊 Painel Admin',
   aceites:'✅ Aceites',
   historico:'🗂️ Histórico',
+  'historico-custos':'💸 Hist. Custos',
   logs:'🧭 Logs',
   relacionamento:'Relacionamento',
   config:'⚙️ Config'

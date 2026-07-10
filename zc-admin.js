@@ -239,7 +239,7 @@ function atualizarTimerAdmin(){
   var m=Math.floor(adminCountdown/60);
   var s=adminCountdown%60;
   var str=m+':'+String(s).padStart(2,'0');
-  ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3','adminTimerDisplayLogs','adminTimerDisplayAceites'].forEach(function(id){
+  ['sbTimer','adminTimerDisplay','adminTimerDisplay2','adminTimerDisplay3','adminTimerDisplayLogs','adminTimerDisplayAceites','adminTimerDisplayHc'].forEach(function(id){
     var el=document.getElementById(id);
     if(el)el.textContent=str;
   });

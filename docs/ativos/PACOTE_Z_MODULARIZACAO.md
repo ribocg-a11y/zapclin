@@ -5,7 +5,7 @@
 
 ---
 
-## Panorama (v4.29.0 — Z.4 entregue)
+## Panorama (v4.31.0 — Z.8 parcial)
 
 | Artefato | Papel |
 |----------|-------|
@@ -16,9 +16,10 @@
 | `zc-sync.js` | Fila offline, `buscar*`, refresh automático |
 | `zc-whatsapp.js` | Mensagens WA, modal, OS helpers, aceite |
 | `zc-admin.js` | PIN admin, KPIs, fechamento, consistência |
-| `index.html` | HTML + CSS inline + restante do JS (~3.700 linhas) |
+| `zc-historico-custos.js` | Histórico de custos admin (filtros, KPIs, gráficos) |
+| `index.html` | HTML + CSS inline + restante do JS (~3.800 linhas) |
 
-**Progresso:** ~15% — 7 módulos extraídos; meta final shell HTML < 200 linhas JS inline.
+**Progresso:** ~18% — 8 módulos extraídos; meta final shell HTML < 200 linhas JS inline.
 
 ---
 
@@ -33,7 +34,7 @@
 | **Z.5** | `zc-nav.js` + `zc-home.js` | v4.29.1 | ⬜ |
 | **Z.6** | `zc-registrar.js` + `zc-clientes.js` | v4.30.0 | ⬜ |
 | **Z.7** | `zc-operacao.js` + `zc-crm.js` | v4.30.1 | ⬜ |
-| **Z.8** | `zc-dashboard.js` + `zc-historico.js` | v4.31.0 | ⬜ |
+| **Z.8** | `zc-historico-custos.js` + dashboard/histórico (parcial) | v4.31.0 | 🟡 histórico custos ✅ |
 | **Z.9** | `zc-app.css` — CSS extraído | v4.32.0 | ⬜ |
 | **Z.10** | `zc-boot.js` — init + SW; shell enxuto | v4.33.0 | ⬜ |
 
@@ -55,6 +56,7 @@
 <script src="zc-sync.js?v=…"></script>
 <script src="zc-whatsapp.js?v=…"></script>
 <script src="zc-admin.js?v=…"></script>
+<script src="zc-historico-custos.js?v=…"></script>
 <!-- futuros zc-*.js por domínio -->
 <script> /* restante inline até Z.10 */ </script>
 ```

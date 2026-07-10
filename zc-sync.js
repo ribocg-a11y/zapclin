@@ -64,6 +64,7 @@ function renderDadosDependentes_(opts){
   if(opts.crm!==false){try{crmClientes=consolidarClientesCRM_();renderRelacionamento();}catch(e){}}
   if(opts.operacao!==false){try{renderOperacaoPainel();}catch(e){}}
   if(opts.historico){try{renderHistorico();}catch(e){}}
+  if(opts.historicoCustos){try{renderHistoricoCustos();}catch(e){}}
 }
 
 function refreshDados(force) {
@@ -77,7 +78,7 @@ function refreshDados(force) {
     .then(function(results) {
       var algumOk = results.some(function(r){ return r; });
       if (algumOk) {
-        renderDadosDependentes_({historico:true});
+        renderDadosDependentes_({historico:true,historicoCustos:true});
         if (isAdmin) {
           var pageAdmin = document.getElementById('page-admin');
           if (pageAdmin && pageAdmin.classList.contains('active')) carregarPainelAdmin();

@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.30.0 | Data: 11/06/2026
+  Versão : 4.31.0 | Data: 11/06/2026
+  Pacote Z.8:
+    - Extrai zc-historico-custos.js — página admin de histórico de custos
+    - Filtros período/categoria, KPIs, composição, gráficos e extrato (client-side)
   Pacote Z.4:
     - Extrai zc-admin.js — PIN, KPIs, fechamento, consistência
   NOVO v4.30.0:
@@ -940,6 +943,34 @@
   .hist-item-val{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--green);flex-shrink:0}
   .hist-empty{text-align:center;padding:40px 20px;color:var(--muted)}
   .hist-empty-icon{font-size:36px;margin-bottom:10px;opacity:.4}
+  /* ═══ HISTÓRICO DE CUSTOS ═══ */
+  #page-historico-custos .hc-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:var(--font-head);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;-webkit-user-select:none;white-space:nowrap}
+  #page-historico-custos .hc-btn.ativo{background:rgba(255,145,0,.14);border-color:var(--orange);color:var(--orange)}
+  .hc-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .hc-cat-select{min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:9px 12px;outline:none}
+  .hc-cat-select:focus{border-color:var(--orange)}
+  .hc-delta{display:block;font-size:10px;margin-top:4px;color:var(--muted)}
+  .hc-delta-up{color:var(--red)}.hc-delta-down{color:var(--green)}.hc-delta-flat{color:var(--muted)}
+  .hc-cat-bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--surface);margin-bottom:10px}
+  .hc-cat-seg{min-width:2px;transition:width .5s ease}
+  .hc-cat-leg-item{display:grid;grid-template-columns:10px 1fr auto auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px}
+  .hc-cat-leg-dot{width:9px;height:9px;border-radius:50%}
+  .hc-cat-leg-name{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hc-cat-leg-val{color:var(--orange);font-weight:700}
+  .hc-cat-leg-pct{color:var(--muted);font-size:10px}
+  .hc-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .hc-chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .hc-chart-title{font-family:var(--font-head);font-size:12px;font-weight:800;color:var(--text);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .hc-chart-note{font-size:10px;color:var(--muted);font-weight:500}
+  .hc-dia-row{display:grid;grid-template-columns:52px 1fr 72px;gap:8px;align-items:center;margin-bottom:7px}
+  .hc-dia-lbl{font-size:10px;color:var(--muted);font-weight:600}
+  .hc-dia-track{background:var(--surface);border-radius:4px;height:8px;overflow:hidden}
+  .hc-dia-fill{height:100%;background:linear-gradient(90deg,var(--orange),#ff6d00);border-radius:4px}
+  .hc-dia-val{font-size:10px;font-weight:700;color:var(--orange);text-align:right}
+  .hc-donut-wrap{display:flex;align-items:center;gap:14px}
+  .hc-donut-canvas{width:128px;height:128px;flex-shrink:0}
+  .hc-rank-bar{background:linear-gradient(90deg,var(--orange),#ff6d00)!important}
+  @media(max-width:720px){.hc-charts-grid{grid-template-columns:1fr}.hc-donut-wrap{flex-direction:column;align-items:flex-start}}
   /* [v4.9.0 NOVO] Painel Admin de LOGS */
   .logs-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .logs-search{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 12px;outline:none}
@@ -1252,6 +1283,9 @@
       </button>
       <button class="sb-btn" data-page="historico" onclick="goTo('historico',this)">
         <span class="sb-icon">🗂️</span> Histórico
+      </button>
+      <button class="sb-btn" data-page="historico-custos" onclick="goTo('historico-custos',this)">
+        <span class="sb-icon">💸</span> Hist. Custos
       </button>
       <button class="sb-btn" data-page="aceites" onclick="goTo('aceites',this)">
         <span class="sb-icon">✅</span> Aceites
@@ -1873,7 +1907,12 @@
     </div>
     <div class="atalho-card" onclick="goTo('historico',null)">
       <span class="atalho-icon">🗂️</span>
-      <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Buscar por período</div></div>
+      <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Atendimentos por período</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('historico-custos',null)">
+      <span class="atalho-icon">💸</span>
+      <div class="atalho-info"><div class="atalho-title">Histórico de Custos</div><div class="atalho-sub">KPIs, categorias e extrato</div></div>
       <span class="atalho-arr">›</span>
     </div>
     <div class="atalho-card" onclick="goTo('aceites',null)">
@@ -1966,6 +2005,80 @@
   <div id="histLista"></div>
 </div>
 
+<!-- ═══════════════════════════════ PAGE: HISTORICO CUSTOS ═══════════════════════════════ -->
+<div class="page" id="page-historico-custos">
+  <div class="admin-badge">
+    <div>
+      <div class="admin-badge-left">💸 Histórico de Custos</div>
+      <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayHc">1:00</span></div>
+    </div>
+    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+  </div>
+
+  <div class="hist-filtros">
+    <button class="hc-btn" data-hc-periodo="hoje" onclick="setHcPeriodo('hoje',this)">Hoje</button>
+    <button class="hc-btn" data-hc-periodo="ontem" onclick="setHcPeriodo('ontem',this)">Ontem</button>
+    <button class="hc-btn" data-hc-periodo="7d" onclick="setHcPeriodo('7d',this)">7 dias</button>
+    <button class="hc-btn ativo" data-hc-periodo="mes" onclick="setHcPeriodo('mes',this)">Mês atual</button>
+    <button class="hc-btn" data-hc-periodo="mesant" onclick="setHcPeriodo('mesant',this)">Mês anterior</button>
+    <button class="hc-btn" data-hc-periodo="custom" onclick="setHcPeriodo('custom',this)">📅 Personalizado</button>
+  </div>
+  <div class="hist-custom" id="hcCustom">
+    <input type="date" class="hist-date-input" id="hcDataDe">
+    <span style="color:var(--muted);font-size:13px">até</span>
+    <input type="date" class="hist-date-input" id="hcDataAte">
+    <button class="hist-apply" onclick="aplicarHcCustom()">Ver</button>
+  </div>
+
+  <div class="hc-toolbar">
+    <select class="hc-cat-select" id="hcCatFilter" onchange="filtrarHcCategoria()">
+      <option value="">Todas as categorias</option>
+    </select>
+    <button class="logs-refresh" onclick="carregarHistoricoCustos()">Atualizar</button>
+  </div>
+
+  <div class="hist-periodo-lbl">
+    Exibindo: <span class="hist-periodo-badge" id="hcPeriodoBadge" style="border-color:rgba(255,145,0,.3);background:rgba(255,145,0,.1);color:var(--orange)">Este mês</span>
+  </div>
+
+  <div class="hist-kpi-grid">
+    <div class="hist-kpi hk-orange"><div class="hist-kpi-lbl">Total de Custos</div><div class="hist-kpi-val orange" id="hcTotal">—</div><div class="hist-kpi-sub" id="hcTotalSub">no período</div><div id="hcTotalDelta"></div></div>
+    <div class="hist-kpi hk-cyan"><div class="hist-kpi-lbl">Lançamentos</div><div class="hist-kpi-val cyan" id="hcLanc">—</div><div class="hist-kpi-sub" id="hcLancSub">registros</div></div>
+    <div class="hist-kpi hk-blue"><div class="hist-kpi-lbl">Média Diária</div><div class="hist-kpi-val blue" id="hcMedia">—</div><div class="hist-kpi-sub" id="hcMediaSub">dias com custo</div></div>
+    <div class="hist-kpi hk-green"><div class="hist-kpi-lbl">Top Categoria</div><div class="hist-kpi-val green" id="hcTopCat" style="font-size:13px">—</div><div class="hist-kpi-sub" id="hcTopCatSub"></div></div>
+  </div>
+
+  <div class="section-title">📊 Composição por Categoria</div>
+  <div class="hc-chart-card" style="margin-bottom:16px">
+    <div class="hc-chart-title">Distribuição do período <span class="hc-chart-note" id="hcCatBarTotal">—</span></div>
+    <div class="hc-cat-bar" id="hcCatBar"></div>
+    <div id="hcCatLegend"></div>
+  </div>
+
+  <div class="hc-charts-grid">
+    <div class="hc-chart-card">
+      <div class="hc-chart-title">Custos por dia <span class="hc-chart-note" id="hcDiaNote">—</span></div>
+      <div id="hcDiaChart"><div class="skeleton-list"><div class="skeleton-card sm"></div><div class="skeleton-card sm"></div></div></div>
+    </div>
+    <div class="hc-chart-card">
+      <div class="hc-chart-title">Participação por categoria</div>
+      <div class="hc-donut-wrap">
+        <canvas class="hc-donut-canvas" id="hcDonutCanvas"></canvas>
+        <div id="hcDonutLegend" style="flex:1;min-width:0"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🏆 Ranking de Categorias</div>
+  <div id="hcRanking"></div>
+
+  <div class="section-title">💡 Leitura do período</div>
+  <div class="dash-insights" id="hcInsights"></div>
+
+  <div class="section-title">📋 Extrato de Lançamentos</div>
+  <div id="hcLista"></div>
+</div>
+
 <!-- ═══════════════════════════════ PAGE: LOGS ═══════════════════════════════ -->
 <div class="page" id="page-logs">
   <div class="admin-badge">
@@ -2023,13 +2136,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.30.0"></script>
-<script src="zc-globals.js?v=v4.30.0"></script>
-<script src="zc-api.js?v=v4.30.0"></script>
-<script src="zc-core.js?v=v4.30.0"></script>
-<script src="zc-sync.js?v=v4.30.0"></script>
-<script src="zc-whatsapp.js?v=v4.30.0"></script>
-<script src="zc-admin.js?v=v4.30.0"></script>
+<script src="zc-version.js?v=v4.31.0"></script>
+<script src="zc-globals.js?v=v4.31.0"></script>
+<script src="zc-api.js?v=v4.31.0"></script>
+<script src="zc-core.js?v=v4.31.0"></script>
+<script src="zc-sync.js?v=v4.31.0"></script>
+<script src="zc-whatsapp.js?v=v4.31.0"></script>
+<script src="zc-admin.js?v=v4.31.0"></script>
+<script src="zc-historico-custos.js?v=v4.31.0"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -3708,7 +3822,7 @@ function goTo(page, btn){
   // Valida rota, fecha menu mobile sempre, atualiza título e sobe a tela para evitar estado visual quebrado no celular.
   var target=document.getElementById('page-'+page);
   if(!target){page='home';target=document.getElementById('page-home');}
-  var paginasAdmin=['admin','dashboard','historico','lancamentos','relatorio','logs','aceites'];
+  var paginasAdmin=['admin','dashboard','historico','historico-custos','lancamentos','relatorio','logs','aceites'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     fecharSidebar();
     abrirAdmin();
@@ -3733,6 +3847,7 @@ function goTo(page, btn){
   if(page==='relatorio')carregarRelatorio();
   if(page==='admin')carregarPainelAdmin();
   if(page==='historico')carregarHistorico();
+  if(page==='historico-custos')carregarHistoricoCustos();
   if(page==='logs')carregarLogsAdmin(false);
   if(page==='aceites')carregarAceitesPainel_(false);
   if(page==='home'){atualizarStatsHome();animarCardsHome();}
@@ -3749,7 +3864,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.29.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.31.0',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 

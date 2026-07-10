@@ -8,9 +8,9 @@
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.30.0';
-const STATIC_CACHE = 'zapclin-static-v4.30.0';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.30.0';
+const ZAPCLIN_SW_VERSION = 'v4.31.0';
+const STATIC_CACHE = 'zapclin-static-v4.31.0';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.31.0';
 
 // [v4.26.0 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
@@ -31,7 +31,8 @@ const APP_SHELL = [
   './zc-core.js',
   './zc-sync.js',
   './zc-whatsapp.js',
-  './zc-admin.js'
+  './zc-admin.js',
+  './zc-historico-custos.js'
 ];
 
 self.addEventListener('install', event => {
