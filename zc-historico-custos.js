@@ -185,7 +185,73 @@ function _hcDeltaHtml_(atual, anterior) {
   return '<span class="hc-delta hc-delta-flat">sem base comparável</span>';
 }
 
-function _hcInsights_(stats, prevTotal, receitaPeriodo) {
+var HC_MES_SHORT_ = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+var HC_MES_LONG_ = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+function _hcMesKeyFromData_(dataStr) {
+  var s = fmtData(dataStr);
+  if (!s || s === '—') return null;
+  var p = s.split('/');
+  if (p.length < 3) return null;
+  var dia = parseInt(p[0], 10), mes = parseInt(p[1], 10), ano = parseInt(p[2], 10);
+  if (!mes || !ano) return null;
+  return {
+    key: String(ano) + '-' + String(mes).padStart(2, '0'),
+    label: HC_MES_SHORT_[mes - 1] + '/' + String(ano).slice(-2),
+    labelLong: HC_MES_LONG_[mes - 1] + ' ' + ano,
+    sort: ano * 100 + mes
+  };
+}
+
+function _hcAggPorMes_(lista) {
+  var map = {};
+  lista.forEach(function (c) {
+    if (!hcValidCusto_(c)) return;
+    var mk = _hcMesKeyFromData_(c.data);
+    if (!mk) return;
+    if (!map[mk.key]) map[mk.key] = { key: mk.key, label: mk.label, labelLong: mk.labelLong, sort: mk.sort, valor: 0, qtd: 0 };
+    map[mk.key].valor += parseFloat(c.val || 0);
+    map[mk.key].qtd++;
+  });
+  return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return a.sort - b.sort; });
+}
+
+function _renderHcMesChart(lista) {
+  var wrap = document.getElementById('hcMesChart');
+  var note = document.getElementById('hcMesNote');
+  var pico = document.getElementById('hcMesPico');
+  if (!wrap) return;
+  var arr = _hcAggPorMes_(lista);
+  if (note) note.textContent = arr.length ? arr.length + ' mês(es) com lançamento' : 'sem histórico';
+  if (!arr.length) {
+    wrap.innerHTML = '<div class="hist-empty" style="width:100%;padding:24px 0"><div class="hist-empty-icon">📅</div><div>Sem custos registrados ainda</div></div>';
+    if (pico) pico.textContent = '';
+    return;
+  }
+  var maxVal = Math.max.apply(null, arr.map(function (x) { return x.valor; }).concat([1]));
+  var top = arr.slice().sort(function (a, b) { return b.valor - a.valor; })[0];
+  if (pico && top) {
+    pico.innerHTML = '🏆 Maior gasto: <strong>' + escapeHtml_(top.labelLong) + '</strong> — ' + fmtBRL(top.valor) +
+      (top.qtd ? ' · ' + top.qtd + ' lançamento' + (top.qtd === 1 ? '' : 's') : '');
+  }
+  wrap.innerHTML = arr.map(function (m) {
+    var pct = Math.max(m.valor > 0 ? 6 : 0, Math.round(m.valor / maxVal * 100));
+    var isPico = top && m.key === top.key;
+    var valShort = m.valor >= 1000 ? 'R$' + Math.round(m.valor) : fmtBRL(m.valor).replace(/\u00a0/g, ' ');
+    return '<div class="hc-mes-col' + (isPico ? ' pico' : '') + '" title="' + escapeHtml_(m.labelLong) + ': ' + fmtBRL(m.valor) + ' (' + m.qtd + ' lanç.)">' +
+      '<div class="hc-mes-val">' + escapeHtml_(valShort) + '</div>' +
+      '<div class="hc-mes-bar-wrap"><div class="hc-mes-bar" style="height:0" data-h="' + pct + '%"></div></div>' +
+      '<div class="hc-mes-lbl">' + escapeHtml_(m.label) + '</div>' +
+      '</div>';
+  }).join('');
+  setTimeout(function () {
+    wrap.querySelectorAll('.hc-mes-bar').forEach(function (b) {
+      b.style.height = b.getAttribute('data-h');
+    });
+  }, 50);
+}
+
+function _hcInsights_(stats, prevTotal, receitaPeriodo, topMes) {
   var linhas = [];
   if (!stats.n) {
     linhas.push({ cls: 'info', txt: 'Nenhum custo válido no período. Registre despesas em Custos ou amplie o filtro.' });
@@ -212,6 +278,9 @@ function _hcInsights_(stats, prevTotal, receitaPeriodo) {
   }
   if (stats.topLanc && stats.topLanc.val >= stats.total * 0.35 && stats.n > 1) {
     linhas.push({ cls: 'warn', txt: 'Lançamento isolado alto: <strong>' + escapeHtml_(stats.topLanc.desc || '—') + '</strong> (' + fmtBRL(stats.topLanc.val) + ').' });
+  }
+  if (topMes && topMes.valor > 0) {
+    linhas.push({ cls: 'warn', txt: 'No histórico completo, o mês mais caro foi <strong>' + escapeHtml_(topMes.labelLong) + '</strong> com <strong>' + fmtBRL(topMes.valor) + '</strong>.' });
   }
   return linhas;
 }
@@ -480,6 +549,9 @@ function renderHistoricoCustos() {
 
   var noRange = _hcFiltrarPorRange(base, range.de, range.ate);
   var filtrados = _hcFiltrarCat(noRange);
+  var filtradosMes = _hcFiltrarCat(base.filter(hcValidCusto_));
+  var mesAgg = _hcAggPorMes_(filtradosMes);
+  var topMes = mesAgg.length ? mesAgg.slice().sort(function (a, b) { return b.valor - a.valor; })[0] : null;
 
   var prevRange = _getHcPrevRange(range);
   var prevFiltrados = _hcFiltrarCat(_hcFiltrarPorRange(base, prevRange.de, prevRange.ate));
@@ -494,10 +566,11 @@ function renderHistoricoCustos() {
   }).reduce(function (s, l) { return s + parseFloat(l.val || 0); }, 0);
 
   _renderHcKpis(stats, prevTotal);
+  _renderHcMesChart(filtradosMes);
   _renderHcCatBar(stats);
   _renderHcDiaChart(stats);
   _renderHcDonut(stats);
   _renderHcRanking(stats);
-  _renderHcInsights(_hcInsights_(stats, prevTotal, receitaPeriodo));
+  _renderHcInsights(_hcInsights_(stats, prevTotal, receitaPeriodo, topMes));
   _renderHcLista(filtrados);
 }

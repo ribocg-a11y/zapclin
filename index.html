@@ -970,7 +970,18 @@
   .hc-donut-wrap{display:flex;align-items:center;gap:14px}
   .hc-donut-canvas{width:128px;height:128px;flex-shrink:0}
   .hc-rank-bar{background:linear-gradient(90deg,var(--orange),#ff6d00)!important}
-  @media(max-width:720px){.hc-charts-grid{grid-template-columns:1fr}.hc-donut-wrap{flex-direction:column;align-items:flex-start}}
+  .hc-mes-card{margin-bottom:16px}
+  .hc-mes-pico{font-size:11px;color:var(--orange);font-weight:700;margin-bottom:10px;min-height:16px}
+  .hc-mes-scroll{overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .hc-mes-chart{display:flex;align-items:flex-end;gap:8px;min-height:168px;padding:8px 4px 0}
+  .hc-mes-col{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:46px;flex:1}
+  .hc-mes-col.pico .hc-mes-bar{background:linear-gradient(180deg,#ffea00,#ff6d00);box-shadow:0 0 14px rgba(255,145,0,.5)}
+  .hc-mes-col.pico .hc-mes-val{color:#ffea00}
+  .hc-mes-bar-wrap{width:100%;max-width:38px;height:124px;display:flex;align-items:flex-end;justify-content:center;background:var(--surface);border-radius:8px 8px 4px 4px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+  .hc-mes-bar{width:100%;min-height:2px;background:linear-gradient(180deg,#ffab40,var(--orange));border-radius:6px 6px 2px 2px;transition:height .6s ease}
+  .hc-mes-val{font-size:9px;font-weight:700;color:var(--orange);white-space:nowrap}
+  .hc-mes-lbl{font-size:9px;color:var(--muted);font-weight:600;text-align:center;line-height:1.2}
+  @media(max-width:720px){.hc-charts-grid{grid-template-columns:1fr}.hc-donut-wrap{flex-direction:column;align-items:flex-start}.hc-mes-col{min-width:40px}}
   /* [v4.9.0 NOVO] Painel Admin de LOGS */
   .logs-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
   .logs-search{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 12px;outline:none}
@@ -2048,6 +2059,13 @@
     <div class="hist-kpi hk-green"><div class="hist-kpi-lbl">Top Categoria</div><div class="hist-kpi-val green" id="hcTopCat" style="font-size:13px">—</div><div class="hist-kpi-sub" id="hcTopCatSub"></div></div>
   </div>
 
+  <div class="section-title">📅 Evolução Mês a Mês</div>
+  <div class="hc-chart-card hc-mes-card">
+    <div class="hc-chart-title">Comparativo histórico <span class="hc-chart-note" id="hcMesNote">todos os meses</span></div>
+    <div class="hc-mes-pico" id="hcMesPico"></div>
+    <div class="hc-mes-scroll"><div class="hc-mes-chart" id="hcMesChart"></div></div>
+  </div>
+
   <div class="section-title">📊 Composição por Categoria</div>
   <div class="hc-chart-card" style="margin-bottom:16px">
     <div class="hc-chart-title">Distribuição do período <span class="hc-chart-note" id="hcCatBarTotal">—</span></div>
@@ -2136,14 +2154,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.31.0"></script>
-<script src="zc-globals.js?v=v4.31.0"></script>
-<script src="zc-api.js?v=v4.31.0"></script>
-<script src="zc-core.js?v=v4.31.0"></script>
-<script src="zc-sync.js?v=v4.31.0"></script>
-<script src="zc-whatsapp.js?v=v4.31.0"></script>
-<script src="zc-admin.js?v=v4.31.0"></script>
-<script src="zc-historico-custos.js?v=v4.31.0"></script>
+<script src="zc-version.js?v=v4.31.1"></script>
+<script src="zc-globals.js?v=v4.31.1"></script>
+<script src="zc-api.js?v=v4.31.1"></script>
+<script src="zc-core.js?v=v4.31.1"></script>
+<script src="zc-sync.js?v=v4.31.1"></script>
+<script src="zc-whatsapp.js?v=v4.31.1"></script>
+<script src="zc-admin.js?v=v4.31.1"></script>
+<script src="zc-historico-custos.js?v=v4.31.1"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -3864,7 +3882,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.31.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.31.1',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
