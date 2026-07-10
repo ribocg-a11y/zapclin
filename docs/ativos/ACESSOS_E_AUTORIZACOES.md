@@ -63,9 +63,17 @@ Agente Movi **não** deve alterar GAS ZapClin sem coordenação; agente ZapClin 
 
 ## 5. OAuth planilha (agente)
 
-Se MCP `google-drive-sheets-auth` estiver configurado no PC do sócio, agente pode ler planilha readonly para diagnóstico.
+**Canal preferencial (v3.47+):** escrita remota via GAS Web App com PIN admin:
 
-Sem OAuth: agente usa ping GAS + exportações manuais que o usuário colar.
+```
+?action=importarJulho2026&pin=1321
+```
+
+O agente chama essa URL após o sócio redeployar o `.gs`. Não exige OAuth na planilha.
+
+**Opcional (Cursor desktop):** MCP `google-drive-sheets-auth` — leitura/escrita direta se configurado no PC do sócio.
+
+Sem OAuth nem action remota: agente usa ping GAS + exportações manuais que o usuário colar.
 
 ---
 

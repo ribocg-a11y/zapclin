@@ -1,6 +1,8 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.46 | Data: 11/06/2026
+// VersÃ£o: 3.47 | Data: 10/07/2026
+// NOVO v3.47:
+//   - Action importarJulho2026 (PIN admin) para agente importar lancamentos remotamente
 // NOVO v3.46:
 //   - CatÃ¡logo jun/2026: 6 serviÃ§os (preÃ§os, tempos e nomes do flyer ZapClin)
 //   - Limpeza + HigienizaÃ§Ã£o unificada, HigienizaÃ§Ã£o + Lavagem, RevitalizaÃ§Ã£o Premium (4h)
@@ -118,7 +120,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.46';
+var VERSION           = '3.47';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -139,7 +141,7 @@ function actionPrecisaLock_(action) {
     'editarCusto','cancelarCusto','atualizarStatus','editarCliente',
     'cancelarCliente','salvarCadastroVip','registrarEventoFrontend',
     'gerarOsPdf','enviarRelatorio','repararLancamentosClientesHoje',
-    'confirmarAceiteOs'
+    'confirmarAceiteOs','importarJulho2026'
   ].indexOf(String(action || '')) >= 0;
 }
 
@@ -1317,6 +1319,9 @@ function doGet(e) {
 
     } else if (action === 'repararLancamentosClientesHoje') {
       result = repararLancamentosClientesHoje_(ss);
+
+    } else if (action === 'importarJulho2026') {
+      result = importarJulho2026_(ss, p.pin);
 
     // â”€â”€ NOVO v3.21: Telemetria leve do frontend/PWA â”€â”€
     } else if (action === 'registrarEventoFrontend') {
