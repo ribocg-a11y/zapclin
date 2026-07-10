@@ -1,0 +1,12 @@
+01/07/2026	25 lançamentos	R$ 568	(meta R$ 568)
+02/07/2026	25 lançamentos	R$ 573	(meta R$ 573)
+03/07/2026	29 lançamentos	R$ 660	(meta R$ 660)
+04/07/2026	32 lançamentos	R$ 558	(meta R$ 558)
+05/07/2026	8 lançamentos	R$ 180	(meta R$ 180)
+06/07/2026	23 lançamentos	R$ 418	(meta R$ 418)
+07/07/2026	35 lançamentos	R$ 595	(meta R$ 595)
+08/07/2026	19 lançamentos	R$ 430	(meta R$ 430)
+09/07/2026	26 lançamentos	R$ 490	(meta R$ 490)
+10/07/2026	27 lançamentos	R$ 430	(meta R$ 430)
+
+TOTAL	249 lançamentos	R$ 4902
