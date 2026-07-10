@@ -1,6 +1,8 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.47 | Data: 10/07/2026
+// VersÃ£o: 3.47.1 | Data: 10/07/2026
+// HOTFIX v3.47.1:
+//   - Inclui funcao importarJulho2026_ + array IMPORT_JULHO_2026_ (faltava no deploy v3.47)
 // NOVO v3.47:
 //   - Action importarJulho2026 (PIN admin) para agente importar lancamentos remotamente
 // NOVO v3.46:
@@ -120,7 +122,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.47';
+var VERSION           = '3.47.1';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
