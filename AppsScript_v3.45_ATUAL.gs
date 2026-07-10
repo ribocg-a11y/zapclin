@@ -1,10 +1,9 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.47.1 | Data: 10/07/2026
+// VersÃ£o: 3.48 | Data: 10/07/2026
+// NOVO v3.48:
+//   - Remove importacao temporaria julho 2026 (IMPORT_JULHO_2026_ ja executada)
 // HOTFIX v3.47.1:
-//   - Inclui funcao importarJulho2026_ + array IMPORT_JULHO_2026_ (faltava no deploy v3.47)
-// NOVO v3.47:
-//   - Action importarJulho2026 (PIN admin) para agente importar lancamentos remotamente
 // NOVO v3.46:
 //   - CatÃ¡logo jun/2026: 6 serviÃ§os (preÃ§os, tempos e nomes do flyer ZapClin)
 //   - Limpeza + HigienizaÃ§Ã£o unificada, HigienizaÃ§Ã£o + Lavagem, RevitalizaÃ§Ã£o Premium (4h)
@@ -122,7 +121,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.47.1';
+var VERSION           = '3.48';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -143,7 +142,7 @@ function actionPrecisaLock_(action) {
     'editarCusto','cancelarCusto','atualizarStatus','editarCliente',
     'cancelarCliente','salvarCadastroVip','registrarEventoFrontend',
     'gerarOsPdf','enviarRelatorio','repararLancamentosClientesHoje',
-    'confirmarAceiteOs','importarJulho2026'
+    'confirmarAceiteOs'
   ].indexOf(String(action || '')) >= 0;
 }
 
@@ -1321,9 +1320,6 @@ function doGet(e) {
 
     } else if (action === 'repararLancamentosClientesHoje') {
       result = repararLancamentosClientesHoje_(ss);
-
-    } else if (action === 'importarJulho2026') {
-      result = importarJulho2026_(ss, p.pin);
 
     // â”€â”€ NOVO v3.21: Telemetria leve do frontend/PWA â”€â”€
     } else if (action === 'registrarEventoFrontend') {
@@ -2704,7 +2700,7 @@ function diagnosticoSistema_(ss) {
     return {
       ok: falhas.length === 0,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.46',
+      fonte: 'diagnosticoSistema-v3.48',
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       duracaoMs: duracaoMs,
       resumo: {
@@ -2728,240 +2724,10 @@ function diagnosticoSistema_(ss) {
     return {
       ok: false,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.46',
+      fonte: 'diagnosticoSistema-v3.48',
       error: err.toString(),
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       checks: checks
     };
   }
 }
-
-
-
-
-// NOVO v3.47: importacao remota agente (PIN admin) — julho 2026
-var IMPORT_AGENT_PIN_ = '1321';
-
-function importarJulho2026_(ss, pin) {
-  if (String(pin || '') !== IMPORT_AGENT_PIN_) throw new Error('PIN invalido');
-  var lanc = getLancamentosSheet_(ss);
-  if (!lanc) throw new Error('Aba LANCAMENTOS nao encontrada');
-  var props = PropertiesService.getScriptProperties();
-  if (props.getProperty('IMPORT_JULHO_2026_DONE') === '1') {
-    return { ok: true, version: VERSION, skipped: true, motivo: 'Importacao julho 2026 ja executada' };
-  }
-  var criados = 0, total = 0;
-  for (var i = 0; i < IMPORT_JULHO_2026_.length; i++) {
-    var row = IMPORT_JULHO_2026_[i];
-    criarLancamentoServico_(lanc, row[2], row[0], row[1], row[3], '');
-    criados++;
-    total += row[3];
-  }
-  props.setProperty('IMPORT_JULHO_2026_DONE', '1');
-  registrarLogSistema_('MANUTENCAO', 'importarJulho2026', 'OK', 'Lancamentos julho 2026 importados pelo agente', { criados: criados, total: total });
-  return { ok: true, version: VERSION, criados: criados, total: total };
-}
-
-var IMPORT_JULHO_2026_ = [
-  ['01/07/2026','09:31','Higienização Rápida',15],
-  ['01/07/2026','09:33','Higienização Rápida',15],
-  ['01/07/2026','11:25','Higienização Rápida',15],
-  ['01/07/2026','12:21','Higienização Essencial',18],
-  ['01/07/2026','12:25','Higienização Profunda',23],
-  ['01/07/2026','12:47','Higienização Rápida',15],
-  ['01/07/2026','12:57','Higienização Rápida',15],
-  ['01/07/2026','13:00','Higienização Rápida',15],
-  ['01/07/2026','13:26','Higienização Essencial',18],
-  ['01/07/2026','13:57','Limpeza + Higienização',30],
-  ['01/07/2026','14:00','Higienização Rápida',15],
-  ['01/07/2026','14:32','Higienização Rápida',15],
-  ['01/07/2026','14:47','Higienização Rápida',15],
-  ['01/07/2026','15:23','Higienização Essencial',18],
-  ['01/07/2026','16:19','Higienização Rápida',15],
-  ['01/07/2026','16:28','Higienização Rápida',15],
-  ['01/07/2026','16:36','Higienização Rápida',15],
-  ['01/07/2026','16:36','Limpeza + Higienização',30],
-  ['01/07/2026','17:04','Higienização Rápida',15],
-  ['01/07/2026','17:29','Higienização Profunda',23],
-  ['01/07/2026','18:03','Higienização Profunda',23],
-  ['01/07/2026','18:13','Higienização Rápida',15],
-  ['01/07/2026','18:24','Limpeza + Higienização',30],
-  ['01/07/2026','18:33','Higienização Rápida',15],
-  ['01/07/2026','18:34','Higienização Rápida',15],
-  ['01/07/2026','19:03','Higienização Rápida',15],
-  ['02/07/2026','10:42','Higienização Rápida',15],
-  ['02/07/2026','11:41','Higienização Rápida',15],
-  ['02/07/2026','11:41','Higienização Rápida',15],
-  ['02/07/2026','12:02','Higienização Rápida',15],
-  ['02/07/2026','12:38','Higienização Essencial',18],
-  ['02/07/2026','12:44','Higienização Rápida',15],
-  ['02/07/2026','13:12','Higienização Essencial',18],
-  ['02/07/2026','13:22','Higienização Essencial',18],
-  ['02/07/2026','13:25','Higienização Rápida',15],
-  ['02/07/2026','13:46','Higienização Rápida',15],
-  ['02/07/2026','13:48','Higienização Rápida',15],
-  ['02/07/2026','13:49','Higienização Rápida',15],
-  ['02/07/2026','14:20','Higienização Rápida',15],
-  ['02/07/2026','14:27','Higienização + Lavagem',45],
-  ['02/07/2026','14:43','Higienização Rápida',15],
-  ['02/07/2026','15:07','Higienização Rápida',15],
-  ['02/07/2026','15:33','Higienização Rápida',15],
-  ['02/07/2026','16:10','Higienização Rápida',15],
-  ['02/07/2026','17:08','Higienização Rápida',15],
-  ['02/07/2026','17:20','Limpeza + Higienização',30],
-  ['02/07/2026','17:34','Higienização Rápida',15],
-  ['02/07/2026','17:45','Higienização Rápida',15],
-  ['02/07/2026','18:02','Higienização Rápida',15],
-  ['02/07/2026','18:03','Higienização Rápida',15],
-  ['02/07/2026','18:04','Higienização Rápida',15],
-  ['02/07/2026','18:12','Higienização Essencial',18],
-  ['02/07/2026','18:18','Higienização Essencial',18],
-  ['02/07/2026','18:59','Higienização Essencial',18],
-  ['02/07/2026','19:42','Higienização Rápida',15],
-  ['02/07/2026','19:46','Higienização Rápida',15],
-  ['02/07/2026','19:58','Higienização Rápida',15],
-  ['03/07/2026','09:34','Higienização Rápida',15],
-  ['03/07/2026','10:34','Higienização Rápida',15],
-  ['03/07/2026','11:10','Higienização Rápida',15],
-  ['03/07/2026','11:17','Higienização Rápida',15],
-  ['03/07/2026','11:37','Higienização Rápida',15],
-  ['03/07/2026','11:42','Higienização Rápida',15],
-  ['03/07/2026','11:47','Higienização Rápida',15],
-  ['03/07/2026','11:48','Higienização Rápida',15],
-  ['03/07/2026','12:58','Higienização Rápida',15],
-  ['03/07/2026','13:32','Higienização Rápida',15],
-  ['03/07/2026','13:55','Higienização Rápida',15],
-  ['03/07/2026','13:58','Higienização Rápida',15],
-  ['03/07/2026','14:12','Higienização Rápida',15],
-  ['03/07/2026','14:26','Higienização Rápida',15],
-  ['03/07/2026','14:50','Higienização Rápida',15],
-  ['03/07/2026','15:30','Higienização Rápida',15],
-  ['03/07/2026','15:46','Higienização Rápida',15],
-  ['03/07/2026','15:51','Higienização Rápida',15],
-  ['03/07/2026','15:56','Higienização Rápida',15],
-  ['03/07/2026','16:09','Higienização Rápida',15],
-  ['03/07/2026','16:27','Higienização Rápida',15],
-  ['03/07/2026','19:36','Higienização Rápida',15],
-  ['03/07/2026','19:37','Higienização Rápida',15],
-  ['03/07/2026','19:37','Higienização Rápida',15],
-  ['03/07/2026','19:48','Higienização Rápida',15],
-  ['04/07/2026','09:41','Higienização Essencial',18],
-  ['04/07/2026','10:04','Revitalização Premium',70],
-  ['04/07/2026','10:31','Higienização Essencial',18],
-  ['04/07/2026','11:10','Higienização Rápida',15],
-  ['04/07/2026','11:34','Higienização Essencial',18],
-  ['04/07/2026','11:34','Higienização Rápida',15],
-  ['04/07/2026','11:39','Higienização Rápida',15],
-  ['04/07/2026','12:47','Revitalização Premium',70],
-  ['04/07/2026','12:50','Higienização Rápida',15],
-  ['04/07/2026','14:51','Higienização Rápida',15],
-  ['04/07/2026','15:23','Higienização Rápida',15],
-  ['04/07/2026','16:00','Higienização Essencial',18],
-  ['04/07/2026','16:49','Higienização Rápida',15],
-  ['04/07/2026','16:56','Higienização Essencial',18],
-  ['04/07/2026','17:07','Higienização Rápida',15],
-  ['04/07/2026','17:15','Higienização Profunda',23],
-  ['04/07/2026','17:25','Higienização Essencial',18],
-  ['04/07/2026','17:45','Higienização Essencial',18],
-  ['04/07/2026','17:51','Higienização + Lavagem',45],
-  ['04/07/2026','18:38','Higienização Essencial',18],
-  ['04/07/2026','18:43','Higienização Essencial',18],
-  ['04/07/2026','18:50','Higienização Profunda',23],
-  ['04/07/2026','19:59','Higienização + Lavagem',45],
-  ['05/07/2026','09:58','Higienização Essencial',18],
-  ['05/07/2026','10:24','Higienização Rápida',15],
-  ['05/07/2026','13:27','Higienização Essencial',18],
-  ['05/07/2026','17:21','Higienização Essencial',18],
-  ['05/07/2026','17:22','Higienização Profunda',23],
-  ['05/07/2026','19:38','Higienização Essencial',18],
-  ['06/07/2026','09:47','Higienização Essencial',18],
-  ['06/07/2026','10:02','Higienização Rápida',15],
-  ['06/07/2026','10:32','Higienização Profunda',23],
-  ['06/07/2026','10:37','Higienização Rápida',15],
-  ['06/07/2026','11:33','Higienização Rápida',15],
-  ['06/07/2026','11:51','Higienização Rápida',15],
-  ['06/07/2026','12:29','Higienização Essencial',18],
-  ['06/07/2026','13:13','Higienização Rápida',15],
-  ['06/07/2026','13:21','Higienização Rápida',15],
-  ['06/07/2026','13:51','Higienização Profunda',23],
-  ['06/07/2026','14:14','Higienização Rápida',15],
-  ['06/07/2026','15:00','Higienização Essencial',18],
-  ['06/07/2026','15:13','Limpeza + Higienização',30],
-  ['06/07/2026','15:34','Higienização Rápida',15],
-  ['06/07/2026','16:18','Higienização Rápida',15],
-  ['06/07/2026','18:13','Higienização Rápida',15],
-  ['06/07/2026','18:18','Limpeza + Higienização',30],
-  ['06/07/2026','19:17','Higienização Rápida',15],
-  ['06/07/2026','19:31','Higienização Essencial',18],
-  ['07/07/2026','09:44','Higienização Essencial',18],
-  ['07/07/2026','09:57','Limpeza + Higienização',30],
-  ['07/07/2026','11:27','Higienização Rápida',15],
-  ['07/07/2026','11:41','Higienização Rápida',15],
-  ['07/07/2026','11:46','Higienização Rápida',15],
-  ['07/07/2026','12:08','Higienização Rápida',15],
-  ['07/07/2026','12:26','Higienização Essencial',18],
-  ['07/07/2026','12:43','Limpeza + Higienização',30],
-  ['07/07/2026','14:16','Higienização Rápida',15],
-  ['07/07/2026','14:30','Higienização Rápida',15],
-  ['07/07/2026','14:40','Higienização Rápida',15],
-  ['07/07/2026','15:02','Higienização Rápida',15],
-  ['07/07/2026','15:55','Higienização Essencial',18],
-  ['07/07/2026','16:08','Higienização Profunda',23],
-  ['07/07/2026','16:13','Higienização Rápida',15],
-  ['07/07/2026','16:14','Higienização Profunda',23],
-  ['07/07/2026','16:32','Higienização Profunda',23],
-  ['07/07/2026','16:34','Higienização Profunda',23],
-  ['07/07/2026','16:54','Higienização Rápida',15],
-  ['07/07/2026','17:46','Higienização Rápida',15],
-  ['07/07/2026','18:07','Higienização Essencial',18],
-  ['07/07/2026','18:30','Limpeza + Higienização',30],
-  ['07/07/2026','18:38','Higienização Essencial',18],
-  ['07/07/2026','19:01','Higienização Profunda',23],
-  ['07/07/2026','19:02','Higienização Rápida',15],
-  ['08/07/2026','09:42','Higienização Rápida',15],
-  ['08/07/2026','10:12','Higienização Rápida',15],
-  ['08/07/2026','10:32','Higienização Rápida',15],
-  ['08/07/2026','10:37','Higienização Rápida',15],
-  ['08/07/2026','10:48','Higienização Rápida',15],
-  ['08/07/2026','11:54','Limpeza + Higienização',30],
-  ['08/07/2026','12:07','Limpeza + Higienização',30],
-  ['08/07/2026','13:35','Higienização Profunda',23],
-  ['08/07/2026','13:38','Higienização Rápida',15],
-  ['08/07/2026','14:04','Higienização Profunda',23],
-  ['08/07/2026','14:56','Higienização Rápida',15],
-  ['08/07/2026','15:01','Higienização Profunda',23],
-  ['08/07/2026','15:21','Higienização Rápida',15],
-  ['08/07/2026','15:22','Higienização Essencial',18],
-  ['08/07/2026','17:41','Higienização Essencial',18],
-  ['08/07/2026','18:19','Higienização Rápida',15],
-  ['08/07/2026','19:43','Higienização Rápida',15],
-  ['08/07/2026','19:56','Higienização Rápida',15],
-  ['09/07/2026','10:09','Higienização Essencial',18],
-  ['09/07/2026','10:38','Higienização + Lavagem',45],
-  ['09/07/2026','10:44','Higienização Essencial',18],
-  ['09/07/2026','11:23','Higienização Essencial',18],
-  ['09/07/2026','11:30','Higienização Rápida',15],
-  ['09/07/2026','11:58','Higienização Profunda',23],
-  ['09/07/2026','13:56','Higienização Rápida',15],
-  ['09/07/2026','13:58','Limpeza + Higienização',30],
-  ['09/07/2026','14:00','Limpeza + Higienização',30],
-  ['09/07/2026','14:04','Limpeza + Higienização',30],
-  ['09/07/2026','14:49','Higienização Profunda',23],
-  ['09/07/2026','15:30','Higienização Rápida',15],
-  ['09/07/2026','17:08','Higienização Rápida',15],
-  ['09/07/2026','17:15','Higienização Rápida',15],
-  ['10/07/2026','09:55','Higienização Rápida',15],
-  ['10/07/2026','09:59','Higienização Rápida',15],
-  ['10/07/2026','10:15','Higienização Rápida',15],
-  ['10/07/2026','10:55','Higienização Rápida',15],
-  ['10/07/2026','11:05','Higienização Rápida',15],
-  ['10/07/2026','11:07','Higienização Rápida',15],
-  ['10/07/2026','11:28','Higienização Rápida',15],
-  ['10/07/2026','13:40','Higienização Rápida',15],
-  ['10/07/2026','14:36','Higienização Rápida',15],
-  ['10/07/2026','15:20','Higienização Rápida',15],
-  ['10/07/2026','16:06','Higienização Rápida',15],
-  ['10/07/2026','16:40','Higienização Rápida',15],
-  ['10/07/2026','17:41','Higienização Rápida',15],
-  ['10/07/2026','18:38','Higienização Rápida',15],
-];
