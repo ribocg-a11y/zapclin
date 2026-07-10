@@ -37,7 +37,7 @@ Quem pode fazer o quê — app, infraestrutura, agente vs humano.
 |------------------------|----------------------|-----------|
 | Ler/editar código repo | `git commit` / `git push` | Nova versão Web no editor GAS |
 | Ping GAS readonly | Merge PR | Script Properties / triggers |
-| Rodar testes `.ps1` | Escrita destrutiva planilha | Login Google planilha (se OAuth não configurado) |
+| Rodar testes `.ps1` | Escrita na planilha via GAS action + PIN (v3.47+) | Login Google planilha (OAuth MCP) |
 | Preparar `.gs` para colar | Alterar PIN admin | Homologação física na loja |
 | Criar/atualizar docs | Deploy GitHub Pages (via merge) | Compartilhar planilha com terceiros |
 

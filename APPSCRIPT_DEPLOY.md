@@ -1,34 +1,44 @@
-# Deploy do Apps Script v3.45.1
+# Deploy do Apps Script v3.47.1
+
+## Regra de ouro
+
+**Sempre colar o arquivo canônico COMPLETO.** Nunca patch, trecho, nem arquivo separado.
+
+1. Abrir `AppsScript_v3.45_ATUAL.gs` (link abaixo ou do repo)
+2. **Ctrl+A** → **Ctrl+C** (arquivo inteiro, ~2967 linhas)
+3. Apps Script → `Código.gs` → **Ctrl+A** → apagar → **Ctrl+V**
+4. Salvar → Implantar → Nova versão (mesmo Deploy ID)
 
 ## Arquivo canônico
 
 | Item | Caminho |
 |------|---------|
 | Arquivo local (repo) | `AppsScript_v3.45_ATUAL.gs` |
-| Versão | **3.45.1** (11/06/2026) |
+| Versão | **3.47.1** (10/07/2026) |
 | PC (clone atual) | `C:\Users\riboc\Documents\Codex\zapclin-repo\AppsScript_v3.45_ATUAL.gs` |
 
-## Download direto (branch equiparação)
+## Download direto (main)
 
-https://raw.githubusercontent.com/ribocg-a11y/zapclin/cursor/plano-equiparacao-movi-zapclin-f0f3/AppsScript_v3.45_ATUAL.gs
+https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs
 
-## v3.45.1 — o que mudou
+**Conferir após abrir:** linha 3 = `Versão: 3.47.1` · **Ctrl+F** `importarJulho2026_` = 1 ocorrência (função no final do arquivo).
 
-1. **Diagnóstico** — check `Risco truncamento legado (600)` passa quando `DATA_ROW_MAX >= 2000` (ranges dinâmicos ativos).
-2. Ping passa a retornar `"version":"3.45.1"`.
+## v3.47.1 — o que mudou
 
-## v3.45 — base
+1. **importarJulho2026_** + array `IMPORT_JULHO_2026_` integrados no `.gs` canônico (não usar arquivos separados).
+2. Action remota `?action=importarJulho2026&pin=1321` para agente importar lançamentos.
 
-1. **`listar`** deixou de truncar na linha 600 — lê até `getLastRow()` (máx. 2000).
-2. **`buscarKpisAdmin`** — fuso `America/Sao_Paulo` e soma **QTD** (igual ao frontend).
+## v3.47 / v3.46 — base
+
+- v3.47: action `importarJulho2026` no doGet
+- v3.46: catálogo jun/2026 (6 serviços)
 
 ## Redeploy (5 minutos)
 
 1. Planilha ZapClin → **Extensões** → **Apps Script**
-2. Abra `AppsScript_v3.45_ATUAL.gs` do repo (pull antes: `git pull origin cursor/plano-equiparacao-movi-zapclin-f0f3`)
-3. **Ctrl+A** no editor GAS → apagar → **Ctrl+V** com o `.gs` completo
-4. **Salvar** (Ctrl+S)
-5. **Implantar** → **Gerenciar implantações** → editar Web App → **Nova versão** → Implantar  
+2. `git pull origin main` no PC (opcional)
+3. Colar **`.gs` completo** conforme regra de ouro acima
+4. **Implantar** → **Gerenciar implantações** → editar Web App → **Nova versão** → Implantar  
    (mesmo Deploy ID — nunca criar implantação nova)
 
 ## Validar após deploy
@@ -39,13 +49,4 @@ Ping:
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 ```
 
-Esperado: `"version":"3.45.1"`
-
-Protocolo (PowerShell no repo):
-
-```powershell
-cd C:\Users\riboc\Documents\Codex\zapclin-repo
-pwsh -File .\scripts\testes\TESTE_PROTOCOLO_DIAGNOSTICO.ps1
-```
-
-Esperado: **STATUS PROTOCOLO: OK** (25/25 checks no GAS após redeploy).
+Esperado: `"version":"3.47.1"`
