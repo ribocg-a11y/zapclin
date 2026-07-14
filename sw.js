@@ -1,19 +1,19 @@
 ﻿// ============================================================
-// ZAPCLIN â€” SERVICE WORKER
-// VersÃ£o: 4.27.4 | Data: 30/05/2026
+// ZAPCLIN — SERVICE WORKER
+// Versão: 4.32.1 | Data: 14/07/2026
+// [v4.32.1 CACHE]
+// Rede primeiro para index.html e zc-*.js — evita PWA preso em versão antiga
+// e some o bloco de Projeção de Fechamento por cache do SW.
 // [v4.27.4 CACHE]
 // Corrige semanas do Dashboard para segunda a domingo.
 // [v4.26.0 CACHE]
-// Cache PWA versionado para reduzir inconsistÃªncia entre celular/desktop.
-// MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
+// Cache PWA versionado para reduzir inconsistência entre celular/desktop.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.32.0';
-const STATIC_CACHE = 'zapclin-static-v4.32.0';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.32.0';
+const ZAPCLIN_SW_VERSION = 'v4.32.1';
+const STATIC_CACHE = 'zapclin-static-v4.32.1';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.32.1';
 
-// [v4.26.0 CACHE]
-// Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
 const APP_SHELL = [
   './',
   './index.html',
@@ -34,6 +34,14 @@ const APP_SHELL = [
   './zc-admin.js',
   './zc-historico-custos.js'
 ];
+
+function isShellCritical_(url) {
+  const path = url.pathname || '';
+  const file = path.split('/').pop() || '';
+  if (file === 'index.html' || file === '' || file === 'sw.js') return true;
+  if (/^zc-.*\.js$/i.test(file)) return true;
+  return false;
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -65,8 +73,6 @@ self.addEventListener('fetch', event => {
 
   if (req.method !== 'GET') return;
 
-  // [v4.20.0 CACHE]
-  // Nunca interceptar chamadas do Google Apps Script/Google APIs. Evita cache indevido de dados reais.
   if (
     url.hostname.includes('script.google.com') ||
     url.hostname.includes('googleusercontent.com') ||
@@ -75,23 +81,25 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.13.1 CACHE]
-  // NavegaÃ§Ã£o: rede primeiro para pegar versÃ£o nova; fallback para cache se offline.
-  if (req.mode === 'navigate') {
+  // Navegação e shell crítico: sempre rede primeiro (evita HTML/JS antigo).
+  if (req.mode === 'navigate' || (url.origin === self.location.origin && isShellCritical_(url))) {
     event.respondWith(
       fetch(req, { cache: 'no-store' })
         .then(resp => {
-          const copy = resp.clone();
-          caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
+          if (resp && resp.status === 200 && url.origin === self.location.origin) {
+            const copy = resp.clone();
+            const cacheKey = req.mode === 'navigate' ? './index.html' : req;
+            caches.open(STATIC_CACHE).then(cache => cache.put(cacheKey, copy));
+          }
           return resp;
         })
-        .catch(() => caches.match('./index.html').then(cached => cached || caches.match('./')))
+        .catch(() => caches.match(req.mode === 'navigate' ? './index.html' : req)
+          .then(cached => cached || caches.match('./index.html')).then(c => c || caches.match('./')))
     );
     return;
   }
 
-  // [v4.13.1 CACHE]
-  // Assets locais: cache primeiro, rede como atualizaÃ§Ã£o silenciosa.
+  // Demais assets locais: cache primeiro, rede atualiza.
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(req).then(cached => {
@@ -107,7 +115,3 @@ self.addEventListener('fetch', event => {
     );
   }
 });
-
-
-
-

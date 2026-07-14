@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.32.0 | Data: 14/07/2026
+  Versão : 4.32.1 | Data: 14/07/2026
+  HOTFIX v4.32.1:
+    - SW rede-primeiro para index/zc-*.js — evita Dashboard antigo sem Projeção
   NOVO v4.32.0:
     - Dashboard: gráfico de projeção de fechamento após Faturamento por Dia
     - Ritmo diário, projeção do mês, restante estimado e desvio dia a dia
@@ -2206,14 +2208,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.32.0"></script>
-<script src="zc-globals.js?v=v4.32.0"></script>
-<script src="zc-api.js?v=v4.32.0"></script>
-<script src="zc-core.js?v=v4.32.0"></script>
-<script src="zc-sync.js?v=v4.32.0"></script>
-<script src="zc-whatsapp.js?v=v4.32.0"></script>
-<script src="zc-admin.js?v=v4.32.0"></script>
-<script src="zc-historico-custos.js?v=v4.32.0"></script>
+<script src="zc-version.js?v=v4.32.1"></script>
+<script src="zc-globals.js?v=v4.32.1"></script>
+<script src="zc-api.js?v=v4.32.1"></script>
+<script src="zc-core.js?v=v4.32.1"></script>
+<script src="zc-sync.js?v=v4.32.1"></script>
+<script src="zc-whatsapp.js?v=v4.32.1"></script>
+<script src="zc-admin.js?v=v4.32.1"></script>
+<script src="zc-historico-custos.js?v=v4.32.1"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -4163,7 +4165,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.32.0',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.32.1',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
 
