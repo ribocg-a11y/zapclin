@@ -8,7 +8,7 @@
     if('serviceWorker' in navigator){for(const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();}
     if(window.caches){for(const k of await caches.keys()) await caches.delete(k);}
     try{sessionStorage.clear();}catch(e){}
-    location.replace('./index.html?v=4.32.6&_='+Date.now());
+    location.replace('./index.html?v=4.32.7&_='+Date.now());
   }catch(e){document.getElementById('l').textContent='Erro. Abra index.html manualmente.';}
 })();
 </script></body></html>
