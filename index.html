@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
   Versão : 4.33.2 | Data: 14/07/2026
@@ -3384,8 +3384,8 @@ function drawProjecaoChart_(svgId, proj){
   if (wrap) cssW = Math.floor(wrap.clientWidth || wrap.getBoundingClientRect().width || 0);
   // viewBox em px CSS → sem letterbox (aspecto 1:1 com o box)
   var W = Math.max(cssW || 0, 320);
-  var H = 228;
-  var pad = { top: 26, right: 16, bottom: 26, left: 48 };
+  var H = 240; // igual à altura CSS do wrap → sem letterbox
+  var pad = { top: 22, right: 12, bottom: 24, left: 44 };
   // em telas largas, dar mais área ao plot
   if (W >= 700) { pad.left = 52; pad.right = 18; }
   var cW = W - pad.left - pad.right;
