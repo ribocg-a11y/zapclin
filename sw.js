@@ -8,9 +8,9 @@
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.32.8';
-const STATIC_CACHE = 'zapclin-static-v4.32.8';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.32.8';
+const ZAPCLIN_SW_VERSION = 'v4.32.9';
+const STATIC_CACHE = 'zapclin-static-v4.32.9';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.32.9';
 
 // [v4.26.0 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
