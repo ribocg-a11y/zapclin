@@ -1,18 +1,18 @@
 // ============================================================
 // ZAPCLIN â€” SERVICE WORKER
 // VersÃ£o: 4.27.4 | Data: 30/05/2026
-// [v4.33.1 CACHE]
+// [v4.33.2 CACHE]
 // Corrige semanas do Dashboard para segunda a domingo.
-// [v4.33.1 CACHE]
+// [v4.33.2 CACHE]
 // Cache PWA versionado para reduzir inconsistÃªncia entre celular/desktop.
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.33.1';
-const STATIC_CACHE = 'zapclin-static-v4.33.1';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.33.1';
+const ZAPCLIN_SW_VERSION = 'v4.33.2';
+const STATIC_CACHE = 'zapclin-static-v4.33.2';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.33.2';
 
-// [v4.33.1 CACHE]
+// [v4.33.2 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
 const APP_SHELL = [
   './',
@@ -65,7 +65,7 @@ self.addEventListener('fetch', event => {
 
   if (req.method !== 'GET') return;
 
-  // [v4.33.1 CACHE]
+  // [v4.33.2 CACHE]
   // Nunca interceptar chamadas do Google Apps Script/Google APIs. Evita cache indevido de dados reais.
   if (
     url.hostname.includes('script.google.com') ||
@@ -75,7 +75,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.33.1 CACHE]
+  // [v4.33.2 CACHE]
   // NavegaÃ§Ã£o: rede primeiro para pegar versÃ£o nova; fallback para cache se offline.
   if (req.mode === 'navigate') {
     event.respondWith(
@@ -90,7 +90,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.33.1 CACHE]
+  // [v4.33.2 CACHE]
   // Assets locais: cache primeiro, rede como atualizaÃ§Ã£o silenciosa.
   if (url.origin === self.location.origin) {
     event.respondWith(

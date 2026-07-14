@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.1 | Data: 14/07/2026
-  NOVO v4.33.1:
+  Versão : 4.33.2 | Data: 14/07/2026
+  NOVO v4.33.2:
     - Força reload limpo (sai de abas velhas v4.32.x com lista abaixo do gráfico)
   NOVO v4.33.0:
     - Remove metodologia + lista dia a dia abaixo do gráfico de projeção
@@ -268,10 +268,10 @@
 <html lang="pt-BR">
 <head>
 <script>
-/* v4.33.1 — força sair de HTML antigo (lista/método sob a projeção) */
+/* v4.33.2 — força sair de HTML antigo (lista/método sob a projeção) */
 (function(){
   try{
-    var NEED='4.33.1';
+    var NEED='4.33.2';
     var KEY='zapclin_force_'+NEED;
     var params=new URLSearchParams(location.search||'');
     var already=params.get('v')===NEED && params.get('fresh')==='1';
@@ -869,7 +869,7 @@
   .dash-chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;overflow:hidden}
   .dash-chart-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
   .dash-chart-canvas{width:100%;min-height:200px;height:auto;display:block}
-  .dash-proj-svg-wrap{position:relative;width:100%;height:220px;margin:4px 0 8px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(0,0,0,.18);padding:8px 6px 4px;box-sizing:border-box;touch-action:none;cursor:crosshair}
+  .dash-proj-svg-wrap{position:relative;width:100%;height:240px;margin:4px 0 2px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(0,0,0,.18);padding:6px 4px 2px;box-sizing:border-box;touch-action:none;cursor:crosshair}
   .dash-proj-svg{width:100%;height:100%;display:block;overflow:visible}
   .dash-proj-tip{position:absolute;z-index:5;min-width:150px;max-width:220px;padding:10px 12px;border-radius:12px;background:rgba(16,16,28,.96);border:1px solid rgba(0,212,238,.55);box-shadow:0 10px 28px rgba(0,0,0,.35);pointer-events:none;display:none}
   .dash-proj-tip.show{display:block}
@@ -1335,7 +1335,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.1</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.2</span>
       </div>
     </div>
   </div>
@@ -1414,7 +1414,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.1</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.2</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -2265,14 +2265,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.1"></script>
-<script src="zc-globals.js?v=v4.33.1"></script>
-<script src="zc-api.js?v=v4.33.1"></script>
-<script src="zc-core.js?v=v4.33.1"></script>
-<script src="zc-sync.js?v=v4.33.1"></script>
-<script src="zc-whatsapp.js?v=v4.33.1"></script>
-<script src="zc-admin.js?v=v4.33.1"></script>
-<script src="zc-historico-custos.js?v=v4.33.1"></script>
+<script src="zc-version.js?v=v4.33.2"></script>
+<script src="zc-globals.js?v=v4.33.2"></script>
+<script src="zc-api.js?v=v4.33.2"></script>
+<script src="zc-core.js?v=v4.33.2"></script>
+<script src="zc-sync.js?v=v4.33.2"></script>
+<script src="zc-whatsapp.js?v=v4.33.2"></script>
+<script src="zc-admin.js?v=v4.33.2"></script>
+<script src="zc-historico-custos.js?v=v4.33.2"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -3348,6 +3348,18 @@ function _projOnLeave_(){
   _projHideTip_();
 }
 
+var _projResizeBound_ = false;
+function _bindProjecaoResize_(){
+  if(_projResizeBound_) return;
+  _projResizeBound_ = true;
+  var t = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      if(_projState && _projState.proj) drawProjecaoChart_('chartProjecao', _projState.proj);
+    }, 120);
+  });
+}
 function _setupProjecaoInteraction_(svg, proj){
   var wrap = document.getElementById('dashProjWrap') || svg.parentElement;
   if(!wrap) return;
@@ -3361,13 +3373,21 @@ function _setupProjecaoInteraction_(svg, proj){
   wrap.addEventListener('click', _projOnPointer_);
   wrap.addEventListener('touchstart', _projOnPointer_, {passive:false});
   wrap.addEventListener('touchmove', _projOnPointer_, {passive:false});
+  _bindProjecaoResize_();
 }
 
 function drawProjecaoChart_(svgId, proj){
   var svg = document.getElementById(svgId);
   if (!svg) return;
-  var W = 640, H = 220;
-  var pad = _projPad_();
+  var wrap = document.getElementById('dashProjWrap') || svg.parentElement;
+  var cssW = 0;
+  if (wrap) cssW = Math.floor(wrap.clientWidth || wrap.getBoundingClientRect().width || 0);
+  // viewBox em px CSS → sem letterbox (aspecto 1:1 com o box)
+  var W = Math.max(cssW || 0, 320);
+  var H = 228;
+  var pad = { top: 26, right: 16, bottom: 26, left: 48 };
+  // em telas largas, dar mais área ao plot
+  if (W >= 700) { pad.left = 52; pad.right = 18; }
   var cW = W - pad.left - pad.right;
   var cH = H - pad.top - pad.bottom;
   var n = proj.diasMes || 1;
@@ -3422,10 +3442,21 @@ function drawProjecaoChart_(svgId, proj){
   }
 
   svg.setAttribute('viewBox', '0 0 '+W+' '+H);
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.style.width = '100%';
+  svg.style.height = '100%';
   svg.innerHTML = parts.join('');
 
   _projState = { svg:svg, proj:proj, pad:pad, W:W, H:H, cW:cW, cH:cH, n:n, maxVal:maxVal };
   _setupProjecaoInteraction_(svg, proj);
+
+  // redesenha se o card ainda estava estreito no 1º paint
+  if (cssW < 200 && !_projState._retry) {
+    _projState._retry = true;
+    requestAnimationFrame(function(){ drawProjecaoChart_(svgId, proj); });
+  }
 }
 
 function drawLineChart(canvasId, diaData, totalAtend) {
@@ -4289,7 +4320,7 @@ function goTo(page, btn){
 // Registra Service Worker próprio do PWA para controlar cache de forma versionada.
 // Motivo: reduzir divergência entre celular/computador e evitar que versões antigas fiquem presas no navegador.
 function registrarServiceWorkerZapClin_(){
-  // v4.33.1 recovery: sem SW ativo — evita HTML no lugar de JS.
+  // v4.33.2 recovery: sem SW ativo — evita HTML no lugar de JS.
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(function(regs){
       (regs||[]).forEach(function(r){ try{r.unregister();}catch(e){} });

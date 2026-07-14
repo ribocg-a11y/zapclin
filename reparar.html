@@ -25,9 +25,9 @@
         for (const k of await caches.keys()) await caches.delete(k);
       }
       try{ sessionStorage.clear(); localStorage.removeItem('zapAppVersion'); }catch(e){}
-      location.replace('./index.html?v=4.33.1&fresh=1&_='+Date.now());
+      location.replace('./index.html?v=4.33.2&fresh=1&_='+Date.now());
     }catch(e){
-      document.getElementById('l').textContent='Abra manualmente: index.html?v=4.33.1';
+      document.getElementById('l').textContent='Abra manualmente: index.html?v=4.33.2';
     }
   })();
   </script>
