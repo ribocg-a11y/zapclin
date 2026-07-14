@@ -1,6 +1,6 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 11/06/2026 (FE **v4.27.4** · GAS repo **v3.44** · fix **v3.45** em PR #1)  
+**Atualizado:** 14/07/2026 (FE **v4.33.3** · GAS ping **3.50**)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
 **GitHub:** `ribocg-a11y/zapclin` · branch `main`
@@ -19,6 +19,7 @@
 1. Homologação real de balcão exige **aparelho na loja** — o agente valida ping/HTTP no PC.
 2. Vários operadores simultâneos — backend usa LockService (v3.36); não quebrar travas.
 3. Admin PIN **1321** — não confundir com PIN Movi (1416).
+4. **Antes de mexer em SW/Dashboard/versão:** ler `ERROS_PWA_2026-07-14.md` + `REGRAS` §11.
 
 ---
 
@@ -32,7 +33,7 @@ Vamos dar continuidade ao projeto ZapClin.
 
 ### O que o agente faz sozinho
 
-- Ler: este arquivo → `PLANO_PRIORIDADES` → `ESTADO_ATUAL` → `REGRAS` → `ACESSOS`
+- Ler: este arquivo → `ESTADO_ATUAL` → `ERROS_PWA_2026-07-14` → `REGRAS` → `ACESSOS`
 - Informar versões FE/GAS e status do ping produção
 - **Toda resposta:** `Mudança no AppScript: sim|não` + link/caminho `.gs` canônico
 
@@ -40,12 +41,12 @@ Vamos dar continuidade ao projeto ZapClin.
 
 ## Produção (verificar sempre no início)
 
-| Camada | Versão repo | Verificação |
-|--------|-------------|-------------|
-| **Frontend** | **v4.27.4** | `APP_VERSION` em `index.html` · `?force=v4.27.4` |
-| **Service Worker** | **v4.27.4** | `ZAPCLIN_SW_VERSION` em `sw.js` |
-| **Apps Script (código)** | **v3.44** (main) / **v3.45** (PR #1) | Nova versão Web manual |
-| **Apps Script (ping)** | alvo **3.45** após deploy | Ping abaixo |
+| Camada | Versão | Verificação |
+|--------|--------|-------------|
+| **Frontend** | **v4.33.3** | `zc-version.js` · `?force=v4.33.3` |
+| **Service Worker** | **v4.33.3** | ativo · toast de update padrão |
+| **Apps Script (ping)** | **3.50** | ping abaixo |
+| **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo v3.50 |
 
 **Deploy ID GAS:** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
@@ -54,7 +55,7 @@ Vamos dar continuidade ao projeto ZapClin.
 **Ping GAS:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 
-**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/
+**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
 
 ---
 
@@ -63,42 +64,46 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | # | Documento | Para quê |
 |---|-----------|----------|
 | 1 | **Este arquivo** | Contexto, regras, próximo passo |
-| 2 | `PLANO_PRIORIDADES_2026-06.md` | Checklist vivo |
-| 3 | `ESTADO_ATUAL.md` | Versões, links, arquivos canônicos |
-| 4 | `REGRAS_DE_PUBLICACAO_SEGURA.md` | Travas antes de commit/push/deploy |
+| 2 | `ESTADO_ATUAL.md` | Versões, links, arquivos canônicos |
+| 3 | `ERROS_PWA_2026-07-14.md` | **14 erros mapeados — não repetir** |
+| 4 | `REGRAS_DE_PUBLICACAO_SEGURA.md` | Travas (§11 pós-incidente) |
 | 5 | `ACESSOS_E_AUTORIZACOES.md` | Agente vs humano |
-| 6 | `../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md` | Roadmap Movi × ZapClin |
+| 6 | `PLANO_PRIORIDADES_2026-06.md` | Checklist vivo |
 | 7 | `../INDICE.md` | Mapa completo |
 
 ### Por tarefa
 
 | Tarefa | Ler |
 |--------|-----|
-| Deploy GAS | `../../APPSCRIPT_DEPLOY.md` (branch fix) · header do `.gs` |
-| Roadmap funcional | `../../ROADMAP_FASE23.md` |
-| QA | `../../AUDITORIA_QA_v4.19.1.md` |
-| Teste ping/KPI/diagnóstico | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` → `TESTE_PROTOCOLO_DIAGNOSTICO.ps1` |
+| Deploy GAS | `../../APPSCRIPT_DEPLOY.md` · header do `.gs` |
+| Dashboard / SW / versão | `ERROS_PWA_2026-07-14.md` + Regra 11 |
+| Teste ping/KPI | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` |
 | Arquitetura | `MAPA_CODIGO_ARQUITETURA.md` |
-| Ranges GAS | `AUDITORIA_RANGES_GAS.md` |
-| Equiparação Movi | `../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md` |
 
 ---
 
-## Próximo passo (11/06/2026)
+## Incidente 14/07/2026 (resumo)
+
+- Projeção v4.32.0 introduziu SyntaxError → navegação morta.
+- Hotfix de SW pioraram (HTML→JS, banner, SW off, boot forçado).
+- Restauro estável: base v4.31.1 → projeção republicada com gate → **v4.33.3**.
+- **14 erros** registrados em `ERROS_PWA_2026-07-14.md` e travados na Regra 11.
+
+### Projeção hoje
+
+- Após Faturamento por Dia; KPIs + SVG full-width + tooltip
+- Sem lista/método embaixo; valores em Inter
+
+---
+
+## Próximo passo (14/07/2026)
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Merge PR #1 + deploy GAS **v3.45** + validar Home = Admin | **Você** (GAS + merge) |
-| 2 | Confirmar ping `"version":"3.45"` | Agente + você |
-| 3 | Rodar `TESTE_KPI_PARIDADE_READONLY.ps1` — deve passar sem divergência | Agente (PC) |
-| 4 | Fase 3 — Pacote Z modular FE | Backlog |
-| 5 | Rodar `TESTE_PROTOCOLO_DIAGNOSTICO.ps1` após deploy v3.45 | Agente PC |
-
-### Incidente conhecido (Home vs Admin)
-
-**Causa:** `listar` lia só `B10:I600`; planilha com `lastRow > 600` truncava dados no frontend enquanto Admin (`buscarKpisAdmin`) lia tudo.
-
-**Fix:** v3.45 ranges dinâmicos + KPI Admin soma **QTD** + fuso `America/Sao_Paulo`.
+| 1 | Abrir `?force=v4.33.3` e confirmar **Online · v4.33.3** | Você |
+| 2 | Validar Dashboard projeção (largura + toque) | Você |
+| 3 | Não reintroduzir SW-off / banner full-screen / Syne em KPIs | Agente |
+| 4 | Qualquer novo incidente PWA → atualizar `ERROS_PWA_*.md` no mesmo PR | Agente |
 
 ---
 
@@ -106,11 +111,11 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação |
 |---|------|
-| 1 | Reconhecer continuidade — ler docs ativos |
-| 2 | Antes de push: `scripts/pre-push-check.ps1` |
-| 3 | Responder com versões, fase ativa, próximo passo, quem faz o quê |
-| 4 | Ao encerrar: atualizar este arquivo se algo mudou |
-| 5 | Mudanças cirúrgicas — não reescrever monolito sem pedido |
+| 1 | Reconhecer continuidade — ler docs ativos **incluindo erros 14/07** |
+| 2 | Antes de push FE: checklist Regra 2 + `node --check` no app inline |
+| 3 | Responder com versões, próximo passo, quem faz o quê |
+| 4 | Ao encerrar: atualizar este arquivo + `ESTADO_ATUAL` se algo mudou |
+| 5 | Mudanças cirúrgicas — não redesenhar fluxo de update no meio de feature visual |
 
 ---
 
@@ -118,4 +123,3 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 - Planilha ZapClin é lida pelo **Financeiro Geral** no repo `ribocg-a11y/movikids`
 - Equiparação ≠ merge de código — ver `PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`
-- Holding unificada = **FASE 11 Movi** (embed financeiro no admin Movi)

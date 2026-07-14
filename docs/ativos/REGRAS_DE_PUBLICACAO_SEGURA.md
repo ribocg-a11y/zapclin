@@ -1,9 +1,11 @@
 # ZapClin — Regras de publicação segura
 
-**Data:** 11/06/2026  
+**Data:** 14/07/2026 (atualizado pós-incidente PWA)  
 **Origem:** adaptado do protocolo Movi Kids para operação real ZapClin (multioperador, WhatsApp, planilha compartilhada).
 
 Este documento é trava operacional. Nenhuma mudança futura deve ser publicada sem passar por estas regras.
+
+**Incidente 14/07/2026:** ler obrigatoriamente [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md) antes de mexer em Dashboard, `sw.js` ou versionamento.
 
 ---
 
@@ -33,8 +35,11 @@ Se o pacote for só frontend, **não** mexer em Apps Script, planilha ou trigger
 Antes de commit/push:
 
 - [ ] `scripts/pre-push-check.ps1` ok (ou `-SkipNetworkTests` se offline);
-- [ ] `APP_VERSION` em `index.html` alinhado com `ZAPCLIN_SW_VERSION` em `sw.js`;
+- [ ] `APP_VERSION` em `zc-version.js` / `index.html` alinhado com `ZAPCLIN_SW_VERSION` em `sw.js`;
 - [ ] caches `STATIC_CACHE` / `RUNTIME_CACHE` em `sw.js` atualizados com a versão;
+- [ ] **`node --check` no script inline do `index.html` que contém `goTo`/`init`** (gate anti-SyntaxError);
+- [ ] `zc-version.js` preserva `WEB_APP`, `BACKEND_MIN_VERSION` e demais constantes;
+- [ ] Service Worker **continua registrado** (não deixar só `unregister` de recovery);
 - [ ] Apps Script declarado como alterado ou não;
 - [ ] WhatsApp declarado como alterado ou não;
 - [ ] URL `?force=VERSAO` informada após deploy FE;
@@ -66,10 +71,12 @@ deve ser tratada como **risco operacional alto**.
 
 Toda mudança de frontend deve:
 
-- subir `APP_VERSION` em `index.html`;
+- subir `APP_VERSION` em `zc-version.js` (e marcações do `index.html`);
 - subir `ZAPCLIN_SW_VERSION` e nomes de cache em `sw.js`;
-- informar URL com `?force=VERSAO`;
-- nunca publicar `index.html` novo com `sw.js` antigo.
+- informar URL com `?force=VERSAO` (ex.: `https://ribocg-a11y.github.io/zapclin/?force=v4.33.3`);
+- nunca publicar `index.html` novo com `sw.js` antigo;
+- manter o toast padrão do SW: **“Nova versão disponível. Atualizando…”** + **“Sistema atualizado para …”**;
+- **não** inventar banner full-screen de versão; **não** desligar o SW como atalho de hotfix.
 
 ---
 
@@ -136,6 +143,23 @@ Arquivo: AppsScript_vX.XX_ATUAL.gs
 Download: (link raw GitHub se aplicável)
 Próximo passo humano: (Nova versão Web? merge? tablet?)
 ```
+
+---
+
+## Regra 11 — Travas pós-incidente PWA (14/07/2026)
+
+Derivadas de [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md). Violação = não publicar.
+
+1. **Sintaxe:** nunca mergear `index.html` com SyntaxError no app inline.
+2. **Inserção de código:** funções novas *antes* das existentes; jamais “trocar só a assinatura”.
+3. **SW:** nunca fallback HTML→JS; nunca deixar SW permanentemente desligado após recovery.
+4. **Update:** só o fluxo oficial (`SW` + toast + `?force=`); proibido boot forçado a cada bump.
+5. **UI recovery:** proibido overlay full-screen que só some via `init()`.
+6. **Valores:** tipografia de dinheiro = Inter (`--font-data`), não Syne.
+7. **Charts SVG:** largura = card (sem letterbox).
+8. **Escopo:** feature de Dashboard ≠ redesenhar versionamento/PWA na mesma entrega sem pedido.
+9. **Restauro:** último commit com JS válido (`node --check`), não a última feature.
+10. **Registro:** qualquer novo incidente PWA atualiza `ERROS_PWA_*.md` no mesmo PR.
 
 ---
 

@@ -1,6 +1,6 @@
 # ZapClin — Índice de documentação
 
-**Atualizado:** 11/06/2026
+**Atualizado:** 14/07/2026
 
 ---
 
@@ -10,9 +10,10 @@
 |-----------|-----------|
 | [`../AGENTS.md`](../AGENTS.md) | Instruções para agentes |
 | [`ativos/HANDOFF_NOVO_CHAT.md`](ativos/HANDOFF_NOVO_CHAT.md) | Handoff ativo |
-| [`ativos/PLANO_PRIORIDADES_2026-06.md`](ativos/PLANO_PRIORIDADES_2026-06.md) | Checklist vivo |
 | [`ativos/ESTADO_ATUAL.md`](ativos/ESTADO_ATUAL.md) | Versões e links |
-| [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy |
+| [`ativos/ERROS_PWA_2026-07-14.md`](ativos/ERROS_PWA_2026-07-14.md) | **14 erros do incidente PWA — proibido repetir** |
+| [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy (+ §11) |
+| [`ativos/PLANO_PRIORIDADES_2026-06.md`](ativos/PLANO_PRIORIDADES_2026-06.md) | Checklist vivo |
 | [`ativos/MAPA_CODIGO_ARQUITETURA.md`](ativos/MAPA_CODIGO_ARQUITETURA.md) | Anatomia código |
 | [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
 | [`ativos/PACOTE_Z_MODULARIZACAO.md`](ativos/PACOTE_Z_MODULARIZACAO.md) | Modularização frontend |

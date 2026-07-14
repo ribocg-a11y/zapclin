@@ -1,21 +1,23 @@
-# ZapClin — Estado atual (11/06/2026)
+# ZapClin — Estado atual (14/07/2026)
 
 Referência única para alinhamento repo × produção.
 
 **Handoff:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md) ← ler primeiro  
+**Erros 14/07 (lido obrigatório):** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
 **Prioridades:** [`PLANO_PRIORIDADES_2026-06.md`](PLANO_PRIORIDADES_2026-06.md)  
-**Equiparação Movi:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)
+**Equiparação Movi:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)  
+**Regras:** [`REGRAS_DE_PUBLICACAO_SEGURA.md`](REGRAS_DE_PUBLICACAO_SEGURA.md) (§11 pós-incidente)
 
 ---
 
 ## Produção (verificar após cada deploy)
 
-| Camada | Versão repo | URL / ID |
-|--------|-------------|----------|
-| **Frontend** | **v4.29.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.29.0 |
-| **Service Worker** | **v4.29.0** | `sw.js` → `ZAPCLIN_SW_VERSION` |
-| **Apps Script (código repo)** | **v3.45.1** | `AppsScript_v3.45_ATUAL.gs` |
-| **Apps Script (ping prod.)** | **3.45** → alvo **3.45.1** | Redeploy `.gs` fecha check truncamento 25/25 |
+| Camada | Versão repo / prod | URL / ID |
+|--------|--------------------|----------|
+| **Frontend** | **v4.33.3** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.3 |
+| **Service Worker** | **v4.33.3** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
+| **Apps Script (código repo)** | **v3.50** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
+| **Apps Script (ping prod.)** | **3.50** | ping ok |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit
 
@@ -27,71 +29,59 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 **Web App base:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec
 
+**PIN Admin:** `1321`
+
 ---
 
 ## Arquivos canônicos
 
 | Artefato | Arquivo |
 |----------|---------|
-| GAS | `AppsScript_v3.45_ATUAL.gs` |
-| GAS fix KPI | ~~v3.44~~ removido — v3.45 unificado |
-| Frontend | `index.html` + `zc-*.js` (Pacote Z.1) |
-| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js`, `zc-sync.js`, `zc-whatsapp.js`, `zc-admin.js` |
+| GAS | `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.50) |
+| Frontend | `index.html` + `zc-*.js` |
+| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js`, `zc-sync.js`, `zc-whatsapp.js`, `zc-admin.js`, `zc-historico-custos.js` |
 | PWA | `sw.js`, `manifest.json` |
-| Roadmap | `ROADMAP_FASE23.md` |
-| QA | `AUDITORIA_QA_v4.19.1.md` |
-| Deploy GAS | `APPSCRIPT_DEPLOY.md` |
+| Erros PWA 14/07 | `docs/ativos/ERROS_PWA_2026-07-14.md` |
 | Governança | `AGENTS.md`, `docs/ativos/*` |
 | Pre-push | `scripts/pre-push-check.ps1` |
-| `scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1` | diagnosticoSistema |
-| `scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1` | Orquestrador Z0+Z1 |
-| `docs/ativos/MAPA_CODIGO_ARQUITETURA.md` | Anatomia |
-| `docs/ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md` | Protocolo testes |
-| `docs/ativos/AUDITORIA_RANGES_GAS.md` | Ranges GAS |
 
 ---
 
-## Entregas recentes (funcional)
+## Entregas recentes (14/07/2026)
 
 | Versão | Entrega |
 |--------|---------|
-| **v4.28.0** | Pacote Z.1 — módulos zc-version/globals/api/core |
-| **v4.27.0** | Fechamento diário Admin |
-| **v4.26.x** | Reconciliação pós-escrita, diagnóstico Admin, sync offline |
-| **v4.24–25** | Relatório Golden v2, aceite digital OS |
-| **v4.21–23** | Nova OS CRM, fotos Drive, aceite OS |
-| **v4.17–19** | SLA operação, resumo diário, gate QA |
-| **v3.45** | Ranges dinâmicos, KPI QTD, diagnostico rangesStatus |
-| **v3.44** | Vínculo CLIENTE/OS em `listar` |
-| **v3.36** | LockService multioperador |
+| **v4.33.3** | Restaura fluxo padrão de versão (SW + toast + `?force=`) |
+| **v4.33.2** | Projeção SVG em largura total do card |
+| **v4.33.0** | Remove lista/método sob a projeção |
+| **v4.32.9** | Projeção interativa + Inter nos valores |
+| **v4.32.7–8** | Projeção republicada (JS validado) → SVG |
+| **v4.32.6** | Restauro base estável v4.31.1 (pós-SyntaxError) |
+| **v3.50 GAS** | Remoção import temporário 11–13/07; totais 11=713, 12=203, 13=295 |
 
 ---
 
-## Governança (Fases 1–2 equiparação — 11/06/2026)
+## Dashboard — Projeção de Fechamento
 
-| Item | Status |
-|------|--------|
-| Fase 1 — AGENTS, docs, pre-push, ping/KPI | ✅ |
-| Fase 2 — MAPA, PROTOCOLO, AUDITORIA, v3.45 | ✅ |
-| `docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md` | ✅ |
-
----
-
-## PRs abertos
-
-| PR | Branch | Conteúdo |
-|----|--------|----------|
-| [#1](https://github.com/ribocg-a11y/zapclin/pull/1) | `cursor/fix-listar-range-kpis-f0f3` | v3.45/v4.27.5 fix KPI |
-| [#2](https://github.com/ribocg-a11y/zapclin/pull/2) | `cursor/plano-equiparacao-movi-zapclin-f0f3` | Plano equiparação |
+- Após **Faturamento por Dia**
+- KPIs: projeção do mês, ritmo diário, restante
+- SVG acumulado real (ciano) × ritmo (laranja), tooltip hover/toque
+- **Sem** texto “Método” e **sem** tabela dia a dia embaixo
+- Tipografia de valores: Inter (`--font-data`)
 
 ---
 
-## Lacunas vs Movi Kids (backlog equiparação)
+## Aviso de nova versão (padrão ZapClin)
 
-| Lacuna | Fase equiparação |
-|--------|------------------|
-| Frontend monolítico | Fase 3 Pacote Z |
-| Sem auth operador | Fase 4 |
-| Sem cockpit narrativo Admin | Fase 5 |
-| Sem Firebase live | Fase 8 (opcional) |
-| Holding só via Movi financeiro | Movi FASE 11 |
+- **Não** há banner persistente
+- Toast do SW: “Nova versão disponível. Atualizando…”
+- Após reload: “Sistema atualizado para vX.Y.Z”
+- Force manual: `?force=vX.Y.Z`
+
+---
+
+## Próximo passo humano
+
+1. Abrir https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
+2. Confirmar status **Online · v4.33.3**
+3. Dashboard → Projeção expandida + interativa
