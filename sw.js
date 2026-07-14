@@ -1,6 +1,5 @@
 // ============================================================
 // ZAPCLIN â€” SERVICE WORKER
-// RESTORE v4.32.5 = comportamento estável v4.32.0 (antes do SW quebrado)
 // VersÃ£o: 4.27.4 | Data: 30/05/2026
 // [v4.27.4 CACHE]
 // Corrige semanas do Dashboard para segunda a domingo.
@@ -9,9 +8,9 @@
 // MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.32.5';
-const STATIC_CACHE = 'zapclin-static-v4.32.5';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.32.5';
+const ZAPCLIN_SW_VERSION = 'v4.32.6';
+const STATIC_CACHE = 'zapclin-static-v4.32.6';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.32.6';
 
 // [v4.26.0 CACHE]
 // Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
