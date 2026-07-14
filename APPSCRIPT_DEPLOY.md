@@ -1,4 +1,4 @@
-# Deploy do Apps Script v3.49
+# Deploy do Apps Script v3.50
 
 ## Regra de ouro
 
@@ -14,20 +14,26 @@
 | Item | Caminho |
 |------|---------|
 | Arquivo local (repo) | `AppsScript_v3.45_ATUAL.gs` |
-| Versão | **3.49** (14/07/2026) |
+| Versão | **3.50** (14/07/2026) |
 | PC (clone atual) | `C:\Users\riboc\Documents\Codex\zapclin-repo\AppsScript_v3.45_ATUAL.gs` |
 
-## Download direto (esta branch / após merge)
+## Download direto (main)
 
-https://raw.githubusercontent.com/ribocg-a11y/zapclin/cursor/import-julho-11-13-f0f3/AppsScript_v3.45_ATUAL.gs
+https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs
 
-**Conferir após abrir:** linha 3 = `Versão: 3.49` · arquivo **com** `importarJulho1113`.
+**Conferir após abrir:** linha 3 = `Versão: 3.50` · arquivo **sem** `importarJulho1113` e **sem** array `IMPORT_JULHO_11_13_2026_`.
 
-## v3.49 — o que mudou
+## v3.50 — o que mudou
 
-1. Action temporária `importarJulho1113` (PIN `1321`) para completar lançamentos **11–13/07/2026**.
-2. Metas do dia: **11=713**, **12=203**, **13=295** (preserva parciais já existentes: 11=R$90 e 13=R$70).
-3. Proteção anti-reimportação via Script Property `IMPORT_JULHO_11_13_2026_DONE`.
+1. Remove bloco temporário `importarJulho1113` / `IMPORT_JULHO_11_13_2026_` (importação 11–13/07 já concluída).
+
+## Conferência dos dias importados
+
+| Dia | Total |
+|-----|-------|
+| 11/07/2026 | **R$ 713** |
+| 12/07/2026 | **R$ 203** |
+| 13/07/2026 | **R$ 295** |
 
 ## Redeploy (5 minutos)
 
@@ -44,16 +50,4 @@ Ping:
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 ```
 
-Esperado: `"version":"3.49"`
-
-Importar (agente ou humano, uma vez):
-
-```
-https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=importarJulho1113&pin=1321
-```
-
-Esperado: `"ok":true,"criados":51,"total":1051`
-
-## Após a importação
-
-Remover o bloco temporário e publicar **v3.50** (igual ao fluxo 3.47→3.48).
+Esperado: `"version":"3.50"`
