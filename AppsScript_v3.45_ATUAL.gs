@@ -1,6 +1,9 @@
 ﻿// ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.48 | Data: 10/07/2026
+// VersÃ£o: 3.49 | Data: 14/07/2026
+// NOVO v3.49:
+//   - Action temporaria importarJulho1113 (PIN admin) — completa dias 11–13/07/2026
+//   - Metas: 11/07=713, 12/07=203, 13/07=295 (preserva lancamentos parciais ja existentes)
 // NOVO v3.48:
 //   - Remove importacao temporaria julho 2026 (IMPORT_JULHO_2026_ ja executada)
 // HOTFIX v3.47.1:
@@ -121,7 +124,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.48';
+var VERSION           = '3.49';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -142,7 +145,7 @@ function actionPrecisaLock_(action) {
     'editarCusto','cancelarCusto','atualizarStatus','editarCliente',
     'cancelarCliente','salvarCadastroVip','registrarEventoFrontend',
     'gerarOsPdf','enviarRelatorio','repararLancamentosClientesHoje',
-    'confirmarAceiteOs'
+    'confirmarAceiteOs','importarJulho1113'
   ].indexOf(String(action || '')) >= 0;
 }
 
@@ -1320,6 +1323,9 @@ function doGet(e) {
 
     } else if (action === 'repararLancamentosClientesHoje') {
       result = repararLancamentosClientesHoje_(ss);
+
+    } else if (action === 'importarJulho1113') {
+      result = importarJulho1113_(ss, p.pin);
 
     // â”€â”€ NOVO v3.21: Telemetria leve do frontend/PWA â”€â”€
     } else if (action === 'registrarEventoFrontend') {
@@ -2700,7 +2706,7 @@ function diagnosticoSistema_(ss) {
     return {
       ok: falhas.length === 0,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.48',
+      fonte: 'diagnosticoSistema-v3.49',
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       duracaoMs: duracaoMs,
       resumo: {
@@ -2724,10 +2730,101 @@ function diagnosticoSistema_(ss) {
     return {
       ok: false,
       version: VERSION,
-      fonte: 'diagnosticoSistema-v3.48',
+      fonte: 'diagnosticoSistema-v3.49',
       error: err.toString(),
       timestamp: Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm:ss'),
       checks: checks
     };
   }
 }
+
+
+// ============================================================
+// TEMPORARIO v3.49 — importar dias 11-13/07/2026 (remover apos uso)
+// Metas do dia (com parcial existente): 11=713, 12=203, 13=295
+// Ja existiam: 11/07 R$90 (2x Lavagem) e 13/07 R$70 (1x Premium)
+// Este bloco importa somente a diferenca (+623 / +203 / +225)
+// ============================================================
+var IMPORT_AGENT_PIN_ = '1321';
+
+function importarJulho1113_(ss, pin) {
+  if (String(pin || '') !== IMPORT_AGENT_PIN_) throw new Error('PIN invalido');
+  var lanc = getLancamentosSheet_(ss);
+  if (!lanc) throw new Error('Aba LANCAMENTOS nao encontrada');
+  var props = PropertiesService.getScriptProperties();
+  if (props.getProperty('IMPORT_JULHO_11_13_2026_DONE') === '1') {
+    return { ok: true, version: VERSION, skipped: true, motivo: 'Importacao 11-13/07/2026 ja executada' };
+  }
+
+  var criados = 0, total = 0;
+  var porDia = {};
+  for (var i = 0; i < IMPORT_JULHO_11_13_2026_.length; i++) {
+    var row = IMPORT_JULHO_11_13_2026_[i];
+    criarLancamentoServico_(lanc, row[2], row[0], row[1], row[3], '');
+    criados++;
+    total += row[3];
+    porDia[row[0]] = (porDia[row[0]] || 0) + row[3];
+  }
+  props.setProperty('IMPORT_JULHO_11_13_2026_DONE', '1');
+  registrarLogSistema_('MANUTENCAO', 'importarJulho1113', 'OK', 'Lancamentos 11-13/07/2026 importados pelo agente', {
+    criados: criados,
+    total: total,
+    porDia: porDia,
+    metasEsperadas: { '11/07/2026': 713, '12/07/2026': 203, '13/07/2026': 295 }
+  });
+  return { ok: true, version: VERSION, criados: criados, total: total, porDia: porDia };
+}
+
+var IMPORT_JULHO_11_13_2026_ = [
+  ['11/07/2026','09:35','Higienização + Lavagem',45],
+  ['11/07/2026','09:52','Higienização Essencial',18],
+  ['11/07/2026','10:15','Higienização + Lavagem',45],
+  ['11/07/2026','10:42','Higienização Rápida',15],
+  ['11/07/2026','11:01','Limpeza + Higienização',30],
+  ['11/07/2026','11:25','Higienização Essencial',18],
+  ['11/07/2026','11:44','Higienização Essencial',18],
+  ['11/07/2026','12:08','Higienização Rápida',15],
+  ['11/07/2026','12:36','Higienização Essencial',18],
+  ['11/07/2026','12:56','Higienização Essencial',18],
+  ['11/07/2026','13:15','Higienização Essencial',18],
+  ['11/07/2026','13:42','Higienização Essencial',18],
+  ['11/07/2026','14:01','Higienização Essencial',18],
+  ['11/07/2026','14:24','Higienização Essencial',18],
+  ['11/07/2026','14:43','Higienização + Lavagem',45],
+  ['11/07/2026','15:08','Higienização Essencial',18],
+  ['11/07/2026','15:24','Limpeza + Higienização',30],
+  ['11/07/2026','15:55','Higienização Essencial',18],
+  ['11/07/2026','16:12','Higienização Profunda',23],
+  ['11/07/2026','16:40','Higienização Essencial',18],
+  ['11/07/2026','16:52','Higienização Essencial',18],
+  ['11/07/2026','17:22','Higienização Essencial',18],
+  ['11/07/2026','17:41','Higienização Essencial',18],
+  ['11/07/2026','17:59','Higienização Essencial',18],
+  ['11/07/2026','18:26','Higienização Essencial',18],
+  ['11/07/2026','18:46','Higienização Essencial',18],
+  ['11/07/2026','19:13','Higienização Essencial',18],
+  ['11/07/2026','19:37','Higienização Essencial',18],
+  ['11/07/2026','19:55','Higienização Rápida',15],
+  ['12/07/2026','09:39','Higienização Essencial',18],
+  ['12/07/2026','10:41','Higienização Essencial',18],
+  ['12/07/2026','11:43','Higienização Essencial',18],
+  ['12/07/2026','12:46','Higienização Essencial',18],
+  ['12/07/2026','13:43','Higienização Essencial',18],
+  ['12/07/2026','14:41','Higienização Essencial',18],
+  ['12/07/2026','15:44','Higienização Essencial',18],
+  ['12/07/2026','16:54','Higienização Profunda',23],
+  ['12/07/2026','17:56','Higienização Essencial',18],
+  ['12/07/2026','18:50','Higienização Essencial',18],
+  ['12/07/2026','19:55','Higienização Essencial',18],
+  ['13/07/2026','09:39','Higienização Essencial',18],
+  ['13/07/2026','10:35','Higienização Profunda',23],
+  ['13/07/2026','11:43','Higienização Essencial',18],
+  ['13/07/2026','12:44','Higienização Profunda',23],
+  ['13/07/2026','13:42','Higienização Rápida',15],
+  ['13/07/2026','14:44','Higienização Profunda',23],
+  ['13/07/2026','15:44','Higienização Essencial',18],
+  ['13/07/2026','16:46','Higienização Profunda',23],
+  ['13/07/2026','17:52','Higienização Profunda',23],
+  ['13/07/2026','18:49','Higienização Essencial',18],
+  ['13/07/2026','19:55','Higienização Profunda',23],
+];

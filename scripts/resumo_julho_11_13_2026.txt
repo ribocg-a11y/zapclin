@@ -1,0 +1,27 @@
+Importação lançamentos 11–13/07/2026 (diferença)
+
+Situação na planilha ANTES:
+  11/07/2026 — 2 lanç. · R$ 90,00  (já existia)
+  12/07/2026 — 0 lanç. · R$ 0,00
+  13/07/2026 — 1 lanç. · R$ 70,00  (já existia)
+
+Metas informadas pelo operador:
+  11/07 = 713
+  12/07 = 203
+  13/07 = 295
+
+Este import adiciona somente a diferença:
+  11/07 +623 (29 lançamentos)
+  12/07 +203 (11 lançamentos)
+  13/07 +225 (11 lançamentos)
+  Total novos: 51 lançamentos · R$ 1.051,00
+
+Totais esperados DEPOIS:
+  11/07 = 713
+  12/07 = 203
+  13/07 = 295
+
+Como executar (após colar Apps Script v3.49 completo + Nova versão Web):
+  ?action=importarJulho1113&pin=1321
+
+Após sucesso: redeploy v3.50 sem o bloco temporário (ou pedir ao agente para remover).
