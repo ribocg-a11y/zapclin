@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.32.7 | Data: 14/07/2026
+  Versão : 4.32.8 | Data: 14/07/2026
+  NOVO v4.32.8:
+    - Projeção de Fechamento em SVG/DOM (visível mesmo com canvas width 0)
+    - Redesenho seguro dos gráficos do Dashboard (try/catch + rAF)
   NOVO v4.32.7:
     - Dashboard: Projeção de Fechamento após Faturamento por Dia (JS validado)
     - Ritmo diário, projeção do mês, restante e desvio dia a dia
@@ -257,7 +260,7 @@
 <html lang="pt-BR">
 <head>
 <script>
-/* v4.32.7 — limpa SW/cache e SEMPRE recarrega 1x antes de rodar o app */
+/* v4.32.8 — limpa SW/cache e SEMPRE recarrega 1x antes de rodar o app */
 (function(){
   try{
     var KEY='zapclin_boot_4327';
@@ -276,7 +279,7 @@
     Promise.all(tasks).then(function(){
       sessionStorage.setItem(KEY,'1');
       var u=new URL(location.href);
-      u.searchParams.set('v','4.32.7');
+      u.searchParams.set('v','4.32.8');
       u.searchParams.set('_', String(Date.now()));
       u.searchParams.delete('repaired');
       u.searchParams.delete('ts');
@@ -847,7 +850,9 @@
   .dash-kpi-val.purple{color:var(--purple)}
   .dash-chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;overflow:hidden}
   .dash-chart-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
-  .dash-chart-canvas{width:100%;display:block}
+  .dash-chart-canvas{width:100%;min-height:200px;height:auto;display:block}
+  .dash-proj-svg-wrap{width:100%;height:220px;margin:4px 0 8px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(0,0,0,.18);padding:8px 6px 4px;box-sizing:border-box}
+  .dash-proj-svg{width:100%;height:100%;display:block;overflow:visible}
 .dash-proj-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
   .dash-proj-kpi{border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;background:rgba(0,0,0,.14)}
   .dash-proj-kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -1305,7 +1310,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.32.7</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.32.8</span>
       </div>
     </div>
   </div>
@@ -1384,7 +1389,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.32.7</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.32.8</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1800,7 +1805,7 @@
       <span class="dash-proj-leg-item"><span class="dash-proj-leg-line real"></span> Acumulado real</span>
       <span class="dash-proj-leg-item"><span class="dash-proj-leg-line proj"></span> Ritmo projetado</span>
     </div>
-    <canvas id="chartProjecao" class="dash-chart-canvas" height="210"></canvas>
+    <div class="dash-proj-svg-wrap"><svg id="chartProjecao" class="dash-proj-svg" viewBox="0 0 640 220" role="img" aria-label="Projeção de fechamento"></svg></div>
     <div class="dash-proj-note" id="dashProjMetodologia"></div>
     <div class="dash-proj-daylist" id="dashProjDiaLista"></div>
   </div>
@@ -2237,14 +2242,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.32.7"></script>
-<script src="zc-globals.js?v=v4.32.7"></script>
-<script src="zc-api.js?v=v4.32.7"></script>
-<script src="zc-core.js?v=v4.32.7"></script>
-<script src="zc-sync.js?v=v4.32.7"></script>
-<script src="zc-whatsapp.js?v=v4.32.7"></script>
-<script src="zc-admin.js?v=v4.32.7"></script>
-<script src="zc-historico-custos.js?v=v4.32.7"></script>
+<script src="zc-version.js?v=v4.32.8"></script>
+<script src="zc-globals.js?v=v4.32.8"></script>
+<script src="zc-api.js?v=v4.32.8"></script>
+<script src="zc-core.js?v=v4.32.8"></script>
+<script src="zc-sync.js?v=v4.32.8"></script>
+<script src="zc-whatsapp.js?v=v4.32.8"></script>
+<script src="zc-admin.js?v=v4.32.8"></script>
+<script src="zc-historico-custos.js?v=v4.32.8"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -2879,13 +2884,17 @@ function carregarDashboard() {
   var semanaData=dashSemanasMes_(lancMes,target);
 
   // Desenhar gráficos com pequeno delay para garantir que o canvas está visível
-  setTimeout(function() {
-    drawWeeklyComboChart('chartSemanas', semanaData);
-    drawLineChart('chartDiario', diaData, atend);
-    renderProjecaoFechamento_(diaData, receita, target);
-    drawDonutChart('chartServico', lancMes);
-    drawPicoChart('dashPicoList', lancMes);
-  }, 80);
+  function _drawDashCharts_(){
+    function safe(fn, label){ try{ fn(); }catch(err){ console.warn('[ZapClin] falha gráfico '+label, err); } }
+    safe(function(){ drawWeeklyComboChart('chartSemanas', semanaData); }, 'semanas');
+    safe(function(){ drawLineChart('chartDiario', diaData, atend); }, 'diario');
+    safe(function(){ renderProjecaoFechamento_(diaData, receita, target); }, 'projecao');
+    safe(function(){ drawDonutChart('chartServico', lancMes); }, 'donut');
+    safe(function(){ drawPicoChart('dashPicoList', lancMes); }, 'picos');
+  }
+  // 2 frames: garante layout da page.active antes de medir/desenhar
+  requestAnimationFrame(function(){ requestAnimationFrame(_drawDashCharts_); });
+  setTimeout(_drawDashCharts_, 120);
 }
 
 function drawWeeklyComboChart(canvasId,semanas){
@@ -3176,12 +3185,7 @@ function renderProjecaoFechamento_(diaData, receitaMes, target){
     if (lista) lista.innerHTML = '';
     var cv = document.getElementById('chartProjecao');
     if (cv) {
-      var ctx = cv.getContext('2d');
-      var W = (cv.parentElement.offsetWidth || 320) - 32;
-      cv.width = Math.max(W, 280); cv.height = 210;
-      ctx.clearRect(0, 0, cv.width, cv.height);
-      ctx.fillStyle = '#6b6b8a'; ctx.font = '12px DM Sans,sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('Sem dados neste mês', cv.width / 2, cv.height / 2);
+      cv.innerHTML = '<text x="320" y="110" fill="#6b6b8a" font-size="13" font-family="DM Sans,sans-serif" text-anchor="middle">Sem dados neste mês</text>';
     }
     return;
   }
@@ -3248,85 +3252,67 @@ function renderProjecaoDiaLista_(proj){
   el.innerHTML = html;
 }
 
-function drawProjecaoChart_(canvasId, proj){
-  var canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  var container = canvas.parentElement;
-  var W = container.offsetWidth - 32; if (W < 100) W = 300;
-  canvas.width = W; canvas.height = 210;
-  var ctx = canvas.getContext('2d');
-  var pad = { top: 18, right: 12, bottom: 28, left: 52 };
+function drawProjecaoChart_(svgId, proj){
+  var svg = document.getElementById(svgId);
+  if (!svg) return;
+  var W = 640, H = 220;
+  var pad = { top: 28, right: 18, bottom: 28, left: 54 };
   var cW = W - pad.left - pad.right;
-  var cH = canvas.height - pad.top - pad.bottom;
-  var n = proj.diasMes;
-  var maxVal = Math.max.apply(null, proj.series.map(function(s){ return Math.max(s.acumProj || 0, s.acumReal || 0); }).concat([proj.projecao, 1]));
-  maxVal = maxVal * 1.08;
+  var cH = H - pad.top - pad.bottom;
+  var n = proj.diasMes || 1;
+  var maxVal = 1;
+  (proj.series || []).forEach(function(s){
+    maxVal = Math.max(maxVal, s.acumProj || 0, s.acumReal || 0);
+  });
+  maxVal = Math.max(maxVal, proj.projecao || 0, 1) * 1.08;
 
   function xP(dia){ return pad.left + ((dia - 1) / Math.max(n - 1, 1)) * cW; }
-  function yP(val){ return pad.top + cH - (val / maxVal) * cH; }
+  function yP(val){ return pad.top + cH - (Math.max(0, val) / maxVal) * cH; }
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  ctx.clearRect(0, 0, W, canvas.height);
-  ctx.strokeStyle = '#2a2a3a'; ctx.lineWidth = 1;
+  var parts = [];
+  parts.push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="transparent"></rect>');
+
+  // grid + Y labels
   for (var i = 0; i <= 4; i++) {
     var y = pad.top + (cH / 4) * i;
-    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cW, y); ctx.stroke();
-    ctx.fillStyle = '#6b6b8a'; ctx.font = '9px DM Sans,sans-serif'; ctx.textAlign = 'right';
-    ctx.fillText('R$' + Math.round(maxVal * (1 - i / 4)), pad.left - 4, y + 4);
+    parts.push('<line x1="'+pad.left+'" y1="'+y+'" x2="'+(pad.left+cW)+'" y2="'+y+'" stroke="#2a2a3a" stroke-width="1"></line>');
+    parts.push('<text x="'+(pad.left-6)+'" y="'+(y+3)+'" fill="#6b6b8a" font-size="10" font-family="DM Sans,sans-serif" text-anchor="end">R$'+Math.round(maxVal*(1-i/4))+'</text>');
   }
-  ctx.fillStyle = '#6b6b8a'; ctx.font = '9px DM Sans,sans-serif'; ctx.textAlign = 'center';
+  // X labels
   for (var d = 1; d <= n; d++) {
-    if (d === 1 || d % 5 === 0 || d === n) ctx.fillText(d, xP(d), canvas.height - 8);
+    if (d === 1 || d % 5 === 0 || d === n) {
+      parts.push('<text x="'+xP(d)+'" y="'+(H-8)+'" fill="#6b6b8a" font-size="10" font-family="DM Sans,sans-serif" text-anchor="middle">'+d+'</text>');
+    }
   }
 
-  // Linha projetada (ritmo) — mês inteiro, tracejada laranja
-  ctx.beginPath();
-  ctx.setLineDash([5, 4]);
-  ctx.strokeStyle = '#ff9100';
-  ctx.lineWidth = 2;
-  ctx.moveTo(xP(1), yP(proj.series[0].acumProj));
-  for (var p = 2; p <= n; p++) ctx.lineTo(xP(p), yP(proj.series[p - 1].acumProj));
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // projected pace line
+  var projPts = [];
+  for (var p = 1; p <= n; p++) projPts.push(xP(p)+','+yP(proj.series[p-1].acumProj));
+  parts.push('<polyline points="'+projPts.join(' ')+'" fill="none" stroke="#ff9100" stroke-width="2.5" stroke-dasharray="6 4" stroke-linejoin="round"></polyline>');
 
-  // Linha real acumulada — só até dias decorridos
-  var pontosReal = proj.series.filter(function(s){ return s.acumReal !== null; });
+  // real area + line
+  var pontosReal = (proj.series || []).filter(function(s){ return s.acumReal !== null && s.acumReal !== undefined; });
   if (pontosReal.length) {
-    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
-    grad.addColorStop(0, 'rgba(0,229,255,0.22)');
-    grad.addColorStop(1, 'rgba(0,229,255,0.02)');
-    ctx.beginPath();
-    ctx.moveTo(xP(pontosReal[0].dia), yP(pontosReal[0].acumReal));
-    pontosReal.forEach(function(s, idx){ if (idx) ctx.lineTo(xP(s.dia), yP(s.acumReal)); });
-    ctx.lineTo(xP(pontosReal[pontosReal.length - 1].dia), pad.top + cH);
-    ctx.lineTo(xP(pontosReal[0].dia), pad.top + cH);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.strokeStyle = '#00e5ff';
-    ctx.lineWidth = 2.5;
-    ctx.lineJoin = 'round';
-    ctx.moveTo(xP(pontosReal[0].dia), yP(pontosReal[0].acumReal));
-    pontosReal.forEach(function(s, idx){ if (idx) ctx.lineTo(xP(s.dia), yP(s.acumReal)); });
-    ctx.stroke();
-
-    // marca último ponto
+    var linePts = pontosReal.map(function(s){ return xP(s.dia)+','+yP(s.acumReal); });
+    var areaPts = linePts.slice();
+    areaPts.push(xP(pontosReal[pontosReal.length-1].dia)+','+(pad.top+cH));
+    areaPts.push(xP(pontosReal[0].dia)+','+(pad.top+cH));
+    parts.push('<polygon points="'+areaPts.join(' ')+'" fill="rgba(0,229,255,0.18)"></polygon>');
+    parts.push('<polyline points="'+linePts.join(' ')+'" fill="none" stroke="#00e5ff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></polyline>');
     var last = pontosReal[pontosReal.length - 1];
-    ctx.beginPath();
-    ctx.arc(xP(last.dia), yP(last.acumReal), 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#00e5ff';
-    ctx.fill();
-    ctx.strokeStyle = '#0a0a0f';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    parts.push('<circle cx="'+xP(last.dia)+'" cy="'+yP(last.acumReal)+'" r="4.5" fill="#00e5ff" stroke="#0a0a0f" stroke-width="1.5"></circle>');
   }
 
-  // marcador projeção final
-  ctx.fillStyle = '#ff9100';
-  ctx.font = 'bold 10px Syne,sans-serif';
-  ctx.textAlign = 'right';
-  ctx.fillText(fmtBRL(proj.projecao), pad.left + cW, pad.top + 10);
+  // end projection label
+  parts.push('<text x="'+(pad.left+cW)+'" y="'+(pad.top+12)+'" fill="#ff9100" font-size="12" font-weight="700" font-family="Syne,sans-serif" text-anchor="end">'+esc(fmtBRL(proj.projecao||0))+'</text>');
+
+  if (!pontosReal.length && !(proj.projecao > 0)) {
+    parts.push('<text x="'+(W/2)+'" y="'+(H/2)+'" fill="#6b6b8a" font-size="13" font-family="DM Sans,sans-serif" text-anchor="middle">Sem dados neste mês</text>');
+  }
+
+  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
+  svg.innerHTML = parts.join('');
 }
 
 function drawLineChart(canvasId, diaData, totalAtend) {
@@ -4190,7 +4176,7 @@ function goTo(page, btn){
 // Registra Service Worker próprio do PWA para controlar cache de forma versionada.
 // Motivo: reduzir divergência entre celular/computador e evitar que versões antigas fiquem presas no navegador.
 function registrarServiceWorkerZapClin_(){
-  // v4.32.7 recovery: sem SW ativo — evita HTML no lugar de JS.
+  // v4.32.8 recovery: sem SW ativo — evita HTML no lugar de JS.
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(function(regs){
       (regs||[]).forEach(function(r){ try{r.unregister();}catch(e){} });
