@@ -1,15 +1,15 @@
 ﻿// ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.32.2 | Data: 14/07/2026
-// [v4.32.2 CACHE]
-// HOTFIX: nunca servir index.html como fallback de zc-*.js (quebrava o PWA).
+// Versão: 4.32.3 | Data: 14/07/2026
+// [v4.32.3 CACHE]
+// EMERGÊNCIA: bump de cache + SKIP_WAITING; mantém fallback seguro (nunca HTML no lugar de JS).
 // [v4.32.1 CACHE]
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.32.2';
-const STATIC_CACHE = 'zapclin-static-v4.32.2';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.32.2';
+const ZAPCLIN_SW_VERSION = 'v4.32.3';
+const STATIC_CACHE = 'zapclin-static-v4.32.3';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.32.3';
 
 const APP_SHELL = [
   './',

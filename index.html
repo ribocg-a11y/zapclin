@@ -1,11 +1,10 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.32.2 | Data: 14/07/2026
-  HOTFIX v4.32.2:
-    - Corrige SW: nunca devolver index.html no lugar de zc-*.js (PWA quebrava)
-  HOTFIX v4.32.1:
-    - SW rede-primeiro para index/zc-*.js
+  Versão : 4.32.3 | Data: 14/07/2026
+  HOTFIX v4.32.3 (EMERGÊNCIA):
+    - Restaura SW estável (nunca devolver HTML no lugar de JS)
+    - Bootstrap inline limpa SW/cache corrompidos e força 1 reload
   NOVO v4.32.0:
     - Dashboard: gráfico de projeção de fechamento após Faturamento por Dia
     - Ritmo diário, projeção do mês, restante estimado e desvio dia a dia
@@ -258,6 +257,34 @@
 -->
 <html lang="pt-BR">
 <head>
+<script>
+/* HOTFIX v4.32.3 — recupera PWA com SW corrompido (sem depender de zc-*.js) */
+(function(){
+  try{
+    if(sessionStorage.getItem('zapclin_repaired_4323')==='1')return;
+    if(!('serviceWorker' in navigator)){sessionStorage.setItem('zapclin_repaired_4323','1');return;}
+    var params=new URLSearchParams(location.search||'');
+    var already=params.get('repaired')==='1';
+    Promise.all([
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        return Promise.all((regs||[]).map(function(r){return r.unregister();}));
+      }).catch(function(){}),
+      (window.caches?caches.keys().then(function(keys){
+        return Promise.all((keys||[]).filter(function(k){return String(k).indexOf('zapclin-')===0;}).map(function(k){return caches.delete(k);}));
+      }).catch(function(){}):Promise.resolve())
+    ]).then(function(){
+      sessionStorage.setItem('zapclin_repaired_4323','1');
+      if(!already){
+        var u=new URL(location.href);
+        u.searchParams.set('repaired','1');
+        u.searchParams.set('v','4.32.3');
+        location.replace(u.toString());
+      }
+    }).catch(function(){sessionStorage.setItem('zapclin_repaired_4323','1');});
+  }catch(e){}
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2210,14 +2237,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.32.2"></script>
-<script src="zc-globals.js?v=v4.32.2"></script>
-<script src="zc-api.js?v=v4.32.2"></script>
-<script src="zc-core.js?v=v4.32.2"></script>
-<script src="zc-sync.js?v=v4.32.2"></script>
-<script src="zc-whatsapp.js?v=v4.32.2"></script>
-<script src="zc-admin.js?v=v4.32.2"></script>
-<script src="zc-historico-custos.js?v=v4.32.2"></script>
+<script src="zc-version.js?v=v4.32.3"></script>
+<script src="zc-globals.js?v=v4.32.3"></script>
+<script src="zc-api.js?v=v4.32.3"></script>
+<script src="zc-core.js?v=v4.32.3"></script>
+<script src="zc-sync.js?v=v4.32.3"></script>
+<script src="zc-whatsapp.js?v=v4.32.3"></script>
+<script src="zc-admin.js?v=v4.32.3"></script>
+<script src="zc-historico-custos.js?v=v4.32.3"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -4167,7 +4194,7 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.32.2',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js?v=4.32.3',{scope:'./'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
         try{reg.update();}catch(e){}
