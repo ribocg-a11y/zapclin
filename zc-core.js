@@ -24,7 +24,7 @@ function aplicarControleVersao_(){
 
     if(anterior){
       setTimeout(function(){
-        showToast('✅ Sistema atualizado para '+APP_VERSION,'blue');
+        showToast({title:'Nova versão', msg:'ZapClin atualizado para '+APP_VERSION+'. Dashboard de projeção limpo (sem lista embaixo).'}, 'blue');
       },900);
     }
   }catch(e){

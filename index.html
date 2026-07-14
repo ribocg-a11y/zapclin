@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.0 | Data: 14/07/2026
+  Versão : 4.33.1 | Data: 14/07/2026
+  NOVO v4.33.1:
+    - Força reload limpo (sai de abas velhas v4.32.x com lista abaixo do gráfico)
   NOVO v4.33.0:
     - Remove metodologia + lista dia a dia abaixo do gráfico de projeção
     - Mantém KPIs, gráfico SVG interativo e fonte Inter nos valores
@@ -266,11 +268,15 @@
 <html lang="pt-BR">
 <head>
 <script>
-/* v4.33.0 — limpa SW/cache e SEMPRE recarrega 1x antes de rodar o app */
+/* v4.33.1 — força sair de HTML antigo (lista/método sob a projeção) */
 (function(){
   try{
-    var KEY='zapclin_boot_4327';
-    if(sessionStorage.getItem(KEY)==='1')return;
+    var NEED='4.33.1';
+    var KEY='zapclin_force_'+NEED;
+    var params=new URLSearchParams(location.search||'');
+    var already=params.get('v')===NEED && params.get('fresh')==='1';
+    if(sessionStorage.getItem(KEY)==='1' && already) return;
+
     var tasks=[];
     if('serviceWorker' in navigator){
       tasks.push(navigator.serviceWorker.getRegistrations().then(function(regs){
@@ -283,14 +289,20 @@
       }).catch(function(){}));
     }
     Promise.all(tasks).then(function(){
+      try{
+        // limpa flags antigos de repair/boot
+        Object.keys(sessionStorage).forEach(function(k){
+          if(k.indexOf('zapclin_')===0 && k!==KEY) sessionStorage.removeItem(k);
+        });
+      }catch(e){}
       sessionStorage.setItem(KEY,'1');
-      var u=new URL(location.href);
-      u.searchParams.set('v','4.33.0');
-      u.searchParams.set('_', String(Date.now()));
-      u.searchParams.delete('repaired');
-      u.searchParams.delete('ts');
-      location.replace(u.pathname + u.search + u.hash);
-    }).catch(function(){ sessionStorage.setItem(KEY,'1'); });
+      if(!already){
+        location.replace(location.pathname+'?v='+NEED+'&fresh=1&_='+Date.now());
+      }
+    }).catch(function(){
+      sessionStorage.setItem(KEY,'1');
+      if(!already) location.replace(location.pathname+'?v='+NEED+'&fresh=1&_='+Date.now());
+    });
   }catch(e){}
 })();
 </script>
@@ -1323,7 +1335,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.0</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.1</span>
       </div>
     </div>
   </div>
@@ -1402,7 +1414,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.0</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.1</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -2253,14 +2265,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.0"></script>
-<script src="zc-globals.js?v=v4.33.0"></script>
-<script src="zc-api.js?v=v4.33.0"></script>
-<script src="zc-core.js?v=v4.33.0"></script>
-<script src="zc-sync.js?v=v4.33.0"></script>
-<script src="zc-whatsapp.js?v=v4.33.0"></script>
-<script src="zc-admin.js?v=v4.33.0"></script>
-<script src="zc-historico-custos.js?v=v4.33.0"></script>
+<script src="zc-version.js?v=v4.33.1"></script>
+<script src="zc-globals.js?v=v4.33.1"></script>
+<script src="zc-api.js?v=v4.33.1"></script>
+<script src="zc-core.js?v=v4.33.1"></script>
+<script src="zc-sync.js?v=v4.33.1"></script>
+<script src="zc-whatsapp.js?v=v4.33.1"></script>
+<script src="zc-admin.js?v=v4.33.1"></script>
+<script src="zc-historico-custos.js?v=v4.33.1"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -4277,7 +4289,7 @@ function goTo(page, btn){
 // Registra Service Worker próprio do PWA para controlar cache de forma versionada.
 // Motivo: reduzir divergência entre celular/computador e evitar que versões antigas fiquem presas no navegador.
 function registrarServiceWorkerZapClin_(){
-  // v4.33.0 recovery: sem SW ativo — evita HTML no lugar de JS.
+  // v4.33.1 recovery: sem SW ativo — evita HTML no lugar de JS.
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(function(regs){
       (regs||[]).forEach(function(r){ try{r.unregister();}catch(e){} });
