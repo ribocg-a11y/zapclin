@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.32.9 | Data: 14/07/2026
+  Versão : 4.33.0 | Data: 14/07/2026
+  NOVO v4.33.0:
+    - Remove metodologia + lista dia a dia abaixo do gráfico de projeção
+    - Mantém KPIs, gráfico SVG interativo e fonte Inter nos valores
   NOVO v4.32.9:
-    - Projeção interativa (hover/toque + tooltip + lista clicável)
+    - Projeção interativa (hover/toque + tooltip)
     - Valores da projeção em Inter (--font-data), sem Syne
   NOVO v4.32.8:
     - Projeção de Fechamento em SVG/DOM (visível mesmo com canvas width 0)
@@ -263,7 +266,7 @@
 <html lang="pt-BR">
 <head>
 <script>
-/* v4.32.9 — limpa SW/cache e SEMPRE recarrega 1x antes de rodar o app */
+/* v4.33.0 — limpa SW/cache e SEMPRE recarrega 1x antes de rodar o app */
 (function(){
   try{
     var KEY='zapclin_boot_4327';
@@ -282,7 +285,7 @@
     Promise.all(tasks).then(function(){
       sessionStorage.setItem(KEY,'1');
       var u=new URL(location.href);
-      u.searchParams.set('v','4.32.9');
+      u.searchParams.set('v','4.33.0');
       u.searchParams.set('_', String(Date.now()));
       u.searchParams.delete('repaired');
       u.searchParams.delete('ts');
@@ -874,7 +877,6 @@
   .dash-proj-leg-item{display:inline-flex;align-items:center;gap:6px}
   .dash-proj-leg-line{width:18px;height:3px;border-radius:2px;display:inline-block}
   .dash-proj-leg-line.real{background:var(--cyan)}.dash-proj-leg-line.proj{background:var(--orange);opacity:.9;background-image:repeating-linear-gradient(90deg,var(--orange) 0 4px,transparent 4px 7px)}
-  .dash-proj-note{font-size:11px;color:var(--muted);line-height:1.4;margin-top:8px}
   .dash-proj-daylist{max-height:240px;overflow-y:auto;margin-top:12px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px}
   .dash-proj-dayrow{display:grid;grid-template-columns:36px 1fr 1fr 86px;gap:8px;align-items:center;padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}
   .dash-proj-dayrow.head{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;position:sticky;top:0;background:var(--card);z-index:1}
@@ -1321,7 +1323,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.32.9</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.0</span>
       </div>
     </div>
   </div>
@@ -1400,7 +1402,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.32.9</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.0</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1817,8 +1819,6 @@
       <span class="dash-proj-leg-item"><span class="dash-proj-leg-line proj"></span> Ritmo projetado</span>
     </div>
     <div class="dash-proj-svg-wrap" id="dashProjWrap"><svg id="chartProjecao" class="dash-proj-svg" viewBox="0 0 640 220" role="img" aria-label="Projeção de fechamento"></svg><div class="dash-proj-tip" id="dashProjTip"></div></div>
-    <div class="dash-proj-note" id="dashProjMetodologia"></div>
-    <div class="dash-proj-daylist" id="dashProjDiaLista"></div>
   </div>
 
   <!-- Gráfico 2: Por Tipo de Serviço -->
@@ -2253,14 +2253,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.32.9"></script>
-<script src="zc-globals.js?v=v4.32.9"></script>
-<script src="zc-api.js?v=v4.32.9"></script>
-<script src="zc-core.js?v=v4.32.9"></script>
-<script src="zc-sync.js?v=v4.32.9"></script>
-<script src="zc-whatsapp.js?v=v4.32.9"></script>
-<script src="zc-admin.js?v=v4.32.9"></script>
-<script src="zc-historico-custos.js?v=v4.32.9"></script>
+<script src="zc-version.js?v=v4.33.0"></script>
+<script src="zc-globals.js?v=v4.33.0"></script>
+<script src="zc-api.js?v=v4.33.0"></script>
+<script src="zc-core.js?v=v4.33.0"></script>
+<script src="zc-sync.js?v=v4.33.0"></script>
+<script src="zc-whatsapp.js?v=v4.33.0"></script>
+<script src="zc-admin.js?v=v4.33.0"></script>
+<script src="zc-historico-custos.js?v=v4.33.0"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -3190,10 +3190,6 @@ function renderProjecaoFechamento_(diaData, receitaMes, target){
     set('dashProjRitmoSub', '—');
     set('dashProjDesvio', '—');
     set('dashProjDesvioSub', '—');
-    var metodo = document.getElementById('dashProjMetodologia');
-    if (metodo) metodo.textContent = 'Aguarde lançamentos no mês para calcular o ritmo e a projeção de fechamento.';
-    var lista = document.getElementById('dashProjDiaLista');
-    if (lista) lista.innerHTML = '';
     var cv = document.getElementById('chartProjecao');
     if (cv) {
       cv.innerHTML = '<text x="320" y="110" fill="#6b6b8a" font-size="13" font-family="DM Sans,sans-serif" text-anchor="middle">Sem dados neste mês</text>';
@@ -3223,53 +3219,7 @@ function renderProjecaoFechamento_(diaData, receitaMes, target){
     ? (proj.diasRestantes + ' dia(s) no ritmo atual')
     : 'fechamento realizado do mês');
 
-  // Contagem dia a dia fora do ritmo (±10%)
-  var acima = 0, abaixo = 0;
-  proj.series.forEach(function(s){
-    if (!(s.passado || !proj.isMesAtual)) return;
-    if (proj.ritmo <= 0) return;
-    if (s.realDia > proj.ritmo * 1.05) acima++;
-    else if (s.realDia < proj.ritmo * 0.95) abaixo++;
-  });
-
-  var metodoEl = document.getElementById('dashProjMetodologia');
-  if (metodoEl) {
-    metodoEl.textContent = 'Método: ritmo = receita acumulada ÷ dias corridos. Projeção = ritmo × ' +
-      proj.diasMes + ' dias. Dia a dia: verde = acima do ritmo, vermelho = abaixo' +
-      (acima || abaixo ? (' · ' + acima + ' dia(s) acima / ' + abaixo + ' abaixo') : '') + '.';
-  }
-
-  renderProjecaoDiaLista_(proj);
   drawProjecaoChart_('chartProjecao', proj);
-}
-
-function renderProjecaoDiaLista_(proj){
-  var el = document.getElementById('dashProjDiaLista');
-  if (!el) return;
-  var rows = proj.series.filter(function(s){ return s.passado || !proj.isMesAtual; });
-  if (!rows.length) { el.innerHTML = ''; return; }
-  var html = '<div class="dash-proj-dayrow head"><div>Dia</div><div>Real</div><div>Ritmo</div><div>Desvio</div></div>';
-  rows.slice().reverse().forEach(function(s){
-    var cls = Math.abs(s.desvioDia) < 0.5 ? 'flat' : (s.desvioDia > 0 ? 'up' : 'down');
-    var sign = s.desvioDia > 0.5 ? '+' : '';
-    var desvioTxt = Math.abs(s.desvioDia) < 0.5 ? '—' : sign + fmtBRL(s.desvioDia);
-    html += '<div class="dash-proj-dayrow' + (s.hoje ? ' hoje' : '') + '" data-dia="'+s.dia+'" role="button" tabindex="0">' +
-      '<div class="dash-proj-day">' + String(s.dia).padStart(2, '0') + (s.hoje ? ' ·' : '') + '</div>' +
-      '<div class="dash-proj-val">' + fmtBRL(s.realDia) + '</div>' +
-      '<div class="dash-proj-esp">' + fmtBRL(s.ritmo) + '</div>' +
-      '<div class="dash-proj-desvio ' + cls + '">' + desvioTxt + '</div>' +
-      '</div>';
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.dash-proj-dayrow[data-dia]').forEach(function(row){
-    var activate = function(){
-      var dia = parseInt(row.getAttribute('data-dia'), 10);
-      _projHighlightDia_(dia, true);
-    };
-    row.addEventListener('mouseenter', activate);
-    row.addEventListener('click', activate);
-    row.addEventListener('keydown', function(ev){ if(ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); activate(); } });
-  });
 }
 
 var _projState = null;
@@ -3359,17 +3309,6 @@ function _projHighlightDia_(dia, fromList){
       ? '<circle cx="'+p.x+'" cy="'+p.y+'" r="5" fill="#00d4ee" stroke="#0a0a0f" stroke-width="1.5"></circle>'
       : '');
 
-  var list = document.getElementById('dashProjDiaLista');
-  if(list){
-    list.querySelectorAll('.dash-proj-dayrow[data-dia]').forEach(function(row){
-      row.classList.toggle('active', parseInt(row.getAttribute('data-dia'),10) === dia);
-    });
-    var active = list.querySelector('.dash-proj-dayrow.active');
-    if(active && fromList){
-      try{ active.scrollIntoView({block:'nearest', behavior:'smooth'}); }catch(e){}
-    }
-  }
-
   var wrap = document.getElementById('dashProjWrap');
   if(wrap){
     var rect = wrap.getBoundingClientRect();
@@ -3395,8 +3334,6 @@ function _projOnPointer_(ev){
 function _projOnLeave_(){
   _projClearHoverSvg_();
   _projHideTip_();
-  var list = document.getElementById('dashProjDiaLista');
-  if(list) list.querySelectorAll('.dash-proj-dayrow.active').forEach(function(r){ r.classList.remove('active'); });
 }
 
 function _setupProjecaoInteraction_(svg, proj){
@@ -4340,7 +4277,7 @@ function goTo(page, btn){
 // Registra Service Worker próprio do PWA para controlar cache de forma versionada.
 // Motivo: reduzir divergência entre celular/computador e evitar que versões antigas fiquem presas no navegador.
 function registrarServiceWorkerZapClin_(){
-  // v4.32.9 recovery: sem SW ativo — evita HTML no lugar de JS.
+  // v4.33.0 recovery: sem SW ativo — evita HTML no lugar de JS.
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(function(regs){
       (regs||[]).forEach(function(r){ try{r.unregister();}catch(e){} });
