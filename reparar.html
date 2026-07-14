@@ -3,54 +3,32 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="theme-color" content="#07080d"/>
-  <title>ZapClin — Reparar cache</title>
+  <title>ZapClin — limpar cache</title>
   <style>
-    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#07080d;color:#f5f7ff;font-family:system-ui,-apple-system,sans-serif;padding:24px;text-align:center}
-    .box{max-width:420px}
-    h1{font-size:22px;margin:0 0 10px}
-    p{font-size:14px;opacity:.8;line-height:1.45;margin:0 0 16px}
-    #log{font-size:12px;opacity:.65;min-height:3em;margin-bottom:16px}
-    a,button{display:inline-block;background:#00d4ee;color:#041018;font-weight:800;text-decoration:none;border:0;padding:14px 22px;border-radius:12px;cursor:pointer;font-size:15px}
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#07080d;color:#f5f7ff;font-family:system-ui,sans-serif;padding:24px;text-align:center}
+    a{color:#00d4ee}
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>Reparando ZapClin…</h1>
-    <p>Limpando Service Worker e caches corrompidos. Aguarde.</p>
-    <div id="log">Iniciando…</div>
-    <a id="go" href="./index.html?repaired=1&v=4.32.4" style="display:none">Abrir ZapClin</a>
+  <div>
+    <p id="log">Limpando cache…</p>
   </div>
   <script>
-  (function(){
-    var log=document.getElementById('log');
-    function say(t){ log.textContent=t; }
-    async function nuke(){
-      try{
-        if('serviceWorker' in navigator){
-          var regs=await navigator.serviceWorker.getRegistrations();
-          say('Removendo '+regs.length+' Service Worker(s)…');
-          await Promise.all(regs.map(function(r){ return r.unregister(); }));
-        }
-        if(window.caches&&caches.keys){
-          var keys=await caches.keys();
-          say('Apagando '+keys.length+' cache(s)…');
-          await Promise.all(keys.map(function(k){ return caches.delete(k); }));
-        }
-        try{
-          localStorage.removeItem('zapAppVersion');
-          sessionStorage.clear();
-        }catch(e){}
-        say('Pronto. Abrindo o sistema…');
-        setTimeout(function(){
-          location.replace('./index.html?repaired=1&v=4.32.4&ts='+Date.now());
-        }, 400);
-      }catch(err){
-        say('Erro: '+(err&&err.message||err)+'. Toque em Abrir ZapClin.');
-        document.getElementById('go').style.display='inline-block';
+  (async function(){
+    try{
+      if('serviceWorker' in navigator){
+        var regs=await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(function(r){return r.unregister();}));
       }
+      if(window.caches){
+        var keys=await caches.keys();
+        await Promise.all(keys.map(function(k){return caches.delete(k);}));
+      }
+      try{sessionStorage.clear();}catch(e){}
+      location.replace('./index.html?repaired=1&v=4.32.5&ts='+Date.now());
+    }catch(e){
+      document.getElementById('log').innerHTML='Falha ao limpar. <a href="./index.html?v=4.32.5">Abrir ZapClin</a>';
     }
-    nuke();
   })();
   </script>
 </body>
