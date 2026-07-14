@@ -1,18 +1,15 @@
 ﻿// ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.32.1 | Data: 14/07/2026
+// Versão: 4.32.2 | Data: 14/07/2026
+// [v4.32.2 CACHE]
+// HOTFIX: nunca servir index.html como fallback de zc-*.js (quebrava o PWA).
 // [v4.32.1 CACHE]
-// Rede primeiro para index.html e zc-*.js — evita PWA preso em versão antiga
-// e some o bloco de Projeção de Fechamento por cache do SW.
-// [v4.27.4 CACHE]
-// Corrige semanas do Dashboard para segunda a domingo.
-// [v4.26.0 CACHE]
-// Cache PWA versionado para reduzir inconsistência entre celular/desktop.
+// Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.32.1';
-const STATIC_CACHE = 'zapclin-static-v4.32.1';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.32.1';
+const ZAPCLIN_SW_VERSION = 'v4.32.2';
+const STATIC_CACHE = 'zapclin-static-v4.32.2';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.32.2';
 
 const APP_SHELL = [
   './',
@@ -38,7 +35,7 @@ const APP_SHELL = [
 function isShellCritical_(url) {
   const path = url.pathname || '';
   const file = path.split('/').pop() || '';
-  if (file === 'index.html' || file === '' || file === 'sw.js') return true;
+  if (file === 'index.html' || file === 'sw.js') return true;
   if (/^zc-.*\.js$/i.test(file)) return true;
   return false;
 }
@@ -81,37 +78,60 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Navegação e shell crítico: sempre rede primeiro (evita HTML/JS antigo).
-  if (req.mode === 'navigate' || (url.origin === self.location.origin && isShellCritical_(url))) {
+  // Navegação: rede primeiro; fallback só index.html.
+  if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req, { cache: 'no-store' })
         .then(resp => {
-          if (resp && resp.status === 200 && url.origin === self.location.origin) {
+          if (resp && resp.status === 200) {
             const copy = resp.clone();
-            const cacheKey = req.mode === 'navigate' ? './index.html' : req;
-            caches.open(STATIC_CACHE).then(cache => cache.put(cacheKey, copy));
+            caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
           }
           return resp;
         })
-        .catch(() => caches.match(req.mode === 'navigate' ? './index.html' : req)
-          .then(cached => cached || caches.match('./index.html')).then(c => c || caches.match('./')))
+        .catch(() => caches.match('./index.html').then(cached => cached || caches.match('./')))
     );
     return;
   }
 
-  // Demais assets locais: cache primeiro, rede atualiza.
-  if (url.origin === self.location.origin) {
+  if (url.origin !== self.location.origin) return;
+
+  // Shell crítico (index/zc-*.js/sw.js): rede primeiro; fallback APENAS do próprio arquivo em cache.
+  if (isShellCritical_(url)) {
     event.respondWith(
-      caches.match(req).then(cached => {
-        const network = fetch(req).then(resp => {
+      fetch(req, { cache: 'no-store' })
+        .then(resp => {
           if (resp && resp.status === 200) {
-            const copy = resp.clone();
-            caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy));
+            const copy1 = resp.clone();
+            const copy2 = resp.clone();
+            caches.open(STATIC_CACHE).then(cache => {
+              cache.put(req, copy1);
+              const clean = url.pathname.split('/').pop();
+              if (clean) cache.put('./' + clean, copy2);
+            });
           }
           return resp;
-        }).catch(() => cached);
-        return cached || network;
-      })
+        })
+        .catch(() =>
+          caches.match(req).then(cached =>
+            cached || caches.match('./' + (url.pathname.split('/').pop() || ''))
+          )
+        )
     );
+    return;
   }
+
+  // Demais assets: cache primeiro.
+  event.respondWith(
+    caches.match(req).then(cached => {
+      const network = fetch(req).then(resp => {
+        if (resp && resp.status === 200) {
+          const copy = resp.clone();
+          caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy));
+        }
+        return resp;
+      }).catch(() => cached);
+      return cached || network;
+    })
+  );
 });
