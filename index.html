@@ -1,8 +1,8 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.2 | Data: 14/07/2026
-  NOVO v4.33.2:
+  Versão : 4.33.3 | Data: 14/07/2026
+  NOVO v4.33.3:
     - Força reload limpo (sai de abas velhas v4.32.x com lista abaixo do gráfico)
   NOVO v4.33.0:
     - Remove metodologia + lista dia a dia abaixo do gráfico de projeção
@@ -268,40 +268,31 @@
 <html lang="pt-BR">
 <head>
 <script>
-/* v4.33.2 — força sair de HTML antigo (lista/método sob a projeção) */
+/* Fluxo padrão ZapClin: ?force=vX.Y.Z limpa cache uma vez (REGRAS_DE_PUBLICACAO_SEGURA) */
 (function(){
   try{
-    var NEED='4.33.2';
-    var KEY='zapclin_force_'+NEED;
     var params=new URLSearchParams(location.search||'');
-    var already=params.get('v')===NEED && params.get('fresh')==='1';
-    if(sessionStorage.getItem(KEY)==='1' && already) return;
-
+    var force=params.get('force');
+    if(!force) return;
+    var KEY='zapclin_force_done_'+force;
+    if(sessionStorage.getItem(KEY)==='1') return;
     var tasks=[];
     if('serviceWorker' in navigator){
       tasks.push(navigator.serviceWorker.getRegistrations().then(function(regs){
-        return Promise.all((regs||[]).map(function(r){return r.unregister();}));
+        return Promise.all((regs||[]).map(function(r){ return r.unregister(); }));
       }).catch(function(){}));
     }
     if(window.caches&&caches.keys){
       tasks.push(caches.keys().then(function(keys){
-        return Promise.all((keys||[]).map(function(k){return caches.delete(k);}));
+        return Promise.all((keys||[]).map(function(k){ return caches.delete(k); }));
       }).catch(function(){}));
     }
     Promise.all(tasks).then(function(){
-      try{
-        // limpa flags antigos de repair/boot
-        Object.keys(sessionStorage).forEach(function(k){
-          if(k.indexOf('zapclin_')===0 && k!==KEY) sessionStorage.removeItem(k);
-        });
-      }catch(e){}
       sessionStorage.setItem(KEY,'1');
-      if(!already){
-        location.replace(location.pathname+'?v='+NEED+'&fresh=1&_='+Date.now());
-      }
+      location.replace(location.pathname+'?v='+encodeURIComponent(force)+'&_='+Date.now());
     }).catch(function(){
       sessionStorage.setItem(KEY,'1');
-      if(!already) location.replace(location.pathname+'?v='+NEED+'&fresh=1&_='+Date.now());
+      location.replace(location.pathname+'?v='+encodeURIComponent(force)+'&_='+Date.now());
     });
   }catch(e){}
 })();
@@ -1335,7 +1326,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.2</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.3</span>
       </div>
     </div>
   </div>
@@ -1414,7 +1405,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.2</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.3</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -2265,14 +2256,14 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.2"></script>
-<script src="zc-globals.js?v=v4.33.2"></script>
-<script src="zc-api.js?v=v4.33.2"></script>
-<script src="zc-core.js?v=v4.33.2"></script>
-<script src="zc-sync.js?v=v4.33.2"></script>
-<script src="zc-whatsapp.js?v=v4.33.2"></script>
-<script src="zc-admin.js?v=v4.33.2"></script>
-<script src="zc-historico-custos.js?v=v4.33.2"></script>
+<script src="zc-version.js?v=v4.33.3"></script>
+<script src="zc-globals.js?v=v4.33.3"></script>
+<script src="zc-api.js?v=v4.33.3"></script>
+<script src="zc-core.js?v=v4.33.3"></script>
+<script src="zc-sync.js?v=v4.33.3"></script>
+<script src="zc-whatsapp.js?v=v4.33.3"></script>
+<script src="zc-admin.js?v=v4.33.3"></script>
+<script src="zc-historico-custos.js?v=v4.33.3"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
@@ -4320,12 +4311,41 @@ function goTo(page, btn){
 // Registra Service Worker próprio do PWA para controlar cache de forma versionada.
 // Motivo: reduzir divergência entre celular/computador e evitar que versões antigas fiquem presas no navegador.
 function registrarServiceWorkerZapClin_(){
-  // v4.33.2 recovery: sem SW ativo — evita HTML no lugar de JS.
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.getRegistrations().then(function(regs){
-      (regs||[]).forEach(function(r){ try{r.unregister();}catch(e){} });
-    }).catch(function(){});
+  if(!('serviceWorker' in navigator)){
+    console.log('[ZapClin] Service Worker não suportado neste navegador.');
+    return;
   }
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js?v=4.33.3',{scope:'./'})
+      .then(function(reg){
+        console.log('[ZapClin] Service Worker registrado:',reg.scope);
+        try{reg.update();}catch(e){}
+        if(reg.waiting){
+          try{reg.waiting.postMessage({type:'SKIP_WAITING'});}catch(e){}
+        }
+        reg.addEventListener('updatefound',function(){
+          var novoSW=reg.installing;
+          if(!novoSW)return;
+          novoSW.addEventListener('statechange',function(){
+            if(novoSW.state==='installed' && navigator.serviceWorker.controller){
+              showToast('Nova versão disponível. Atualizando...', 'blue');
+              try{novoSW.postMessage({type:'SKIP_WAITING'});}catch(e){}
+            }
+          });
+        });
+      })
+      .catch(function(err){
+        console.warn('[ZapClin] Falha ao registrar Service Worker:',err);
+      });
+  });
+
+  var recarregou=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(recarregou)return;
+    recarregou=true;
+    try{sessionStorage.setItem('zapclin_sw_updated','1');}catch(e){}
+    window.location.reload();
+  });
 }
 
 // [v4.7 NOVO]

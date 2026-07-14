@@ -1,19 +1,16 @@
 // ============================================================
-// ZAPCLIN â€” SERVICE WORKER
-// VersÃ£o: 4.27.4 | Data: 30/05/2026
-// [v4.33.2 CACHE]
-// Corrige semanas do Dashboard para segunda a domingo.
-// [v4.33.2 CACHE]
-// Cache PWA versionado para reduzir inconsistÃªncia entre celular/desktop.
-// MantÃ©m rede como fonte principal para navegaÃ§Ã£o e usa cache como fallback.
+// ZAPCLIN — SERVICE WORKER
+// Versão: 4.33.3 | Data: 14/07/2026
+// [v4.33.3 CACHE]
+// Restaura SW padrão ZapClin + fallback seguro (nunca HTML no lugar de JS).
+// [v4.32.1 CACHE]
+// Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.33.2';
-const STATIC_CACHE = 'zapclin-static-v4.33.2';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.33.2';
+const ZAPCLIN_SW_VERSION = 'v4.33.3';
+const STATIC_CACHE = 'zapclin-static-v4.33.3';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.33.3';
 
-// [v4.33.2 CACHE]
-// Arquivos locais seguros para cache. NÃ£o inclui Apps Script/API, porque dados operacionais devem vir da planilha/backend.
 const APP_SHELL = [
   './',
   './index.html',
@@ -35,6 +32,14 @@ const APP_SHELL = [
   './zc-historico-custos.js'
 ];
 
+function isShellCritical_(url) {
+  const path = url.pathname || '';
+  const file = path.split('/').pop() || '';
+  if (file === 'index.html' || file === 'sw.js') return true;
+  if (/^zc-.*\.js$/i.test(file)) return true;
+  return false;
+}
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
@@ -47,7 +52,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
       keys
-        .filter(key => key !== STATIC_CACHE && key !== RUNTIME_CACHE)
+        .filter(key => key.startsWith('zapclin-') && key !== STATIC_CACHE && key !== RUNTIME_CACHE)
         .map(key => caches.delete(key))
     )).then(() => self.clients.claim())
   );
@@ -65,8 +70,6 @@ self.addEventListener('fetch', event => {
 
   if (req.method !== 'GET') return;
 
-  // [v4.33.2 CACHE]
-  // Nunca interceptar chamadas do Google Apps Script/Google APIs. Evita cache indevido de dados reais.
   if (
     url.hostname.includes('script.google.com') ||
     url.hostname.includes('googleusercontent.com') ||
@@ -75,14 +78,15 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.33.2 CACHE]
-  // NavegaÃ§Ã£o: rede primeiro para pegar versÃ£o nova; fallback para cache se offline.
+  // Navegação: rede primeiro; fallback só index.html.
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req, { cache: 'no-store' })
         .then(resp => {
-          const copy = resp.clone();
-          caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
+          if (resp && resp.status === 200) {
+            const copy = resp.clone();
+            caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
+          }
           return resp;
         })
         .catch(() => caches.match('./index.html').then(cached => cached || caches.match('./')))
@@ -90,24 +94,44 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // [v4.33.2 CACHE]
-  // Assets locais: cache primeiro, rede como atualizaÃ§Ã£o silenciosa.
-  if (url.origin === self.location.origin) {
+  if (url.origin !== self.location.origin) return;
+
+  // Shell crítico (index/zc-*.js/sw.js): rede primeiro; fallback APENAS do próprio arquivo em cache.
+  if (isShellCritical_(url)) {
     event.respondWith(
-      caches.match(req).then(cached => {
-        const network = fetch(req).then(resp => {
+      fetch(req, { cache: 'no-store' })
+        .then(resp => {
           if (resp && resp.status === 200) {
-            const copy = resp.clone();
-            caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy));
+            const copy1 = resp.clone();
+            const copy2 = resp.clone();
+            caches.open(STATIC_CACHE).then(cache => {
+              cache.put(req, copy1);
+              const clean = url.pathname.split('/').pop();
+              if (clean) cache.put('./' + clean, copy2);
+            });
           }
           return resp;
-        }).catch(() => cached);
-        return cached || network;
-      })
+        })
+        .catch(() =>
+          caches.match(req).then(cached =>
+            cached || caches.match('./' + (url.pathname.split('/').pop() || ''))
+          )
+        )
     );
+    return;
   }
+
+  // Demais assets: cache primeiro.
+  event.respondWith(
+    caches.match(req).then(cached => {
+      const network = fetch(req).then(resp => {
+        if (resp && resp.status === 200) {
+          const copy = resp.clone();
+          caches.open(RUNTIME_CACHE).then(cache => cache.put(req, copy));
+        }
+        return resp;
+      }).catch(() => cached);
+      return cached || network;
+    })
+  );
 });
-
-
-
-

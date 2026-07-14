@@ -3,33 +3,10 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <title>ZapClin — atualizar</title>
-  <style>
-    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#07080d;color:#f5f7ff;font-family:Inter,DM Sans,system-ui,sans-serif;padding:24px;text-align:center}
-    p{opacity:.8;line-height:1.45}
-  </style>
+  <title>ZapClin — force update</title>
 </head>
-<body>
-  <div>
-    <h1 style="font-size:20px;margin:0 0 10px">Atualizando ZapClin…</h1>
-    <p id="l">Limpando cache antigo e abrindo a versão nova.</p>
-  </div>
-  <script>
-  (async function(){
-    try{
-      if('serviceWorker' in navigator){
-        for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
-      }
-      if (window.caches){
-        for (const k of await caches.keys()) await caches.delete(k);
-      }
-      try{ sessionStorage.clear(); localStorage.removeItem('zapAppVersion'); }catch(e){}
-      location.replace('./index.html?v=4.33.2&fresh=1&_='+Date.now());
-    }catch(e){
-      document.getElementById('l').textContent='Abra manualmente: index.html?v=4.33.2';
-    }
-  })();
-  </script>
+<body style="background:#07080d;color:#fff;font-family:system-ui,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center">
+  <p>Redirecionando para a versão atual…</p>
+  <script>location.replace('./index.html?force=v4.33.3');</script>
 </body>
 </html>
