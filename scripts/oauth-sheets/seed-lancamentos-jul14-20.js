@@ -279,9 +279,13 @@ async function main() {
     }
     appendRow = lastUsed + 1;
 
+    const sheetId = await getSheetGid(sheets);
+    const endRow = appendRow + newRows.length - 1;
+    await ensureGridRows(sheets, sheetId, endRow + 50);
+
     await sheets.spreadsheets.values.update({
       spreadsheetId: ZAPCLIN_SS_ID,
-      range: "'" + ABA + "'!B" + appendRow + ":G" + (appendRow + newRows.length - 1),
+      range: "'" + ABA + "'!B" + appendRow + ":G" + endRow,
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: newRows },
     });
@@ -293,7 +297,7 @@ async function main() {
           {
             repeatCell: {
               range: {
-                sheetId: await getSheetGid(sheets),
+                sheetId,
                 startRowIndex: appendRow - 1,
                 endRowIndex: appendRow - 1 + newRows.length,
                 startColumnIndex: 6,
@@ -352,6 +356,44 @@ async function getSheetGid(sheets) {
     if (s.properties.title === ABA) return s.properties.sheetId;
   }
   throw new Error('Aba nao encontrada: ' + ABA);
+}
+
+/** Expande rowCount da aba se o append passar do limite da grade (ex.: 1108). */
+async function ensureGridRows(sheets, sheetId, minRows) {
+  const meta = await sheets.spreadsheets.get({
+    spreadsheetId: ZAPCLIN_SS_ID,
+    fields: 'sheets.properties',
+  });
+  let current = 0;
+  for (const s of meta.data.sheets || []) {
+    if (s.properties.sheetId === sheetId) {
+      current = (s.properties.gridProperties && s.properties.gridProperties.rowCount) || 0;
+      break;
+    }
+  }
+  // Alinha ao teto operacional GAS (DATA_ROW_MAX=2000) com folga
+  const want = Math.max(minRows, 2000);
+  if (current >= want) {
+    console.log('Grade OK: rowCount=' + current);
+    return;
+  }
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: ZAPCLIN_SS_ID,
+    requestBody: {
+      requests: [
+        {
+          updateSheetProperties: {
+            properties: {
+              sheetId,
+              gridProperties: { rowCount: want },
+            },
+            fields: 'gridProperties.rowCount',
+          },
+        },
+      ],
+    },
+  });
+  console.log('Grade expandida: rowCount', current, '→', want);
 }
 
 main().catch((e) => {
