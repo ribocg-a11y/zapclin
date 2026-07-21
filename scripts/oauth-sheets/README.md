@@ -36,6 +36,7 @@ node "$ZC\scripts\oauth-sheets\test-zapclin-write.js"
 | `test-zapclin-write.js` | Smoke write na aba `OAUTH_SMOKE` |
 | `write-range.js` | Update de range (`--range` + `--json`/`--value`/`--file`) |
 | `append-rows.js` | Append de linhas |
+| `seed-lancamentos-jul14-20.js` | Seed 14–20/07/2026 com totais fixos (cancela + recreia) |
 
 ### Exemplos de edição
 
