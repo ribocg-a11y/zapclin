@@ -364,17 +364,20 @@ async function getSheetGid(sheets) {
 
 /** Expande rowCount da aba se o append passar do limite da grade (ex.: 1108). */
 async function ensureGridRows(sheets, sheetId, minRows) {
-  const meta = await sheets.spreadsheets.get({
-    spreadsheetId: ZAPCLIN_SS_ID,
-    fields: 'sheets.properties',
-  });
-  let current = 0;
-  for (const s of meta.data.sheets || []) {
-    if (s.properties.sheetId === sheetId) {
-      current = (s.properties.gridProperties && s.properties.gridProperties.rowCount) || 0;
-      break;
+  async function readRowCount() {
+    const meta = await sheets.spreadsheets.get({
+      spreadsheetId: ZAPCLIN_SS_ID,
+      fields: 'sheets.properties',
+    });
+    for (const s of meta.data.sheets || []) {
+      if (s.properties.sheetId === sheetId) {
+        return (s.properties.gridProperties && s.properties.gridProperties.rowCount) || 0;
+      }
     }
+    return 0;
   }
+
+  const current = await readRowCount();
   // Alinha ao teto operacional GAS (DATA_ROW_MAX=2000) com folga
   const want = Math.max(minRows, 2000);
   if (current >= want) {
@@ -382,45 +385,45 @@ async function ensureGridRows(sheets, sheetId, minRows) {
     return;
   }
 
-  const requests = [];
-  // 1) sobe rowCount (propriedade da aba)
-  requests.push({
-    updateSheetProperties: {
-      properties: {
-        sheetId,
-        gridProperties: { rowCount: want },
-      },
-      fields: 'gridProperties.rowCount',
-    },
-  });
-  // 2) fallback explícito: append de linhas no fim
+  // Preferir appendDimension (mais confiável que só updateSheetProperties)
   const missing = want - current;
-  if (missing > 0) {
-    requests.push({
-      appendDimension: {
-        sheetId,
-        dimension: 'ROWS',
-        length: missing,
-      },
-    });
-  }
-
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId: ZAPCLIN_SS_ID,
-    requestBody: { requests },
+    requestBody: {
+      requests: [
+        {
+          appendDimension: {
+            sheetId,
+            dimension: 'ROWS',
+            length: missing,
+          },
+        },
+      ],
+    },
   });
 
-  const meta2 = await sheets.spreadsheets.get({
-    spreadsheetId: ZAPCLIN_SS_ID,
-    fields: 'sheets.properties',
-  });
-  let after = current;
-  for (const s of meta2.data.sheets || []) {
-    if (s.properties.sheetId === sheetId) {
-      after = (s.properties.gridProperties && s.properties.gridProperties.rowCount) || after;
-      break;
-    }
+  let after = await readRowCount();
+  if (after < minRows) {
+    // fallback: força rowCount
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: ZAPCLIN_SS_ID,
+      requestBody: {
+        requests: [
+          {
+            updateSheetProperties: {
+              properties: {
+                sheetId,
+                gridProperties: { rowCount: want },
+              },
+              fields: 'gridProperties.rowCount',
+            },
+          },
+        ],
+      },
+    });
+    after = await readRowCount();
   }
+
   console.log('Grade expandida: rowCount', current, '→', after, '(alvo', want + ')');
   if (after < minRows) {
     throw new Error('Falha ao expandir grade: rowCount=' + after + ' < minRows=' + minRows);
