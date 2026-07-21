@@ -1,5 +1,6 @@
 /**
  * ZapClin — seed OAuth: LANÇAMENTOS 14–20/07/2026 com totais fixos.
+ * SEED_VERSION=2 — expande grade (rowCount/appendDimension) antes do append.
  *
  * Totais alvo (valor ativo, exclui CANCELADO):
  *   14/07 = 349 | 15/07 = 365 | 16/07 = 435 | 17/07 = 476
@@ -13,6 +14,8 @@
  *   node seed-lancamentos-jul14-20.js --i-know-what-im-doing
  */
 'use strict';
+
+const SEED_VERSION = 2;
 
 const path = require('path');
 const {
@@ -137,6 +140,7 @@ function parseMoney(raw) {
 }
 
 async function main() {
+  console.log('seed-lancamentos-jul14-20 SEED_VERSION=' + SEED_VERSION);
   const dry = process.argv.includes('--dry-run');
   const force = process.argv.includes('--i-know-what-im-doing');
   if (!dry && !force) {
@@ -377,23 +381,50 @@ async function ensureGridRows(sheets, sheetId, minRows) {
     console.log('Grade OK: rowCount=' + current);
     return;
   }
-  await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: ZAPCLIN_SS_ID,
-    requestBody: {
-      requests: [
-        {
-          updateSheetProperties: {
-            properties: {
-              sheetId,
-              gridProperties: { rowCount: want },
-            },
-            fields: 'gridProperties.rowCount',
-          },
-        },
-      ],
+
+  const requests = [];
+  // 1) sobe rowCount (propriedade da aba)
+  requests.push({
+    updateSheetProperties: {
+      properties: {
+        sheetId,
+        gridProperties: { rowCount: want },
+      },
+      fields: 'gridProperties.rowCount',
     },
   });
-  console.log('Grade expandida: rowCount', current, '→', want);
+  // 2) fallback explícito: append de linhas no fim
+  const missing = want - current;
+  if (missing > 0) {
+    requests.push({
+      appendDimension: {
+        sheetId,
+        dimension: 'ROWS',
+        length: missing,
+      },
+    });
+  }
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: ZAPCLIN_SS_ID,
+    requestBody: { requests },
+  });
+
+  const meta2 = await sheets.spreadsheets.get({
+    spreadsheetId: ZAPCLIN_SS_ID,
+    fields: 'sheets.properties',
+  });
+  let after = current;
+  for (const s of meta2.data.sheets || []) {
+    if (s.properties.sheetId === sheetId) {
+      after = (s.properties.gridProperties && s.properties.gridProperties.rowCount) || after;
+      break;
+    }
+  }
+  console.log('Grade expandida: rowCount', current, '→', after, '(alvo', want + ')');
+  if (after < minRows) {
+    throw new Error('Falha ao expandir grade: rowCount=' + after + ' < minRows=' + minRows);
+  }
 }
 
 main().catch((e) => {
