@@ -54,8 +54,8 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.33.3** | GitHub Pages |
-| Service Worker | **v4.33.3** | `sw.js` |
+| Frontend | **v4.33.4** | GitHub Pages |
+| Service Worker | **v4.33.4** | `sw.js` |
 | GAS (código repo) | **v3.50** (arquivo `AppsScript_v3.45_ATUAL.gs`) | ✅ |
 | GAS (ping) | **3.50** | ✅ produção |
 
@@ -83,11 +83,11 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (21/07/2026)
 
-- **Produção:** FE/SW **v4.33.3** · GAS **3.50** · projeção Dashboard OK no código
+- **Produção alvo:** FE/SW **v4.33.4** · GAS **3.50**
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
-- **Pacote Z:** até admin + histórico custos; **próximo código:** Z.5 `zc-nav` + `zc-home`
+- **Pacote Z:** Z.5 ✅ (`zc-nav` + `zc-home`); **próximo:** Z.6 registrar + clientes
 - **OAuth planilha:** write validado; scripts em `scripts/oauth-sheets/`
-- **Próximo humano:** homologar loja `?force=v4.33.3`
+- **Próximo humano:** `?force=v4.33.4` após merge
 
 ## Ao encerrar sessão
 

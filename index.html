@@ -1,7 +1,9 @@
 ﻿<!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.3 | Data: 14/07/2026
+  Versão : 4.33.4 | Data: 21/07/2026
+  NOVO v4.33.4:
+    - Pacote Z.5: extrai zc-nav.js + zc-home.js (zero mudança de comportamento)
   NOVO v4.33.3:
     - Força reload limpo (sai de abas velhas v4.32.x com lista abaixo do gráfico)
   NOVO v4.33.0:
@@ -1326,7 +1328,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.3</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.4</span>
       </div>
     </div>
   </div>
@@ -1405,7 +1407,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.3</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.4</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -2256,17 +2258,19 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.3"></script>
-<script src="zc-globals.js?v=v4.33.3"></script>
-<script src="zc-api.js?v=v4.33.3"></script>
-<script src="zc-core.js?v=v4.33.3"></script>
-<script src="zc-sync.js?v=v4.33.3"></script>
-<script src="zc-whatsapp.js?v=v4.33.3"></script>
-<script src="zc-admin.js?v=v4.33.3"></script>
-<script src="zc-historico-custos.js?v=v4.33.3"></script>
+<script src="zc-version.js?v=v4.33.4"></script>
+<script src="zc-globals.js?v=v4.33.4"></script>
+<script src="zc-api.js?v=v4.33.4"></script>
+<script src="zc-core.js?v=v4.33.4"></script>
+<script src="zc-nav.js?v=v4.33.4"></script>
+<script src="zc-home.js?v=v4.33.4"></script>
+<script src="zc-sync.js?v=v4.33.4"></script>
+<script src="zc-whatsapp.js?v=v4.33.4"></script>
+<script src="zc-admin.js?v=v4.33.4"></script>
+<script src="zc-historico-custos.js?v=v4.33.4"></script>
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN — app inline (Pacote Z.4: zc-admin extraído)
+// ZAPCLIN — app inline (Pacote Z.5: zc-nav + zc-home extraídos)
 // ═══════════════════════════════════════════════════════
 
 // ZAPCLIN v4.20.0 | 23/05/2026 — Ficha CRM e nova OS por Relacionamento
@@ -2682,15 +2686,7 @@ function enviarRelatorioEmail(){
 
 
 
-// ═══ SIDEBAR MOBILE ═══
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sbOverlay').classList.toggle('open');
-}
-function fecharSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sbOverlay').classList.remove('open');
-}
+// Sidebar + goTo → zc-nav.js (Pacote Z.5)
 // abrirAdmin() definida no bloco ADMIN/PIN acima
 function backendDesatualizado_(){
   var v=parseFloat(String(backendVersao||'0'));
@@ -4268,44 +4264,7 @@ function renderOperacaoPainel(){var base=(clientes.length?clientes:JSON.parse(lo
 function salvarConfig(){webAppUrl=document.getElementById('webAppUrl').value.trim();localStorage.setItem('zapWebApp',webAppUrl);showToast('✅ Configuração salva!');checkConexao();}
 function checkConexao(){var el=document.getElementById('statusConexao');el.textContent='Verificando...';apiGet('ping',{},5000).then(function(r){if(r&&r.ok){el.textContent='🟢 Conectado v'+r.version;el.className='info-val green';}else{el.textContent='🔴 Erro: '+(r&&r.error||'?');el.className='info-val';}}).catch(function(){el.textContent='🔴 Sem conexão';el.className='info-val';});}
 
-// ═══ NAVEGAÇÃO PRINCIPAL ═══
-function goTo(page, btn){
-  // [v4.2 MENU/HOME]
-  // Valida rota, fecha menu mobile sempre, atualiza título e sobe a tela para evitar estado visual quebrado no celular.
-  var target=document.getElementById('page-'+page);
-  if(!target){page='home';target=document.getElementById('page-home');}
-  var paginasAdmin=['admin','dashboard','historico','historico-custos','lancamentos','relatorio','logs','aceites'];
-  if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
-    fecharSidebar();
-    abrirAdmin();
-    return;
-  }
-  fecharSidebar();
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  target.classList.add('active');
-  document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
-  var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
-  if(match)match.classList.add('active');
-  // [v4.7 ALTERAÇÃO]
-  // Usa helper para preservar o selo de versão quando a rota volta para Home.
-  setMobileTitle_(PAGE_TITLES[page]||'ZapClin');
-  try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
-  if(page==='lancamentos')carregarLancamentos();
-  if(page==='custos')carregarCustos();
-  if(page==='operacao')carregarOperacao(false);
-  if(page==='clientes')carregarClientes();
-  if(page==='relacionamento')carregarRelacionamento(false);
-  if(page==='dashboard')carregarDashboard();
-  if(page==='relatorio')carregarRelatorio();
-  if(page==='admin')carregarPainelAdmin();
-  if(page==='historico')carregarHistorico();
-  if(page==='historico-custos')carregarHistoricoCustos();
-  if(page==='logs')carregarLogsAdmin(false);
-  if(page==='aceites')carregarAceitesPainel_(false);
-  if(page==='home'){atualizarStatsHome();animarCardsHome();}
-}
-
-
+// Navegação principal → zc-nav.js (Pacote Z.5)
 
 // [v4.7 NOVO]
 // Registra Service Worker próprio do PWA para controlar cache de forma versionada.

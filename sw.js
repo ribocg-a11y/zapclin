@@ -1,15 +1,17 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.33.3 | Data: 14/07/2026
+// Versão: 4.33.4 | Data: 21/07/2026
+// [v4.33.4 CACHE]
+// Inclui zc-nav.js + zc-home.js (Pacote Z.5).
 // [v4.33.3 CACHE]
 // Restaura SW padrão ZapClin + fallback seguro (nunca HTML no lugar de JS).
 // [v4.32.1 CACHE]
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.33.3';
-const STATIC_CACHE = 'zapclin-static-v4.33.3';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.33.3';
+const ZAPCLIN_SW_VERSION = 'v4.33.4';
+const STATIC_CACHE = 'zapclin-static-v4.33.4';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.33.4';
 
 const APP_SHELL = [
   './',
@@ -26,6 +28,8 @@ const APP_SHELL = [
   './zc-globals.js',
   './zc-api.js',
   './zc-core.js',
+  './zc-nav.js',
+  './zc-home.js',
   './zc-sync.js',
   './zc-whatsapp.js',
   './zc-admin.js',

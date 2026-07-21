@@ -17,8 +17,8 @@ Referência única para alinhamento repo × produção.
 
 | Camada | Versão repo / prod | URL / ID |
 |--------|--------------------|----------|
-| **Frontend** | **v4.33.3** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.3 |
-| **Service Worker** | **v4.33.3** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
+| **Frontend** | **v4.33.4** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.4 |
+| **Service Worker** | **v4.33.4** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
 | **Apps Script (código repo)** | **v3.50** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
 | **Apps Script (ping prod.)** | **3.50** | ping ok |
 | **OAuth Desktop** | write OK (21/07) | `scripts/oauth-sheets/` |
@@ -42,7 +42,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.50) |
 | Frontend | `index.html` + `zc-*.js` |
-| Pacote Z | `zc-version`, `zc-globals`, `zc-api`, `zc-core`, `zc-sync`, `zc-whatsapp`, `zc-admin`, `zc-historico-custos` |
+| Pacote Z | `zc-version`, `zc-globals`, `zc-api`, `zc-core`, `zc-nav`, `zc-home`, `zc-sync`, `zc-whatsapp`, `zc-admin`, `zc-historico-custos` |
 | PWA | `sw.js`, `manifest.json`, `reparar.html` |
 | OAuth planilha | `scripts/oauth-sheets/` |
 | Erros PWA 14/07 | `docs/ativos/ERROS_PWA_2026-07-14.md` |
@@ -55,6 +55,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | Versão / data | Entrega |
 |---------------|---------|
+| **21/07/2026** | Pacote Z.5 — `zc-nav.js` + `zc-home.js` (**v4.33.4**) |
 | **21/07/2026** | Organização pastas C: × repo; OAuth no repo; fluxos + mapa pastas |
 | **v4.33.3** | Restaura fluxo padrão de versão (SW + toast + `?force=`) |
 | **v4.33.2** | Projeção SVG em largura total do card |
@@ -65,9 +66,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ## Próximo passo
 
-1. **Você:** homologar loja `?force=v4.33.3` + Dashboard  
-2. **Engenharia:** Pacote Z.5 (`zc-nav` + `zc-home`) — após homologação  
-3. Merge organização + OAuth no `main` quando pedir commit/push  
+1. Merge/deploy **v4.33.4** · abrir `?force=v4.33.4`  
+2. **Engenharia:** Pacote Z.6 (`zc-registrar` + `zc-clientes`)  
+3. Auth operador (Fase 4) depois do Pacote Z avançar
 
 ---
 
