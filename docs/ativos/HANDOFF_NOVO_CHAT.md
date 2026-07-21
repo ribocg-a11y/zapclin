@@ -100,10 +100,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | OAuth read + write Desktop | ✅ (`OAUTH_SMOKE` criada; smoke OK) |
-| 2 | Dizer **qual edição** fazer na planilha (aba + células/linhas) | Você |
-| 3 | Rodar `write-range.js` / `append-rows.js` com o comando cirúrgico | Você (Desktop) |
-| 4 | Homologação PWA `?force=v4.33.3` + Dashboard projeção (ainda pendente loja) | Você |
+| 1 | OAuth read + write Desktop | ✅ (`OAUTH_SMOKE`) |
+| 2 | Seed LANÇAMENTOS 14–20/07 totais fixos | Você — `seed-lancamentos-jul14-20.js` |
+| 3 | Homologação PWA `?force=v4.33.3` + Dashboard projeção | Você |
 
 ---
 
