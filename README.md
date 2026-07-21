@@ -17,10 +17,10 @@ Leia primeiro: [`AGENTS.md`](AGENTS.md) → [`docs/ativos/HANDOFF_NOVO_CHAT.md`]
 
 ## Estado Atual
 
-- Frontend / SW GitHub Pages: **v4.33.4**
+- Frontend / SW GitHub Pages: **v4.33.5**
 - Backend Apps Script (ping): **3.50** (`AppsScript_v3.45_ATUAL.gs`)
 - Clone canônico: `C:\Users\riboc\Documents\Codex\zapclin-repo`
-- URL: https://ribocg-a11y.github.io/zapclin/?force=v4.33.4
+- URL: https://ribocg-a11y.github.io/zapclin/?force=v4.33.5
 - Pastas no PC: [`docs/MAPA_PASTAS_LOCAL.md`](docs/MAPA_PASTAS_LOCAL.md)
 - Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md)
 

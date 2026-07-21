@@ -1,6 +1,6 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 21/07/2026 (FE **v4.33.4** · GAS ping **3.50** · Pacote Z.5)  
+**Atualizado:** 21/07/2026 (FE **v4.33.5** · GAS ping **3.50** · Pacote Z.6)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
 **GitHub:** `ribocg-a11y/zapclin` · branch `main`  
@@ -45,8 +45,8 @@ Vamos dar continuidade ao projeto ZapClin.
 
 | Camada | Versão | Verificação |
 |--------|--------|-------------|
-| **Frontend** | **v4.33.4** | `zc-version.js` · `?force=v4.33.4` |
-| **Service Worker** | **v4.33.4** | ativo · toast de update padrão |
+| **Frontend** | **v4.33.5** | `zc-version.js` · `?force=v4.33.5` |
+| **Service Worker** | **v4.33.5** | ativo · toast de update padrão |
 | **Apps Script (ping)** | **3.50** | ping abaixo |
 | **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo v3.50 |
 | **OAuth planilha** | Desktop OK | `scripts/oauth-sheets/test-zapclin-write.js` |
@@ -58,7 +58,7 @@ Vamos dar continuidade ao projeto ZapClin.
 **Ping GAS:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 
-**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.4
+**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.5
 
 ---
 
@@ -102,10 +102,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Deploy/merge Z.5 **v4.33.4** + abrir `?force=v4.33.4` | Você + agente |
-| 2 | Smoke Home + menu (`goTo`) + Admin | Você |
-| 3 | **Próximo código:** Pacote Z.6 — `zc-registrar` + `zc-clientes` | Agente |
-| 4 | Não reintroduzir erros do incidente 14/07 | Agente |
+| 1 | Abrir `?force=v4.33.5` + smoke Registrar/Clientes | Você |
+| 2 | **Próximo código:** Pacote Z.7 — `zc-operacao` + `zc-crm` | Agente |
+| 3 | Não reintroduzir erros do incidente 14/07 | Agente |
 
 ---
 
