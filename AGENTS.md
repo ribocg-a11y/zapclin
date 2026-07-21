@@ -23,10 +23,11 @@ Leia **nesta ordem**:
 4. [`docs/ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](docs/ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) — antes de publicar (inclui §11)
 5. [`docs/ativos/ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md) — papéis, PIN admin, agente vs humano
 6. [`docs/ativos/PLANO_PRIORIDADES_2026-06.md`](docs/ativos/PLANO_PRIORIDADES_2026-06.md) — o que fazer agora
+7. [`docs/MAPA_PASTAS_LOCAL.md`](docs/MAPA_PASTAS_LOCAL.md) — pastas no C: (não misturar com Movi)
 
-Planejamento estratégico Movi × ZapClin: [`docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)
-
-Índice completo: [`docs/INDICE.md`](docs/INDICE.md)
+**Clone canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
+Planejamento Movi × ZapClin: [`docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)  
+Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice: [`docs/INDICE.md`](docs/INDICE.md)
 
 ## Agente vs você (resumo)
 
@@ -53,17 +54,17 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.29.0** | GitHub Pages |
-| Service Worker | **v4.29.0** | `sw.js` |
-| GAS (código repo) | **v3.45** | Nova versão Web pendente |
-| GAS (ping alvo) | **3.45** | ✅ produção |
+| Frontend | **v4.33.3** | GitHub Pages |
+| Service Worker | **v4.33.3** | `sw.js` |
+| GAS (código repo) | **v3.50** (arquivo `AppsScript_v3.45_ATUAL.gs`) | ✅ |
+| GAS (ping) | **3.50** | ✅ produção |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico:** `AppsScript_v3.45_ATUAL.gs`
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.50)
 
-Fonte de verdade: header do `.gs`, `APP_VERSION` em `index.html`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
+Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
 ## Código canônico
 
@@ -80,14 +81,13 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `index.html`, `ZAPCLIN_SW_VE
 - Multioperador: LockService v3.36 — não remover travas sem análise
 - WhatsApp = zona crítica — ver `REGRAS_DE_PUBLICACAO_SEGURA.md` §3
 
-## Estado do projeto (11/06/2026)
+## Estado do projeto (21/07/2026)
 
-- **Fase 23A–27:** ✅ repo (design system, dashboard, SLA, CRM, aceite OS, Golden, fechamento diário)
-- **Fase 1 governança:** ✅ AGENTS + docs + pre-push + testes readonly
-- **Fase 2 padrões GAS:** ✅ MAPA + PROTOCOLO + v3.45 + diagnostico ranges
-- **Deploy pendente:** Nova versão Web GAS v3.45 + merge PRs
-- **Pacote Z.1:** ✅ `zc-version`, `zc-globals`, `zc-api`, `zc-core` (v4.28.0)
-- **Próximo:** Pacote Z.2 sync · deploy GAS v3.45
+- **Produção:** FE/SW **v4.33.3** · GAS **3.50** · projeção Dashboard OK no código
+- **Incidente 14/07:** documentado — não repetir erros de SW/cache
+- **Pacote Z:** até admin + histórico custos; **próximo código:** Z.5 `zc-nav` + `zc-home`
+- **OAuth planilha:** write validado; scripts em `scripts/oauth-sheets/`
+- **Próximo humano:** homologar loja `?force=v4.33.3`
 
 ## Ao encerrar sessão
 

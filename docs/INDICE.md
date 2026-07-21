@@ -1,6 +1,6 @@
 # ZapClin — Índice de documentação
 
-**Atualizado:** 14/07/2026
+**Atualizado:** 21/07/2026
 
 ---
 
@@ -14,9 +14,12 @@
 | [`ativos/ERROS_PWA_2026-07-14.md`](ativos/ERROS_PWA_2026-07-14.md) | **14 erros do incidente PWA — proibido repetir** |
 | [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy (+ §11) |
 | [`ativos/PLANO_PRIORIDADES_2026-06.md`](ativos/PLANO_PRIORIDADES_2026-06.md) | Checklist vivo |
+| [`MAPA_PASTAS_LOCAL.md`](MAPA_PASTAS_LOCAL.md) | Pastas no C: × canônico × Movi |
+| [`FLUXOS_OPERACIONAIS.md`](FLUXOS_OPERACIONAIS.md) | Diagramas de fluxos |
 | [`ativos/MAPA_CODIGO_ARQUITETURA.md`](ativos/MAPA_CODIGO_ARQUITETURA.md) | Anatomia código |
 | [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
 | [`ativos/PACOTE_Z_MODULARIZACAO.md`](ativos/PACOTE_Z_MODULARIZACAO.md) | Modularização frontend |
+| [`ativos/OAUTH_PLANILHA_DESKTOP.md`](ativos/OAUTH_PLANILHA_DESKTOP.md) | Escrita planilha via OAuth |
 
 ---
 
@@ -31,14 +34,23 @@
 
 ---
 
-## Deploy e código
+## Referência / histórico
 
 | Documento | Descrição |
 |-----------|-----------|
+| [`referencia/REGRAS_DE_OURO_ZAPCLIN.md`](referencia/REGRAS_DE_OURO_ZAPCLIN.md) | Princípios originais |
+| [`referencia/README.md`](referencia/README.md) | O que é “referência” |
+
+---
+
+## Deploy e código
+
+| Documento / artefato | Descrição |
+|----------------------|-----------|
 | [`../README.md`](../README.md) | Visão geral repo |
-| [`../APPSCRIPT_DEPLOY.md`](../APPSCRIPT_DEPLOY.md) | Deploy GAS (branch fix) |
-| `AppsScript_v3.44_ATUAL.gs` | Backend canônico main |
-| `index.html` | Frontend monolito |
+| [`../APPSCRIPT_DEPLOY.md`](../APPSCRIPT_DEPLOY.md) | Deploy GAS |
+| `AppsScript_v3.45_ATUAL.gs` | Backend canônico (conteúdo **v3.50**) |
+| `index.html` + `zc-*.js` | Frontend Pacote Z (parcial) |
 | `sw.js` | Service Worker |
 
 ---
@@ -48,15 +60,15 @@
 | Script | Descrição |
 |--------|-----------|
 | [`../scripts/pre-push-check.ps1`](../scripts/pre-push-check.ps1) | Gate antes de push |
-| [`../scripts/testes/TESTE_PING_READONLY.ps1`](../scripts/testes/TESTE_PING_READONLY.ps1) | Ping GAS |
-| [`../scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1`](../scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1) | diagnosticoSistema |
-| [`../scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1`](../scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1) | Orquestrador Z0+Z1 |
-| [`../scripts/testes/README.md`](../scripts/testes/README.md) | Como rodar testes |
+| [`../scripts/oauth-sheets/`](../scripts/oauth-sheets/) | OAuth read/write planilha |
+| [`../scripts/planilha/`](../scripts/planilha/) | Utilitários Sheets ZapClin |
+| [`../scripts/testes/`](../scripts/testes/) | Testes readonly `.ps1` |
 
 ---
 
-## Repo irmão
+## Repo irmão (separado)
 
 | Repo | Relação |
 |------|---------|
-| [`ribocg-a11y/movikids`](https://github.com/ribocg-a11y/movikids) | Holding financeiro · referência governança |
+| [`ribocg-a11y/movikids`](https://github.com/ribocg-a11y/movikids) | Holding financeiro · referência governança — **código em outra pasta** |
+| `google-drive-sheets-auth` | Infra OAuth compartilhada (não é o app) |

@@ -9,15 +9,20 @@ Leia primeiro: [`AGENTS.md`](AGENTS.md) → [`docs/ativos/HANDOFF_NOVO_CHAT.md`]
 | Doc | Uso |
 |-----|-----|
 | [`docs/INDICE.md`](docs/INDICE.md) | Mapa de documentação |
+| [`docs/MAPA_PASTAS_LOCAL.md`](docs/MAPA_PASTAS_LOCAL.md) | Pastas no C: × Movi |
+| [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) | Diagramas de fluxo |
 | [`docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](docs/PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md) | Equiparação com Movi Kids |
 | [`scripts/pre-push-check.ps1`](scripts/pre-push-check.ps1) | Gate antes de `git push` |
+| [`scripts/oauth-sheets/`](scripts/oauth-sheets/) | OAuth leitura/escrita planilha |
 
 ## Estado Atual
 
-- Frontend GitHub Pages: `v4.28.0` (Pacote Z.1 modular)
-- Service Worker/PWA: `v4.28.0`
-- Backend Apps Script: `v3.44` preparado para reimplantacao manual
-- URL: https://ribocg-a11y.github.io/zapclin/
+- Frontend / SW GitHub Pages: **v4.33.3**
+- Backend Apps Script (ping): **3.50** (`AppsScript_v3.45_ATUAL.gs`)
+- Clone canônico: `C:\Users\riboc\Documents\Codex\zapclin-repo`
+- URL: https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
+- Pastas no PC: [`docs/MAPA_PASTAS_LOCAL.md`](docs/MAPA_PASTAS_LOCAL.md)
+- Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md)
 
 ## Fase Antecipada
 
