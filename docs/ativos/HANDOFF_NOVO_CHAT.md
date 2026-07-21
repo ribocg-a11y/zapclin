@@ -1,9 +1,9 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 21/07/2026 (FE **v4.33.3** · GAS ping **3.50** · org pastas + OAuth)  
+**Atualizado:** 21/07/2026 (FE **v4.33.4** · GAS ping **3.50** · Pacote Z.5)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
-**GitHub:** `ribocg-a11y/zapclin` · branch `main` (trabalho local: `cursor/organizacao-local-zapclin-f0f3`)  
+**GitHub:** `ribocg-a11y/zapclin` · branch `main`  
 **Clone canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 ---
@@ -45,8 +45,8 @@ Vamos dar continuidade ao projeto ZapClin.
 
 | Camada | Versão | Verificação |
 |--------|--------|-------------|
-| **Frontend** | **v4.33.3** | `zc-version.js` · `?force=v4.33.3` |
-| **Service Worker** | **v4.33.3** | ativo · toast de update padrão |
+| **Frontend** | **v4.33.4** | `zc-version.js` · `?force=v4.33.4` |
+| **Service Worker** | **v4.33.4** | ativo · toast de update padrão |
 | **Apps Script (ping)** | **3.50** | ping abaixo |
 | **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo v3.50 |
 | **OAuth planilha** | Desktop OK | `scripts/oauth-sheets/test-zapclin-write.js` |
@@ -58,7 +58,7 @@ Vamos dar continuidade ao projeto ZapClin.
 **Ping GAS:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 
-**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
+**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.4
 
 ---
 
@@ -102,9 +102,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Homologar loja: `?force=v4.33.3` + Dashboard projeção | **Você** |
-| 2 | Commit/push desta organização + merge OAuth (PR #6 / branch org) | Você + agente (se pedir) |
-| 3 | **Próximo código:** Pacote Z.5 — `zc-nav.js` + `zc-home.js` | Agente (após homologação) |
+| 1 | Deploy/merge Z.5 **v4.33.4** + abrir `?force=v4.33.4` | Você + agente |
+| 2 | Smoke Home + menu (`goTo`) + Admin | Você |
+| 3 | **Próximo código:** Pacote Z.6 — `zc-registrar` + `zc-clientes` | Agente |
 | 4 | Não reintroduzir erros do incidente 14/07 | Agente |
 
 ---
