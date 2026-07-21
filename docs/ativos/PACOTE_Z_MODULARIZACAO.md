@@ -1,12 +1,12 @@
 # Pacote Z — Modularização do frontend ZapClin
 
 **Início:** 11/06/2026  
-**Atualizado:** 21/07/2026 (Z.6 · **v4.33.5**)  
+**Atualizado:** 21/07/2026 (Z.6 · **v4.33.6**)  
 **Objetivo:** reduzir monólito `index.html` sem mudar comportamento — espelhar Pacote M do Movi Kids.
 
 ---
 
-## Panorama (v4.33.5 — Z.6)
+## Panorama (v4.33.6 — Z.6)
 
 | Artefato | Papel |
 |----------|-------|
@@ -34,7 +34,7 @@
 |------|---------|--------|--------|
 | **Z.1–Z.4** | version…admin | v4.28–4.29 | ✅ |
 | **Z.5** | `zc-nav.js` + `zc-home.js` | v4.33.4 | ✅ |
-| **Z.6** | `zc-registrar.js` + `zc-clientes.js` | **v4.33.5** | ✅ |
+| **Z.6** | `zc-registrar.js` + `zc-clientes.js` | **v4.33.6** | ✅ |
 | **Z.7** | `zc-operacao.js` + `zc-crm.js` | v4.34.0 | ⬜ próximo |
 | **Z.8** | histórico custos (parcial) | v4.31.0 | 🟡 ✅ custos |
 | **Z.9** | `zc-app.css` | v4.35.0 | ⬜ |
@@ -61,4 +61,4 @@ node --check zc-registrar.js; node --check zc-clientes.js
 .\scripts\pre-push-check.ps1
 ```
 
-Homologação: Registrar avulso, Custos, Nova OS, lista Clientes — `?force=v4.33.5`.
+Homologação: Registrar avulso, Custos, Nova OS, lista Clientes — `?force=v4.33.6`.
