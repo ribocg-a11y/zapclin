@@ -127,4 +127,6 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 - Pasta: `C:\Users\riboc\Projects\google-drive-sheets-auth`
 - Scripts ZapClin: `scripts/oauth-sheets/` · doc: `OAUTH_PLANILHA_DESKTOP.md`
-- Cloud Agent **não** executa OAuth — só Desktop com token local
+- ✅ Seed 14–20/07 feito
+- **Para o agente mexer na planilha sozinho:** usar **Agent local** no PC (não Cloud Agent), ou secrets `GOOGLE_*` no Environment Cloud
+- Cloud Agent **sem** token/env **não** edita planilha
