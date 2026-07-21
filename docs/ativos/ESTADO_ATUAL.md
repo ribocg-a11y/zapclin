@@ -1,4 +1,4 @@
-# ZapClin — Estado atual (14/07/2026)
+# ZapClin — Estado atual (21/07/2026)
 
 Referência única para alinhamento repo × produção.
 
@@ -80,8 +80,14 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ---
 
+## OAuth planilha (Desktop)
+
+- Pasta auth: `C:\Users\riboc\Projects\google-drive-sheets-auth`
+- Scripts: `scripts/oauth-sheets/` · doc: [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)
+- Leitura validada no PC; escrita: `test-zapclin-write.js` (aba `OAUTH_SMOKE`)
+
 ## Próximo passo humano
 
-1. Abrir https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
-2. Confirmar status **Online · v4.33.3**
-3. Dashboard → Projeção expandida + interativa
+1. Desktop: smoke OAuth write (`test-zapclin-read.js` → `test-zapclin-write.js`)
+2. Abrir https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
+3. Confirmar status **Online · v4.33.3** + Dashboard projeção

@@ -1,6 +1,6 @@
 # ZapClin — Índice de documentação
 
-**Atualizado:** 14/07/2026
+**Atualizado:** 21/07/2026
 
 ---
 
@@ -17,6 +17,7 @@
 | [`ativos/MAPA_CODIGO_ARQUITETURA.md`](ativos/MAPA_CODIGO_ARQUITETURA.md) | Anatomia código |
 | [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
 | [`ativos/PACOTE_Z_MODULARIZACAO.md`](ativos/PACOTE_Z_MODULARIZACAO.md) | Modularização frontend |
+| [`ativos/OAUTH_PLANILHA_DESKTOP.md`](ativos/OAUTH_PLANILHA_DESKTOP.md) | Leitura/escrita planilha via OAuth no PC |
 
 ---
 
@@ -52,6 +53,7 @@
 | [`../scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1`](../scripts/testes/TESTE_DIAGNOSTICO_READONLY.ps1) | diagnosticoSistema |
 | [`../scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1`](../scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1) | Orquestrador Z0+Z1 |
 | [`../scripts/testes/README.md`](../scripts/testes/README.md) | Como rodar testes |
+| [`../scripts/oauth-sheets/README.md`](../scripts/oauth-sheets/README.md) | OAuth Sheets (Desktop read/write) |
 
 ---
 

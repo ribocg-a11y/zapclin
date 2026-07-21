@@ -1,6 +1,6 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 14/07/2026 (FE **v4.33.3** · GAS ping **3.50**)  
+**Atualizado:** 21/07/2026 (FE **v4.33.3** · GAS ping **3.50** · OAuth Sheets write no Desktop)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
 **GitHub:** `ribocg-a11y/zapclin` · branch `main`
@@ -96,14 +96,15 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ---
 
-## Próximo passo (14/07/2026)
+## Próximo passo (21/07/2026)
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Abrir `?force=v4.33.3` e confirmar **Online · v4.33.3** | Você |
-| 2 | Validar Dashboard projeção (largura + toque) | Você |
-| 3 | Não reintroduzir SW-off / banner full-screen / Syne em KPIs | Agente |
-| 4 | Qualquer novo incidente PWA → atualizar `ERROS_PWA_*.md` no mesmo PR | Agente |
+| 1 | No PC: `cd google-drive-sheets-auth` → `node …\scripts\oauth-sheets\test-zapclin-read.js` | Você |
+| 2 | Se readonly ok: `test-zapclin-write.js` (aba `OAUTH_SMOKE`) | Você |
+| 3 | Se 403 na escrita: `npm run auth` com escopo `spreadsheets` e repetir | Você |
+| 4 | Edições reais: `write-range.js` / `append-rows.js` (flag em abas operacionais) | Você + agente Desktop |
+| 5 | Homologação PWA `?force=v4.33.3` + Dashboard projeção (ainda pendente loja) | Você |
 
 ---
 
@@ -123,3 +124,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 - Planilha ZapClin é lida pelo **Financeiro Geral** no repo `ribocg-a11y/movikids`
 - Equiparação ≠ merge de código — ver `PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`
+
+## OAuth planilha (Desktop)
+
+- Pasta: `C:\Users\riboc\Projects\google-drive-sheets-auth`
+- Scripts ZapClin: `scripts/oauth-sheets/` · doc: `OAUTH_PLANILHA_DESKTOP.md`
+- Cloud Agent **não** executa OAuth — só Desktop com token local

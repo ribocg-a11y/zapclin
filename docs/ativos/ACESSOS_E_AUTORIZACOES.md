@@ -67,7 +67,11 @@ Agente Movi **não** deve alterar GAS ZapClin sem coordenação; agente ZapClin 
 
 **Escrita pontual:** concluída via importação jul/2026 (v3.47, removida em v3.48). Operação normal segue pelo app/PWA.
 
+**Desktop OAuth (sócio no PC):** pasta `C:\Users\riboc\Projects\google-drive-sheets-auth` + scripts em `scripts/oauth-sheets/` (read/write). Doc: [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md). Leitura já validada (`test-movikids.js`); escrita via `test-zapclin-write.js` / `write-range.js` com escopo `spreadsheets`.
+
 **Opcional (Cursor desktop):** MCP `google-drive-sheets-auth` — leitura/escrita direta se configurado no PC do sócio.
+
+**Cloud Agent:** sem token OAuth do Desktop — não edita planilha direto; prepara scripts no repo.
 
 Sem OAuth: agente usa ping GAS + exportações manuais que o usuário colar.
 

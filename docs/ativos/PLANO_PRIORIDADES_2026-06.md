@@ -1,6 +1,6 @@
 # ZapClin — Plano de prioridades (jun/2026)
 
-**Atualizado:** 11/06/2026  
+**Atualizado:** 21/07/2026  
 **Documento irmão:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)
 
 Checklist vivo — marcar ao concluir.
@@ -74,6 +74,17 @@ Checklist vivo — marcar ao concluir.
 |---|------|--------|
 | F5.1 | 5 KPIs síntese + narrativa | ⬜ |
 | F5.2 | Alertas semáforo | ⬜ |
+
+---
+
+## P2 — OAuth planilha Desktop
+
+| # | Item | Status |
+|---|------|--------|
+| O1 | Scripts `scripts/oauth-sheets/` (read/write + smoke `OAUTH_SMOKE`) | ✅ repo |
+| O2 | Doc `OAUTH_PLANILHA_DESKTOP.md` | ✅ |
+| O3 | Rodar `test-zapclin-read.js` + `test-zapclin-write.js` no PC | ⬜ humano Desktop |
+| O4 | Reauth com escopo `spreadsheets` se escrita 403 | ⬜ se necessário |
 
 ---
 
