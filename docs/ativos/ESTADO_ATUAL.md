@@ -84,7 +84,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 - Pasta auth: `C:\Users\riboc\Projects\google-drive-sheets-auth`
 - Scripts: `scripts/oauth-sheets/` · doc: [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)
-- Leitura validada no PC; escrita: `test-zapclin-write.js` (aba `OAUTH_SMOKE`)
+- ✅ 21/07/2026: leitura + escrita OK (`OAUTH_SMOKE` gid=1791087150)
 
 ## Próximo passo humano
 

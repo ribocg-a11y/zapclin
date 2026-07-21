@@ -83,8 +83,8 @@ Checklist vivo — marcar ao concluir.
 |---|------|--------|
 | O1 | Scripts `scripts/oauth-sheets/` (read/write + smoke `OAUTH_SMOKE`) | ✅ repo |
 | O2 | Doc `OAUTH_PLANILHA_DESKTOP.md` | ✅ |
-| O3 | Rodar `test-zapclin-read.js` + `test-zapclin-write.js` no PC | ⬜ humano Desktop |
-| O4 | Reauth com escopo `spreadsheets` se escrita 403 | ⬜ se necessário |
+| O3 | Rodar `test-zapclin-read.js` + `test-zapclin-write.js` no PC | ✅ 21/07/2026 |
+| O4 | Reauth com escopo `spreadsheets` se escrita 403 | ✅ não precisou (write OK) |
 
 ---
 

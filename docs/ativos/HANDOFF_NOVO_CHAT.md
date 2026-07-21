@@ -100,11 +100,10 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | No PC: `cd google-drive-sheets-auth` → `node …\scripts\oauth-sheets\test-zapclin-read.js` | Você |
-| 2 | Se readonly ok: `test-zapclin-write.js` (aba `OAUTH_SMOKE`) | Você |
-| 3 | Se 403 na escrita: `npm run auth` com escopo `spreadsheets` e repetir | Você |
-| 4 | Edições reais: `write-range.js` / `append-rows.js` (flag em abas operacionais) | Você + agente Desktop |
-| 5 | Homologação PWA `?force=v4.33.3` + Dashboard projeção (ainda pendente loja) | Você |
+| 1 | OAuth read + write Desktop | ✅ (`OAUTH_SMOKE` criada; smoke OK) |
+| 2 | Dizer **qual edição** fazer na planilha (aba + células/linhas) | Você |
+| 3 | Rodar `write-range.js` / `append-rows.js` com o comando cirúrgico | Você (Desktop) |
+| 4 | Homologação PWA `?force=v4.33.3` + Dashboard projeção (ainda pendente loja) | Você |
 
 ---
 

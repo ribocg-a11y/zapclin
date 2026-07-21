@@ -1,6 +1,6 @@
 # ZapClin — OAuth planilha no Desktop
 
-**Atualizado:** 21/07/2026  
+**Atualizado:** 21/07/2026 (smoke read+write ✅ no Desktop)  
 **Prioridade:** P1 (ferramenta de manutenção — não é fluxo de balcão)
 
 ## Contexto
