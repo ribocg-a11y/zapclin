@@ -85,6 +85,7 @@ Checklist vivo — marcar ao concluir.
 | O2 | Doc `OAUTH_PLANILHA_DESKTOP.md` | ✅ |
 | O3 | Rodar `test-zapclin-read.js` + `test-zapclin-write.js` no PC | ✅ 21/07/2026 |
 | O4 | Reauth com escopo `spreadsheets` se escrita 403 | ✅ não precisou (write OK) |
+| O5 | Seed LANÇAMENTOS 14–20/07 (349…274) | ✅ 21/07/2026 |
 
 ---
 

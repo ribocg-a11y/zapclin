@@ -100,8 +100,8 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | OAuth read + write Desktop | ✅ (`OAUTH_SMOKE`) |
-| 2 | Seed LANÇAMENTOS 14–20/07 totais fixos | Você — `seed-lancamentos-jul14-20.js` |
+| 1 | OAuth read + write Desktop | ✅ |
+| 2 | Seed LANÇAMENTOS 14–20/07 totais fixos | ✅ (SEED_VERSION=2 · grade 1108→2000 · 80 linhas) |
 | 3 | Homologação PWA `?force=v4.33.3` + Dashboard projeção | Você |
 
 ---

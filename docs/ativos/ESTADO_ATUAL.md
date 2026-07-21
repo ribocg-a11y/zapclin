@@ -85,6 +85,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Pasta auth: `C:\Users\riboc\Projects\google-drive-sheets-auth`
 - Scripts: `scripts/oauth-sheets/` · doc: [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)
 - ✅ 21/07/2026: leitura + escrita OK (`OAUTH_SMOKE` gid=1791087150)
+- ✅ 21/07/2026: seed `📊 LANÇAMENTOS` 14–20/07 — totais 349/365/435/476/565/0/274 (grade expandida 2000)
 
 ## Próximo passo humano
 
