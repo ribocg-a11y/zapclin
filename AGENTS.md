@@ -54,15 +54,15 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.33.5** | GitHub Pages |
-| Service Worker | **v4.33.5** | `sw.js` |
-| GAS (código repo) | **v3.50** (arquivo `AppsScript_v3.45_ATUAL.gs`) | ✅ |
-| GAS (ping) | **3.50** | ✅ produção |
+| Frontend | **v4.33.6** | GitHub Pages |
+| Service Worker | **v4.33.6** | `sw.js` |
+| GAS (código repo) | **v3.51** (arquivo `AppsScript_v3.45_ATUAL.gs`) | Nova versão Web pendente |
+| GAS (ping) | **3.50** (alvo **3.51**) | ✅ produção |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.50)
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.51)
 
 Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
@@ -83,11 +83,11 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (21/07/2026)
 
-- **Produção alvo:** FE/SW **v4.33.5** · GAS **3.50**
+- **Produção alvo:** FE/SW **v4.33.6** · GAS **3.51** (ping ainda 3.50 até Nova versão Web)
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
 - **Pacote Z:** Z.6 ✅ (`zc-registrar` + `zc-clientes`); **próximo:** Z.7 operação + CRM
 - **OAuth planilha:** write validado; scripts em `scripts/oauth-sheets/`
-- **Próximo humano:** `?force=v4.33.5` após merge
+- **Próximo humano:** `?force=v4.33.6` após merge
 
 ## Ao encerrar sessão
 

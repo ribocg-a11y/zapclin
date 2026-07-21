@@ -1,6 +1,6 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 21/07/2026 (FE **v4.33.5** · GAS ping **3.50** · Pacote Z.6)  
+**Atualizado:** 21/07/2026 (FE **v4.33.6** · GAS repo **3.51** / ping **3.50** · hotfix Relacionamento)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
 **GitHub:** `ribocg-a11y/zapclin` · branch `main`  
@@ -45,10 +45,10 @@ Vamos dar continuidade ao projeto ZapClin.
 
 | Camada | Versão | Verificação |
 |--------|--------|-------------|
-| **Frontend** | **v4.33.5** | `zc-version.js` · `?force=v4.33.5` |
-| **Service Worker** | **v4.33.5** | ativo · toast de update padrão |
-| **Apps Script (ping)** | **3.50** | ping abaixo |
-| **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo v3.50 |
+| **Frontend** | **v4.33.6** | `zc-version.js` · `?force=v4.33.6` |
+| **Service Worker** | **v4.33.6** | ativo · toast de update padrão |
+| **Apps Script (ping)** | **3.50** (alvo **3.51** após Nova versão Web) | ping abaixo |
+| **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo **v3.51** |
 | **OAuth planilha** | Desktop OK | `scripts/oauth-sheets/test-zapclin-write.js` |
 
 **Deploy ID GAS:** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
@@ -58,7 +58,7 @@ Vamos dar continuidade ao projeto ZapClin.
 **Ping GAS:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 
-**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.5
+**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.6
 
 ---
 
@@ -102,9 +102,10 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Abrir `?force=v4.33.5` + smoke Registrar/Clientes | Você |
-| 2 | **Próximo código:** Pacote Z.7 — `zc-operacao` + `zc-crm` | Agente |
-| 3 | Não reintroduzir erros do incidente 14/07 | Agente |
+| 1 | Merge/push FE **v4.33.6** + `?force=v4.33.6` · validar Relacionamento | Você |
+| 2 | Nova versão Web GAS **3.51** (preview fotos CRM) — mesmo Deploy ID | Você |
+| 3 | Só após estável: Pacote Z.7 — `zc-operacao` + `zc-crm` | Agente |
+| 4 | Não reintroduzir erros do incidente 14/07 | Agente |
 
 ---
 

@@ -63,7 +63,7 @@ Checklist vivo — marcar ao concluir.
 | F3.1–F3.4 | version, api, core, sync, whatsapp, admin | ✅ |
 | F3.8 parcial | `zc-historico-custos.js` | ✅ v4.31+ |
 | **F3.5** | `zc-nav.js` + `zc-home.js` | ✅ **v4.33.4** |
-| **F3.6** | `zc-registrar.js` + `zc-clientes.js` | ✅ **v4.33.5** |
+| **F3.6** | `zc-registrar.js` + `zc-clientes.js` | ✅ **v4.33.6** |
 | **F3.7** | `zc-operacao.js` + `zc-crm.js` | ⬜ **próximo código** |
 | F3.9 | `zc-app.css` | ⬜ |
 | F3.10 | `zc-boot.js` shell enxuto | ⬜ |

@@ -1,6 +1,9 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.50 | Data: 14/07/2026
+// VersÃ£o: 3.51 | Data: 21/07/2026
+// NOVO v3.51:
+//   - Relacionamento: preview base64 das fotos (OAuth) para exibir no PWA sem Drive publico
+//   - listarFotosCliente limita as OS mais recentes para reduzir lentidao
 // NOVO v3.50:
 //   - Remove importacao temporaria 11-13/07/2026 (ja executada)
 // NOVO v3.48:
@@ -123,7 +126,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.50';
+var VERSION           = '3.51';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -354,7 +357,25 @@ function folderIdFromUrl_(url) {
   return m ? m[1] : '';
 }
 
-function listarFotosCliente_(folderUrl, limite) {
+function previewFotoDrive_(fileId) {
+  if (!fileId) return '';
+  try {
+    var token = ScriptApp.getOAuthToken();
+    var resp = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + fileId + '&sz=w160', {
+      headers: { Authorization: 'Bearer ' + token },
+      muteHttpExceptions: true
+    });
+    if (resp.getResponseCode() !== 200) return '';
+    var blob = resp.getBlob();
+    if (!blob || blob.getBytes().length > 90000) return '';
+    var mime = String(blob.getContentType() || 'image/jpeg');
+    return 'data:' + mime + ';base64,' + Utilities.base64Encode(blob.getBytes());
+  } catch (ePrev) {
+    return '';
+  }
+}
+
+function listarFotosCliente_(folderUrl, limite, comPreview) {
   var id = folderIdFromUrl_(folderUrl);
   var out = [];
   if (!id) return out;
@@ -365,12 +386,14 @@ function listarFotosCliente_(folderUrl, limite) {
       var file = files.next();
       var mime = String(file.getMimeType() || '');
       if (mime.indexOf('image/') !== 0) continue;
+      var fid = file.getId();
       out.push({
-        id: file.getId(),
+        id: fid,
         name: file.getName(),
         url: file.getUrl(),
-        thumb: 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w220',
-        downloadUrl: 'https://drive.google.com/uc?export=view&id=' + file.getId()
+        thumb: 'https://drive.google.com/thumbnail?id=' + fid + '&sz=w220',
+        downloadUrl: 'https://drive.google.com/uc?export=view&id=' + fid,
+        preview: comPreview === false ? '' : previewFotoDrive_(fid)
       });
     }
   } catch(e) {}
@@ -1208,23 +1231,34 @@ function doGet(e) {
       var rowsFotos = getClientesListaValues_(clientesFotos);
       var telBusca = telDigits_(p.tel || p.telefone || '');
       var pastaBusca = String(p.pasta || '');
-      var fotosItems = [];
+      var matchesFotos = [];
       for (var f = 0; f < rowsFotos.length; f++) {
         var rf = rowsFotos[f];
         if (!rf[0]) break;
         var mesmoTel = telBusca && telDigits_(rf[4]) === telBusca;
         var mesmaPasta = pastaBusca && String(rf[6] || '') === pastaBusca;
         if (!mesmoTel && !mesmaPasta) continue;
-        var fotosOs = listarFotosCliente_(String(rf[6] || ''), 10);
+        matchesFotos.push(rf);
+      }
+      // OS mais recentes primeiro (reduz lentidao em clientes com muitas visitas)
+      matchesFotos = matchesFotos.slice(-8).reverse();
+      var fotosItems = [];
+      for (var fm = 0; fm < matchesFotos.length; fm++) {
+        var rowF = matchesFotos[fm];
+        var comPreview = fotosItems.length < 12;
+        var fotosOs = listarFotosCliente_(String(rowF[6] || ''), 6, comPreview);
         for (var ff = 0; ff < fotosOs.length; ff++) {
-          fotosOs[ff].os = rf[0];
-          fotosOs[ff].data = fmtData_(rf[1]);
-          fotosOs[ff].hora = fmtHora_(rf[2]);
-          fotosOs[ff].pasta = String(rf[6] || '');
+          if (fotosItems.length >= 24) break;
+          if (!comPreview) fotosOs[ff].preview = '';
+          fotosOs[ff].os = rowF[0];
+          fotosOs[ff].data = fmtData_(rowF[1]);
+          fotosOs[ff].hora = fmtHora_(rowF[2]);
+          fotosOs[ff].pasta = String(rowF[6] || '');
           fotosItems.push(fotosOs[ff]);
         }
+        if (fotosItems.length >= 24) break;
       }
-      result = { ok: true, version: VERSION, items: fotosItems.slice(0, 60) };
+      result = { ok: true, version: VERSION, items: fotosItems };
 
     } else if (action === 'atualizarStatus') {
       var clientes    = getOrCreateClientesSheet(ss);
