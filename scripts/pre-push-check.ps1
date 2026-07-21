@@ -143,7 +143,7 @@ try {
 Write-Host ""
 foreach ($c in $result.checks) {
   $color = switch ($c.status) { "ok" { "Green" } "warn" { "Yellow" } default { "Red" } }
-  Write-Host ("[{0}] {1} — {2}" -f $c.status.ToUpper(), $c.name, $c.detail) -ForegroundColor $color
+  Write-Host ("[{0}] {1} - {2}" -f $c.status.ToUpper(), $c.name, $c.detail) -ForegroundColor $color
 }
 
 Write-Host ""

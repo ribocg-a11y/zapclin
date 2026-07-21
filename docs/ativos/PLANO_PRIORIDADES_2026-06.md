@@ -1,65 +1,75 @@
-# ZapClin — Plano de prioridades (jun/2026)
+# ZapClin — Plano de prioridades (atualizado 21/07/2026)
 
-**Atualizado:** 11/06/2026  
-**Documento irmão:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)
+**Documento irmão:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)  
+**Pastas locais:** [`../MAPA_PASTAS_LOCAL.md`](../MAPA_PASTAS_LOCAL.md)  
+**Fluxos:** [`../FLUXOS_OPERACIONAIS.md`](../FLUXOS_OPERACIONAIS.md)
 
 Checklist vivo — marcar ao concluir.
 
 ---
 
-## P0 — Estabilização (esta semana)
+## Produção estável (baseline 14–21/07)
+
+| Item | Status |
+|------|--------|
+| FE / SW **v4.33.3** em GitHub Pages | ✅ |
+| GAS ping **3.50** (mesmo Deploy ID) | ✅ |
+| Incidente PWA 14/07 documentado (`ERROS_PWA_*` + Regra 11) | ✅ |
+| Projeção Dashboard (SVG full-width, sem lista embaixo) | ✅ |
+| OAuth Desktop write smoke (`OAUTH_SMOKE`) | ✅ 21/07 |
+| Organização pastas C: + repo (este ciclo) | 🟡 em curso |
+
+---
+
+## P0 — Homologação loja (humano)
 
 | # | Item | Status | Quem |
 |---|------|--------|------|
-| P0.1 | Merge [PR #1](https://github.com/ribocg-a11y/zapclin/pull/1) v3.45/v4.27.5 | ⬜ | Humano |
-| P0.2 | Colar `AppsScript_v3.45_ATUAL.gs` → Nova versão Web GAS | ✅ | Humano |
-| P0.3 | Ping retorna `"version":"3.45"` | ✅ | Agente |
-| P0.4 | Home atendimentos hoje = Admin serviços hoje | ⬜ | Humano (loja) |
-| P0.5 | `TESTE_KPI_PARIDADE_READONLY.ps1` passa | ✅ | Agente |
+| P0.1 | Abrir `?force=v4.33.3` → **Online · v4.33.3** | ⬜ | Humano |
+| P0.2 | Validar Dashboard projeção (largura + toque) | ⬜ | Humano |
+| P0.3 | Smoke balcão: OS + status + Admin PIN 1321 | ⬜ | Humano (loja) |
 
 ---
 
-## P1 — Governança Fase 1 ✅
+## P1 — Governança / organização ✅
 
 | # | Item | Status |
 |---|------|--------|
-| G1 | `AGENTS.md` | ✅ |
-| G2 | `docs/ativos/HANDOFF_NOVO_CHAT.md` | ✅ |
-| G3 | `docs/ativos/ESTADO_ATUAL.md` | ✅ |
-| G4 | `docs/ativos/REGRAS_DE_PUBLICACAO_SEGURA.md` | ✅ |
-| G5 | `docs/ativos/ACESSOS_E_AUTORIZACOES.md` | ✅ |
-| G6 | `scripts/pre-push-check.ps1` | ✅ |
-| G7 | `TESTE_PING_READONLY.ps1` | ✅ |
-| G8 | `TESTE_KPI_PARIDADE_READONLY.ps1` | ✅ |
-| G9 | Merge PR governança + plano equiparação | ⬜ |
+| G1–G8 | AGENTS, handoff, estado, regras, acessos, pre-push, ping/KPI | ✅ |
+| G9 | Merge plano equiparação | ✅ (PR #2) |
+| G10 | `MAPA_PASTAS_LOCAL.md` + marcadores arquivo histórico | ✅ 21/07 |
+| G11 | `FLUXOS_OPERACIONAIS.md` | ✅ 21/07 |
+| G12 | `scripts/oauth-sheets/` no repo canônico | ✅ (branch org / PR #6) |
+| G13 | Separar scripts ZapClin vs Movi no `google-drive-sheets-auth` | ✅ README |
 
 ---
 
-## P1 — Padrões GAS (Fase 2 equiparação) ✅ repo
+## P1 — Padrões GAS ✅
 
 | # | Item | Status |
 |---|------|--------|
-| F2.1 | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` + orquestrador | ✅ |
-| F2.2 | `AUDITORIA_RANGES_GAS.md` + diagnostico rangesStatus | ✅ |
-| F2.3 | `MAPA_CODIGO_ARQUITETURA.md` | ✅ |
-| F2.4 | `AppsScript_v3.45_ATUAL.gs` canônico no repo | ✅ |
-| F2.5 | Deploy v3.45 produção | ✅ humano |
+| F2.* | Mapa, protocolo, ranges, v3.45+ | ✅ |
+| Deploy produção | **3.50** | ✅ |
 
 ---
 
-## P2 — Frontend Pacote Z (Fase 3)
+## P2 — Frontend Pacote Z (próximo engenharia)
 
 | # | Item | Status |
 |---|------|--------|
-| F3.1 | Extrair `zc-version.js`, `zc-api.js`, `zc-core.js`, `zc-globals.js` | ✅ v4.28.0 |
-| F3.2 | `zc-sync.js` | ✅ v4.28.1 |
-| F3.3 | `zc-whatsapp.js` | ✅ v4.28.2 |
-| F3.4 | `zc-admin.js` | ✅ v4.29.0 |
-| F3.5 | `zc-nav.js` … | ⬜ |
+| F3.1–F3.4 | version, api, core, sync, whatsapp, admin | ✅ |
+| F3.8 parcial | `zc-historico-custos.js` | ✅ v4.31+ |
+| **F3.5** | `zc-nav.js` + `zc-home.js` | ⬜ **próximo código** |
+| F3.6 | `zc-registrar.js` + `zc-clientes.js` | ⬜ |
+| F3.7 | `zc-operacao.js` + `zc-crm.js` | ⬜ |
+| F3.9 | `zc-app.css` | ⬜ |
+| F3.10 | `zc-boot.js` shell enxuto | ⬜ |
+
+Ver `PACOTE_Z_MODULARIZACAO.md`. **Antes de mexer em SW/versão:** `ERROS_PWA_2026-07-14.md`.
 
 ---
 
-## P2 — Auth operador (Fase 4)
+## P2 — Auth operador (Fase 4 equiparação)
 
 | # | Item | Status |
 |---|------|--------|
@@ -68,7 +78,7 @@ Checklist vivo — marcar ao concluir.
 
 ---
 
-## P2 — Cockpit Admin (Fase 5 ← Movi Fases 6–8)
+## P2 — Cockpit Admin (Fase 5)
 
 | # | Item | Status |
 |---|------|--------|
@@ -77,17 +87,28 @@ Checklist vivo — marcar ao concluir.
 
 ---
 
-## Coordenação Movi
+## Coordenação Movi (repos separados)
 
 | # | Item | Owner |
 |---|------|-------|
 | M1 | FASE 11 Holding embed | Movi repo |
-| M2 | FinanceiroGeral lê planilha ZapClin | ✅ existente |
+| M2 | FinanceiroGeral lê planilha ZapClin | ✅ |
+| M3 | Não misturar pastas/código | ✅ mapa 21/07 |
 
 ---
 
-## Ao encerrar sessão de agente
+## Backlog PRs
 
-1. Atualizar checklist acima  
-2. Atualizar `HANDOFF_NOVO_CHAT.md` se versão mudou  
-3. Atualizar `ESTADO_ATUAL.md` se deploy ocorreu
+| PR | Estado | Nota |
+|----|--------|------|
+| [#6](https://github.com/ribocg-a11y/zapclin/pull/6) OAuth sheets | DRAFT | Incorporar/merge após org |
+| [#1](https://github.com/ribocg-a11y/zapclin/pull/1) fix listar | DRAFT legado | Conteúdo já em main via outros merges |
+
+---
+
+## Ao encerrar sessão
+
+1. Atualizar este checklist  
+2. Atualizar `HANDOFF_NOVO_CHAT.md`  
+3. Atualizar `ESTADO_ATUAL.md` se versão/deploy mudou  
+4. Confirmar que edições foram em `zapclin-repo` (não em Continuidade/Downloads)

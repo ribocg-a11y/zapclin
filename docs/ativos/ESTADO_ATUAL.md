@@ -1,12 +1,15 @@
-# ZapClin — Estado atual (14/07/2026)
+# ZapClin — Estado atual (21/07/2026)
 
 Referência única para alinhamento repo × produção.
 
 **Handoff:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md) ← ler primeiro  
 **Erros 14/07 (lido obrigatório):** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
 **Prioridades:** [`PLANO_PRIORIDADES_2026-06.md`](PLANO_PRIORIDADES_2026-06.md)  
+**Pastas no PC:** [`../MAPA_PASTAS_LOCAL.md`](../MAPA_PASTAS_LOCAL.md)  
+**Fluxos:** [`../FLUXOS_OPERACIONAIS.md`](../FLUXOS_OPERACIONAIS.md)  
 **Equiparação Movi:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)  
-**Regras:** [`REGRAS_DE_PUBLICACAO_SEGURA.md`](REGRAS_DE_PUBLICACAO_SEGURA.md) (§11 pós-incidente)
+**Regras:** [`REGRAS_DE_PUBLICACAO_SEGURA.md`](REGRAS_DE_PUBLICACAO_SEGURA.md) (§11 pós-incidente)  
+**OAuth:** [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)
 
 ---
 
@@ -18,6 +21,9 @@ Referência única para alinhamento repo × produção.
 | **Service Worker** | **v4.33.3** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
 | **Apps Script (código repo)** | **v3.50** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
 | **Apps Script (ping prod.)** | **3.50** | ping ok |
+| **OAuth Desktop** | write OK (21/07) | `scripts/oauth-sheets/` |
+
+**Clone local canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit
 
@@ -25,9 +31,6 @@ Referência única para alinhamento repo × produção.
 
 **Ping GAS:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
-
-**Web App base:**  
-https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec
 
 **PIN Admin:** `1321`
 
@@ -39,49 +42,40 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.50) |
 | Frontend | `index.html` + `zc-*.js` |
-| Pacote Z | `zc-version.js`, `zc-globals.js`, `zc-api.js`, `zc-core.js`, `zc-sync.js`, `zc-whatsapp.js`, `zc-admin.js`, `zc-historico-custos.js` |
-| PWA | `sw.js`, `manifest.json` |
+| Pacote Z | `zc-version`, `zc-globals`, `zc-api`, `zc-core`, `zc-sync`, `zc-whatsapp`, `zc-admin`, `zc-historico-custos` |
+| PWA | `sw.js`, `manifest.json`, `reparar.html` |
+| OAuth planilha | `scripts/oauth-sheets/` |
 | Erros PWA 14/07 | `docs/ativos/ERROS_PWA_2026-07-14.md` |
 | Governança | `AGENTS.md`, `docs/ativos/*` |
 | Pre-push | `scripts/pre-push-check.ps1` |
 
 ---
 
-## Entregas recentes (14/07/2026)
+## Entregas recentes
 
-| Versão | Entrega |
-|--------|---------|
+| Versão / data | Entrega |
+|---------------|---------|
+| **21/07/2026** | Organização pastas C: × repo; OAuth no repo; fluxos + mapa pastas |
 | **v4.33.3** | Restaura fluxo padrão de versão (SW + toast + `?force=`) |
 | **v4.33.2** | Projeção SVG em largura total do card |
 | **v4.33.0** | Remove lista/método sob a projeção |
-| **v4.32.9** | Projeção interativa + Inter nos valores |
-| **v4.32.7–8** | Projeção republicada (JS validado) → SVG |
-| **v4.32.6** | Restauro base estável v4.31.1 (pós-SyntaxError) |
-| **v3.50 GAS** | Remoção import temporário 11–13/07; totais 11=713, 12=203, 13=295 |
+| **v3.50 GAS** | Remove import temp 11–13/07 |
 
 ---
 
-## Dashboard — Projeção de Fechamento
+## Próximo passo
 
-- Após **Faturamento por Dia**
-- KPIs: projeção do mês, ritmo diário, restante
-- SVG acumulado real (ciano) × ritmo (laranja), tooltip hover/toque
-- **Sem** texto “Método” e **sem** tabela dia a dia embaixo
-- Tipografia de valores: Inter (`--font-data`)
+1. **Você:** homologar loja `?force=v4.33.3` + Dashboard  
+2. **Engenharia:** Pacote Z.5 (`zc-nav` + `zc-home`) — após homologação  
+3. Merge organização + OAuth no `main` quando pedir commit/push  
 
 ---
 
-## Aviso de nova versão (padrão ZapClin)
+## Lacunas vs Movi (backlog)
 
-- **Não** há banner persistente
-- Toast do SW: “Nova versão disponível. Atualizando…”
-- Após reload: “Sistema atualizado para vX.Y.Z”
-- Force manual: `?force=vX.Y.Z`
-
----
-
-## Próximo passo humano
-
-1. Abrir https://ribocg-a11y.github.io/zapclin/?force=v4.33.3
-2. Confirmar status **Online · v4.33.3**
-3. Dashboard → Projeção expandida + interativa
+| Lacuna | Fase |
+|--------|------|
+| FE ainda parcial monolito | Pacote Z.5+ |
+| Sem auth operador | Fase 4 |
+| Sem cockpit narrativo | Fase 5 |
+| Holding só via Movi financeiro | Movi FASE 11 |

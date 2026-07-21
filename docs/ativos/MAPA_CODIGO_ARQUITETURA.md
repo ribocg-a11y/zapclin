@@ -1,8 +1,8 @@
 # ZapClin — Mapa do código e arquitetura
 
-**Atualizado:** 11/06/2026 (FE **v4.27.4** · GAS repo **v3.45** · Fase 2 equiparação)  
+**Atualizado:** 21/07/2026 (FE **v4.33.3** · GAS **3.50** · Pacote Z parcial)  
 **Função:** anatomia do sistema — o que é cada parte, o que liga com o quê, zonas sensíveis.  
-**Complementa:** `ESTADO_ATUAL.md`, `ACESSOS_E_AUTORIZACOES.md`, `REGRAS_DE_PUBLICACAO_SEGURA.md`, `PROTOCOLO_DIAGNOSTICO_E_TESTES.md`, `AUDITORIA_RANGES_GAS.md`
+**Complementa:** `ESTADO_ATUAL.md`, `ACESSOS_E_AUTORIZACOES.md`, `REGRAS_DE_PUBLICACAO_SEGURA.md`, `PROTOCOLO_DIAGNOSTICO_E_TESTES.md`, `AUDITORIA_RANGES_GAS.md`, `../FLUXOS_OPERACIONAIS.md`
 
 ---
 
@@ -19,31 +19,32 @@
 | **Olhos (gestão)** | Dashboard, Admin PIN, fechamento diário | Dashboard, Admin, Relatório Golden |
 | **CRM** | VIP, recorrência, aceite OS | Relacionamento, Clube VIP, ACEITES OS |
 
-**Frontend hoje:** monolito `index.html` (~4.900 linhas). **Meta Fase 3:** Pacote Z modular (espelhar Pacote M do Movi).
+**Frontend hoje:** `index.html` + 8 módulos `zc-*.js` (Pacote Z parcial). **Meta:** shell enxuto (Z.10).
 
 ---
 
 ## 2. Mapa de arquivos (raiz)
 
 ```
-zapclin/
+zapclin-repo/
 ├── CÉREBRO
-│   └── AppsScript_v3.45_ATUAL.gs     ← único GAS canônico (repo)
+│   └── AppsScript_v3.45_ATUAL.gs     ← GAS canônico (conteúdo v3.50)
 ├── CORAÇÃO + MÃOS + OLHOS
-│   └── index.html                    ← UI + lógica + estilos (monolito)
+│   ├── index.html                    ← HTML + CSS + JS restante
+│   └── zc-*.js                       ← Pacote Z (version…historico-custos)
 ├── PWA
-│   ├── sw.js                         ← ZAPCLIN_SW_VERSION + cache
-│   └── manifest.json
+│   ├── sw.js · manifest.json · reparar.html
 ├── IMUNOLÓGICO
-│   ├── scripts/pre-push-check.ps1
-│   └── githooks/pre-push
-├── DEDOS (testes readonly)
+│   ├── scripts/pre-push-check.ps1 · githooks/pre-push
+├── DEDOS
 │   └── scripts/testes/*.ps1
+├── MÃOS PLANILHA (PC)
+│   └── scripts/oauth-sheets/ · scripts/planilha/
 ├── DEPLOY
 │   └── APPSCRIPT_DEPLOY.md
 └── DOCUMENTAÇÃO
     ├── AGENTS.md
-    └── docs/ativos/                  ← handoff, mapa, protocolo
+    └── docs/ativos|FLUXOS|MAPA_PASTAS|referencia/
 ```
 
 ---
