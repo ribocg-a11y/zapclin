@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.6 | Data: 21/07/2026
+  Versão : 4.33.7 | Data: 29/07/2026
+  NOVO v4.33.7:
+  - Dashboard: corrige Projeção de Fechamento (ritmo até último dia com venda; linha só no futuro; label no ponto)
   NOVO v4.33.6:
   - Hotfix Relacionamento: fotos preview, preserve seleção Nova OS, cache fotos, lista 40 cards
   NOVO v4.33.5:
@@ -1332,7 +1334,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.6</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.7</span>
       </div>
     </div>
   </div>
@@ -1411,7 +1413,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.6</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.7</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1825,7 +1827,7 @@
     </div>
     <div class="dash-proj-legend">
       <span class="dash-proj-leg-item"><span class="dash-proj-leg-line real"></span> Acumulado real</span>
-      <span class="dash-proj-leg-item"><span class="dash-proj-leg-line proj"></span> Ritmo projetado</span>
+      <span class="dash-proj-leg-item"><span class="dash-proj-leg-line proj"></span> Projeção até o fechamento</span>
     </div>
     <div class="dash-proj-svg-wrap" id="dashProjWrap"><svg id="chartProjecao" class="dash-proj-svg" viewBox="0 0 640 220" role="img" aria-label="Projeção de fechamento"></svg><div class="dash-proj-tip" id="dashProjTip"></div></div>
   </div>
@@ -2262,18 +2264,18 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.6"></script>
-<script src="zc-globals.js?v=v4.33.6"></script>
-<script src="zc-api.js?v=v4.33.6"></script>
-<script src="zc-core.js?v=v4.33.6"></script>
-<script src="zc-nav.js?v=v4.33.6"></script>
-<script src="zc-home.js?v=v4.33.6"></script>
-<script src="zc-sync.js?v=v4.33.6"></script>
-<script src="zc-whatsapp.js?v=v4.33.6"></script>
-<script src="zc-admin.js?v=v4.33.6"></script>
-<script src="zc-historico-custos.js?v=v4.33.6"></script>
-<script src="zc-registrar.js?v=v4.33.6"></script>
-<script src="zc-clientes.js?v=v4.33.6"></script>
+<script src="zc-version.js?v=v4.33.7"></script>
+<script src="zc-globals.js?v=v4.33.7"></script>
+<script src="zc-api.js?v=v4.33.7"></script>
+<script src="zc-core.js?v=v4.33.7"></script>
+<script src="zc-nav.js?v=v4.33.7"></script>
+<script src="zc-home.js?v=v4.33.7"></script>
+<script src="zc-sync.js?v=v4.33.7"></script>
+<script src="zc-whatsapp.js?v=v4.33.7"></script>
+<script src="zc-admin.js?v=v4.33.7"></script>
+<script src="zc-historico-custos.js?v=v4.33.7"></script>
+<script src="zc-registrar.js?v=v4.33.7"></script>
+<script src="zc-clientes.js?v=v4.33.7"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.6: zc-registrar + zc-clientes extraídos)
@@ -3130,41 +3132,49 @@ function calcProjecaoMes_(diaData, receitaMes, target){
   var diasMes = diaData.length;
   var isMesAtual = target.getFullYear() === hoje.getFullYear() && target.getMonth() === hoje.getMonth();
   var isFuturo = target.getFullYear() > hoje.getFullYear() || (target.getFullYear() === hoje.getFullYear() && target.getMonth() > hoje.getMonth());
-  var diasDecorridos = isFuturo ? 0 : (isMesAtual ? Math.min(hoje.getDate(), diasMes) : diasMes);
+  var limiteCalendario = isFuturo ? 0 : (isMesAtual ? Math.min(hoje.getDate(), diasMes) : diasMes);
+  // Mês atual: ritmo só até o último dia com venda (ignora hoje/amanhã zerados).
+  // Mês fechado: usa o mês completo.
+  var diasDecorridos = 0;
+  if (isFuturo) {
+    diasDecorridos = 0;
+  } else if (isMesAtual) {
+    for (var u = 0; u < limiteCalendario; u++) {
+      if (parseFloat(diaData[u].valor || 0) > 0) diasDecorridos = u + 1;
+    }
+  } else {
+    diasDecorridos = diasMes;
+  }
   var receitaAteRef = 0;
   for (var i = 0; i < diasDecorridos; i++) receitaAteRef += parseFloat(diaData[i].valor || 0);
-  // Para mês atual, receitaMes pode incluir só até ontem se hoje ainda não fechou — usar o acumulado até diasDecorridos.
   var receitaBase = isMesAtual ? receitaAteRef : receitaMes;
   var ritmo = diasDecorridos > 0 ? receitaBase / diasDecorridos : 0;
   var projecao = ritmo * diasMes;
-  var esperadoAteAgora = ritmo * diasDecorridos;
-  var desvioAcum = receitaBase - esperadoAteAgora; // tipicamente ~0 por construção com média linear; usamos desvio dia a dia vs ritmo
 
-  // Desvio acumulado mais útil: real vs ritmo esperado em cada dia, medido no último dia com referência
-  // Com ritmo = média dos dias decorridos, acumulado no fim do período ref bate exatamente.
-  // Mostramos desvio do último dia útil em relação ao ritmo (média) e série dia a dia.
   var series = [];
   var acumReal = 0;
   for (var d = 1; d <= diasMes; d++) {
     var realDia = parseFloat(diaData[d - 1].valor || 0);
     acumReal += realDia;
+    // Reta do ritmo (fechamento estimado). No gráfico, o traço laranja só usa o trecho futuro.
     var acumProj = ritmo * d;
     var desvioDia = realDia - ritmo;
     var desvioAcumDia = acumReal - acumProj;
+    var noPeriodoBase = d <= diasDecorridos || !isMesAtual;
     series.push({
       dia: d,
       realDia: realDia,
       ritmo: ritmo,
       desvioDia: desvioDia,
-      acumReal: d <= diasDecorridos || !isMesAtual ? acumReal : null,
+      acumReal: noPeriodoBase ? acumReal : null,
       acumProj: acumProj,
-      desvioAcum: d <= diasDecorridos || !isMesAtual ? desvioAcumDia : null,
+      desvioAcum: noPeriodoBase ? desvioAcumDia : null,
       passado: d <= diasDecorridos,
+      futuroProj: isMesAtual && d >= diasDecorridos && diasDecorridos > 0,
       hoje: isMesAtual && d === hoje.getDate()
     });
   }
 
-  // Desvio “até agora”: soma dos gaps diários até o dia de referência (real - ritmo)
   var desvioAteAgora = 0;
   for (var j = 0; j < diasDecorridos; j++) desvioAteAgora += series[j].desvioDia;
 
@@ -3204,7 +3214,7 @@ function renderProjecaoFechamento_(diaData, receitaMes, target){
 
   if (note) {
     note.textContent = proj.isMesAtual
-      ? ('dia ' + proj.diasDecorridos + '/' + proj.diasMes)
+      ? ('base até dia ' + proj.diasDecorridos + '/' + proj.diasMes)
       : ('mês fechado · ' + proj.diasMes + ' dias');
   }
   set('dashProjFechamento', fmtBRL(proj.projecao));
@@ -3212,7 +3222,9 @@ function renderProjecaoFechamento_(diaData, receitaMes, target){
     ? ('restam ' + proj.diasRestantes + ' dia(s) · realizado ' + fmtBRL(proj.receitaBase))
     : ('média do mês × ' + proj.diasMes + ' dias'));
   set('dashProjRitmo', fmtBRL(proj.ritmo));
-  set('dashProjRitmoSub', fmtBRL(proj.receitaBase) + ' ÷ ' + proj.diasDecorridos + ' dia(s)');
+  set('dashProjRitmoSub', proj.diasDecorridos
+    ? (fmtBRL(proj.receitaBase) + ' ÷ ' + proj.diasDecorridos + ' dia(s) c/ venda')
+    : '—');
 
   var restante = Math.max(0, proj.projecao - proj.receitaBase);
   var desvioEl = document.getElementById('dashProjDesvio');
@@ -3247,8 +3259,9 @@ function _projNearestDia_(clientX){
   var x = ((clientX - rect.left) / rect.width) * st.W;
   var best = null, bestD = Infinity;
   (st.proj.series || []).forEach(function(s){
-    if(!(s.passado || !st.proj.isMesAtual)) return;
-    var px = _projXY_(s.dia, s.acumProj).x;
+    if(!(s.passado || s.futuroProj || !st.proj.isMesAtual)) return;
+    var yRef = (s.acumReal !== null && s.acumReal !== undefined) ? s.acumReal : s.acumProj;
+    var px = _projXY_(s.dia, yRef).x;
     var d = Math.abs(px - x);
     if(d < bestD){ bestD = d; best = s; }
   });
@@ -3269,12 +3282,15 @@ function _projShowTip_(s, clientX, clientY){
   var sign = s.desvioDia > 0.5 ? '+' : '';
   var desvioTxt = Math.abs(s.desvioDia) < 0.5 ? '—' : sign + fmtBRL(s.desvioDia);
   var acum = (s.acumReal !== null && s.acumReal !== undefined) ? fmtBRL(s.acumReal) : '—';
+  var mesAtual = !(_projState && _projState.proj && _projState.proj.isMesAtual === false);
+  var mostrarReal = s.passado || !mesAtual;
   tip.innerHTML =
-    '<div class="dash-proj-tip-dia">Dia '+String(s.dia).padStart(2,'0')+(s.hoje?' · hoje':'')+'</div>'+
-    '<div class="dash-proj-tip-row"><span>Real do dia</span><b class="c">'+fmtBRL(s.realDia)+'</b></div>'+
+    '<div class="dash-proj-tip-dia">Dia '+String(s.dia).padStart(2,'0')+(s.hoje?' · hoje':'')+(s.futuroProj&&!s.passado?' · projetado':'')+'</div>'+
+    '<div class="dash-proj-tip-row"><span>Real do dia</span><b class="c">'+(mostrarReal?fmtBRL(s.realDia):'—')+'</b></div>'+
     '<div class="dash-proj-tip-row"><span>Acumulado</span><b class="c">'+acum+'</b></div>'+
-    '<div class="dash-proj-tip-row"><span>Ritmo</span><b class="o">'+fmtBRL(s.ritmo)+'</b></div>'+
-    '<div class="dash-proj-tip-row"><span>Desvio</span><b class="'+desvioCls+'">'+desvioTxt+'</b></div>';
+    '<div class="dash-proj-tip-row"><span>Projeção acum.</span><b class="o">'+fmtBRL(s.acumProj)+'</b></div>'+
+    '<div class="dash-proj-tip-row"><span>Ritmo/dia</span><b class="o">'+fmtBRL(s.ritmo)+'</b></div>'+
+    (mostrarReal?'<div class="dash-proj-tip-row"><span>Desvio do dia</span><b class="'+desvioCls+'">'+desvioTxt+'</b></div>':'');
   tip.classList.add('show');
   var wr = wrap.getBoundingClientRect();
   var left = clientX - wr.left + 14;
@@ -3408,10 +3424,6 @@ function drawProjecaoChart_(svgId, proj){
     }
   }
 
-  var projPts = [];
-  for (var p = 1; p <= n; p++) projPts.push(xP(p)+','+yP(proj.series[p-1].acumProj));
-  parts.push('<polyline points="'+projPts.join(' ')+'" fill="none" stroke="#ff9100" stroke-width="2.5" stroke-dasharray="6 4" stroke-linejoin="round"></polyline>');
-
   var pontosReal = (proj.series || []).filter(function(s){ return s.acumReal !== null && s.acumReal !== undefined; });
   if (pontosReal.length) {
     var linePts = pontosReal.map(function(s){ return xP(s.dia)+','+yP(s.acumReal); });
@@ -3427,7 +3439,26 @@ function drawProjecaoChart_(svgId, proj){
     });
   }
 
-  parts.push('<text x="'+(pad.left+cW)+'" y="'+(pad.top+12)+'" fill="#ff9100" font-size="12" font-weight="700" font-family="Inter,DM Sans,sans-serif" text-anchor="end">'+esc(fmtBRL(proj.projecao||0))+'</text>');
+  // Laranja = projeção a partir do último dia com venda até o fechamento (não reescreve o passado).
+  var refDia = proj.diasDecorridos || 0;
+  if (proj.isMesAtual && refDia > 0 && refDia < n && proj.projecao > 0) {
+    var projPts = [];
+    for (var p = refDia; p <= n; p++) projPts.push(xP(p)+','+yP(proj.series[p-1].acumProj));
+    parts.push('<polyline points="'+projPts.join(' ')+'" fill="none" stroke="#ff9100" stroke-width="2.5" stroke-dasharray="6 4" stroke-linejoin="round"></polyline>');
+    parts.push('<circle cx="'+xP(refDia)+'" cy="'+yP(proj.receitaBase)+'" r="4" fill="#ff9100" stroke="#0a0a0f" stroke-width="1.2"></circle>');
+    parts.push('<circle cx="'+xP(n)+'" cy="'+yP(proj.projecao)+'" r="4.5" fill="#ff9100" stroke="#0a0a0f" stroke-width="1.2"></circle>');
+  } else if ((!proj.isMesAtual || refDia >= n) && proj.projecao > 0) {
+    // Mês fechado: reta de referência do ritmo médio no mês inteiro
+    var projPtsFull = [];
+    for (var pf = 1; pf <= n; pf++) projPtsFull.push(xP(pf)+','+yP(proj.series[pf-1].acumProj));
+    parts.push('<polyline points="'+projPtsFull.join(' ')+'" fill="none" stroke="#ff9100" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round" opacity="0.85"></polyline>');
+  }
+
+  if (proj.projecao > 0) {
+    var labelX = xP(n);
+    var labelY = Math.max(pad.top + 14, yP(proj.projecao) - 10);
+    parts.push('<text x="'+labelX+'" y="'+labelY+'" fill="#ff9100" font-size="12" font-weight="700" font-family="Inter,DM Sans,sans-serif" text-anchor="end">'+esc(fmtBRL(proj.projecao||0))+'</text>');
+  }
   parts.push('<g id="projHover"></g>');
 
   if (!pontosReal.length && !(proj.projecao > 0)) {

@@ -1,4 +1,4 @@
-# ZapClin — Estado atual (21/07/2026)
+# ZapClin — Estado atual (29/07/2026)
 
 Referência única para alinhamento repo × produção.
 
@@ -17,10 +17,10 @@ Referência única para alinhamento repo × produção.
 
 | Camada | Versão repo / prod | URL / ID |
 |--------|--------------------|----------|
-| **Frontend** | **v4.33.6** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.6 |
-| **Service Worker** | **v4.33.6** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
+| **Frontend** | **v4.33.7** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.7 |
+| **Service Worker** | **v4.33.7** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
 | **Apps Script (código repo)** | **v3.51** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
-| **Apps Script (ping prod.)** | **3.50** (Nova versão Web **3.51** pendente) | ping ok |
+| **Apps Script (ping prod.)** | **3.51** | ping ok |
 | **OAuth Desktop** | write OK (21/07) | `scripts/oauth-sheets/` |
 
 **Clone local canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`
@@ -55,7 +55,8 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | Versão / data | Entrega |
 |---------------|---------|
-| **21/07/2026** | Hotfix Relacionamento FE **v4.33.6** + GAS **v3.51** (preview fotos; deploy Web pendente) |
+| **29/07/2026** | Dashboard: corrige Projeção de Fechamento (**v4.33.7**) |
+| **21/07/2026** | Hotfix Relacionamento FE **v4.33.6** + GAS **v3.51** (preview fotos) |
 | **21/07/2026** | Pacote Z.6 — `zc-registrar.js` + `zc-clientes.js` (**v4.33.5**) |
 | **21/07/2026** | Pacote Z.5 — `zc-nav.js` + `zc-home.js` (**v4.33.4**) |
 | **21/07/2026** | Organização pastas C: × repo; OAuth no repo; fluxos + mapa pastas |
@@ -68,9 +69,8 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ## Próximo passo
 
-1. Publicar FE **v4.33.6** + abrir `?force=v4.33.6` · smoke Relacionamento (10 testes)  
-2. **Humano:** Nova versão Web GAS **3.51** (mesmo Deploy ID) — preview de fotos  
-3. Só depois: Pacote Z.7 (`zc-operacao` + `zc-crm`)
+1. Abrir `?force=v4.33.7` · validar Projeção de Fechamento no Dashboard  
+2. Pacote Z.7 (`zc-operacao` + `zc-crm`) quando Relacionamento estiver ok na loja
 
 ---
 

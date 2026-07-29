@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.33.6 | Data: 21/07/2026
+// Versão: 4.33.7 | Data: 29/07/2026
+// [v4.33.7 CACHE]
+// Corrige Projeção de Fechamento no Dashboard.
 // [v4.33.6 CACHE]
 // Hotfix Relacionamento (fotos/Nova OS) + Z.6 registrar/clientes.
 // [v4.33.4 CACHE]
@@ -11,9 +13,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.33.6';
-const STATIC_CACHE = 'zapclin-static-v4.33.6';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.33.6';
+const ZAPCLIN_SW_VERSION = 'v4.33.7';
+const STATIC_CACHE = 'zapclin-static-v4.33.7';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.33.7';
 
 const APP_SHELL = [
   './',
