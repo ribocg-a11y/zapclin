@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.51 | Data: 21/07/2026
+// VersÃ£o: 3.52 | Data: 30/07/2026
+// NOVO v3.52:
+//   - Action getFotoPreview: preview maior sob demanda para abrir foto do capacete no CRM
 // NOVO v3.51:
 //   - Relacionamento: preview base64 das fotos (OAuth) para exibir no PWA sem Drive publico
 //   - listarFotosCliente limita as OS mais recentes para reduzir lentidao
@@ -126,7 +128,7 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.51';
+var VERSION           = '3.52';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -357,17 +359,20 @@ function folderIdFromUrl_(url) {
   return m ? m[1] : '';
 }
 
-function previewFotoDrive_(fileId) {
+function previewFotoDrive_(fileId, sz) {
   if (!fileId) return '';
+  var size = String(sz || 'w160');
+  if (!/^w\d{2,4}$/.test(size)) size = 'w160';
+  var maxBytes = parseInt(size.replace(/\D/g, ''), 10) >= 400 ? 500000 : 90000;
   try {
     var token = ScriptApp.getOAuthToken();
-    var resp = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + fileId + '&sz=w160', {
+    var resp = UrlFetchApp.fetch('https://drive.google.com/thumbnail?id=' + fileId + '&sz=' + size, {
       headers: { Authorization: 'Bearer ' + token },
       muteHttpExceptions: true
     });
     if (resp.getResponseCode() !== 200) return '';
     var blob = resp.getBlob();
-    if (!blob || blob.getBytes().length > 90000) return '';
+    if (!blob || blob.getBytes().length > maxBytes) return '';
     var mime = String(blob.getContentType() || 'image/jpeg');
     return 'data:' + mime + ';base64,' + Utilities.base64Encode(blob.getBytes());
   } catch (ePrev) {
@@ -1259,6 +1264,14 @@ function doGet(e) {
         if (fotosItems.length >= 24) break;
       }
       result = { ok: true, version: VERSION, items: fotosItems };
+
+    } else if (action === 'getFotoPreview') {
+      var fidPrev = String(p.id || '');
+      var szPrev = String(p.sz || 'w1000');
+      if (!/^[a-zA-Z0-9_-]+$/.test(fidPrev)) throw new Error('id de foto invalido');
+      if (!/^w\d{2,4}$/.test(szPrev)) szPrev = 'w1000';
+      var previewBig = previewFotoDrive_(fidPrev, szPrev);
+      result = { ok: !!previewBig, version: VERSION, id: fidPrev, preview: previewBig };
 
     } else if (action === 'atualizarStatus') {
       var clientes    = getOrCreateClientesSheet(ss);

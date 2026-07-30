@@ -17,10 +17,10 @@ Referência única para alinhamento repo × produção.
 
 | Camada | Versão repo / prod | URL / ID |
 |--------|--------------------|----------|
-| **Frontend** | **v4.33.7** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.7 |
-| **Service Worker** | **v4.33.7** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
-| **Apps Script (código repo)** | **v3.51** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
-| **Apps Script (ping prod.)** | **3.51** | ping ok |
+| **Frontend** | **v4.33.8** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.8 |
+| **Service Worker** | **v4.33.8** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
+| **Apps Script (código repo)** | **v3.52** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
+| **Apps Script (ping prod.)** | **3.51** (alvo **3.52** após Nova versão Web) | ping ok |
 | **OAuth Desktop** | write OK (21/07) | `scripts/oauth-sheets/` |
 
 **Clone local canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`
@@ -55,7 +55,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | Versão / data | Entrega |
 |---------------|---------|
-| **29/07/2026** | Dashboard: corrige Projeção de Fechamento (**v4.33.7**) |
+| **29/07/2026** | Dashboard: corrige Projeção de Fechamento (**v4.33.8**) |
 | **21/07/2026** | Hotfix Relacionamento FE **v4.33.6** + GAS **v3.51** (preview fotos) |
 | **21/07/2026** | Pacote Z.6 — `zc-registrar.js` + `zc-clientes.js` (**v4.33.5**) |
 | **21/07/2026** | Pacote Z.5 — `zc-nav.js` + `zc-home.js` (**v4.33.4**) |
@@ -69,7 +69,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ## Próximo passo
 
-1. Abrir `?force=v4.33.7` · validar Projeção de Fechamento no Dashboard  
+1. Abrir `?force=v4.33.8` · validar Projeção de Fechamento no Dashboard  
 2. Pacote Z.7 (`zc-operacao` + `zc-crm`) quando Relacionamento estiver ok na loja
 
 ---

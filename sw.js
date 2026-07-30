@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.33.7 | Data: 29/07/2026
+// Versão: 4.33.8 | Data: 30/07/2026
+// [v4.33.8 CACHE]
+// Lightbox foto do capacete no Relacionamento.
 // [v4.33.7 CACHE]
 // Corrige Projeção de Fechamento no Dashboard.
 // [v4.33.6 CACHE]
@@ -13,9 +15,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.33.7';
-const STATIC_CACHE = 'zapclin-static-v4.33.7';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.33.7';
+const ZAPCLIN_SW_VERSION = 'v4.33.8';
+const STATIC_CACHE = 'zapclin-static-v4.33.8';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.33.8';
 
 const APP_SHELL = [
   './',

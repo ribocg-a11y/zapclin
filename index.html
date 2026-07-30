@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.7 | Data: 29/07/2026
+  Versão : 4.33.8 | Data: 30/07/2026
+  NOVO v4.33.8:
+  - Relacionamento: toque na foto do capacete abre visualizador ampliado
   NOVO v4.33.7:
   - Dashboard: corrige Projeção de Fechamento (ritmo até último dia com venda; linha só no futuro; label no ponto)
   NOVO v4.33.6:
@@ -1248,8 +1250,20 @@
   .crm-os-fields{display:grid;grid-template-columns:1fr;gap:8px}
   .crm-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin:10px 0 4px}
   .crm-photo-card,.crm-photo-option{border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.035);overflow:hidden;min-height:82px;display:grid;align-content:start;color:var(--text);font:inherit;text-align:left}
+  .crm-photo-card{cursor:pointer;padding:0;width:100%;transition:transform .15s ease,border-color .15s ease}
+  .crm-photo-card:hover,.crm-photo-card:focus{transform:translateY(-1px);border-color:rgba(0,229,255,.45);outline:none}
   .crm-photo-card img,.crm-photo-option img{width:100%;height:76px;object-fit:cover;display:block;background:#10131d}
   .crm-photo-caption{font-size:9px;color:var(--muted);padding:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crm-foto-overlay{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:960;display:none;align-items:center;justify-content:center;padding:16px}
+  .crm-foto-overlay.show{display:flex}
+  .crm-foto-box{width:min(720px,96vw);max-height:92vh;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 28px 80px rgba(0,0,0,.5)}
+  .crm-foto-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
+  .crm-foto-title{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)}
+  .crm-foto-sub{font-size:11px;color:var(--muted);margin-top:3px}
+  .crm-foto-body{position:relative;padding:12px;overflow:auto;background:#0a0c12;display:flex;align-items:center;justify-content:center;min-height:220px}
+  .crm-foto-body img{max-width:100%;max-height:min(72vh,640px);object-fit:contain;border-radius:12px;background:#10131d}
+  .crm-foto-loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--muted);background:rgba(10,12,18,.82);padding:8px 12px;border-radius:10px;display:none}
+  @media(max-width:520px){.crm-foto-overlay{padding:0}.crm-foto-box{width:100vw;height:100dvh;max-height:none;border-radius:0}}
   .crm-photo-empty{border:1px dashed rgba(255,255,255,.16);border-radius:12px;padding:12px;color:var(--muted);font-size:12px;background:rgba(255,255,255,.025)}
   .crm-photo-option{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
   .crm-photo-option:hover{transform:translateY(-1px);border-color:rgba(0,229,255,.45)}
@@ -1334,7 +1348,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.7</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.8</span>
       </div>
     </div>
   </div>
@@ -1413,7 +1427,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.7</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.8</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1464,6 +1478,22 @@
     </div>
     <div id="editBody"></div>
     <div class="edit-actions" id="editActions"></div>
+  </div>
+</div>
+
+<div class="crm-foto-overlay" id="crmFotoOverlay" onclick="fecharFotoCrmLightbox_(event)">
+  <div class="crm-foto-box" onclick="event.stopPropagation()">
+    <div class="crm-foto-head">
+      <div>
+        <div class="crm-foto-title" id="crmFotoTitle">Foto do capacete</div>
+        <div class="crm-foto-sub" id="crmFotoSub"></div>
+      </div>
+      <button type="button" class="edit-close" onclick="fecharFotoCrmLightbox_()" aria-label="Fechar">×</button>
+    </div>
+    <div class="crm-foto-body">
+      <img id="crmFotoImg" alt="Foto do capacete">
+      <div class="crm-foto-loading" id="crmFotoLoading">Carregando foto ampliada...</div>
+    </div>
   </div>
 </div>
 
@@ -2264,18 +2294,18 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.7"></script>
-<script src="zc-globals.js?v=v4.33.7"></script>
-<script src="zc-api.js?v=v4.33.7"></script>
-<script src="zc-core.js?v=v4.33.7"></script>
-<script src="zc-nav.js?v=v4.33.7"></script>
-<script src="zc-home.js?v=v4.33.7"></script>
-<script src="zc-sync.js?v=v4.33.7"></script>
-<script src="zc-whatsapp.js?v=v4.33.7"></script>
-<script src="zc-admin.js?v=v4.33.7"></script>
-<script src="zc-historico-custos.js?v=v4.33.7"></script>
-<script src="zc-registrar.js?v=v4.33.7"></script>
-<script src="zc-clientes.js?v=v4.33.7"></script>
+<script src="zc-version.js?v=v4.33.8"></script>
+<script src="zc-globals.js?v=v4.33.8"></script>
+<script src="zc-api.js?v=v4.33.8"></script>
+<script src="zc-core.js?v=v4.33.8"></script>
+<script src="zc-nav.js?v=v4.33.8"></script>
+<script src="zc-home.js?v=v4.33.8"></script>
+<script src="zc-sync.js?v=v4.33.8"></script>
+<script src="zc-whatsapp.js?v=v4.33.8"></script>
+<script src="zc-admin.js?v=v4.33.8"></script>
+<script src="zc-historico-custos.js?v=v4.33.8"></script>
+<script src="zc-registrar.js?v=v4.33.8"></script>
+<script src="zc-clientes.js?v=v4.33.8"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.6: zc-registrar + zc-clientes extraídos)
@@ -4170,8 +4200,40 @@ function crmVipCompleto_(c){var r=c&&c.relacionamento||{};return !!(r.aniversari
 function crmFotoSrc_(f){if(!f)return '';if(f.preview)return f.preview;if(f.downloadUrl)return f.downloadUrl;if(f.thumb)return f.thumb;if(f.id)return 'https://drive.google.com/uc?export=view&id='+f.id;return f.url||'';}
 function crmFotos_(c){var out=[];(c&&c.registros||[]).forEach(function(os){(os.fotos||[]).forEach(function(f,idx){if(!f)return;out.push({id:f.id||'',name:f.name||('Capacete '+(idx+1)),url:f.url||'',thumb:f.thumb||'',downloadUrl:f.downloadUrl||'',preview:f.preview||'',os:f.os||os.num,data:f.data||fmtData(os.data),hora:f.hora||fmtHora(os.hora)});});});(c&&c.fotosHistoricas||[]).forEach(function(f){if(f&&f.id&&!out.some(function(x){return x.id===f.id;}))out.push(f);});return out;}
 function crmFotoOnError_(img){if(!img)return;var step=parseInt(img.getAttribute('data-try')||'0',10);var id=img.getAttribute('data-fid')||'';if(step===0&&id){img.setAttribute('data-try','1');img.src='https://drive.google.com/uc?export=view&id='+id;return;}if(step===1&&id){img.setAttribute('data-try','2');img.src='https://lh3.googleusercontent.com/d/'+id+'=w220';return;}img.style.display='none';var cap=img.parentElement&&img.parentElement.querySelector('.crm-photo-caption');if(cap&&!cap.getAttribute('data-fb')){cap.setAttribute('data-fb','1');cap.textContent=(cap.textContent||'Foto')+' (miniatura indisponível)';}}
-function crmFotoHtml_(f){var src=escapeHtml_(crmFotoSrc_(f));var fid=escapeHtml_(f.id||'');var cap=escapeHtml_((f.name||'Foto')+' · OS '+formatarOS_(f.os));return'<div class="crm-photo-card">'+(src?'<img src="'+src+'" data-fid="'+fid+'" data-try="0" loading="lazy" onerror="crmFotoOnError_(this)">':'')+'<div class="crm-photo-caption">'+cap+'</div></div>';}
-function abrirFichaRelacionamento(key){var c=crmByKey_(key);if(!c)return;aplicarFotosCacheCrm_(c);var r=c.relacionamento||{};var fotos=crmFotos_(c);var fotosHtml=fotos.length?'<div class="crm-photo-grid">'+fotos.slice(0,18).map(crmFotoHtml_).join('')+'</div>':(!c.fotosCarregadas?'<div class="crm-photo-empty">Carregando fotos do Drive deste cliente...</div>':'<div class="crm-photo-empty">Nenhuma foto encontrada no Drive para este cliente.</div>');var hist=c.registros.slice(0,8).map(function(os){var sv=Array.isArray(os.servicos)?os.servicos.filter(Boolean).join(', '):'';return'<div class="crm-history-row"><span class="info-badge vinculo">'+formatarOS_(os.num)+'</span><div><div style="font-weight:800">'+escapeHtml_(sv||'Serviço não informado')+'</div><div class="crm-meta">'+fmtData(os.data)+' '+fmtHora(os.hora)+' · '+escapeHtml_(os.status||'')+'</div></div><div class="lanc-val">'+fmtBRL(os.total||0)+'</div></div>';}).join('')||'<div class="empty"><div class="empty-text">Sem histórico operacional.</div></div>';var body='<div class="crm-detail-head"><div><div class="crm-detail-name">'+escapeHtml_(c.nome)+'</div><div class="crm-detail-phone">'+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div></div><div class="crm-tags">'+c.tags.map(function(t){return'<span class="crm-tag '+t.cls+'">'+escapeHtml_(t.txt)+'</span>';}).join('')+'</div></div><div class="crm-detail-grid"><div class="crm-detail-item"><div class="crm-detail-lbl">Aniversário</div><div class="crm-detail-val">'+crmRelVal_(r.aniversario)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">E-mail</div><div class="crm-detail-val">'+crmRelVal_(r.email)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Modelo/capacete</div><div class="crm-detail-val">'+crmRelVal_(r.modelo)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Origem</div><div class="crm-detail-val">'+crmRelVal_(r.origem)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Consentimento</div><div class="crm-detail-val">'+crmRelVal_(r.consentimento)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Cadastro VIP</div><div class="crm-detail-val">'+(crmVipCompleto_(c)?'Completo':'Pendente')+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Total gasto</div><div class="crm-detail-val">'+fmtBRL(c.total)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Ticket médio</div><div class="crm-detail-val">'+fmtBRL(c.ticket)+'</div></div></div><div class="section-title" style="margin:12px 0 8px">Capacetes/fotos no histórico</div>'+fotosHtml+'<div class="section-title" style="margin:12px 0 8px">Histórico operacional</div><div class="crm-history">'+hist+'</div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Fechar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro com fotos</button><button class="save-btn green" onclick="abrirNovaOsRelacionamento(\''+jsStr_(c.key)+'\')">Nova OS assistida</button>';abrirEditorOperacional('Ficha do cliente',body,actions);if(!c.fotosCarregadas&&!c.fotosCarregando){buscarFotosClienteCRM_(c).then(function(){var ov=document.getElementById('editOverlay');var tit=document.getElementById('editTitle');if(ov&&ov.classList.contains('show')&&tit&&/Ficha/.test(tit.textContent||''))abrirFichaRelacionamento(key);});}}
+var _crmFotoLightboxList_=[];
+function crmFotoHtml_(f,idx){var src=escapeHtml_(crmFotoSrc_(f));var fid=escapeHtml_(f.id||'');var cap=escapeHtml_((f.name||'Foto')+' · OS '+formatarOS_(f.os));return'<button type="button" class="crm-photo-card" onclick="event.stopPropagation();abrirFotoCrmLightbox_('+idx+')" title="Toque para ampliar">'+(src?'<img src="'+src+'" data-fid="'+fid+'" data-try="0" loading="lazy" onerror="crmFotoOnError_(this)" alt="">':'')+'<div class="crm-photo-caption">'+cap+' · tocar p/ abrir</div></button>';}
+function abrirFotoCrmLightbox_(idx){
+  var f=_crmFotoLightboxList_[idx];
+  if(!f)return;
+  var ov=document.getElementById('crmFotoOverlay');
+  var img=document.getElementById('crmFotoImg');
+  var load=document.getElementById('crmFotoLoading');
+  var tit=document.getElementById('crmFotoTitle');
+  var sub=document.getElementById('crmFotoSub');
+  if(!ov||!img)return;
+  if(tit)tit.textContent=f.name||'Foto do capacete';
+  if(sub)sub.textContent='OS '+formatarOS_(f.os)+(f.data?' · '+f.data:'')+(f.hora?' '+f.hora:'');
+  img.alt=f.name||'Foto do capacete';
+  img.src=crmFotoSrc_(f)||'';
+  if(load)load.style.display=f.id?'block':'none';
+  ov.classList.add('show');
+  if(f.id&&typeof apiGet==='function'){
+    apiGet('getFotoPreview',{id:f.id,sz:'w1000'},20000).then(function(j){
+      if(j&&j.ok&&j.preview)img.src=j.preview;
+      if(load)load.style.display='none';
+    }).catch(function(){if(load)load.style.display='none';});
+  }else if(load){load.style.display='none';}
+}
+function fecharFotoCrmLightbox_(ev){
+  if(ev&&ev.target&&ev.target.id&&ev.target.id!=='crmFotoOverlay')return;
+  var ov=document.getElementById('crmFotoOverlay');
+  if(ov)ov.classList.remove('show');
+  var img=document.getElementById('crmFotoImg');
+  if(img)img.removeAttribute('src');
+  var load=document.getElementById('crmFotoLoading');
+  if(load)load.style.display='none';
+}
+function abrirFichaRelacionamento(key){var c=crmByKey_(key);if(!c)return;aplicarFotosCacheCrm_(c);var r=c.relacionamento||{};var fotos=crmFotos_(c);_crmFotoLightboxList_=fotos.slice(0,18);var fotosHtml=_crmFotoLightboxList_.length?'<div class="crm-photo-grid">'+_crmFotoLightboxList_.map(function(f,i){return crmFotoHtml_(f,i);}).join('')+'</div>':(!c.fotosCarregadas?'<div class="crm-photo-empty">Carregando fotos do Drive deste cliente...</div>':'<div class="crm-photo-empty">Nenhuma foto encontrada no Drive para este cliente.</div>');var hist=c.registros.slice(0,8).map(function(os){var sv=Array.isArray(os.servicos)?os.servicos.filter(Boolean).join(', '):'';return'<div class="crm-history-row"><span class="info-badge vinculo">'+formatarOS_(os.num)+'</span><div><div style="font-weight:800">'+escapeHtml_(sv||'Serviço não informado')+'</div><div class="crm-meta">'+fmtData(os.data)+' '+fmtHora(os.hora)+' · '+escapeHtml_(os.status||'')+'</div></div><div class="lanc-val">'+fmtBRL(os.total||0)+'</div></div>';}).join('')||'<div class="empty"><div class="empty-text">Sem histórico operacional.</div></div>';var body='<div class="crm-detail-head"><div><div class="crm-detail-name">'+escapeHtml_(c.nome)+'</div><div class="crm-detail-phone">'+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div></div><div class="crm-tags">'+c.tags.map(function(t){return'<span class="crm-tag '+t.cls+'">'+escapeHtml_(t.txt)+'</span>';}).join('')+'</div></div><div class="crm-detail-grid"><div class="crm-detail-item"><div class="crm-detail-lbl">Aniversário</div><div class="crm-detail-val">'+crmRelVal_(r.aniversario)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">E-mail</div><div class="crm-detail-val">'+crmRelVal_(r.email)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Modelo/capacete</div><div class="crm-detail-val">'+crmRelVal_(r.modelo)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Origem</div><div class="crm-detail-val">'+crmRelVal_(r.origem)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Consentimento</div><div class="crm-detail-val">'+crmRelVal_(r.consentimento)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Cadastro VIP</div><div class="crm-detail-val">'+(crmVipCompleto_(c)?'Completo':'Pendente')+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Total gasto</div><div class="crm-detail-val">'+fmtBRL(c.total)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Ticket médio</div><div class="crm-detail-val">'+fmtBRL(c.ticket)+'</div></div></div><div class="section-title" style="margin:12px 0 8px">Capacetes/fotos no histórico</div>'+fotosHtml+'<div class="section-title" style="margin:12px 0 8px">Histórico operacional</div><div class="crm-history">'+hist+'</div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Fechar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro com fotos</button><button class="save-btn green" onclick="abrirNovaOsRelacionamento(\''+jsStr_(c.key)+'\')">Nova OS assistida</button>';abrirEditorOperacional('Ficha do cliente',body,actions);if(!c.fotosCarregadas&&!c.fotosCarregando){buscarFotosClienteCRM_(c).then(function(){var ov=document.getElementById('editOverlay');var tit=document.getElementById('editTitle');if(ov&&ov.classList.contains('show')&&tit&&/Ficha/.test(tit.textContent||''))abrirFichaRelacionamento(key);});}}
 function preencherCadastroRelacionamento(key){var c=crmByKey_(key);if(!c)return;fecharEditorOperacional();goTo('clientes',null);setTimeout(function(){resetClienteForm();document.getElementById('clienteNome').value=c.nome||'';document.getElementById('clienteTel').value=formatarTelefoneBR_(c.tel)||c.tel||'';verificarCadastroCompleto();var n=document.getElementById('clienteNome');if(n)n.focus();showToast({title:'Cliente preenchido',msg:'Agora escolha capacetes, serviços e fotos para a nova OS.'},'info');},180);}
 function renderCrmOsItens_(){var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10)||1);var key=(document.getElementById('crmOsKey')||{}).value||'';var c=crmByKey_(key);aplicarFotosCacheCrm_(c);if(c&&!c.fotosCarregadas&&!c.fotosCarregando){buscarFotosClienteCRM_(c).then(function(){renderCrmOsItens_();});}var fotos=crmFotos_(c);var prevFiles=crmOsFotosSelecionadas.slice();var prevRefs=crmOsFotoRefs.slice();var prevObs=crmOsObsPorCap.slice();var prevSvcs=[];for(var si=0;si<qtd;si++){var sel=document.getElementById('crmOsSvc'+si);prevSvcs[si]=sel?String(sel.value||''):'';}crmOsFotosSelecionadas=new Array(qtd).fill(null);crmOsFotoRefs=new Array(qtd).fill(null);crmOsObsPorCap=new Array(qtd).fill(null).map(function(){return[];});for(var a=0;a<qtd;a++){if(prevFiles[a])crmOsFotosSelecionadas[a]=prevFiles[a];else if(prevRefs[a]&&(prevRefs[a].id||prevRefs[a].preview||prevRefs[a].url))crmOsFotoRefs[a]=prevRefs[a];else if(fotos[a])crmOsFotoRefs[a]=fotos[a];crmOsObsPorCap[a]=Array.isArray(prevObs[a])?prevObs[a].slice():[];}var wrap=document.getElementById('crmOsItens');if(!wrap)return;if(!SERVICES||!SERVICES.length){wrap.innerHTML='<div class="crm-photo-empty">Catálogo de serviços indisponível. Recarregue o app.</div>';return;}var html='';for(var i=0;i<qtd;i++){var opts=SERVICES.map(function(s){var sel=prevSvcs[i]===s.name?' selected':'';return'<option value="'+escapeHtml_(s.name)+'"'+sel+'>'+escapeHtml_(s.name)+' · '+fmtBRL(s.price)+'</option>';}).join('');var chipBase=OBS_CHIPS.map(function(ch){var on=(crmOsObsPorCap[i]||[]).indexOf(ch.label)>=0?' selected':'';return'<span class="chip'+on+'" onclick="toggleCrmChip_(IDX,this,\''+jsStr_(ch.label)+'\')">'+ch.emoji+' '+escapeHtml_(ch.label)+'</span>';}).join('');var statusTxt=crmOsFotosSelecionadas[i]?('Nova foto: '+(crmOsFotosSelecionadas[i].name||'selecionada')):(crmOsFotoRefs[i]?'Foto anterior selecionada':'Foto obrigatória');var photoOpts=fotos.length?'<div class="crm-photo-grid">'+fotos.slice(0,12).map(function(f,idx){var src=escapeHtml_(crmFotoSrc_(f));var fid=escapeHtml_(f.id||'');var ativo=crmOsFotoRefs[i]&&crmOsFotoRefs[i].id&&crmOsFotoRefs[i].id===f.id?' ativo':'';return'<button type="button" class="crm-photo-option'+ativo+'" id="crmPhotoOpt'+i+'_'+idx+'" onclick="selecionarFotoCrmRef_('+i+','+idx+')">'+(src?'<img src="'+src+'" data-fid="'+fid+'" data-try="0" loading="lazy" onerror="crmFotoOnError_(this)">':'')+'<span class="crm-photo-caption">OS '+formatarOS_(f.os)+'</span></button>';}).join('')+'</div>':(!c||!c.fotosCarregadas?'<div class="crm-photo-empty">Carregando fotos anteriores do Drive...</div>':'<div class="crm-photo-empty">Sem foto anterior disponível: cadastre uma nova foto para este capacete.</div>');html+='<div class="crm-os-line"><div class="cap-card-header"><span class="cap-num-label">Capacete '+(i+1)+'</span><span class="crm-selected-photo" id="crmFotoStatus'+i+'">'+escapeHtml_(statusTxt)+'</span></div><div class="crm-os-fields"><select class="form-input blue crm-os-svc" id="crmOsSvc'+i+'" onchange="atualizarTotalCrmOs_()"><option value="">Serviço...</option>'+opts+'</select><div class="chips-wrap">'+chipBase.replace(/IDX/g,String(i))+'<span class="chip chip-outro" onclick="toggleCrmOutro_('+i+',this)">➕ Outro...</span></div><input class="form-input cap-obs-outro" type="text" id="crmOsOutro'+i+'" placeholder="Descreva..." oninput="onCrmOutroChange_('+i+',this)"></div><div><label class="crm-photo-upload" for="crmOsFotoInput'+i+'"><strong>Cadastrar nova foto</strong><span>Use quando for outro capacete ou a foto antiga não representar o estado atual.</span><input type="file" id="crmOsFotoInput'+i+'" accept="image/*" capture="environment" style="display:none" onchange="onFotoCrmSelecionada_('+i+',this)"></label>'+photoOpts+'</div></div>';}wrap.innerHTML=html;atualizarTotalCrmOs_();var sheet=document.querySelector('.edit-sheet');if(sheet)sheet.scrollTop=0;}
 function atualizarTotalCrmOs_(){var total=0;document.querySelectorAll('.crm-os-svc').forEach(function(el){var s=SERVICES.find(function(x){return x.name===el.value;});if(s)total+=s.price;});var t=document.getElementById('crmOsTotal');if(t)t.textContent=fmtBRL(total);return total;}
