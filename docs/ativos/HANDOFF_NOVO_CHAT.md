@@ -1,6 +1,6 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 29/07/2026 (FE **v4.33.7** · GAS ping **3.51** · fix Projeção Dashboard)  
+**Atualizado:** 29/07/2026 (FE **v4.33.8** · GAS ping **3.51** · fix Projeção Dashboard)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
 **GitHub:** `ribocg-a11y/zapclin` · branch `main`  
@@ -45,10 +45,10 @@ Vamos dar continuidade ao projeto ZapClin.
 
 | Camada | Versão | Verificação |
 |--------|--------|-------------|
-| **Frontend** | **v4.33.7** | `zc-version.js` · `?force=v4.33.7` |
-| **Service Worker** | **v4.33.7** | ativo · toast de update padrão |
-| **Apps Script (ping)** | **3.51** | ping abaixo |
-| **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo **v3.51** |
+| **Frontend** | **v4.33.8** | `zc-version.js` · `?force=v4.33.8` |
+| **Service Worker** | **v4.33.8** | ativo · toast de update padrão |
+| **Apps Script (ping)** | **3.51** (alvo **3.52**) | ping abaixo |
+| **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo **v3.52** |
 | **OAuth planilha** | Desktop OK | `scripts/oauth-sheets/test-zapclin-write.js` |
 
 **Deploy ID GAS:** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
@@ -58,7 +58,7 @@ Vamos dar continuidade ao projeto ZapClin.
 **Ping GAS:**  
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
 
-**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.7
+**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.33.8
 
 ---
 
@@ -102,7 +102,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Abrir `?force=v4.33.7` · validar Projeção de Fechamento | Você |
+| 1 | Abrir `?force=v4.33.8` · validar Projeção de Fechamento | Você |
 | 2 | Pacote Z.7 — `zc-operacao` + `zc-crm` | Agente |
 | 3 | Não reintroduzir erros do incidente 14/07 | Agente |
 
