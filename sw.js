@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.33.8 | Data: 30/07/2026
+// Versão: 4.33.9 | Data: 08/08/2026
+// [v4.33.9 CACHE]
+// Isola vitrine /site/ do SW (não intercepta marketing público).
 // [v4.33.8 CACHE]
 // Lightbox foto do capacete no Relacionamento.
 // [v4.33.7 CACHE]
@@ -15,9 +17,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.33.8';
-const STATIC_CACHE = 'zapclin-static-v4.33.8';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.33.8';
+const ZAPCLIN_SW_VERSION = 'v4.33.9';
+const STATIC_CACHE = 'zapclin-static-v4.33.9';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.33.9';
 
 const APP_SHELL = [
   './',
@@ -81,6 +83,9 @@ self.addEventListener('fetch', event => {
   const url = new URL(req.url);
 
   if (req.method !== 'GET') return;
+
+  // Vitrine pública /site/ — fora do app: nunca interceptar (evita cache/HTML do PWA).
+  if (url.pathname.includes('/site/') || /\/site\/?$/.test(url.pathname)) return;
 
   if (
     url.hostname.includes('script.google.com') ||

@@ -89,7 +89,18 @@ ul { list-style: none; }
   align-items: center;
   gap: 0.75rem;
 }
-.brand img { height: 42px; width: auto; }
+.brand img,
+.brand-mark svg { height: 46px; width: auto; display: block; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
 .nav-links {
   display: flex;
   align-items: center;
@@ -478,7 +489,7 @@ section { padding: 4.5rem 0; position: relative; z-index: 1; }
   border: 1px solid rgba(0,200,224,0.28);
   background:
     linear-gradient(120deg, rgba(0,200,224,0.12), transparent 45%),
-    url("assets/loja-balcao.jpg") center/cover;
+    url("/zapclin/site/assets/loja-balcao.jpg") center/cover;
   min-height: 260px;
   position: relative;
   overflow: hidden;
