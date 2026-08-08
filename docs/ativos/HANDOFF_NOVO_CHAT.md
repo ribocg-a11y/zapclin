@@ -126,3 +126,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Planilha ZapClin é lida pelo **Financeiro Geral** no repo `ribocg-a11y/movikids`
 - Equiparação ≠ merge de código — ver `PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`
 - Holding unificada = **FASE 11 Movi**
+
+## Sessão 08/08/2026 (SEO avançado)
+- Domínio público: https://www.zapclinslz.com (HTTPS ok)
+- Search Console www verificado + sitemap + indexação solicitada
+- GBP existe (categoria Lavagem de motos + site)
+- Pacote entity/IndexNow na branch `cursor/seo-avancado-entity-c633` — sincronizar no repo `zapclinslz`
