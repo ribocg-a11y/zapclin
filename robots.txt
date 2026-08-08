@@ -1,10 +1,4 @@
-# SEO público ZapClin — marketing site
-# O app operacional (index.html / zc-*.js) não é a vitrine de busca.
-
 User-agent: *
-Allow: /zapclin/site/
-Allow: /zapclin/sobre.html
-Allow: /zapclin/robots.txt
-Allow: /zapclin/sitemap.xml
+Allow: /
 
 Sitemap: https://ribocg-a11y.github.io/zapclin/sitemap.xml
