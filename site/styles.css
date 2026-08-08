@@ -90,11 +90,21 @@ ul { list-style: none; }
   gap: 0.75rem;
 }
 .brand-logo {
-  height: 48px;
+  height: 52px;
   width: auto;
   display: block;
   object-fit: contain;
-  border-radius: 8px;
+}
+.hero-logo {
+  width: min(180px, 42vw);
+  height: auto;
+  margin-bottom: 1.1rem;
+  filter: drop-shadow(0 12px 40px rgba(79, 240, 207, 0.22));
+  animation: logoIn .9s ease both;
+}
+@keyframes logoIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: none; }
 }
 .nav-links {
   display: flex;
