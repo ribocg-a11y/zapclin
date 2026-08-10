@@ -139,5 +139,6 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Sync SEO avançado live no `zapclinslz` (`84e9de8`): `@graph` + FAQ + offers ✅
 - Bing Index ainda “Discovered but not crawled” — aguardar crawl (não reclicar)
 - Landing local live: `/higienizacao-de-capacetes-sao-luis/` (`c56b0d2`) + IndexNow 2 URLs ✅
-- GSC: indexação da landing solicitada (10/08) — aguardar crawl
-- Próximo humano: GSC → Sitemaps → reenviar `sitemap.xml` (2 URLs)
+- GSC: indexação da landing solicitada + sitemap reenviado (**2 páginas encontradas**) ✅
+- Aguardar crawl/orgânico; Bing ainda “Discovered but not crawled”
+- Bloco SEO/relevância: **pausar** até próxima checagem (site: da landing + query de serviço)
