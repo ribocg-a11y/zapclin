@@ -134,8 +134,8 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Pacote entity/IndexNow na branch `cursor/seo-avancado-entity-c633` — sincronizar no repo `zapclinslz`
 
 ## Validação SEO 48h (10/08/2026)
-- Infra live + IndexNow re-ping: **OK** (ver `SEO_AVANCADO_ENTITY.md`)
-- Domínio oficial indexado no Google; marca 1º + mapa local 1º
-- Sync SEO avançado publicado no `zapclinslz` (`84e9de8`): `@graph` + FAQ + offers live ✅
-- Bing ainda “Discovered but not crawled” (Request indexing feito)
-- Próximo humano: GSC → Testar URL publicada + Solicitar indexação (recrawl do schema novo)
+- Infra live + IndexNow: **OK** (Bing IndexNow: 5 envios / homepage hoje)
+- Google: indexado · marca 1º · mapa local 1º · recrawl solicitado (10/08)
+- Sync SEO avançado live no `zapclinslz` (`84e9de8`): `@graph` + FAQ + offers ✅
+- Bing Index ainda “Discovered but not crawled” — aguardar crawl (não reclicar)
+- Próximo opcional: conteúdo/landing para orgânico em “higienização de capacetes São Luís”
