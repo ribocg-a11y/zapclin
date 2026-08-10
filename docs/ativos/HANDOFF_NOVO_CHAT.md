@@ -138,4 +138,5 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Google: indexado · marca 1º · mapa local 1º · recrawl solicitado (10/08)
 - Sync SEO avançado live no `zapclinslz` (`84e9de8`): `@graph` + FAQ + offers ✅
 - Bing Index ainda “Discovered but not crawled” — aguardar crawl (não reclicar)
-- Próximo opcional: conteúdo/landing para orgânico em “higienização de capacetes São Luís”
+- Landing local live: `/higienizacao-de-capacetes-sao-luis/` (`c56b0d2`) + IndexNow 2 URLs ✅
+- Próximo humano: GSC Inspeção + Solicitar indexação da landing
