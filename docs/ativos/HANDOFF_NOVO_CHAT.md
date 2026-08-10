@@ -135,7 +135,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ## Validação SEO 48h (10/08/2026)
 - Infra live + IndexNow re-ping: **OK** (ver `SEO_AVANCADO_ENTITY.md`)
-- Domínio oficial ainda **não** aparece em `site:` público Google/Bing/DDG
-- Relevância de marca: melhorou via **LinkedIn Golden** + **GuiaPJ CNPJ**; site próprio ainda fora do ranking
-- Gap: live tem só LocalBusiness; `@graph`/FAQ/offers do pacote avançado ainda não estão no `zapclinslz`
-- Próximo humano: GSC + Bing URL Inspection + sync schema no `zapclinslz`
+- Domínio oficial indexado no Google; marca 1º + mapa local 1º
+- Sync SEO avançado publicado no `zapclinslz` (`84e9de8`): `@graph` + FAQ + offers live ✅
+- Bing ainda “Discovered but not crawled” (Request indexing feito)
+- Próximo humano: GSC → Testar URL publicada + Solicitar indexação (recrawl do schema novo)
