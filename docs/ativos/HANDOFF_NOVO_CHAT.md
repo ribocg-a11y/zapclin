@@ -132,3 +132,10 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Search Console www verificado + sitemap + indexação solicitada
 - GBP existe (categoria Lavagem de motos + site)
 - Pacote entity/IndexNow na branch `cursor/seo-avancado-entity-c633` — sincronizar no repo `zapclinslz`
+
+## Validação SEO 48h (10/08/2026)
+- Infra live + IndexNow re-ping: **OK** (ver `SEO_AVANCADO_ENTITY.md`)
+- Domínio oficial ainda **não** aparece em `site:` público Google/Bing/DDG
+- Relevância de marca: melhorou via **LinkedIn Golden** + **GuiaPJ CNPJ**; site próprio ainda fora do ranking
+- Gap: live tem só LocalBusiness; `@graph`/FAQ/offers do pacote avançado ainda não estão no `zapclinslz`
+- Próximo humano: GSC + Bing URL Inspection + sync schema no `zapclinslz`
