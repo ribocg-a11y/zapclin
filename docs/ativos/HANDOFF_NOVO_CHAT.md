@@ -140,6 +140,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 - Bing Index ainda “Discovered but not crawled” — aguardar crawl (não reclicar)
 - Landing local live: `/higienizacao-de-capacetes-sao-luis/` (`c56b0d2`) + IndexNow 2 URLs ✅
 - GSC sitemap processado (**2 páginas**) ✅
-- **Revalidação 10/08 ~20h UTC:** Google `site:` mostra **home + landing** (landing já indexada) · marca 1º · Bing ainda sem crawl
-- Infra live + schema `@graph` + IndexNow 200: OK
-- Próxima checagem humana: query `higienização de capacetes São Luís` (orgânico do domínio)
+- **Revalidação 10/08 ~20h UTC:** Google `site:` **home + landing** · marca 1º · Bing ainda sem crawl
+- Query serviço `higienização de capacetes São Luís`: **mapa/local ZapClin 1º** + IA cita quiosque; **orgânico do domínio ainda não** (Cap Box IG / ZapClin IG / OLX)
+- Infra live + schema + IndexNow: OK
+- Próximo opcional: mais reviews GBP + posts locais; categoria pública ainda “lavandaria” (atraso)
