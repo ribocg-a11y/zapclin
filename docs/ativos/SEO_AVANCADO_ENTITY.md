@@ -48,7 +48,8 @@ Repo `zapclinslz` (raiz):
 ### Gap produção × pacote avançado
 - **Repo `zapclin` (`site/index.html`):** `@graph` com WebSite + LocalBusiness + OfferCatalog + FAQPage
 - **Live `www.zapclinslz.com`:** só LocalBusiness simples — **FAQ/OfferCatalog ainda não publicados no domínio**
-- Ação: sincronizar head/schema do pacote no repo `zapclinslz` e republicar Pages
+- **Pacote pronto para domínio:** `site/zapclinslz-sync/` (paths `/`, sem `/zapclin/site/`)
+- **Prompt para o agente do `zapclinslz`:** [`PROMPT_SYNC_ZAPCLINSLZ_SEO.md`](PROMPT_SYNC_ZAPCLINSLZ_SEO.md)
 
 ### O que o humano confere agora (logado)
 1. GSC → Inspeção de URL `https://www.zapclinslz.com/` (ainda “no Google”?)
