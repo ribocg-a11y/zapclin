@@ -46,12 +46,23 @@ Repo `zapclinslz` (raiz):
 | Colisão de entidade | `zapclin.com` = JáPedeAí (delivery) — confunde marca |
 
 ### Gap produção × pacote avançado
-- **Repo `zapclin` (`site/index.html`):** `@graph` com WebSite + LocalBusiness + OfferCatalog + FAQPage
-- **Live `www.zapclinslz.com`:** só LocalBusiness simples — **FAQ/OfferCatalog ainda não publicados no domínio**
-- **Pacote pronto para domínio:** `site/zapclinslz-sync/` (paths `/`, sem `/zapclin/site/`)
-- **Prompt para o agente do `zapclinslz`:** [`PROMPT_SYNC_ZAPCLINSLZ_SEO.md`](PROMPT_SYNC_ZAPCLINSLZ_SEO.md)
+- **Repo `zapclin` (`site/index.html` + sync):** `@graph` + landings PAA no pacote `site/zapclinslz-sync/`
+- **Live `www.zapclinslz.com` (até Fase B):** home + landing São Luís indexáveis; **5 landings PAA ainda precisam de sync** via [`PROMPT_SYNC_LANDINGS_PAA.md`](PROMPT_SYNC_LANDINGS_PAA.md)
+- Entity sync anterior: [`PROMPT_SYNC_ZAPCLINSLZ_SEO.md`](PROMPT_SYNC_ZAPCLINSLZ_SEO.md)
+- Plano passo a passo: [`PLANO_SEO_ROBUSTO_2026-08.md`](PLANO_SEO_ROBUSTO_2026-08.md)
+
+### Landings PAA no pacote (11/08/2026)
+| Path | Foco |
+|------|------|
+| `/preco-higienizacao-capacete-sao-luis/` | quanto custa |
+| `/quanto-tempo-higienizar-capacete/` | tempos / SLA |
+| `/como-higienizar-capacete/` | HowTo + processo |
+| `/higienizacao-vs-lavagem-capacete/` | intenção comparativa |
+| `/higienizacao-capacete-calhau-golden-shopping/` | Calhau / Golden |
 
 ### O que o humano confere agora (logado)
-1. GSC → Inspeção de URL `https://www.zapclinslz.com/` (ainda “no Google”?)
-2. Bing Webmaster → URL Inspection (saiu de “Discovered but not crawled”?)
-3. No celular (fora VPN/incognito de datacenter): `site:www.zapclinslz.com`
+1. Colar `PROMPT_SYNC_LANDINGS_PAA.md` no agente `zapclinslz`
+2. GSC → solicitar indexação das URLs novas
+3. Bing Webmaster → URL Inspection (sair de “Discovered but not crawled”)
+4. Celular (fora VPN): `site:www.zapclinslz.com` + query de serviço
+5. Fase C: pack IG + avaliações GBP + link Golden — ver plano

@@ -1,28 +1,37 @@
 #!/usr/bin/env bash
+# IndexNow multi-URL — ZapClin marketing domain
 set -euo pipefail
 KEY="0bbacc4983f5ad29f11a4d5b29e06e62"
-payload=$(python3 - <<PY
-import json
-print(json.dumps({
-  "host": "www.zapclinslz.com",
-  "key": "$KEY",
-  "keyLocation": f"https://www.zapclinslz.com/{'$KEY'}.txt".replace("'$KEY'","$KEY"),
-  "urlList": ["https://www.zapclinslz.com/"]
-}))
-PY
+HOST="www.zapclinslz.com"
+
+DEFAULT_URLS=(
+  "https://www.zapclinslz.com/"
+  "https://www.zapclinslz.com/higienizacao-de-capacetes-sao-luis/"
+  "https://www.zapclinslz.com/preco-higienizacao-capacete-sao-luis/"
+  "https://www.zapclinslz.com/quanto-tempo-higienizar-capacete/"
+  "https://www.zapclinslz.com/como-higienizar-capacete/"
+  "https://www.zapclinslz.com/higienizacao-vs-lavagem-capacete/"
+  "https://www.zapclinslz.com/higienizacao-capacete-calhau-golden-shopping/"
 )
-# fix keyLocation cleanly
-payload=$(python3 - <<PY
-import json
-key="0bbacc4983f5ad29f11a4d5b29e06e62"
+
+if [[ $# -gt 0 ]]; then
+  URLS=("$@")
+else
+  URLS=("${DEFAULT_URLS[@]}")
+fi
+
+payload=$(python3 -c '
+import json, sys
+key, host = sys.argv[1], sys.argv[2]
+urls = sys.argv[3:]
 print(json.dumps({
-  "host": "www.zapclinslz.com",
+  "host": host,
   "key": key,
-  "keyLocation": f"https://www.zapclinslz.com/{key}.txt",
-  "urlList": ["https://www.zapclinslz.com/"]
-}))
-PY
-)
+  "keyLocation": f"https://{host}/{key}.txt",
+  "urlList": urls,
+}, ensure_ascii=False))
+' "$KEY" "$HOST" "${URLS[@]}")
+
 echo "$payload"
 for endpoint in "https://api.indexnow.org/indexnow" "https://www.bing.com/indexnow"; do
   echo "==> $endpoint"

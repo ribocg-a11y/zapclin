@@ -1,9 +1,32 @@
 # ZapClin
-> Higienização profissional de capacetes em São Luís (MA), Golden Shopping Calhau.
 
-- Site: https://www.zapclinslz.com/
+> Higienização, limpeza, lavagem e secagem profissional de capacetes em São Luís - MA.
+
+Site oficial de marketing da ZapClin (sem app/PWA operacional).
+
+## Principal
+
+- [Página inicial](https://www.zapclinslz.com/): serviços, preços, método, unidades e FAQ
+- [Higienização de Capacetes em São Luís](https://www.zapclinslz.com/higienizacao-de-capacetes-sao-luis/): página de serviço local (preços, onde ir, FAQ)
+- [Sitemap](https://www.zapclinslz.com/sitemap.xml)
+- [Robots](https://www.zapclinslz.com/robots.txt)
+
+## Contato e redes
+
 - WhatsApp: https://wa.me/5598981479616
 - Instagram: https://www.instagram.com/zapclinhigienizacao/
-- Local: Av. dos Holandeses, 200 — Golden Shopping Calhau, Quiosque 01, São Luís - MA, 65071-380
-- Serviços: Higienização (R$15), Higienização+Lavagem (R$45), Revitalização Premium (R$70), Secagem (R$15)
-- Horário: Seg–Sáb 10:00–22:00 · Dom 13:00–21:00
+
+## Unidades
+
+- Golden Shopping Calhau (aberta): Av. dos Holandeses, 200 — Quiosque 01, São Luís - MA
+- Rio Anil Shopping: em breve será inaugurada
+
+## Serviços (referência)
+
+- Higienização Rápida — R$ 15 (8 min)
+- Higienização Essencial — R$ 18 (10 min)
+- Higienização Profunda — R$ 23 (12 min)
+- Limpeza + Higienização — R$ 30 (20 min)
+- Higienização + Lavagem — R$ 45 (45 min)
+- Revitalização Premium — R$ 70 (4 h)
+- Secagem (Extra da Chuva) — R$ 15
