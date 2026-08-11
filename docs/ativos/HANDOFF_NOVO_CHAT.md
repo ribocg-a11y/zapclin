@@ -1,6 +1,6 @@
 # ZapClin — Handoff para novo chat (ativo)
 
-**Atualizado:** 11/08/2026 (FE **v4.33.8** · GAS ping **3.51** · SEO PAA Fase A)  
+**Atualizado:** 11/08/2026 (FE **v4.33.8** · GAS ping **3.51** · SEO Fase B ✅ · aguarda indexação)  
 **Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
 
 **GitHub:** `ribocg-a11y/zapclin` · branch `main`  
@@ -102,22 +102,22 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| 1 | Colar `PROMPT_SYNC_LANDINGS_PAA.md` no agente do repo `zapclinslz` | Você |
-| 2 | GSC: solicitar indexação das 5 landings novas | Você |
-| 3 | Fase C humana: Reels pack + GBP reviews + pedir link Golden | Você |
+| **1** | **Fase C passo 1:** bio IG + Reel #01 — ver `FASE_C_PASSO_1_INSTAGRAM.md` | Você |
+| 2 | Aguardar indexação Google (já pedido 5/5) — `CHECKLIST_ESPERA_INDEXACAO.md` | Você / tempo |
+| 3 | Demais itens Fase C (GBP, Golden, NAP) — `PROMPT_HUMANO_FASE_C.md` | Você |
 | 4 | Pacote Z.7 — `zc-operacao` + `zc-crm` (PWA) | Agente (outra thread) |
 | 5 | Não reintroduzir erros do incidente 14/07 | Agente |
 
 ### SEO marketing (ativo)
 
+- **Fase B ✅:** live `zapclinslz` `4dafda1` · IndexNow 200 · GSC 5/5 solicitado · sitemap 7 URLs
 - Plano: `PLANO_SEO_ROBUSTO_2026-08.md`
-- Pacote sync: `site/zapclinslz-sync/` (home + 6 landings + sitemap)
-- Prompt sync: `PROMPT_SYNC_LANDINGS_PAA.md`
-- Pack IG: `PACK_INSTAGRAM_REELS_SEO.md`
-- Citações NAP: `CITACOES_NAP_SAO_LUIS.md`
-- Scripts: `scripts/seo/notify-indexnow.sh` · `scripts/seo/monitor-serp.sh`
-- Domínio live: https://www.zapclinslz.com/
-- Branch SEO: `cursor/seo-avancado-entity-c633` · PR #15
+- Pacote sync: `site/zapclinslz-sync/`
+- Passo IG: `FASE_C_PASSO_1_INSTAGRAM.md` · fila: `PROMPT_HUMANO_FASE_C.md`
+- Baseline: `SEO_MONITOR_LOG.md` · `_serp_monitor_baseline_2026-08-11.txt`
+- NAP: OK (sem patch) · `CITACOES_NAP_SAO_LUIS.md`
+- Domínio: https://www.zapclinslz.com/ · branch `cursor/seo-avancado-entity-c633` · PR #15
+- P5 sync NAP: **N/A**
 
 ---
 

@@ -60,9 +60,14 @@ Repo `zapclinslz` (raiz):
 | `/higienizacao-vs-lavagem-capacete/` | intenção comparativa |
 | `/higienizacao-capacete-calhau-golden-shopping/` | Calhau / Golden |
 
-### O que o humano confere agora (logado)
-1. Colar `PROMPT_SYNC_LANDINGS_PAA.md` no agente `zapclinslz`
-2. GSC → solicitar indexação das URLs novas
-3. Bing Webmaster → URL Inspection (sair de “Discovered but not crawled”)
-4. Celular (fora VPN): `site:www.zapclinslz.com` + query de serviço
-5. Fase C: pack IG + avaliações GBP + link Golden — ver plano
+### Validação 11/08/2026 (pós-publish)
+- Live: 7 URLs HTTP 200 · sitemap 7 `<loc>` · commit `zapclinslz` `4dafda1`
+- IndexNow: 200
+- GSC: 5 landings novas na fila (“Indexação solicitada”)
+- NAP sync: OK sem patch
+- Baseline: `SEO_MONITOR_LOG.md`
+
+### O que o humano faz agora
+1. Fase C passo 1 — bio + Reel 01: `FASE_C_PASSO_1_INSTAGRAM.md`
+2. Não re-pedir GSC/IndexNow — `CHECKLIST_ESPERA_INDEXACAO.md`
+3. Depois: fila `PROMPT_HUMANO_FASE_C.md` (GBP, Golden, NAP)

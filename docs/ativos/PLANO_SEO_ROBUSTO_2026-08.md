@@ -21,12 +21,12 @@
 | A7 | Prompt sync `zapclinslz` (colar no outro agente) | ✅ |
 | A8 | Atualizar HANDOFF / SEO_AVANCADO | ✅ |
 
-### Fase B — Agente `zapclinslz` (humano cola prompt)
-| # | Ação |
-|---|------|
-| B1 | Publicar pastas novas + sitemap + llms no domínio |
-| B2 | IndexNow nas URLs novas |
-| B3 | GSC: inspeção + solicitar indexação de cada URL nova |
+### Fase B — Agente `zapclinslz` + humano GSC
+| # | Ação | Status |
+|---|------|--------|
+| B1 | Publicar pastas novas + sitemap + llms no domínio | ✅ `4dafda1` |
+| B2 | IndexNow nas URLs novas | ✅ HTTP 200 |
+| B3 | GSC: inspeção + solicitar indexação de cada URL nova | ✅ 5/5 (11/08) |
 
 ### Fase C — Só humano (loja / contas)
 | # | Ação | Por quê |
@@ -73,10 +73,10 @@
 
 ## Ordem de execução (passo a passo)
 
-1. **Agora:** fechar Fase A neste branch → commit → push → PR #15.
-2. **Você:** abrir agente no repo `zapclinslz` e colar `PROMPT_SYNC_LANDINGS_PAA.md`.
-3. **Você:** GSC indexação das URLs novas.
-4. **Depois:** Fase C (IG + GBP + Golden + citações) — checklist humano no mesmo prompt/doc.
+1. ~~Fase A + B~~ ✅ (publicado + GSC 5/5).
+2. **Agora (humano):** Fase C item 1 — `FASE_C_PASSO_1_INSTAGRAM.md`.
+3. Paralelo: esperar indexação — `CHECKLIST_ESPERA_INDEXACAO.md` (sem re-pedir).
+4. Depois: GBP → Golden → citações (`PROMPT_HUMANO_FASE_C.md`).
 5. **+7 dias:** Fase D monitoramento.
 
 ---

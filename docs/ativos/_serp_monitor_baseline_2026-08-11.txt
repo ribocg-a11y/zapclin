@@ -1,0 +1,29 @@
+ZapClin SEO monitor — 2026-08-11 15:12 UTC
+=================================
+
+## HTTP status
+200  https://www.zapclinslz.com/
+200  https://www.zapclinslz.com/sitemap.xml
+200  https://www.zapclinslz.com/llms.txt
+200  https://www.zapclinslz.com/higienizacao-de-capacetes-sao-luis/
+200  https://www.zapclinslz.com/preco-higienizacao-capacete-sao-luis/
+200  https://www.zapclinslz.com/quanto-tempo-higienizar-capacete/
+200  https://www.zapclinslz.com/como-higienizar-capacete/
+200  https://www.zapclinslz.com/higienizacao-vs-lavagem-capacete/
+200  https://www.zapclinslz.com/higienizacao-capacete-calhau-golden-shopping/
+200  https://www.zapclinslz.com/robots.txt
+
+## Sitemap URL count (loc)
+7
+
+## DuckDuckGo HTML (brand) — top titles (best-effort)
+(sem parse)
+
+## DuckDuckGo HTML (serviço) — top titles
+(sem parse)
+
+## Checklist humano
+- [ ] GSC: site: e cobertura das landings novas
+- [ ] Bing: saiu de Discovered but not crawled?
+- [ ] SERP celular guest: query serviço + brand
+- [ ] IG: Reels do pack publicados?
