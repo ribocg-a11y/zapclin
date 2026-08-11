@@ -102,16 +102,16 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| **1** | GSC: solicitar indexação das **5 URLs de bairro** — `GSC_PEDIDO_BAIRROS.md` | Você |
-| 2 | Backlink Golden / reviews GBP — `ALAVANCAS_HUMANAS_ALTO_IMPACTO.md` | Você |
-| 3 | Postar Reel #02 (odor) — `marketing-ig/zapclin-reel-02-*` | Você |
-| 4 | Motor master periódico | Agente |
+| **1** | Pedir backlink lista de lojas Golden — `ALAVANCAS_HUMANAS_ALTO_IMPACTO.md` §2 | Você |
+| 2 | Postar Reel #03 (Calhau) — `marketing-ig/zapclin-reel-03-*` | Você |
+| 3 | Aguardar bairros no `site:` (GSC já ✅) | Tempo |
+| 4 | Reviews GBP pós-OS | Você |
 
 ### SEO marketing (ativo)
 
-- Live enrich bairros: `zapclinslz` **`13d4493`** · sitemap 12 · IndexNow 200
-- `site:` Google ~7 URLs (https://share.google/eL4I3ONW11M7hS0Kd) — bairros ainda fora
-- Playbook: `PLAYBOOK_SEO_MASTER_ALGORITMOS.md` · prompt tudo: `PROMPT_AGENTE_TUDO.md`
+- Live: `zapclinslz` tip ~`2a0bcb3` (links PageRank em quanto-tempo) · enrich `13d4493`
+- GSC 5 bairros ✅ · sitemap 12
+- Reels 01–03 em `docs/ativos/marketing-ig/`
 - Domínio: https://www.zapclinslz.com/ · PR #15
 
 

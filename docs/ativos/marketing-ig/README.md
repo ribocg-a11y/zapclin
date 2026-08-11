@@ -25,3 +25,7 @@ Print da publicação + link do Reel.
 - `zapclin-reel-02-8min-9x16.mp4`
 - `zapclin-reel-02-legenda.txt`
 - Social score: 100 (gate ≥80)
+
+## Reel #03 — Calhau / Golden
+- `zapclin-reel-03-8min-9x16.mp4` (use link **raw**/download)
+- `zapclin-reel-03-legenda.txt`

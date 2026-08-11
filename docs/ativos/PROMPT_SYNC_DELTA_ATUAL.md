@@ -1,7 +1,7 @@
 # PROMPT_SYNC_DELTA_ATUAL
 
-**Status:** já aplicado no live `zapclinslz` commit **`13d4493`** (enrich bairros FAQ×5 + hub).
+**Status:** aplicado no live `zapclinslz` **`2a0bcb3`** (links bairros no footer de `/quanto-tempo-higienizar-capacete/`).
 
-Espelho no `zapclin`: `site/zapclinslz-sync/` (sincronizado a partir do live em 11/08).
+Espelho em `site/zapclinslz-sync/quanto-tempo-higienizar-capacete/index.html`.
 
-Não precisa re-colar sync, salvo novo delta futuro.
+Não re-colar sync salvo novo delta.
