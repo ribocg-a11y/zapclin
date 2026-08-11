@@ -20,3 +20,8 @@
 
 ## Evidência de volta
 Print da publicação + link do Reel.
+
+## Reel #02 — odor / motoboy
+- `zapclin-reel-02-8min-9x16.mp4`
+- `zapclin-reel-02-legenda.txt`
+- Social score: 100 (gate ≥80)

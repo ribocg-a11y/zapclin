@@ -18,3 +18,10 @@ Arquivo bruto: [`_serp_monitor_baseline_2026-08-11.txt`](_serp_monitor_baseline_
 
 ### Próximo monitor
 - +48h / +7d: rerodar `bash scripts/seo/monitor-serp.sh` e anexar entrada aqui.
+
+## Update 2026-08-11 ~21h UTC
+
+- Live enrich: `zapclinslz` `13d4493` (FAQ×5 bairros)
+- `site:` humano ~7 URLs indexadas (share Google) — bairros ainda fora
+- Próximo humano: GSC 5 bairros (`GSC_PEDIDO_BAIRROS.md`)
+- Reel #02 gerado (odor/motoboy)

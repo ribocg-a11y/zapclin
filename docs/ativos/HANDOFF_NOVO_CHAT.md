@@ -102,21 +102,18 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| **1** | Sync MASTER delta no `zapclinslz` — `PROMPT_SYNC_MASTER_DELTA.md` | Agente `zapclinslz` (você cola) |
-| **2** | Alavanca humana H1: backlink lista de lojas Golden | Você |
-| **3** | Alavanca humana H2: reviews GBP pós-OS (sistemático) | Você |
-| 4 | Rodar motor: `python3 scripts/seo/engine/run_master.py` | Agente |
-| 5 | Pacote Z.7 PWA (outra thread) | Agente |
+| **1** | GSC: solicitar indexação das **5 URLs de bairro** — `GSC_PEDIDO_BAIRROS.md` | Você |
+| 2 | Backlink Golden / reviews GBP — `ALAVANCAS_HUMANAS_ALTO_IMPACTO.md` | Você |
+| 3 | Postar Reel #02 (odor) — `marketing-ig/zapclin-reel-02-*` | Você |
+| 4 | Motor master periódico | Agente |
 
 ### SEO marketing (ativo)
 
-- **Playbook MASTER:** `PLAYBOOK_SEO_MASTER_ALGORITMOS.md` · motor `scripts/seo/engine/`
-- Report: `SEO_MASTER_REPORT.md`
-- Sync delta: `PROMPT_SYNC_MASTER_DELTA.md` (5 bairros + CTR title + links PageRank)
-- Fase B ✅ live `4dafda1` · GSC 5/5 · agora expandir inventário programático
+- Live enrich bairros: `zapclinslz` **`13d4493`** · sitemap 12 · IndexNow 200
+- `site:` Google ~7 URLs (https://share.google/eL4I3ONW11M7hS0Kd) — bairros ainda fora
+- Playbook: `PLAYBOOK_SEO_MASTER_ALGORITMOS.md` · prompt tudo: `PROMPT_AGENTE_TUDO.md`
 - Domínio: https://www.zapclinslz.com/ · PR #15
 
----
 
 ## Comportamento esperado do agente
 
