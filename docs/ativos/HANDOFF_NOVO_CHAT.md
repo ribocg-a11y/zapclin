@@ -102,22 +102,19 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | # | Ação | Quem |
 |---|------|------|
-| **1** | **Fase C passo 1:** bio IG + Reel #01 — ver `FASE_C_PASSO_1_INSTAGRAM.md` | Você |
-| 2 | Aguardar indexação Google (já pedido 5/5) — `CHECKLIST_ESPERA_INDEXACAO.md` | Você / tempo |
-| 3 | Demais itens Fase C (GBP, Golden, NAP) — `PROMPT_HUMANO_FASE_C.md` | Você |
-| 4 | Pacote Z.7 — `zc-operacao` + `zc-crm` (PWA) | Agente (outra thread) |
-| 5 | Não reintroduzir erros do incidente 14/07 | Agente |
+| **1** | Sync MASTER delta no `zapclinslz` — `PROMPT_SYNC_MASTER_DELTA.md` | Agente `zapclinslz` (você cola) |
+| **2** | Alavanca humana H1: backlink lista de lojas Golden | Você |
+| **3** | Alavanca humana H2: reviews GBP pós-OS (sistemático) | Você |
+| 4 | Rodar motor: `python3 scripts/seo/engine/run_master.py` | Agente |
+| 5 | Pacote Z.7 PWA (outra thread) | Agente |
 
 ### SEO marketing (ativo)
 
-- **Fase B ✅:** live `zapclinslz` `4dafda1` · IndexNow 200 · GSC 5/5 solicitado · sitemap 7 URLs
-- Plano: `PLANO_SEO_ROBUSTO_2026-08.md`
-- Pacote sync: `site/zapclinslz-sync/`
-- Passo IG: `FASE_C_PASSO_1_INSTAGRAM.md` · fila: `PROMPT_HUMANO_FASE_C.md`
-- Baseline: `SEO_MONITOR_LOG.md` · `_serp_monitor_baseline_2026-08-11.txt`
-- NAP: OK (sem patch) · `CITACOES_NAP_SAO_LUIS.md`
-- Domínio: https://www.zapclinslz.com/ · branch `cursor/seo-avancado-entity-c633` · PR #15
-- P5 sync NAP: **N/A**
+- **Playbook MASTER:** `PLAYBOOK_SEO_MASTER_ALGORITMOS.md` · motor `scripts/seo/engine/`
+- Report: `SEO_MASTER_REPORT.md`
+- Sync delta: `PROMPT_SYNC_MASTER_DELTA.md` (5 bairros + CTR title + links PageRank)
+- Fase B ✅ live `4dafda1` · GSC 5/5 · agora expandir inventário programático
+- Domínio: https://www.zapclinslz.com/ · PR #15
 
 ---
 
