@@ -1,10 +1,13 @@
 # ZapClin — Protocolo de diagnóstico e testes
 
 **Criado:** 11/06/2026 (Fase 2 equiparação Movi × ZapClin)  
+**Atualizado:** 14/08/2026  
 **Função:** quando pedir *"rodar teste"*, *"diagnosticar"* ou *"validar deploy"*, seguir este documento.  
-**Complementa:** `MAPA_CODIGO_ARQUITETURA.md`, `AUDITORIA_RANGES_GAS.md`, `REGRAS_DE_PUBLICACAO_SEGURA.md`
+**Complementa:** `MAPA_CODIGO_ARQUITETURA.md`, `AUDITORIA_RANGES_GAS.md`, `REGRAS_DE_PUBLICACAO_SEGURA.md`, `HANDOFF_NOVO_CHAT.md`, `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`
 
 **Orquestrador:** `scripts/testes/TESTE_PROTOCOLO_DIAGNOSTICO.ps1`
+
+**Z0 rápido (novo agente):** ping GAS + conferir `APP_VERSION`/`ZAPCLIN_SW_VERSION` + remoto git + (se Sheets) Environment `zapclin`.
 
 ---
 

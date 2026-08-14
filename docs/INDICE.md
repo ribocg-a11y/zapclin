@@ -1,6 +1,6 @@
 # ZapClin — Índice de documentação
 
-**Atualizado:** 21/07/2026
+**Atualizado:** 14/08/2026
 
 ---
 
@@ -9,10 +9,14 @@
 | Documento | Descrição |
 |-----------|-----------|
 | [`../AGENTS.md`](../AGENTS.md) | Instruções para agentes |
-| [`ativos/HANDOFF_NOVO_CHAT.md`](ativos/HANDOFF_NOVO_CHAT.md) | Handoff ativo |
+| [`ativos/HANDOFF_NOVO_CHAT.md`](ativos/HANDOFF_NOVO_CHAT.md) | Handoff ativo (14/08) |
+| [`ativos/PROMPT_ABERTURA_NOVO_AGENTE.md`](ativos/PROMPT_ABERTURA_NOVO_AGENTE.md) | Texto colar no novo agente |
 | [`ativos/ESTADO_ATUAL.md`](ativos/ESTADO_ATUAL.md) | Versões e links |
 | [`ativos/ERROS_PWA_2026-07-14.md`](ativos/ERROS_PWA_2026-07-14.md) | **14 erros do incidente PWA — proibido repetir** |
-| [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy (+ §11) |
+| [`ativos/MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](ativos/MAPA_ERROS_FALHAS_EVENTOS_2026-08.md) | Falhas Cloud/SEO/OAuth + eventos |
+| [`ativos/REGRAS_DE_PUBLICACAO_SEGURA.md`](ativos/REGRAS_DE_PUBLICACAO_SEGURA.md) | Travas deploy (+ §11 + §12) |
+| [`ativos/ACESSOS_E_AUTORIZACOES.md`](ativos/ACESSOS_E_AUTORIZACOES.md) | Papéis, PIN, Environment |
+| [`ativos/AMBIENTE_CLOUD_ZAPCLIN.md`](ativos/AMBIENTE_CLOUD_ZAPCLIN.md) | Secrets OAuth no Cloud |
 | [`ativos/PLANO_PRIORIDADES_2026-06.md`](ativos/PLANO_PRIORIDADES_2026-06.md) | Checklist vivo |
 | [`MAPA_PASTAS_LOCAL.md`](MAPA_PASTAS_LOCAL.md) | Pastas no C: × canônico × Movi |
 | [`FLUXOS_OPERACIONAIS.md`](FLUXOS_OPERACIONAIS.md) | Diagramas de fluxos |

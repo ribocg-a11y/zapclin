@@ -1,6 +1,6 @@
 # ZapClin — Regras de publicação segura
 
-**Data:** 14/07/2026 (atualizado pós-incidente PWA)  
+**Data:** 14/07/2026 (atualizado 14/08/2026 — §12 Cloud/SEO/repos)  
 **Origem:** adaptado do protocolo Movi Kids para operação real ZapClin (multioperador, WhatsApp, planilha compartilhada).
 
 Este documento é trava operacional. Nenhuma mudança futura deve ser publicada sem passar por estas regras.
@@ -160,6 +160,20 @@ Derivadas de [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md). Violação = 
 8. **Escopo:** feature de Dashboard ≠ redesenhar versionamento/PWA na mesma entrega sem pedido.
 9. **Restauro:** último commit com JS válido (`node --check`), não a última feature.
 10. **Registro:** qualquer novo incidente PWA atualiza `ERROS_PWA_*.md` no mesmo PR.
+
+---
+
+## Regra 12 — Dois repositórios, Cloud Environment e SEO (ago/2026)
+
+Complementa o mapa [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EVENTOS_2026-08.md).
+
+1. **Remoto certo:** ops/PWA/docs/scripts → `ribocg-a11y/zapclin`. Site live → `ribocg-a11y/zapclinslz`. Confirmar `git remote -v` antes de push (anti **CLOUD-403**).
+2. **Planilha no Cloud:** só com Environment Cursor **`zapclin`** e secrets OAuth; nunca commit de tokens; ver `AMBIENTE_CLOUD_ZAPCLIN.md`.
+3. **GAS:** nunca `clasp deploy` / nunca novo Deploy ID.
+4. **Indexação:** não re-solicitar GSC/IndexNow em URLs já pedidas sem evidência de falha.
+5. **SEO:** não reinventar motor/landings sem gap (coverage/PageRank/schema). Alavanca humana #1: Golden Shopping.
+6. **Handoff:** ao encerrar sessão, atualizar `HANDOFF_NOVO_CHAT.md` + este mapa de erros se houver incidente novo.
+7. **WhatsApp / PIN:** continuam zona crítica / pedido explícito (regras 3 e acessos).
 
 ---
 

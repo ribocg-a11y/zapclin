@@ -1,6 +1,6 @@
 # ZapClin — Acessos e autorizações
 
-**Data:** 11/06/2026
+**Data:** 14/08/2026 (atualizado Environment Cloud)
 
 Quem pode fazer o quê — app, infraestrutura, agente vs humano.
 
@@ -25,9 +25,11 @@ Quem pode fazer o quê — app, infraestrutura, agente vs humano.
 |---------|----------|-----------------|
 | Planilha | `1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug` | Sócio (Google account) |
 | GAS Web App | Deploy ID `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg` | Sócio |
-| GitHub Pages | `ribocg-a11y/zapclin` | Merge na `main` |
+| GitHub Pages (PWA) | `ribocg-a11y/zapclin` | Merge na `main` |
+| Site marketing | `ribocg-a11y/zapclinslz` · https://www.zapclinslz.com/ | Merge nesse repo |
 | Drive (fotos OS) | Pastas por cliente/OS | GAS + operadores |
 | Gmail (Golden PDF) | Conta configurada no GAS | Sócio |
+| Cursor Environment | nome **`zapclin`** | Sócio + agentes com Environment |
 
 ---
 
@@ -37,15 +39,18 @@ Quem pode fazer o quê — app, infraestrutura, agente vs humano.
 |------------------------|----------------------|-----------|
 | Ler/editar código repo | `git commit` / `git push` | Nova versão Web no editor GAS |
 | Ping GAS readonly | Merge PR | Script Properties / triggers |
-| Rodar testes `.ps1` | Escrita na planilha via GAS action + PIN (v3.47+) | Login Google planilha (OAuth MCP) |
-| Preparar `.gs` para colar | Alterar PIN admin | Homologação física na loja |
-| Criar/atualizar docs | Deploy GitHub Pages (via merge) | Compartilhar planilha com terceiros |
+| Rodar testes `.ps1` / `node --check` | Escrita na planilha (OAuth Environment ou GAS+PIN) | Homologação física na loja |
+| Preparar `.gs` para colar | Alterar PIN admin | Login Google / re-auth OAuth Desktop |
+| Criar/atualizar docs | Deploy Pages (via merge) | Compartilhar planilha com terceiros |
+| SEO docs / scripts em `zapclin` | Push live em `zapclinslz` | GSC, Golden backlink, posts IG |
 
 **Nunca pelo agente:**
 
 - `clasp deploy` (criar novo deployment);
-- Publicar segredos (PIN em repo público já existe no FE — não piorar);
-- POST JSON no browser contra GAS.
+- Publicar segredos no git;
+- POST JSON no browser contra GAS;
+- Alterar PIN admin sem pedido explícito;
+- Re-spam GSC/IndexNow em URLs já solicitadas.
 
 ---
 
@@ -65,9 +70,17 @@ Agente Movi **não** deve alterar GAS ZapClin sem coordenação; agente ZapClin 
 
 **Leitura:** GAS Web App (`listar`, `ping`, `diagnosticoSistema`).
 
-**Escrita pontual:** concluída via importação jul/2026 (v3.47, removida em v3.48). Operação normal segue pelo app/PWA.
+**Escrita pontual (Cloud):** Environment Cursor **`zapclin`** com:
 
-**OAuth Desktop (planilha):** scripts em `scripts/oauth-sheets/` do **zapclin-repo**; token em `%USERPROFILE%\.config\google-api\`. Projeto `google-drive-sheets-auth` = só infra OAuth compartilhada (ZapClin + Movi) — ver `docs/MAPA_PASTAS_LOCAL.md` e `OAUTH_PLANILHA_DESKTOP.md`.
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REFRESH_TOKEN`
+
+Detalhe: [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md).
+
+**OAuth Desktop (PC sócio):** scripts em `scripts/oauth-sheets/`; token em `%USERPROFILE%\.config\google-api\`. Ver `OAUTH_PLANILHA_DESKTOP.md` e `MAPA_PASTAS_LOCAL.md`.
+
+**Regra:** escrita em produção **só com pedido explícito** do humano.
 
 Sem OAuth: agente usa ping GAS + exportações manuais que o usuário colar.
 
@@ -76,5 +89,17 @@ Sem OAuth: agente usa ping GAS + exportações manuais que o usuário colar.
 ## 6. PIN e dados sensíveis
 
 - PIN admin **1321** está no frontend público — controle operacional de balcão.
-- Não commitar: tokens OAuth, senhas Gmail, chaves API.
+- Não commitar: tokens OAuth, senhas Gmail, chaves API, refresh tokens.
 - Logs Admin (`listarLogsAdmin`) podem conter telefones — tratar como dado operacional.
+- Se secrets vazarem no chat: rotacionar no Google Cloud + atualizar Environment.
+
+---
+
+## 7. Dois repositórios (protocolo anti-403)
+
+| Repo | Uso |
+|------|-----|
+| `ribocg-a11y/zapclin` | PWA, GAS arquivo, scripts, docs ops, SEO playbooks |
+| `ribocg-a11y/zapclinslz` | Site marketing **live** |
+
+Antes de `git push`: confirmar `git remote -v`. Falha clássica: trabalhar em `zapclinslz` e tentar push em `zapclin` → 403.
