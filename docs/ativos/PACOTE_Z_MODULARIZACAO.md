@@ -1,12 +1,12 @@
 # Pacote Z — Modularização do frontend ZapClin
 
 **Início:** 11/06/2026  
-**Atualizado:** 21/07/2026 (Z.6 · **v4.33.6**)  
+**Atualizado:** 14/08/2026 (Z.7 · **v4.34.0**)  
 **Objetivo:** reduzir monólito `index.html` sem mudar comportamento — espelhar Pacote M do Movi Kids.
 
 ---
 
-## Panorama (v4.33.6 — Z.6)
+## Panorama (v4.34.0 — Z.7)
 
 | Artefato | Papel |
 |----------|-------|
@@ -22,9 +22,11 @@
 | `zc-historico-custos.js` | Histórico de custos admin |
 | `zc-registrar.js` | Lançamento avulso + custos (form/lista) |
 | `zc-clientes.js` | Cadastro OS, lista, status, pagamento |
-| `index.html` | HTML + CSS + Operação/CRM/Dashboard/… |
+| `zc-operacao.js` | Fila Operação, SLA, painel |
+| `zc-crm.js` | Relacionamento: ficha, fotos, Nova OS assistida |
+| `index.html` | HTML + CSS + Dashboard/Admin/Vendas/… |
 
-**Progresso:** ~28% — 12 módulos; meta final shell HTML < 200 linhas JS inline.
+**Progresso:** ~35% — 14 módulos; meta final shell HTML < 200 linhas JS inline.
 
 ---
 
@@ -35,9 +37,9 @@
 | **Z.1–Z.4** | version…admin | v4.28–4.29 | ✅ |
 | **Z.5** | `zc-nav.js` + `zc-home.js` | v4.33.4 | ✅ |
 | **Z.6** | `zc-registrar.js` + `zc-clientes.js` | **v4.33.6** | ✅ |
-| **Z.7** | `zc-operacao.js` + `zc-crm.js` | v4.34.0 | ⬜ próximo |
+| **Z.7** | `zc-operacao.js` + `zc-crm.js` | **v4.34.0** | ✅ |
 | **Z.8** | histórico custos (parcial) | v4.31.0 | 🟡 ✅ custos |
-| **Z.9** | `zc-app.css` | v4.35.0 | ⬜ |
+| **Z.9** | `zc-app.css` | v4.35.0 | ⬜ próximo CSS |
 | **Z.10** | `zc-boot.js` shell enxuto | v4.36.0 | ⬜ |
 
 ---
@@ -50,15 +52,15 @@
 4. Cada `zc-*.js` novo entra em `APP_SHELL`.
 5. Antes de SW/versão: `ERROS_PWA_2026-07-14.md` + Regra 11.
 
-Ordem de carga: version → globals → api → core → nav → home → sync → whatsapp → admin → historico-custos → **registrar → clientes** → inline.
+Ordem de carga: version → globals → api → core → nav → home → sync → whatsapp → admin → historico-custos → registrar → clientes → **operacao → crm** → inline.
 
 ---
 
 ## Validação
 
 ```powershell
-node --check zc-registrar.js; node --check zc-clientes.js
+node --check zc-operacao.js; node --check zc-crm.js
 .\scripts\pre-push-check.ps1
 ```
 
-Homologação: Registrar avulso, Custos, Nova OS, lista Clientes — `?force=v4.33.6`.
+Homologação: Operação (fila/SLA/Marcar pronto) + Relacionamento (ficha, lightbox foto, Nova OS) — `?force=v4.34.0`.

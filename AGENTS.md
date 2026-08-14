@@ -54,15 +54,15 @@ Detalhe: [`ACESSOS_E_AUTORIZACOES.md`](docs/ativos/ACESSOS_E_AUTORIZACOES.md)
 
 | Camada | Versão repo | Ping produção |
 |--------|-------------|---------------|
-| Frontend | **v4.33.8** | GitHub Pages |
-| Service Worker | **v4.33.8** | `sw.js` |
-| GAS (código repo) | **v3.51** (arquivo `AppsScript_v3.45_ATUAL.gs`) | ✅ |
+| Frontend | **v4.34.0** | GitHub Pages |
+| Service Worker | **v4.34.0** | `sw.js` |
+| GAS (código repo) | **v3.52** (arquivo `AppsScript_v3.45_ATUAL.gs`) | ✅ |
 | GAS (ping) | **3.51** | ✅ produção |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.51)
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.52)
 
 Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
@@ -81,13 +81,13 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 - Multioperador: LockService v3.36 — não remover travas sem análise
 - WhatsApp = zona crítica — ver `REGRAS_DE_PUBLICACAO_SEGURA.md` §3
 
-## Estado do projeto (21/07/2026)
+## Estado do projeto (14/08/2026)
 
-- **Produção alvo:** FE/SW **v4.33.8** · GAS **3.51**
+- **Produção alvo:** FE/SW **v4.34.0** · GAS arquivo **3.52** · ping **3.51** até Nova versão Web
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
-- **Pacote Z:** Z.6 ✅ (`zc-registrar` + `zc-clientes`); **próximo:** Z.7 operação + CRM
+- **Pacote Z:** Z.7 ✅ (`zc-operacao` + `zc-crm`); **próximo:** Z.9 `zc-app.css`
 - **OAuth planilha:** write validado; scripts em `scripts/oauth-sheets/`
-- **Próximo humano:** `?force=v4.33.8` após merge
+- **Próximo humano:** `?force=v4.34.0` após merge + Nova versão Web GAS 3.52
 
 ## Ao encerrar sessão
 

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.33.9 | Data: 08/08/2026
+  Versão : 4.34.0 | Data: 14/08/2026
+  NOVO v4.34.0:
+  - Pacote Z.7: extrai zc-operacao.js + zc-crm.js (zero mudança de comportamento)
   NOVO v4.33.9:
   - Isola vitrine publica /site/ do Service Worker (sem interceptar marketing).
   NOVO v4.33.8:
@@ -1350,7 +1352,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.33.9</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.34.0</span>
       </div>
     </div>
   </div>
@@ -1429,7 +1431,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.33.9</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.34.0</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -2296,21 +2298,23 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.33.9"></script>
-<script src="zc-globals.js?v=v4.33.9"></script>
-<script src="zc-api.js?v=v4.33.9"></script>
-<script src="zc-core.js?v=v4.33.9"></script>
-<script src="zc-nav.js?v=v4.33.9"></script>
-<script src="zc-home.js?v=v4.33.9"></script>
-<script src="zc-sync.js?v=v4.33.9"></script>
-<script src="zc-whatsapp.js?v=v4.33.9"></script>
-<script src="zc-admin.js?v=v4.33.9"></script>
-<script src="zc-historico-custos.js?v=v4.33.9"></script>
-<script src="zc-registrar.js?v=v4.33.9"></script>
-<script src="zc-clientes.js?v=v4.33.9"></script>
+<script src="zc-version.js?v=v4.34.0"></script>
+<script src="zc-globals.js?v=v4.34.0"></script>
+<script src="zc-api.js?v=v4.34.0"></script>
+<script src="zc-core.js?v=v4.34.0"></script>
+<script src="zc-nav.js?v=v4.34.0"></script>
+<script src="zc-home.js?v=v4.34.0"></script>
+<script src="zc-sync.js?v=v4.34.0"></script>
+<script src="zc-whatsapp.js?v=v4.34.0"></script>
+<script src="zc-admin.js?v=v4.34.0"></script>
+<script src="zc-historico-custos.js?v=v4.34.0"></script>
+<script src="zc-registrar.js?v=v4.34.0"></script>
+<script src="zc-clientes.js?v=v4.34.0"></script>
+<script src="zc-operacao.js?v=v4.34.0"></script>
+<script src="zc-crm.js?v=v4.34.0"></script>
 <script>
 // ═══════════════════════════════════════════════════════
-// ZAPCLIN — app inline (Pacote Z.6: zc-registrar + zc-clientes extraídos)
+// ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)
 // ═══════════════════════════════════════════════════════
 
 // ZAPCLIN v4.20.0 | 23/05/2026 — Ficha CRM e nova OS por Relacionamento
@@ -3975,32 +3979,7 @@ function init(){
 // ═══ CLIENTES → zc-clientes.js (Pacote Z.6) ═══
 
 // ═══ BUSCAR / LISTAR ═══
-function buscarFotosClienteCRM_(c){
-  if(!c)return Promise.resolve([]);
-  aplicarFotosCacheCrm_(c);
-  if(c.fotosCarregadas)return Promise.resolve(c.fotosHistoricas||[]);
-  var k=crmCacheKey_(c);
-  if(crmFotosInflight_[k])return crmFotosInflight_[k];
-  if(c.fotosCarregando)return Promise.resolve(c.fotosHistoricas||[]);
-  c.fotosCarregando=true;
-  crmFotosCache_[k]={items:c.fotosHistoricas||[],carregadas:false,carregando:true};
-  crmFotosInflight_[k]=apiGet('listarFotosCliente',{tel:c.tel},18000).then(function(j){
-    var items=(j&&j.ok&&Array.isArray(j.items))?j.items:[];
-    c.fotosHistoricas=items;
-    c.fotosCarregadas=true;
-    c.fotosCarregando=false;
-    crmFotosCache_[k]={items:items,carregadas:true,carregando:false};
-    aplicarFotosNosRegistrosCrm_(c,items);
-    return items;
-  }).catch(function(){
-    c.fotosHistoricas=c.fotosHistoricas||[];
-    c.fotosCarregadas=true;
-    c.fotosCarregando=false;
-    crmFotosCache_[k]={items:c.fotosHistoricas,carregadas:true,carregando:false};
-    return c.fotosHistoricas;
-  }).then(function(items){delete crmFotosInflight_[k];return items;},function(err){delete crmFotosInflight_[k];throw err;});
-  return crmFotosInflight_[k];
-}
+// buscarFotosClienteCRM_ → zc-crm.js (Pacote Z.7)
 function buscarLogsAdmin(){return apiGet('listarLogsAdmin',{limite:80},12000).then(function(j){if(j&&j.ok&&j.items){logsAdmin=j.items;logsAdminFiltrados=logsAdmin.slice();try{localStorage.setItem('zapAdminLogs',JSON.stringify({resumo:j.resumo||{},items:logsAdmin}));}catch(e){}return j;}return null;}).catch(function(){return null;});}
 function logStatusClass_(status){var s=String(status||'INFO').toUpperCase();if(s==='ERRO')return'erro';if(s==='ALERTA')return'alerta';if(s==='OK')return'ok';return'info';}
 function atualizarResumoLogs_(resumo){
@@ -4164,134 +4143,12 @@ function renderVendasGerencial(){
 function skeletonList_(rows,kind){rows=rows||3;var cls=kind==='sm'?' sm':kind==='lg'?' lg':'';var h='<div class="skeleton-list">';for(var i=0;i<rows;i++)h+='<div class="skeleton-card'+cls+'"></div>';return h+'</div>';}
 function carregarLancamentos(){var list=document.getElementById('lancList');if(list)list.innerHTML=skeletonList_(4,'sm');buscarLancamentos().then(function(ok){if(!ok)lancamentos=JSON.parse(localStorage.getItem('zapLanc')||'[]');renderVendasGerencial();});}
 // carregarCustos + renderCustoList → zc-registrar.js (Pacote Z.6)
-// ═══ RELACIONAMENTO / CRM ═══
-var relacionamentoFiltro='todos';
-var relacionamentoBusca='';
-var crmClientes=[];
-var crmFotosCache_={};
-var crmFotosInflight_={};
-var crmOsFotosSelecionadas=[],crmOsFotoRefs=[],crmOsObsPorCap=[];
-function telKey_(tel){return String(tel||'').replace(/\D/g,'').replace(/^55/,'');}
-function dateBR_(br,hora){var p=String(br||'').split('/');if(p.length<3)return null;var hp=String(hora||'00:00').split(':');return new Date(parseInt(p[2],10),parseInt(p[1],10)-1,parseInt(p[0],10),parseInt(hp[0]||0,10),parseInt(hp[1]||0,10));}
-function crmCacheKey_(c){return (c&&c.key)||telKey_(c&&c.tel)||'';}
-function aplicarFotosNosRegistrosCrm_(c,items){
-  var porOs={};
-  (items||[]).forEach(function(f){if(!f)return;var k=f.os;if(k===undefined||k===null||k==='')return;if(!porOs[k])porOs[k]=[];porOs[k].push(f);});
-  (c.registros||[]).forEach(function(os){if(porOs[os.num])os.fotos=porOs[os.num];});
-}
-function aplicarFotosCacheCrm_(c){
-  if(!c)return;
-  var cache=crmFotosCache_[crmCacheKey_(c)];
-  if(!cache)return;
-  c.fotosHistoricas=cache.items||[];
-  c.fotosCarregadas=!!cache.carregadas;
-  c.fotosCarregando=!!cache.carregando;
-  if(c.fotosHistoricas&&c.fotosHistoricas.length)aplicarFotosNosRegistrosCrm_(c,c.fotosHistoricas);
-}
-function consolidarClientesCRM_(){var mapa={};clientes.forEach(function(c){if((c.status||'')==='Cancelado')return;var k=telKey_(c.tel)||('nome:'+String(c.nome||'').toLowerCase());if(!mapa[k])mapa[k]={key:k,nome:c.nome||'Cliente',tel:c.tel||'',visitas:0,total:0,ultimo:null,os:[],registros:[],servicosCount:{},servicosLista:[],lastSvc:'',preferencia:'',aniversario:false,beneficio:false,relacionamento:null,abertos:0,prontos:0};var g=mapa[k];g.visitas++;g.total+=parseFloat(c.total||0)||0;g.os.push(c.num);g.registros.push(c);if(c.status==='Em andamento')g.abertos++;if(c.status==='Pronto')g.prontos++;if(c.relacionamento)g.relacionamento=c.relacionamento;if(c.beneficioVip){g.beneficio=true;g.aniversario=!!(c.beneficioVip.aniversarioHoje||c.beneficioVip.aniversarioMes);}var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];svcs.forEach(function(s){g.servicosLista.push(s);g.servicosCount[s]=(g.servicosCount[s]||0)+1;});var d=dateBR_(fmtData(c.data),fmtHora(c.hora));if(!g.ultimo||d>g.ultimo){g.ultimo=d;g.ultimaData=fmtData(c.data);g.ultimaHora=fmtHora(c.hora);g.lastSvc=svcs[0]||'';g.nome=c.nome||g.nome;g.tel=c.tel||g.tel;g.status=c.status||g.status;}});var arr=Object.keys(mapa).map(function(k){var g=mapa[k];g.registros.sort(function(a,b){return (dateBR_(fmtData(b.data),fmtHora(b.hora))||0)-(dateBR_(fmtData(a.data),fmtHora(a.hora))||0);});g.dias=g.ultimo?Math.max(0,Math.floor((new Date()-g.ultimo)/86400000)):null;g.recorrente=g.visitas>1;g.ticket=g.visitas?g.total/g.visitas:0;g.vip=g.visitas>=3||g.total>=150||g.beneficio;g.manutencao=g.dias!==null&&g.dias>=30;g.inativo=g.dias!==null&&g.dias>=60;g.novo=g.visitas<=1;g.servicosTop=Object.keys(g.servicosCount).map(function(s){return{nome:s,qtd:g.servicosCount[s]};}).sort(function(a,b){return b.qtd-a.qtd||a.nome.localeCompare(b.nome,'pt-BR',{sensitivity:'base'});}).slice(0,3);g.preferencia=(g.relacionamento&&g.relacionamento.preferencia)||g.servicosTop[0]&&g.servicosTop[0].nome||g.lastSvc||'não identificado';g.tags=[];if(g.recorrente)g.tags.push({cls:'green',txt:'Recorrente'});else g.tags.push({cls:'blue',txt:'Novo'});if(g.vip)g.tags.push({cls:'purple',txt:'Potencial VIP'});if(g.manutencao)g.tags.push({cls:'orange',txt:'Manutenção'});if(g.inativo)g.tags.push({cls:'red',txt:'Inativo'});if(g.relacionamento)g.tags.push({cls:'purple',txt:'Cadastro VIP'});if(g.aniversario)g.tags.push({cls:'purple',txt:'Aniversário'});if(g.abertos)g.tags.push({cls:'orange',txt:g.abertos+' OS aberta'});if(g.prontos)g.tags.push({cls:'green',txt:g.prontos+' pronto'});aplicarFotosCacheCrm_(g);return g;}).sort(function(a,b){var n=String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR',{sensitivity:'base'});if(n!==0)return n;return String(a.tel||'').localeCompare(String(b.tel||''),'pt-BR',{sensitivity:'base'});});return arr;}
-function setRelacionamentoFiltro(f,btn){relacionamentoFiltro=f;document.querySelectorAll('[data-crm]').forEach(function(b){b.classList.remove('ativo');});if(btn)btn.classList.add('ativo');renderRelacionamento();}
-function carregarRelacionamento(force){var el=document.getElementById('crmList');if(el)el.innerHTML='<div class="skeleton-card lg"></div><div class="skeleton-card lg"></div>';var done=function(){crmClientes=consolidarClientesCRM_();renderRelacionamento();};if(force||!clientes.length){buscarClientes().then(done).catch(done);}else done();}
-function filtrarRelacionamento(q){relacionamentoBusca=String(q||'').toLowerCase().trim();renderRelacionamento();}
-function crmFiltrados_(){var q=relacionamentoBusca,qd=telKey_(q);return crmClientes.filter(function(c){var filtro=true;if(relacionamentoFiltro==='30d')filtro=c.manutencao;if(relacionamentoFiltro==='recorrentes')filtro=c.recorrente;if(relacionamentoFiltro==='vip')filtro=c.vip;if(relacionamentoFiltro==='novos')filtro=c.novo;if(relacionamentoFiltro==='inativos')filtro=c.inativo;if(!filtro)return false;if(!q)return true;var blob=[c.nome,c.tel,formatarTelefoneBR_(c.tel),c.preferencia,c.lastSvc,c.os.map(formatarOS_).join(' '),c.servicosLista.join(' ')].join(' ').toLowerCase();return blob.indexOf(q)>=0||(qd&&telKey_(blob).indexOf(qd)>=0);});}
-function renderRelacionamento(){var unicos=crmClientes.length,rec=crmClientes.filter(function(c){return c.recorrente;}).length,man=crmClientes.filter(function(c){return c.manutencao;}).length,vip=crmClientes.filter(function(c){return c.vip;}).length;[['crmUnicos',unicos],['crmRecorrentes',rec],['crmManutencao',man],['crmVip',vip]].forEach(function(x){var el=document.getElementById(x[0]);if(el)el.textContent=x[1];});var list=document.getElementById('crmList');var count=document.getElementById('crmCount');if(!list)return;var arr=crmFiltrados_();if(count)count.textContent='('+arr.length+' exibidos)';if(!arr.length){list.innerHTML='<div class="empty"><div class="empty-icon">💎</div><div class="empty-text">Nenhum cliente neste filtro.</div></div>';return;}list.innerHTML=arr.slice(0,40).map(function(c){var cls=c.vip?'vip':c.manutencao?'manutencao':'';var tags=c.tags.map(function(t){return'<span class="crm-tag '+t.cls+'">'+escapeHtml_(t.txt)+'</span>';}).join('')+'<span class="crm-tag">'+(c.dias===0?'hoje':c.dias+' dias')+'</span>';var svcTags=c.servicosTop.map(function(s){return'<span class="crm-svc-chip">'+escapeHtml_(s.nome)+' · '+s.qtd+'x</span>';}).join('')||'<span class="crm-svc-chip">sem histórico de serviço</span>';return'<div class="crm-client '+cls+'" onclick="abrirFichaRelacionamento(\''+jsStr_(c.key)+'\')"><div class="crm-top"><div class="crm-tags">'+tags+'</div><span class="info-badge vinculo">'+c.visitas+' visita(s)</span></div><div class="crm-name">'+escapeHtml_(c.nome)+'</div><div class="crm-meta">'+escapeHtml_(formatarTelefoneBR_(c.tel))+'<br>Última visita: '+escapeHtml_(c.ultimaData||'—')+' '+escapeHtml_(c.ultimaHora||'')+'</div><div class="crm-profile"><div class="crm-profile-item"><div class="crm-profile-lbl">Total gasto</div><div class="crm-profile-val">'+fmtBRL(c.total)+'</div></div><div class="crm-profile-item"><div class="crm-profile-lbl">Ticket médio</div><div class="crm-profile-val">'+fmtBRL(c.ticket)+'</div></div><div class="crm-profile-item"><div class="crm-profile-lbl">Preferência</div><div class="crm-profile-val">'+escapeHtml_(c.preferencia)+'</div></div></div><div class="crm-svc-tags">'+svcTags+'</div><div class="crm-note">Último serviço: '+escapeHtml_(c.lastSvc||'não identificado')+'. OS recentes: '+c.os.slice(-3).map(formatarOS_).join(', ')+'</div><div class="crm-actions"><button class="cli-btn green" onclick="event.stopPropagation();abrirNovaOsRelacionamento(\''+jsStr_(c.key)+'\')">Nova OS</button><button class="cli-btn wa" onclick="event.stopPropagation();enviarMensagemRelacionamento(\''+jsStr_(c.key)+'\',\'manutencao\')">Manutenção</button><button class="cli-btn gray" onclick="event.stopPropagation();abrirHistoricoRelacionamento(\''+jsStr_(c.tel)+'\')">Histórico</button></div></div>';}).join('');}
-function crmByKey_(key){return crmClientes.find(function(c){return c.key===key;});}
-function enviarMensagemRelacionamento(key,tipo){var c=crmByKey_(key);if(!c)return;var msg;if(tipo==='vip')msg='Olá, '+c.nome+'! A ZapClin preparou condições especiais para clientes que já confiam na gente. Seu histórico por aqui mostra '+c.visitas+' visita(s) e preferência por '+(c.preferencia||'serviços de higienização')+'. Queremos te avisar em primeira mão sobre campanhas, benefícios e cuidados para manter seu capacete sempre higienizado. 💎';else if(tipo==='recorrente')msg='Olá, '+c.nome+'! Que bom ter você como cliente recorrente da ZapClin. Vi aqui que seu serviço mais comum é '+(c.preferencia||'higienização')+' e já são '+c.visitas+' visita(s) com a gente. Quer que eu te ajude a programar a próxima manutenção para manter o capacete sempre pronto para uso?';else msg='Olá, '+c.nome+'! Já faz '+(c.dias||30)+' dias desde sua última higienização na ZapClin. Esse é um ótimo momento para fazer uma manutenção rápida e manter seu capacete cheiroso, protegido e pronto para uso. Posso reservar um horário para você?';waData={tipo:'relacionamento-'+tipo,nome:c.nome,tel:c.tel,qtd:1,msg:msg};document.getElementById('waEmoji').textContent='💎';document.getElementById('waTitulo').textContent=tipo==='vip'?'Campanha VIP':tipo==='recorrente'?'Cliente recorrente':'Retorno 30 dias';document.getElementById('waClienteNome').textContent=c.nome;document.getElementById('waPreview').textContent=msg;document.getElementById('waModal').classList.add('show');}
-function abrirHistoricoRelacionamento(tel){goTo('clientes',null);setTimeout(function(){var s=document.getElementById('clienteSearch');if(s){s.value=telKey_(tel);filtrarClientes(s.value);s.focus();}},200);}
-function crmRelVal_(v){return v?escapeHtml_(v):'—';}
-function crmVipCompleto_(c){var r=c&&c.relacionamento||{};return !!(r.aniversario||r.email||r.modelo||r.timestamp);}
-function crmFotoSrc_(f){if(!f)return '';if(f.preview)return f.preview;if(f.downloadUrl)return f.downloadUrl;if(f.thumb)return f.thumb;if(f.id)return 'https://drive.google.com/uc?export=view&id='+f.id;return f.url||'';}
-function crmFotos_(c){var out=[];(c&&c.registros||[]).forEach(function(os){(os.fotos||[]).forEach(function(f,idx){if(!f)return;out.push({id:f.id||'',name:f.name||('Capacete '+(idx+1)),url:f.url||'',thumb:f.thumb||'',downloadUrl:f.downloadUrl||'',preview:f.preview||'',os:f.os||os.num,data:f.data||fmtData(os.data),hora:f.hora||fmtHora(os.hora)});});});(c&&c.fotosHistoricas||[]).forEach(function(f){if(f&&f.id&&!out.some(function(x){return x.id===f.id;}))out.push(f);});return out;}
-function crmFotoOnError_(img){if(!img)return;var step=parseInt(img.getAttribute('data-try')||'0',10);var id=img.getAttribute('data-fid')||'';if(step===0&&id){img.setAttribute('data-try','1');img.src='https://drive.google.com/uc?export=view&id='+id;return;}if(step===1&&id){img.setAttribute('data-try','2');img.src='https://lh3.googleusercontent.com/d/'+id+'=w220';return;}img.style.display='none';var cap=img.parentElement&&img.parentElement.querySelector('.crm-photo-caption');if(cap&&!cap.getAttribute('data-fb')){cap.setAttribute('data-fb','1');cap.textContent=(cap.textContent||'Foto')+' (miniatura indisponível)';}}
-var _crmFotoLightboxList_=[];
-function crmFotoHtml_(f,idx){var src=escapeHtml_(crmFotoSrc_(f));var fid=escapeHtml_(f.id||'');var cap=escapeHtml_((f.name||'Foto')+' · OS '+formatarOS_(f.os));return'<button type="button" class="crm-photo-card" onclick="event.stopPropagation();abrirFotoCrmLightbox_('+idx+')" title="Toque para ampliar">'+(src?'<img src="'+src+'" data-fid="'+fid+'" data-try="0" loading="lazy" onerror="crmFotoOnError_(this)" alt="">':'')+'<div class="crm-photo-caption">'+cap+' · tocar p/ abrir</div></button>';}
-function abrirFotoCrmLightbox_(idx){
-  var f=_crmFotoLightboxList_[idx];
-  if(!f)return;
-  var ov=document.getElementById('crmFotoOverlay');
-  var img=document.getElementById('crmFotoImg');
-  var load=document.getElementById('crmFotoLoading');
-  var tit=document.getElementById('crmFotoTitle');
-  var sub=document.getElementById('crmFotoSub');
-  if(!ov||!img)return;
-  if(tit)tit.textContent=f.name||'Foto do capacete';
-  if(sub)sub.textContent='OS '+formatarOS_(f.os)+(f.data?' · '+f.data:'')+(f.hora?' '+f.hora:'');
-  img.alt=f.name||'Foto do capacete';
-  img.src=crmFotoSrc_(f)||'';
-  if(load)load.style.display=f.id?'block':'none';
-  ov.classList.add('show');
-  if(f.id&&typeof apiGet==='function'){
-    apiGet('getFotoPreview',{id:f.id,sz:'w1000'},20000).then(function(j){
-      if(j&&j.ok&&j.preview)img.src=j.preview;
-      if(load)load.style.display='none';
-    }).catch(function(){if(load)load.style.display='none';});
-  }else if(load){load.style.display='none';}
-}
-function fecharFotoCrmLightbox_(ev){
-  if(ev&&ev.target&&ev.target.id&&ev.target.id!=='crmFotoOverlay')return;
-  var ov=document.getElementById('crmFotoOverlay');
-  if(ov)ov.classList.remove('show');
-  var img=document.getElementById('crmFotoImg');
-  if(img)img.removeAttribute('src');
-  var load=document.getElementById('crmFotoLoading');
-  if(load)load.style.display='none';
-}
-function abrirFichaRelacionamento(key){var c=crmByKey_(key);if(!c)return;aplicarFotosCacheCrm_(c);var r=c.relacionamento||{};var fotos=crmFotos_(c);_crmFotoLightboxList_=fotos.slice(0,18);var fotosHtml=_crmFotoLightboxList_.length?'<div class="crm-photo-grid">'+_crmFotoLightboxList_.map(function(f,i){return crmFotoHtml_(f,i);}).join('')+'</div>':(!c.fotosCarregadas?'<div class="crm-photo-empty">Carregando fotos do Drive deste cliente...</div>':'<div class="crm-photo-empty">Nenhuma foto encontrada no Drive para este cliente.</div>');var hist=c.registros.slice(0,8).map(function(os){var sv=Array.isArray(os.servicos)?os.servicos.filter(Boolean).join(', '):'';return'<div class="crm-history-row"><span class="info-badge vinculo">'+formatarOS_(os.num)+'</span><div><div style="font-weight:800">'+escapeHtml_(sv||'Serviço não informado')+'</div><div class="crm-meta">'+fmtData(os.data)+' '+fmtHora(os.hora)+' · '+escapeHtml_(os.status||'')+'</div></div><div class="lanc-val">'+fmtBRL(os.total||0)+'</div></div>';}).join('')||'<div class="empty"><div class="empty-text">Sem histórico operacional.</div></div>';var body='<div class="crm-detail-head"><div><div class="crm-detail-name">'+escapeHtml_(c.nome)+'</div><div class="crm-detail-phone">'+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div></div><div class="crm-tags">'+c.tags.map(function(t){return'<span class="crm-tag '+t.cls+'">'+escapeHtml_(t.txt)+'</span>';}).join('')+'</div></div><div class="crm-detail-grid"><div class="crm-detail-item"><div class="crm-detail-lbl">Aniversário</div><div class="crm-detail-val">'+crmRelVal_(r.aniversario)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">E-mail</div><div class="crm-detail-val">'+crmRelVal_(r.email)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Modelo/capacete</div><div class="crm-detail-val">'+crmRelVal_(r.modelo)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Origem</div><div class="crm-detail-val">'+crmRelVal_(r.origem)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Consentimento</div><div class="crm-detail-val">'+crmRelVal_(r.consentimento)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Cadastro VIP</div><div class="crm-detail-val">'+(crmVipCompleto_(c)?'Completo':'Pendente')+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Total gasto</div><div class="crm-detail-val">'+fmtBRL(c.total)+'</div></div><div class="crm-detail-item"><div class="crm-detail-lbl">Ticket médio</div><div class="crm-detail-val">'+fmtBRL(c.ticket)+'</div></div></div><div class="section-title" style="margin:12px 0 8px">Capacetes/fotos no histórico</div>'+fotosHtml+'<div class="section-title" style="margin:12px 0 8px">Histórico operacional</div><div class="crm-history">'+hist+'</div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Fechar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro com fotos</button><button class="save-btn green" onclick="abrirNovaOsRelacionamento(\''+jsStr_(c.key)+'\')">Nova OS assistida</button>';abrirEditorOperacional('Ficha do cliente',body,actions);if(!c.fotosCarregadas&&!c.fotosCarregando){buscarFotosClienteCRM_(c).then(function(){var ov=document.getElementById('editOverlay');var tit=document.getElementById('editTitle');if(ov&&ov.classList.contains('show')&&tit&&/Ficha/.test(tit.textContent||''))abrirFichaRelacionamento(key);});}}
-function preencherCadastroRelacionamento(key){var c=crmByKey_(key);if(!c)return;fecharEditorOperacional();goTo('clientes',null);setTimeout(function(){resetClienteForm();document.getElementById('clienteNome').value=c.nome||'';document.getElementById('clienteTel').value=formatarTelefoneBR_(c.tel)||c.tel||'';verificarCadastroCompleto();var n=document.getElementById('clienteNome');if(n)n.focus();showToast({title:'Cliente preenchido',msg:'Agora escolha capacetes, serviços e fotos para a nova OS.'},'info');},180);}
-function renderCrmOsItens_(){var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10)||1);var key=(document.getElementById('crmOsKey')||{}).value||'';var c=crmByKey_(key);aplicarFotosCacheCrm_(c);if(c&&!c.fotosCarregadas&&!c.fotosCarregando){buscarFotosClienteCRM_(c).then(function(){renderCrmOsItens_();});}var fotos=crmFotos_(c);var prevFiles=crmOsFotosSelecionadas.slice();var prevRefs=crmOsFotoRefs.slice();var prevObs=crmOsObsPorCap.slice();var prevSvcs=[];for(var si=0;si<qtd;si++){var sel=document.getElementById('crmOsSvc'+si);prevSvcs[si]=sel?String(sel.value||''):'';}crmOsFotosSelecionadas=new Array(qtd).fill(null);crmOsFotoRefs=new Array(qtd).fill(null);crmOsObsPorCap=new Array(qtd).fill(null).map(function(){return[];});for(var a=0;a<qtd;a++){if(prevFiles[a])crmOsFotosSelecionadas[a]=prevFiles[a];else if(prevRefs[a]&&(prevRefs[a].id||prevRefs[a].preview||prevRefs[a].url))crmOsFotoRefs[a]=prevRefs[a];else if(fotos[a])crmOsFotoRefs[a]=fotos[a];crmOsObsPorCap[a]=Array.isArray(prevObs[a])?prevObs[a].slice():[];}var wrap=document.getElementById('crmOsItens');if(!wrap)return;if(!SERVICES||!SERVICES.length){wrap.innerHTML='<div class="crm-photo-empty">Catálogo de serviços indisponível. Recarregue o app.</div>';return;}var html='';for(var i=0;i<qtd;i++){var opts=SERVICES.map(function(s){var sel=prevSvcs[i]===s.name?' selected':'';return'<option value="'+escapeHtml_(s.name)+'"'+sel+'>'+escapeHtml_(s.name)+' · '+fmtBRL(s.price)+'</option>';}).join('');var chipBase=OBS_CHIPS.map(function(ch){var on=(crmOsObsPorCap[i]||[]).indexOf(ch.label)>=0?' selected':'';return'<span class="chip'+on+'" onclick="toggleCrmChip_(IDX,this,\''+jsStr_(ch.label)+'\')">'+ch.emoji+' '+escapeHtml_(ch.label)+'</span>';}).join('');var statusTxt=crmOsFotosSelecionadas[i]?('Nova foto: '+(crmOsFotosSelecionadas[i].name||'selecionada')):(crmOsFotoRefs[i]?'Foto anterior selecionada':'Foto obrigatória');var photoOpts=fotos.length?'<div class="crm-photo-grid">'+fotos.slice(0,12).map(function(f,idx){var src=escapeHtml_(crmFotoSrc_(f));var fid=escapeHtml_(f.id||'');var ativo=crmOsFotoRefs[i]&&crmOsFotoRefs[i].id&&crmOsFotoRefs[i].id===f.id?' ativo':'';return'<button type="button" class="crm-photo-option'+ativo+'" id="crmPhotoOpt'+i+'_'+idx+'" onclick="selecionarFotoCrmRef_('+i+','+idx+')">'+(src?'<img src="'+src+'" data-fid="'+fid+'" data-try="0" loading="lazy" onerror="crmFotoOnError_(this)">':'')+'<span class="crm-photo-caption">OS '+formatarOS_(f.os)+'</span></button>';}).join('')+'</div>':(!c||!c.fotosCarregadas?'<div class="crm-photo-empty">Carregando fotos anteriores do Drive...</div>':'<div class="crm-photo-empty">Sem foto anterior disponível: cadastre uma nova foto para este capacete.</div>');html+='<div class="crm-os-line"><div class="cap-card-header"><span class="cap-num-label">Capacete '+(i+1)+'</span><span class="crm-selected-photo" id="crmFotoStatus'+i+'">'+escapeHtml_(statusTxt)+'</span></div><div class="crm-os-fields"><select class="form-input blue crm-os-svc" id="crmOsSvc'+i+'" onchange="atualizarTotalCrmOs_()"><option value="">Serviço...</option>'+opts+'</select><div class="chips-wrap">'+chipBase.replace(/IDX/g,String(i))+'<span class="chip chip-outro" onclick="toggleCrmOutro_('+i+',this)">➕ Outro...</span></div><input class="form-input cap-obs-outro" type="text" id="crmOsOutro'+i+'" placeholder="Descreva..." oninput="onCrmOutroChange_('+i+',this)"></div><div><label class="crm-photo-upload" for="crmOsFotoInput'+i+'"><strong>Cadastrar nova foto</strong><span>Use quando for outro capacete ou a foto antiga não representar o estado atual.</span><input type="file" id="crmOsFotoInput'+i+'" accept="image/*" capture="environment" style="display:none" onchange="onFotoCrmSelecionada_('+i+',this)"></label>'+photoOpts+'</div></div>';}wrap.innerHTML=html;atualizarTotalCrmOs_();var sheet=document.querySelector('.edit-sheet');if(sheet)sheet.scrollTop=0;}
-function atualizarTotalCrmOs_(){var total=0;document.querySelectorAll('.crm-os-svc').forEach(function(el){var s=SERVICES.find(function(x){return x.name===el.value;});if(s)total+=s.price;});var t=document.getElementById('crmOsTotal');if(t)t.textContent=fmtBRL(total);return total;}
-function selecionarFotoCrmRef_(cap,idx){var key=(document.getElementById('crmOsKey')||{}).value||'';var fotos=crmFotos_(crmByKey_(key));crmOsFotoRefs[cap]=fotos[idx]||null;crmOsFotosSelecionadas[cap]=null;document.querySelectorAll('[id^="crmPhotoOpt'+cap+'_"]').forEach(function(b){b.classList.remove('ativo');});var btn=document.getElementById('crmPhotoOpt'+cap+'_'+idx);if(btn)btn.classList.add('ativo');var st=document.getElementById('crmFotoStatus'+cap);if(st)st.textContent='Foto anterior selecionada';}
-function onFotoCrmSelecionada_(cap,input){var file=input&&input.files&&input.files[0];if(!file)return;crmOsFotosSelecionadas[cap]=file;crmOsFotoRefs[cap]=null;document.querySelectorAll('[id^="crmPhotoOpt'+cap+'_"]').forEach(function(b){b.classList.remove('ativo');});var st=document.getElementById('crmFotoStatus'+cap);if(st)st.textContent='Nova foto: '+file.name;}
-function toggleCrmChip_(cap,el,label){crmOsObsPorCap[cap]=crmOsObsPorCap[cap]||[];var arr=crmOsObsPorCap[cap];var idx=arr.indexOf(label);if(idx>=0){arr.splice(idx,1);el.classList.remove('selected');}else{arr.push(label);el.classList.add('selected');}}
-function toggleCrmOutro_(cap,el){el.classList.toggle('selected');var inp=document.getElementById('crmOsOutro'+cap);if(inp){inp.classList.toggle('show',el.classList.contains('selected'));if(el.classList.contains('selected'))inp.focus();else inp.value='';onCrmOutroChange_(cap,inp);}}
-function onCrmOutroChange_(cap,input){crmOsObsPorCap[cap]=crmOsObsPorCap[cap]||[];var arr=crmOsObsPorCap[cap].filter(function(x){return x.indexOf('Outro: ')!==0;});var v=String(input&&input.value||'').trim();if(v)arr.push('Outro: '+v);crmOsObsPorCap[cap]=arr;}
-function abrirNovaOsRelacionamento(key){var c=crmByKey_(key);if(!c)return;crmOsFotosSelecionadas=[];crmOsFotoRefs=[];crmOsObsPorCap=[];aplicarFotosCacheCrm_(c);var body='<div class="crm-os-builder"><input type="hidden" id="crmOsKey" value="'+escapeHtml_(key)+'"><div class="crm-detail-item"><div class="crm-detail-lbl">Cliente recorrente</div><div class="crm-detail-val">'+escapeHtml_(c.nome)+' · '+escapeHtml_(formatarTelefoneBR_(c.tel))+'</div><div class="crm-meta">Última visita: '+escapeHtml_(c.ultimaData||'—')+' · '+(c.dias===0?'hoje':c.dias+' dia(s)')+'</div></div><div class="form-group"><label class="form-label">Quantidade de capacetes</label><input class="form-input blue" id="crmOsQtd" type="number" min="1" max="20" value="1" onchange="renderCrmOsItens_()"></div><div id="crmOsItens"></div><div class="total-cliente-row"><div class="total-cli-label">Total da nova OS</div><div class="total-cli-val" id="crmOsTotal">R$ 0,00</div></div></div>';var actions='<button class="save-btn cancel-edit" onclick="fecharEditorOperacional()">Cancelar</button><button class="save-btn blue" onclick="preencherCadastroRelacionamento(\''+jsStr_(c.key)+'\')">Cadastro completo</button><button class="save-btn green" id="crmOsSalvarBtn" onclick="salvarNovaOsRelacionamento(\''+jsStr_(key)+'\')">Criar OS</button>';abrirEditorOperacional('Nova OS assistida',body,actions);setTimeout(function(){renderCrmOsItens_();},30);}
-async function salvarNovaOsRelacionamento(key){var c=crmByKey_(key);if(!c)return;var qtd=Math.max(1,parseInt((document.getElementById('crmOsQtd')||{}).value||1,10)||1);var serv=[],obs=[],fotoRefs=[],fotos=[];for(var i=0;i<qtd;i++){var s=(document.getElementById('crmOsSvc'+i)||{}).value||'';if(!s){showToast('Escolha o serviço do capacete '+(i+1),'warning');return;}if(!crmOsFotosSelecionadas[i]&&!crmOsFotoRefs[i]){showToast('Informe foto nova ou selecione foto anterior do capacete '+(i+1),'warning');return;}serv.push(s);obs.push((crmOsObsPorCap[i]||[]).join(', '));fotoRefs.push(crmOsFotoRefs[i]?{id:crmOsFotoRefs[i].id,name:crmOsFotoRefs[i].name,os:crmOsFotoRefs[i].os}:null);}var total=atualizarTotalCrmOs_();var btn=document.getElementById('crmOsSalvarBtn');if(btn){btn.disabled=true;btn.textContent='Preparando fotos...';}try{for(var f=0;f<qtd;f++){fotos.push(crmOsFotosSelecionadas[f]?await comprimirFoto(crmOsFotosSelecionadas[f]):'');}if(btn)btn.textContent='Criando OS...';var payload={nome:c.nome,telefone:c.tel,qtd:qtd,fotos:fotos,fotoRefs:fotoRefs,servicos:serv,observacoes:obs,criarLancamentos:true,total:total,desconto:0,origem:'relacionamento'};var resp=await fetch(webAppUrl,{method:'POST',body:JSON.stringify(payload),redirect:'follow'});var data=await resp.json();if(!data||!data.ok)throw new Error(data&&data.error||'Falha ao criar OS');var dh=dataHoraAgoraParts_();var num=data.clienteId;var descontoFinal=parseFloat(data.desconto||0)||0;var novoCliente={num:num,data:dh.data,hora:dh.hora,nome:c.nome,tel:c.tel,qtd:qtd,pasta:data.folderUrl||'',servicos:serv.slice(),observacoes:obs.slice(),status:'Em andamento',total:data.total||total,desconto:descontoFinal,beneficioVip:data.beneficioVip||null,aceite:{status:'PENDENTE',url:data.aceiteUrl||aceiteOsUrl_(num)},dataPagamento:'',relacionamento:c.relacionamento||null,fotos:[],numVisita:data.numVisita||c.visitas+1,totalVisitas:data.totalVisitas||c.visitas+1};clientes.unshift(novoCliente);clientesFiltrados=clientes.slice();lancamentosDaOs_(num,serv).reverse().forEach(function(l){lancamentos.unshift(l);});localStorage.setItem('zapClientes',JSON.stringify(clientes.slice(0,500)));localStorage.setItem('zapLanc',JSON.stringify(lancamentos.slice(0,1000)));renderDadosDependentes_({historico:true});showToast({title:'OS criada',msg:'Nova OS '+formatarOS_(num)+' vinculada ao cliente.'},'success');fecharEditorOperacional();Promise.all([buscarClientes(),buscarLancamentos()]).then(function(){renderDadosDependentes_({historico:true});});var detalhes=montarDetalhesAtendimento_(c.nome,c.tel,qtd,serv,obs,data.total||total,descontoFinal,num,data.numVisita||c.visitas+1,data.totalVisitas||c.visitas+1);detalhes.diasDesdeUltima=c.dias;detalhes.vipCompleto=crmVipCompleto_(c);detalhes.aceiteUrl=data.aceiteUrl||aceiteOsUrl_(num);setTimeout(function(){mostrarWaModal('boasVindas',c.nome,c.tel,qtd,detalhes);},600);}catch(err){showToast({title:'Erro ao criar OS',msg:String(err.message||err)},'error');}finally{if(btn){btn.disabled=false;btn.textContent='Criar OS';}}}
+// ═══ RELACIONAMENTO / CRM → zc-crm.js (Pacote Z.7) ═══
 
 // carregarClientes → zc-clientes.js (Pacote Z.6)
 
 
-function setOperacaoFiltro(f,btn){operacaoFiltro=f||'todos';document.querySelectorAll('.op-filter').forEach(function(b){b.classList.remove('ativo');});if(btn)btn.classList.add('ativo');renderOperacaoPainel();}
-function carregarOperacao(force){var sub=document.getElementById('opSub');if(sub)sub.textContent='Atualizando fila...';['opListAtencao','opListAndamento','opListProntos'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=skeletonList_(2,'lg');});var cacheOk=false;if(!force){try{var c=JSON.parse(localStorage.getItem('zapClientes')||'[]');if(c&&c.length){clientes=c;cacheOk=true;}}catch(e){}}buscarClientes().then(function(ok){if(!ok&&!cacheOk){try{clientes=JSON.parse(localStorage.getItem('zapClientes')||'[]')||[];}catch(e){clientes=[];}}renderOperacaoPainel();});}
-function classificarOperacao_(c){var st=statusPrazoCliente_(c);var status=String(c.status||'Em andamento');var tipo=status==='Pronto'?'prontos':(st.cls==='late'||st.cls==='warn')?'atencao':'andamento';var prioridade=(st.meta||0)-(st.elapsed||0);if(tipo==='atencao')prioridade-=10000;if(tipo==='prontos')prioridade=99999+(st.elapsed||0);return{c:c,st:st,tipo:tipo,prioridade:prioridade};}
-function opResumoServicos_(c){var svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];if(!svcs.length)return'—';return svcs.slice(0,3).map(function(s,i){return'Cap.'+(i+1)+': '+escapeHtml_(s);}).join('<br>')+(svcs.length>3?'<br>+'+(svcs.length-3)+' cap.':'');}
-function opCardHtml_(it){var c=it.c,st=it.st,cls=st.cls==='late'?'late':st.cls==='warn'?'warn':it.tipo==='prontos'?'ready':'';var btn=it.tipo==='prontos'?'<button class="op-btn gray" onclick="marcarStatus('+c.num+',\'Entregue\')">Entregue</button><button class="op-btn wa" onclick="mostrarWaModal(\'pronto\',\''+jsStr_(c.nome)+'\',\''+jsStr_(c.tel)+'\','+(c.qtd||1)+')">WhatsApp</button>':'<button class="op-btn green" onclick="marcarStatus('+c.num+',\'Pronto\')">Marcar pronto</button>';return'<div class="op-card '+cls+'" id="opCard'+c.num+'"><div class="op-card-top"><span class="op-os">OS '+formatarOS_(c.num)+'</span><span class="op-time '+st.cls+'">'+escapeHtml_(st.label)+'</span></div><div class="op-name">'+escapeHtml_(c.nome)+'</div><div class="op-meta">'+(c.qtd||1)+' cap. · '+fmtData(c.data)+' '+fmtHora(c.hora)+'</div><div class="op-services">'+opResumoServicos_(c)+'</div><div class="op-actions">'+btn+'<button class="op-btn gray" onclick="goTo(\'clientes\',null);setTimeout(function(){filtrarClientes(\''+formatarOS_(c.num)+'\');},150)">Ver OS</button><button class="op-btn gray" onclick="gerarOsPdf('+c.num+')">PDF</button></div></div>';}
-function renderOperacaoLista_(id,items,msg){var el=document.getElementById(id);if(!el)return;el.innerHTML=items.length?items.map(opCardHtml_).join(''):'<div class="op-empty">'+msg+'</div>';}
-function opMinRestante_(it){if(!it||!it.st||it.st.elapsed===null)return null;return (it.st.meta||0)-(it.st.elapsed||0);}
-function opRenderRiscos_(items){
-  var el=document.getElementById('opRiskList');if(!el)return;
-  var riscos=items.filter(function(it){var r=opMinRestante_(it);return it.tipo!=='prontos'&&r!==null&&r<=10;}).sort(function(a,b){return opMinRestante_(a)-opMinRestante_(b);}).slice(0,4);
-  if(!riscos.length){el.innerHTML='';return;}
-  el.innerHTML=riscos.map(function(it){var r=opMinRestante_(it),late=r<0;var txt=late?'atrasado há '+fmtTempo(Math.abs(r)):'vence em '+fmtTempo(r);return'<div class="op-risk-item '+(late?'late':'')+'"><span>'+escapeHtml_(it.c.nome||'Cliente')+' · '+txt+'</span><span class="op-risk-os">OS '+formatarOS_(it.c.num)+'</span></div>';}).join('');
-}
-function opRenderServicoSla_(base){
-  var el=document.getElementById('opServicoSlaList');if(!el)return;
-  var mapa={};
-  base.forEach(function(item){
-    var c=opClienteFromItem_(item);
-    if(!clienteAberto_(c))return;
-    var st=opStatusFromItem_(item,c),svcs=Array.isArray(c.servicos)?c.servicos.filter(Boolean):[];
-    if(!svcs.length)svcs=['Serviço não informado'];
-    var porSvc=svcs.length?Math.round((st.elapsed||0)/svcs.length):st.elapsed;
-    svcs.forEach(function(s){
-      var k=s||'Serviço não informado';if(!mapa[k])mapa[k]={nome:k,total:0,qtd:0,ok:0,meta:tempoServicoMin_(k)};
-      if(st.elapsed!==null){mapa[k].total+=porSvc;mapa[k].qtd++;}
-      if(st.elapsed!==null&&st.elapsed<=st.meta)mapa[k].ok++;
-    });
-  });
-  var arr=Object.keys(mapa).map(function(k){var m=mapa[k];m.media=m.qtd?Math.round(m.total/m.qtd):0;m.sla=m.qtd?Math.round(m.ok/m.qtd*100):0;return m;}).sort(function(a,b){return b.qtd-a.qtd||b.media-a.media;}).slice(0,6);
-  if(!arr.length){el.innerHTML='<div class="dash-empty">Sem dados de serviço ainda.</div>';return;}
-  el.innerHTML=arr.map(function(m){var cls=m.sla>=85?'ok':m.sla>=60?'warn':'late';return'<div class="op-svc-row"><div><div class="op-svc-name">'+escapeHtml_(m.nome)+'</div><div class="op-mini-bar"><div class="op-mini-fill" style="width:'+Math.min(100,m.sla)+'%"></div></div></div><div class="op-svc-meta">'+fmtTempo(m.media)+' méd.</div><div class="op-svc-sla '+cls+'">'+m.sla+'%</div></div>';}).join('');
-}
-function opRenderPicos_(base){
-  var el=document.getElementById('opPicoList');if(!el)return;
-  var hrs={};base.forEach(function(item){var c=opClienteFromItem_(item);if(!clienteAberto_(c))return;var h=fmtHora(c.hora);if(!h||h==='—')return;var n=parseInt(h.split(':')[0],10);if(isNaN(n))return;hrs[n]=(hrs[n]||0)+1;});
-  var arr=Object.keys(hrs).map(function(k){return{h:parseInt(k,10),qtd:hrs[k]};}).sort(function(a,b){return b.qtd-a.qtd||a.h-b.h;}).slice(0,5);
-  var max=arr.length?arr[0].qtd:0;
-  if(!arr.length){el.innerHTML='<div class="dash-empty">Sem dados de horário na fila atual.</div>';return;}
-  el.innerHTML=arr.map(function(x){var pct=max?Math.round(x.qtd/max*100):0;return'<div class="op-peak-row"><div><div class="op-peak-hora">'+String(x.h).padStart(2,'0')+'h</div><div class="op-mini-bar"><div class="op-mini-fill" style="width:'+pct+'%"></div></div></div><div class="op-peak-meta">'+x.qtd+' atend.</div><div class="op-svc-sla ok">'+pct+'%</div></div>';}).join('');
-}
-function opRenderInteligencia_(src){opRenderRiscos_(src);opRenderServicoSla_(src);opRenderPicos_(src);}
-function renderOperacaoPainel(){var base=(clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]')).filter(function(c){return c&&!clienteCancelado_(c);});var src=base.filter(clienteAberto_).map(classificarOperacao_);var atencao=src.filter(function(i){return i.tipo==='atencao';}).sort(function(a,b){return a.prioridade-b.prioridade;});var andamento=src.filter(function(i){return i.tipo==='andamento';}).sort(function(a,b){return a.prioridade-b.prioridade;});var prontos=src.filter(function(i){return i.tipo==='prontos';}).sort(function(a,b){return (a.c.encerradoEm||'')<(b.c.encerradoEm||'')?1:-1;});var producao=andamento.length,totalAnd=atencao.length+andamento.length,ok=andamento.length,pct=totalAnd?Math.round(ok/totalAnd*100):100;var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};set('opKpiProducao',producao);set('opKpiAtraso',atencao.length);set('opKpiProntos',prontos.length);set('opKpiSla',pct+'%');set('opCountAtencao',atencao.length);set('opCountAndamento',andamento.length);set('opCountProntos',prontos.length);var sub=document.getElementById('opSub');if(sub)sub.textContent=src.length+' atendimento(s) ativo(s) · atualizado agora';var alert=document.getElementById('opAlert');if(alert){if(atencao.length){var p=atencao[0];alert.classList.add('show');alert.textContent='Prioridade: '+(p.c.nome||'Cliente')+' · OS '+formatarOS_(p.c.num)+' · '+p.st.label;}else{alert.classList.remove('show');alert.textContent='';}}opRenderInteligencia_(src);var show=function(wrap,on){var el=document.getElementById(wrap);if(el)el.style.display=on?'block':'none';};show('opLaneAtencaoWrap',operacaoFiltro==='todos'||operacaoFiltro==='atencao');show('opLaneAndamentoWrap',operacaoFiltro==='todos'||operacaoFiltro==='andamento');show('opLaneProntosWrap',operacaoFiltro==='todos'||operacaoFiltro==='prontos');renderOperacaoLista_('opListAtencao',atencao,'Nenhum atendimento em risco agora.');renderOperacaoLista_('opListAndamento',andamento,'Fila de produção vazia.');renderOperacaoLista_('opListProntos',prontos,'Nenhum capacete pronto para retirada.');}
+// ═══ OPERAÇÃO → zc-operacao.js (Pacote Z.7) ═══
 function salvarConfig(){webAppUrl=document.getElementById('webAppUrl').value.trim();localStorage.setItem('zapWebApp',webAppUrl);showToast('✅ Configuração salva!');checkConexao();}
 function checkConexao(){var el=document.getElementById('statusConexao');el.textContent='Verificando...';apiGet('ping',{},5000).then(function(r){if(r&&r.ok){el.textContent='🟢 Conectado v'+r.version;el.className='info-val green';}else{el.textContent='🔴 Erro: '+(r&&r.error||'?');el.className='info-val';}}).catch(function(){el.textContent='🔴 Sem conexão';el.className='info-val';});}
 

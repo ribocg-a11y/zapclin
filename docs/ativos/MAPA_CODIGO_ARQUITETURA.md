@@ -19,7 +19,7 @@
 | **Olhos (gestão)** | Dashboard, Admin PIN, fechamento diário | Dashboard, Admin, Relatório Golden |
 | **CRM** | VIP, recorrência, aceite OS | Relacionamento, Clube VIP, ACEITES OS |
 
-**Frontend hoje:** `index.html` + 8 módulos `zc-*.js` (Pacote Z parcial). **Meta:** shell enxuto (Z.10).
+**Frontend hoje:** `index.html` + 14 módulos `zc-*.js` (Pacote Z.7). **Meta:** shell enxuto (Z.10).
 
 ---
 
@@ -31,7 +31,7 @@ zapclin-repo/
 │   └── AppsScript_v3.45_ATUAL.gs     ← GAS canônico (conteúdo v3.50)
 ├── CORAÇÃO + MÃOS + OLHOS
 │   ├── index.html                    ← HTML + CSS + JS restante
-│   └── zc-*.js                       ← Pacote Z (version…historico-custos)
+│   └── zc-*.js                       ← Pacote Z (version…crm / Z.7)
 ├── PWA
 │   ├── sw.js · manifest.json · reparar.html
 ├── IMUNOLÓGICO

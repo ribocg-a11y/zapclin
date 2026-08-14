@@ -31,6 +31,7 @@ Checklist vivo — marcar ao concluir.
 | P0.2 | Validar Dashboard projeção (largura + toque) | ✅ | Humano |
 | P0.3 | Smoke balcão: OS + status + Admin PIN 1321 | ✅ | Humano (loja) |
 | P0.4 | Abrir `?force=v4.33.4` após deploy Z.5 | ⬜ | Humano |
+| P0.5 | Abrir `?force=v4.34.0` após merge Z.7 (Operação + CRM) | ⬜ | Humano |
 
 ---
 
@@ -64,8 +65,8 @@ Checklist vivo — marcar ao concluir.
 | F3.8 parcial | `zc-historico-custos.js` | ✅ v4.31+ |
 | **F3.5** | `zc-nav.js` + `zc-home.js` | ✅ **v4.33.4** |
 | **F3.6** | `zc-registrar.js` + `zc-clientes.js` | ✅ **v4.33.6** |
-| **F3.7** | `zc-operacao.js` + `zc-crm.js` | ⬜ **próximo código** |
-| F3.9 | `zc-app.css` | ⬜ |
+| **F3.7** | `zc-operacao.js` + `zc-crm.js` | ✅ **v4.34.0** |
+| F3.9 | `zc-app.css` | ⬜ **próximo código** |
 | F3.10 | `zc-boot.js` shell enxuto | ⬜ |
 
 Ver `PACOTE_Z_MODULARIZACAO.md`. **Antes de mexer em SW/versão:** `ERROS_PWA_2026-07-14.md`.
