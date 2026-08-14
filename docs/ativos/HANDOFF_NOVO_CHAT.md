@@ -21,7 +21,7 @@
 | FE / SW | **v4.34.0** (Pages) |
 | GAS arquivo | **3.52** (`AppsScript_v3.45_ATUAL.gs`) |
 | GAS ping | **3.52** ✅ |
-| PRs abertas | auditoria WA/aceite (esta) |
+| PRs abertas | **#23** auditoria WA/aceite |
 | Site | https://www.zapclinslz.com/ · sitemap 12 |
 | Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
 
@@ -100,7 +100,7 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 
 | PR | Estado |
 |----|--------|
-| auditoria WA + aceite (esta branch) | aberta |
+| auditoria WA + aceite (**#23**) | aberta (draft) |
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
 | #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** |
 
