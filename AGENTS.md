@@ -59,8 +59,8 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Camada | Versão repo | Ping / live |
 |--------|-------------|-------------|
-| Frontend | **v4.34.0** | GitHub Pages |
-| Service Worker | **v4.34.0** | `sw.js` |
+| Frontend | **v4.35.0** | GitHub Pages |
+| Service Worker | **v4.35.0** | `sw.js` |
 | GAS (código repo) | **v3.52** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
 | GAS (ping) | **3.52** | ✅ produção (14/08) |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
@@ -75,7 +75,7 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 ## Código canônico
 
 - **GAS:** `AppsScript_v3.45_ATUAL.gs`
-- **Frontend:** `index.html` + `zc-*.js` (Pacote Z — ver `PACOTE_Z_MODULARIZACAO.md`)
+- **Frontend:** `index.html` + `zc-*.js` + `zc-app.css` (Pacote Z — ver `PACOTE_Z_MODULARIZACAO.md`)
 - **PWA:** `sw.js`, `manifest.json`
 - **OAuth Sheets:** `scripts/oauth-sheets/`
 - **SEO engine:** `scripts/seo/engine/`
@@ -93,14 +93,14 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (14/08/2026)
 
-- **Produção alvo:** FE/SW **v4.34.0** · GAS **3.52** (arquivo + ping ✅)
+- **Produção alvo:** FE/SW **v4.35.0** · GAS **3.52** (arquivo + ping ✅)
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
-- **Pacote Z:** Z.7 ✅ (`zc-operacao` + `zc-crm`); **próximo:** Z.9 `zc-app.css`
+- **Pacote Z:** Z.9 ✅ (`zc-app.css`); **próximo:** Z.10 `zc-boot.js`
 - **OAuth:** Environment `zapclin` + seed ago 01–13 ✅
 - **SEO:** motor + Reels + playbooks em `main` (não reinventar); humano = Golden Shopping
-- **PRs:** nenhuma aberta
-- **Próximo humano:** Wi-Fi loja + smoke v4.34.0; Golden backlink
-- **Próximo agente:** Z.9 CSS ou NET-TIMEOUT (só com pedido)
+- **PRs:** Z.9 em draft nesta sessão
+- **Próximo humano:** merge + `?force=v4.35.0`; Golden backlink
+- **Próximo agente:** Z.10 ou NET-TIMEOUT (só com pedido)
 
 ## Ao encerrar sessão
 

@@ -48,6 +48,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | 14/08/2026 | Loja: lentidão + erros salvar/encerrar | Correlacionado a internet fraca (**NET-TIMEOUT**) |
 | 14/08/2026 | Humano redeploy GAS → ping **3.52** | ✅ alinhado com arquivo |
 | 14/08/2026 | PRs draft zeradas (#20 SEO + closes) | 0 PRs abertas |
+| 14/08/2026 | Pacote Z.9 `zc-app.css` | alvo FE **v4.35.0** (SW: CSS = shell crítico) |
 
 **Commits live SEO (referência `zapclinslz`):** `4dafda1` (PAA), `13d4493` (bairro FAQ), `2a0bcb3` (PageRank `/quanto-tempo/`).
 
@@ -59,6 +60,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 |------|------|------------|
 | Ping GAS **3.52** = arquivo **3.52** | Redeploy 14/08 | ✅ resolvido |
 | Pacote Z.7 | `zc-operacao` + `zc-crm` em v4.34.0 | ✅ |
+| Pacote Z.9 | `zc-app.css` em v4.35.0 | ✅ |
 | Auth operador ausente | Fase 4 equiparação | P2 |
 | Cockpit narrativo ausente | Fase 5 | P2 |
 | Indexação parcial site | bairros em fila GSC | P1 humano/aguardar |

@@ -16,7 +16,7 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
+| Frontend / SW | **v4.35.0** (após merge) | https://ribocg-a11y.github.io/zapclin/?force=v4.35.0 |
 | GAS arquivo + ping | **3.52** ✅ | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **0 abertas** | — |
@@ -36,8 +36,8 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` (`APP_VERSION` = v4.34.0) |
-| Pacote Z | até `zc-operacao` + `zc-crm` · próximo `zc-app.css` |
+| FE | `index.html` + `zc-*.js` + `zc-app.css` (`APP_VERSION` = v4.35.0) |
+| Pacote Z | até `zc-app.css` (Z.9) · próximo `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` |
 | SEO | `scripts/seo/engine/` + `docs/ativos/marketing-ig/` |
@@ -49,6 +49,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 | Item | PR |
 |------|-----|
+| Z.9 `zc-app.css` v4.35.0 | [#22](https://github.com/ribocg-a11y/zapclin/pull/22) |
 | Z.7 v4.34.0 | #18 MERGED |
 | Handoff / Environment | #17 MERGED |
 | Docs ping 3.52 | #19 MERGED |
@@ -59,8 +60,8 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 ## Próximo
 
-**Humano:** Wi-Fi + smoke v4.34.0 · Golden backlink · esperar GSC.  
-**Agente:** Z.9 CSS **ou** fila offline OS/status (pedido) · sem reabrir SEO.
+**Humano:** Wi-Fi + smoke `?force=v4.35.0` · Golden backlink · esperar GSC.  
+**Agente:** Z.10 `zc-boot.js` **ou** fila offline OS/status (pedido) · sem reabrir SEO.
 
 ---
 
