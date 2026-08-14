@@ -1,4 +1,4 @@
-# Deploy do Apps Script v3.53
+# Deploy do Apps Script v3.54
 
 ## Regra de ouro
 
@@ -22,7 +22,7 @@
 | Item | Valor |
 |------|-------|
 | Arquivo | `AppsScript_v3.45_ATUAL.gs` |
-| Versão no código | **3.53** (`var VERSION = '3.53'`) |
+| Versão no código | **3.54** (`var VERSION = '3.54'`) |
 | PC clone | `C:\Users\riboc\Documents\Codex\zapclin-repo\AppsScript_v3.45_ATUAL.gs` |
 
 ## Download direto
@@ -30,7 +30,7 @@
 - Raw `main`: https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
 - Blob: https://github.com/ribocg-a11y/zapclin/blob/main/AppsScript_v3.45_ATUAL.gs  
 
-**Conferir após abrir:** `VERSION = '3.53'` (ou header Versão 3.53).
+**Conferir após abrir:** `VERSION = '3.54'` (ou header Versão 3.54).
 
 ## Deploy ID (único — nunca criar outro)
 
@@ -42,6 +42,6 @@
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping
 ```
 
-Esperado após Nova versão: `"version":"3.53"`  
+Esperado após Nova versão: `"version":"3.54"`  
 
-**Status 14/08/2026:** ping produção ainda **3.52** até o humano colar o `.gs` 3.53 e publicar **Nova versão** no mesmo Deploy ID.
+**Status 14/08/2026:** ping produção **3.53** (humano já colou 3.53). Alvo seguinte: **3.54** (página `aceite.html` + `dadosAceiteOs`).

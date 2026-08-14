@@ -20,8 +20,8 @@
 
 | # | Item | Status |
 |---|------|--------|
-| H1 | GAS Nova versão **3.53** (aceite WhatsApp `target=_top`) | ⏳ |
-| H2 | Smoke loja `?force=v4.34.0` | ⏳ |
+| H1 | GAS Nova versão **3.54** (aceite.html + dadosAceiteOs) | ⏳ |
+| H2 | Smoke loja `?force=v4.34.1` + aceite no WhatsApp | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
 | H5 | Toast exato se erro rede | ⏳ |

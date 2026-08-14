@@ -1,6 +1,10 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.53 | Data: 14/08/2026
+// VersÃ£o: 3.54 | Data: 14/08/2026
+// NOVO v3.54:
+//   - Aceite pÃºblico vira pÃ¡gina GitHub Pages (aceite.html); GAS sÃ³ API JSON dadosAceiteOs
+//   - Links novos: https://ribocg-a11y.github.io/zapclin/aceite.html?os=
+//   - action=aceiteOs HTML legado permanece para mensagens jÃ¡ enviadas
 // NOVO v3.53:
 //   - Aceite OS / VIP: form target=_top + ALLOWALL em todas as pÃ¡ginas pÃºblicas
 //     (HtmlService iframe; sem isso o cliente no WhatsApp vÃª pÃ¡gina em branco ao aceitar)
@@ -131,7 +135,8 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.53';
+var VERSION           = '3.54';
+var ACEITE_PAGE_URL   = 'https://ribocg-a11y.github.io/zapclin/aceite.html';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -500,8 +505,7 @@ function cadastroVipUrl_(nome, telefone) {
 }
 
 function aceiteOsUrl_(os) {
-  var base = ScriptApp.getService().getUrl();
-  return base + '?action=aceiteOs&os=' + encodeURIComponent(os || '');
+  return ACEITE_PAGE_URL + '?os=' + encodeURIComponent(os || '');
 }
 
 function confirmarAceiteOsUrl_(os) {
@@ -731,6 +735,29 @@ function listarAceitesOsMap_(ss) {
     };
   }
   return out;
+}
+
+function dadosAceiteOs_(ss, p) {
+  var os = parseInt(p.os || 0, 10);
+  if (!os) return { ok: false, error: 'OS obrigatoria', version: VERSION };
+  var cliente = buscarClientePorOs_(ss, os);
+  if (!cliente) return { ok: false, error: 'OS nao encontrada', version: VERSION, os: os };
+  var mapa = listarAceitesOsMap_(ss);
+  var ace = mapa[String(os)] || { status: 'PENDENTE' };
+  return {
+    ok: true,
+    version: VERSION,
+    os: os,
+    nome: cliente.nome,
+    telefone: cliente.telefone,
+    data: cliente.data,
+    hora: cliente.hora,
+    servicos: cliente.servicos || [],
+    observacoes: cliente.observacoes || [],
+    total: cliente.total || 0,
+    statusOs: cliente.status || '',
+    aceite: { status: String(ace.status || 'PENDENTE') }
+  };
 }
 
 function confirmarAceiteOs_(ss, p) {
@@ -1046,6 +1073,9 @@ function doGet(e) {
 
     } else if (action === 'aceiteOs') {
       return renderAceiteOsForm_(ss, p);
+
+    } else if (action === 'dadosAceiteOs') {
+      result = dadosAceiteOs_(ss, p);
 
     } else if (action === 'confirmarAceiteOs' && p.form === '1') {
       return renderAceiteOsObrigado_(confirmarAceiteOs_(ss, p));

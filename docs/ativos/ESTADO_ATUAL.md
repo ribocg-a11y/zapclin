@@ -17,8 +17,8 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
-| GAS arquivo + ping | **3.53** no repo / ping live **3.52** até Nova versão | ping abaixo |
+| Frontend / SW | **v4.34.1** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.1 |
+| GAS arquivo + ping | **3.54** no repo / ping live **3.53** até Nova versão | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **0 abertas** | — |
 
@@ -37,7 +37,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` (`APP_VERSION` = v4.34.0) |
+| FE | `index.html` + `zc-*.js` + `aceite.html` (`APP_VERSION` = v4.34.1) |
 | Pacote Z | até `zc-operacao` + `zc-crm` · próximo `zc-app.css` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` |

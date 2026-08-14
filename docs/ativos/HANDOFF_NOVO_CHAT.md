@@ -1,10 +1,11 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (fix aceite iframe WhatsApp · GAS 3.53 no repo)  
+**Atualizado:** 14/08/2026 (aceite vira página GitHub Pages · v4.34.1 / GAS 3.54)  
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.1  
+**Aceite (página, não script):** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cursor:** **`zapclin`**
 
 > Mensagem mínima: *Vamos dar continuidade ao projeto ZapClin.*  
@@ -18,9 +19,9 @@
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.34.0** (Pages) |
-| GAS arquivo | **3.53** (`AppsScript_v3.45_ATUAL.gs`) — **produção ainda 3.52 até Nova versão** |
-| GAS ping | **3.52** (live) → alvo **3.53** |
+| FE / SW | **v4.34.1** (repo; Pages após merge) |
+| GAS arquivo | **3.54** (`AppsScript_v3.45_ATUAL.gs`) |
+| GAS ping | **3.53** live → alvo **3.54** |
 | PRs abertas | **#23** auditoria WA/aceite |
 | Site | https://www.zapclinslz.com/ · sitemap 12 |
 | Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
@@ -54,11 +55,12 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 
 ### Humano (só você) — **agora**
 
-1. **GAS 3.53 — aceite no WhatsApp:** colar `AppsScript_v3.45_ATUAL.gs` completo → **Nova versão** no Deploy ID atual (nunca `clasp deploy`). Guia: `docs/APPSCRIPT_DEPLOY.md`  
-   Smoke: abrir o link de aceite de uma OS **pendente** pelo WhatsApp do celular → botão verde ou o link “Se o botão não responder…”. **Não** usar OS de cliente real se preferir uma OS de teste.  
-2. Loja: Wi-Fi estável + smoke `?force=v4.34.0` (OS, Pronto, Entregue)  
-3. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
-4. Aguardar GSC bairros — **não** re-spam
+1. Merge PR **#23** (sobe `aceite.html` no GitHub Pages)  
+2. Colar `AppsScript_v3.45_ATUAL.gs` **3.54** → **Nova versão** no Deploy ID atual  
+3. Loja: `?force=v4.34.1`  
+4. Teste no WhatsApp: https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
+   Tem que abrir **sem** a faixa azul “criado por um usuário do Google Apps Script”.  
+5. Ping deve ser `"version":"3.54"`
 
 ### Auditoria WA + aceite (14/08 — executada)
 

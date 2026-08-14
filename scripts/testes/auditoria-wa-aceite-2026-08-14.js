@@ -187,7 +187,8 @@ function loadWhatsappSandbox() {
     GOOGLE_REVIEW_URL: GOOGLE_REVIEW,
     clientes: [],
     waData: null,
-    APP_VERSION: 'v4.34.0',
+    APP_VERSION: 'v4.34.1',
+    ACEITE_PAGE_URL: 'https://ribocg-a11y.github.io/zapclin/aceite.html',
     fmtBRL: function (n) { return 'R$ ' + Number(n || 0).toFixed(2).replace('.', ','); },
     showToast: function () {},
     logEventoSistema_: function () {},
@@ -349,8 +350,8 @@ async function runUnit() {
     boasPreview: snippet(boas, 400)
   };
 
-  record('MSG-ACEITE-URL', aceiteUrl === WEB_APP + '?action=aceiteOs&os=176' ? 'PASS' : 'FAIL',
-    'aceiteOsUrl_ = WEB_APP?action=aceiteOs&os=', { aceiteUrl: aceiteUrl });
+  record('MSG-ACEITE-URL', aceiteUrl.indexOf('aceite.html?os=176') >= 0 ? 'PASS' : 'FAIL',
+    'aceiteOsUrl_ aponta para GitHub Pages aceite.html', { aceiteUrl: aceiteUrl });
   record('MSG-VIP-URL', vipUrl.indexOf(WEB_APP + '?action=cadastroVip') === 0 ? 'PASS' : 'FAIL',
     'clienteVipUrl_ aponta para cadastroVip no mesmo WEB_APP');
   record('MSG-BOAS-LINKS', evidence.messages.boasHasAceite && evidence.messages.boasHasVip ? 'PASS' : 'FAIL',
