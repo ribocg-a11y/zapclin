@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "brand": "ZapClin",
+  "geo_ obligatory": ["São Luís", "Calhau", "Maranhão", "Golden Shopping Calhau"],
+  "anti_collision": ["zapclin.com", "JáPedeAí"],
+  "clusters": [
+    {
+      "id": "local_core",
+      "intent": "transactional_local",
+      "value": 95,
+      "queries": [
+        "higienização de capacete São Luís",
+        "higienizar capacete São Luís",
+        "limpeza de capacete São Luís",
+        "lavagem de capacete São Luís"
+      ],
+      "target_paths": ["/higienizacao-de-capacetes-sao-luis/", "/"]
+    },
+    {
+      "id": "price",
+      "intent": "commercial_investigate",
+      "value": 90,
+      "queries": [
+        "preço higienização capacete São Luís",
+        "quanto custa higienizar capacete",
+        "higienização capacete valor"
+      ],
+      "target_paths": ["/preco-higienizacao-capacete-sao-luis/"]
+    },
+    {
+      "id": "time",
+      "intent": "commercial_investigate",
+      "value": 85,
+      "queries": [
+        "quanto tempo higienizar capacete",
+        "higienização capacete 8 minutos",
+        "higienizar capacete rápido"
+      ],
+      "target_paths": ["/quanto-tempo-higienizar-capacete/"]
+    },
+    {
+      "id": "howto",
+      "intent": "informational",
+      "value": 80,
+      "queries": [
+        "como higienizar capacete de moto",
+        "como tirar odor de capacete",
+        "como limpar forro capacete"
+      ],
+      "target_paths": ["/como-higienizar-capacete/"]
+    },
+    {
+      "id": "compare",
+      "intent": "commercial_investigate",
+      "value": 78,
+      "queries": [
+        "higienização ou lavagem de capacete",
+        "diferença higienização lavagem capacete"
+      ],
+      "target_paths": ["/higienizacao-vs-lavagem-capacete/"]
+    },
+    {
+      "id": "geo_calhau",
+      "intent": "transactional_local",
+      "value": 88,
+      "queries": [
+        "higienização capacete Calhau",
+        "higienizar capacete Golden Shopping",
+        "limpeza capacete Golden Shopping Calhau"
+      ],
+      "target_paths": ["/higienizacao-capacete-calhau-golden-shopping/"]
+    },
+    {
+      "id": "geo_bairro_expand",
+      "intent": "transactional_local",
+      "value": 70,
+      "queries": [
+        "higienização capacete Renascença São Luís",
+        "higienizar capacete Cohama",
+        "higienização capacete Ponta d'Areia",
+        "higienizar capacete São Francisco São Luís",
+        "higienização capacete Turu"
+      ],
+      "target_paths": [],
+      "factory": "local_modifier",
+      "seeds": ["Renascença", "Cohama", "Ponta d'Areia", "São Francisco", "Turu"]
+    },
+    {
+      "id": "social_discovery",
+      "intent": "discovery",
+      "value": 92,
+      "queries": [
+        "higienização capacete Instagram São Luís",
+        "ZapClin São Luís"
+      ],
+      "target_paths": ["/"],
+      "channel": "instagram"
+    }
+  ],
+  "nap": {
+    "name": "ZapClin",
+    "telephone": "+5598981479616",
+    "street": "Av. dos Holandeses, 200",
+    "locality": "São Luís",
+    "region": "MA",
+    "postal": "65071-380",
+    "url": "https://www.zapclinslz.com/",
+    "instagram": "https://www.instagram.com/zapclinhigienizacao/"
+  }
+}

@@ -17,7 +17,7 @@ Checklist vivo — marcar ao concluir.
 | Incidente PWA 14/07 documentado | ✅ |
 | OAuth + Environment `zapclin` | ✅ |
 | Seed LANÇAMENTOS ago 01–13 | ✅ |
-| SEO live + motor (PR #15) | ✅ / draft |
+| SEO live + motor (playbooks em main) | ✅ |
 | Handoff transição 14/08 | ✅ |
 
 ---
@@ -89,10 +89,10 @@ Ver `PACOTE_Z_MODULARIZACAO.md`. Antes de SW/versão: `ERROS_PWA_2026-07-14.md`.
 
 | PR | Estado |
 |----|--------|
-| #18 Z.7 | **MERGED** |
-| #17 handoff | rebase |
-| #15 SEO · #16 seed · #14 chuva | DRAFT |
-| #1 legado | DRAFT |
+| #18 Z.7 · #17 handoff · #19 GAS 3.52 | **MERGED** |
+| #15 SEO | consolidado nesta limpeza |
+| #16 seed · #1 legado | **CLOSED** |
+| #14 Extra chuva | merge se ainda aberto |
 
 ---
 

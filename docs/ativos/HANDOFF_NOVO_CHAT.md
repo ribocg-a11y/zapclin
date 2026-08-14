@@ -1,6 +1,6 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (FE **v4.34.0** · Z.7 ✅ · GAS ping **3.52** ✅ · PR #18/#17 MERGED)  
+**Atualizado:** 14/08/2026 (FE **v4.34.0** · Z.7 ✅ · GAS ping **3.52** ✅ · PRs draft limpos)  
 **Repo canônico:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site marketing:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
@@ -43,7 +43,7 @@
 |--------|--------|
 | Pacote Z.1–Z.7 | ✅ · próximo Z.9 `zc-app.css` |
 | Handoff + Environment `zapclin` | ✅ |
-| SEO live + motor | ✅ · PR #15 draft |
+| SEO live + motor + playbooks | ✅ em `main` |
 | Seed ago 01–13 | ✅ |
 
 ### Humano agora
@@ -87,11 +87,14 @@ O PWA **abre** com cache local, mas **não é 100% offline**:
 
 | PR | Estado |
 |----|--------|
-| #18 Z.7 | **MERGED** |
-| #17 handoff | rebase pós-#18 |
-| #15 SEO · #16 seed · #14 chuva | draft |
+| #18 Z.7 · #17 handoff · #19 GAS 3.52 | **MERGED** |
+| #15 SEO | consolidado nesta limpeza |
+| #16 seed | **CLOSED** (já em main via #17) |
+| #1 legado KPI | **CLOSED** (obsoleto; não mergear) |
+| #14 Extra chuva | merge se ainda aberto |
 
----
+SEO marketing: Reels 01–03 em `docs/ativos/marketing-ig/` · playbooks em `docs/ativos/` · live `zapclinslz`.
+
 
 ## 6) Premissas P0
 
