@@ -33,6 +33,7 @@
 | # | Item | Status |
 |---|------|--------|
 | F3.7 | `zc-operacao` + `zc-crm` | ✅ v4.34.0 |
+| AUD | Auditoria WA + aceite 14/08 | ✅ evidências; FAIL §3 só com pedido |
 | F3.9 | `zc-app.css` | ⬜ próximo |
 | F3.10 | `zc-boot.js` | ⬜ |
 | NET | Fila offline OS + status | ⬜ |

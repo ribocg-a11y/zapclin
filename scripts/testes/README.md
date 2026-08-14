@@ -12,6 +12,7 @@ Requer Windows + PowerShell 5.1+ (mesmo ambiente do Movi Kids).
 | `TESTE_KPI_PARIDADE_READONLY.ps1` | Compara KPI hoje: listar vs buscarKpisAdmin |
 | `TESTE_DIAGNOSTICO_READONLY.ps1` | Action `diagnosticoSistema` + rangesStatus |
 | `TESTE_PROTOCOLO_DIAGNOSTICO.ps1` | Orquestra Z0+Z1 (pre-push + ping + diag + KPI) |
+| `auditoria-wa-aceite-2026-08-14.js` | WhatsApp + aceite + links (Node, readonly, sem gravar planilha) |
 
 ## Uso
 
@@ -22,6 +23,8 @@ cd C:\caminho\para\zapclin
 .\scripts\testes\TESTE_PING_READONLY.ps1
 .\scripts\testes\TESTE_DIAGNOSTICO_READONLY.ps1
 .\scripts\testes\TESTE_KPI_PARIDADE_READONLY.ps1
+# Linux/Cloud (fluxo WA + aceite, sem escrita):
+node scripts/testes/auditoria-wa-aceite-2026-08-14.js
 .\scripts\pre-push-check.ps1
 ```
 

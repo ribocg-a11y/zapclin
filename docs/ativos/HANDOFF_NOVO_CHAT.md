@@ -1,6 +1,6 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (fim de sessão — produção limpa)  
+**Atualizado:** 14/08/2026 (auditoria WA + aceite — evidências)  
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
@@ -21,7 +21,7 @@
 | FE / SW | **v4.34.0** (Pages) |
 | GAS arquivo | **3.52** (`AppsScript_v3.45_ATUAL.gs`) |
 | GAS ping | **3.52** ✅ |
-| PRs abertas | **nenhuma** |
+| PRs abertas | auditoria WA/aceite (esta) |
 | Site | https://www.zapclinslz.com/ · sitemap 12 |
 | Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
 
@@ -59,12 +59,19 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 3. Aguardar GSC bairros — **não** re-spam  
 4. Opcional: postar Reels `docs/ativos/marketing-ig/`
 
+### Auditoria WA + aceite (14/08 — executada)
+
+Varredura readonly: [`AUDITORIA_WA_ACEITE_2026-08-14.md`](./AUDITORIA_WA_ACEITE_2026-08-14.md) + JSON em `scripts/testes/evidencias/`.  
+**39 PASS / 7 FAIL / 1 WARN.** Links aceite/VIP/review/wa.me **OK**. Aceite OS #000345 (form) e #000343 (já confirmado) **OK**.  
+FAILs = REGRAS §3 (`confirmarEnvioWA` não insere nono dígito em 10 dígitos, não bloqueia inválido, sem clipboard/fallback). **Não corrigido** — zona crítica, só com pedido.  
+Operacional: 49 OS ativas ainda sem aceite na planilha.
+
 ### Agente (próxima sessão — só com pedido)
 
-1. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status (hoje só lançamento avulso tem fila)  
-2. Pacote **Z.9** `zc-app.css`  
-3. Planilha: Environment `zapclin` + pedido explícito  
-4. SEO: não reinventar; gap medido só
+1. Corrigir `confirmarEnvioWA` na matriz §3 (nono dígito / bloqueio / clipboard / fallback)  
+2. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status  
+3. Pacote **Z.9** `zc-app.css`  
+4. Planilha: Environment `zapclin` + pedido explícito
 
 ---
 
@@ -84,16 +91,18 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 
 - `ERROS_PWA_2026-07-14.md` — 14 erros SW (não repetir)  
 - `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md` — Cloud-403, OAuth, NET-TIMEOUT  
+- `AUDITORIA_WA_ACEITE_2026-08-14.md` — varredura WhatsApp + aceite (14/08)  
 - `REGRAS_DE_PUBLICACAO_SEGURA.md` §11 + §12  
 
 ---
 
-## 5) PRs (histórico — nada aberto)
+## 5) PRs
 
 | PR | Estado |
 |----|--------|
+| auditoria WA + aceite (esta branch) | aberta |
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
-| #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** (conteúdo útil já em main) |
+| #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** |
 
 ---
 
