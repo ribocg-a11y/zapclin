@@ -1,10 +1,10 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (fim de sessão — produção limpa)  
+**Atualizado:** 14/08/2026 (Pacote Z.9 · FE alvo **v4.35.0**)  
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.35.0  
 **Environment Cursor:** **`zapclin`**
 
 > Mensagem mínima: *Vamos dar continuidade ao projeto ZapClin.*  
@@ -18,7 +18,7 @@
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.34.0** (Pages) |
+| FE / SW | **v4.35.0** (repo; Pages após merge) |
 | GAS arquivo | **3.52** (`AppsScript_v3.45_ATUAL.gs`) |
 | GAS ping | **3.52** ✅ |
 | PRs abertas | **nenhuma** |
@@ -44,6 +44,7 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 
 | Frente | Status |
 |--------|--------|
+| Pacote Z.1–Z.9 | ✅ `zc-app.css` · alvo **v4.35.0** |
 | Pacote Z.1–Z.7 | ✅ `zc-operacao.js` + `zc-crm.js` · v4.34.0 |
 | GAS 3.52 | arquivo + ping live ✅ |
 | Handoff + Environment `zapclin` | ✅ secrets OAuth |
@@ -54,7 +55,7 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 
 ### Humano (só você)
 
-1. Loja: Wi-Fi estável + smoke `?force=v4.34.0` (OS, Pronto, Entregue)  
+1. Loja: Wi-Fi estável + smoke `?force=v4.35.0` (Home, OS, Pronto, Entregue, Relacionamento)  
 2. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
 3. Aguardar GSC bairros — **não** re-spam  
 4. Opcional: postar Reels `docs/ativos/marketing-ig/`
@@ -62,7 +63,7 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 ### Agente (próxima sessão — só com pedido)
 
 1. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status (hoje só lançamento avulso tem fila)  
-2. Pacote **Z.9** `zc-app.css`  
+2. Pacote **Z.10** `zc-boot.js`  
 3. Planilha: Environment `zapclin` + pedido explícito  
 4. SEO: não reinventar; gap medido só
 
@@ -93,6 +94,7 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 | PR | Estado |
 |----|--------|
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
+| Z.9 `zc-app.css` v4.35.0 | **este PR** |
 | #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** (conteúdo útil já em main) |
 
 ---

@@ -1,12 +1,12 @@
 # Pacote Z — Modularização do frontend ZapClin
 
 **Início:** 11/06/2026  
-**Atualizado:** 14/08/2026 (Z.7 · **v4.34.0**)  
+**Atualizado:** 14/08/2026 (Z.9 · **v4.35.0**)  
 **Objetivo:** reduzir monólito `index.html` sem mudar comportamento — espelhar Pacote M do Movi Kids.
 
 ---
 
-## Panorama (v4.34.0 — Z.7)
+## Panorama (v4.35.0 — Z.9)
 
 | Artefato | Papel |
 |----------|-------|
@@ -24,9 +24,10 @@
 | `zc-clientes.js` | Cadastro OS, lista, status, pagamento |
 | `zc-operacao.js` | Fila Operação, SLA, painel |
 | `zc-crm.js` | Relacionamento: ficha, fotos, Nova OS assistida |
-| `index.html` | HTML + CSS + Dashboard/Admin/Vendas/… |
+| `zc-app.css` | Estilos do PWA (tokens, layout, páginas) |
+| `index.html` | HTML + JS inline (Dashboard/Admin/Vendas/…) |
 
-**Progresso:** ~35% — 14 módulos; meta final shell HTML < 200 linhas JS inline.
+**Progresso:** ~45% — 14 JS + 1 CSS; meta final shell HTML < 200 linhas JS inline.
 
 ---
 
@@ -39,8 +40,8 @@
 | **Z.6** | `zc-registrar.js` + `zc-clientes.js` | **v4.33.6** | ✅ |
 | **Z.7** | `zc-operacao.js` + `zc-crm.js` | **v4.34.0** | ✅ |
 | **Z.8** | histórico custos (parcial) | v4.31.0 | 🟡 ✅ custos |
-| **Z.9** | `zc-app.css` | v4.35.0 | ⬜ próximo CSS |
-| **Z.10** | `zc-boot.js` shell enxuto | v4.36.0 | ⬜ |
+| **Z.9** | `zc-app.css` | **v4.35.0** | ✅ |
+| **Z.10** | `zc-boot.js` shell enxuto | v4.36.0 | ⬜ próximo |
 
 ---
 
@@ -49,10 +50,11 @@
 1. Uma fase = bump de versão (`zc-version`, `sw.js`, `?v=`).
 2. Zero mudança de comportamento — só mover código.
 3. `pre-push-check.ps1` verde antes de push.
-4. Cada `zc-*.js` novo entra em `APP_SHELL`.
+4. Cada `zc-*.js` / `zc-app.css` novo entra em `APP_SHELL`.
 5. Antes de SW/versão: `ERROS_PWA_2026-07-14.md` + Regra 11.
+6. SW: **nunca** fallback HTML → `.js` / `.css` / `manifest`. `zc-app.css` é shell crítico.
 
-Ordem de carga: version → globals → api → core → nav → home → sync → whatsapp → admin → historico-custos → registrar → clientes → **operacao → crm** → inline.
+Ordem de carga: `zc-app.css` (head) → version → globals → api → core → nav → home → sync → whatsapp → admin → historico-custos → registrar → clientes → operacao → crm → inline.
 
 ---
 
@@ -63,4 +65,4 @@ node --check zc-operacao.js; node --check zc-crm.js
 .\scripts\pre-push-check.ps1
 ```
 
-Homologação: Operação (fila/SLA/Marcar pronto) + Relacionamento (ficha, lightbox foto, Nova OS) — `?force=v4.34.0`.
+Homologação: Home, Operação, Relacionamento e Dashboard — `?force=v4.35.0`.

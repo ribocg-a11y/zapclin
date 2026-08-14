@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.34.0 | Data: 14/08/2026
+// Versão: 4.35.0 | Data: 14/08/2026
+// [v4.35.0 CACHE]
+// Pacote Z.9: inclui zc-app.css (nunca HTML no lugar de CSS).
 // [v4.34.0 CACHE]
 // Pacote Z.7: inclui zc-operacao.js + zc-crm.js.
 // [v4.33.9 CACHE]
@@ -19,9 +21,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.34.0';
-const STATIC_CACHE = 'zapclin-static-v4.34.0';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.34.0';
+const ZAPCLIN_SW_VERSION = 'v4.35.0';
+const STATIC_CACHE = 'zapclin-static-v4.35.0';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.35.0';
 
 const APP_SHELL = [
   './',
@@ -47,14 +49,15 @@ const APP_SHELL = [
   './zc-registrar.js',
   './zc-clientes.js',
   './zc-operacao.js',
-  './zc-crm.js'
+  './zc-crm.js',
+  './zc-app.css'
 ];
 
 function isShellCritical_(url) {
   const path = url.pathname || '';
   const file = path.split('/').pop() || '';
   if (file === 'index.html' || file === 'sw.js') return true;
-  if (/^zc-.*\.js$/i.test(file)) return true;
+  if (/^zc-.*\.(js|css)$/i.test(file)) return true;
   return false;
 }
 
@@ -117,7 +120,7 @@ self.addEventListener('fetch', event => {
 
   if (url.origin !== self.location.origin) return;
 
-  // Shell crítico (index/zc-*.js/sw.js): rede primeiro; fallback APENAS do próprio arquivo em cache.
+  // Shell crítico (index/zc-*.js/zc-*.css/sw.js): rede primeiro; fallback APENAS do próprio arquivo em cache.
   if (isShellCritical_(url)) {
     event.respondWith(
       fetch(req, { cache: 'no-store' })
