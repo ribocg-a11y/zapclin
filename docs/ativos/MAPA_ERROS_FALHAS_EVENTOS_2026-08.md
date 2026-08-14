@@ -47,6 +47,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | 14/08/2026 | PR #18 Z.7 merged → **v4.34.0** | Operação/CRM módulos |
 | 14/08/2026 | Loja: lentidão + erros salvar/encerrar | Correlacionado a internet fraca (**NET-TIMEOUT**) |
 | 14/08/2026 | Humano redeploy GAS → ping **3.52** | ✅ alinhado com arquivo |
+| 14/08/2026 | PRs draft zeradas (#20 SEO + closes) | 0 PRs abertas |
 
 **Commits live SEO (referência `zapclinslz`):** `4dafda1` (PAA), `13d4493` (bairro FAQ), `2a0bcb3` (PageRank `/quanto-tempo/`).
 
@@ -57,12 +58,13 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | Item | Nota | Prioridade |
 |------|------|------------|
 | Ping GAS **3.52** = arquivo **3.52** | Redeploy 14/08 | ✅ resolvido |
-| Pacote Z.7 pendente | `zc-operacao` + `zc-crm` | P2 agente |
+| Pacote Z.7 | `zc-operacao` + `zc-crm` em v4.34.0 | ✅ |
 | Auth operador ausente | Fase 4 equiparação | P2 |
 | Cockpit narrativo ausente | Fase 5 | P2 |
-| Indexação parcial site | ~7 URLs em `site:` amostra; bairros em fila GSC | P1 humano/aguardar |
-| Backlink Golden Shopping | Texto pronto; falta ação humana | P1 humano |
-| PRs draft acumulados | #14 #15 #16 #1 | Consolidar com pedido |
+| Indexação parcial site | bairros em fila GSC | P1 humano/aguardar |
+| Backlink Golden Shopping | `ALAVANCAS_HUMANAS_ALTO_IMPACTO.md` | P1 humano |
+| NET-TIMEOUT OS/status | sem fila offline para cadastro/fotos | P2 sob pedido |
+| PRs abertas | 0 (14/08 limpeza #20) | ✅ |
 
 ---
 

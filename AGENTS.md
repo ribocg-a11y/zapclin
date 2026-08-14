@@ -97,8 +97,10 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
 - **Pacote Z:** Z.7 ✅ (`zc-operacao` + `zc-crm`); **próximo:** Z.9 `zc-app.css`
 - **OAuth:** Environment `zapclin` + seed ago 01–13 ✅
-- **SEO:** live + PR #15; próximo humano = Golden Shopping
-- **Próximo humano:** Wi-Fi estável na loja; Golden backlink; opcional resiliência rede
+- **SEO:** motor + Reels + playbooks em `main` (não reinventar); humano = Golden Shopping
+- **PRs:** nenhuma aberta
+- **Próximo humano:** Wi-Fi loja + smoke v4.34.0; Golden backlink
+- **Próximo agente:** Z.9 CSS ou NET-TIMEOUT (só com pedido)
 
 ## Ao encerrar sessão
 

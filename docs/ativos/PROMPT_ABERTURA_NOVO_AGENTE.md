@@ -1,17 +1,16 @@
 # Prompt de abertura — novo agente ZapClin
 
-**Cole tudo abaixo** na primeira mensagem do novo Cloud Agent.  
-**Environment Cursor:** selecione **`zapclin`** (secrets Google OAuth).  
-**Repo:** `ribocg-a11y/zapclin` (não abrir só `zapclinslz` se a tarefa for ops/docs/PWA).
+**Cole o bloco abaixo** na primeira mensagem.  
+**Environment:** `zapclin` · **Repo:** `ribocg-a11y/zapclin`
 
 ---
 
 ```
 Vamos dar continuidade ao projeto ZapClin.
 
-Você é o próximo Cloud Agent. Faça handoff limpo a partir dos docs — não invente estado.
+Você é o próximo Cloud Agent. Leia os docs — não invente estado.
 
-## Leitura obrigatória (nesta ordem) antes de qualquer código
+## Leitura obrigatória (nesta ordem) antes de código
 1. docs/ativos/HANDOFF_NOVO_CHAT.md
 2. docs/ativos/ESTADO_ATUAL.md
 3. docs/ativos/ERROS_PWA_2026-07-14.md
@@ -20,41 +19,38 @@ Você é o próximo Cloud Agent. Faça handoff limpo a partir dos docs — não 
 6. docs/ativos/ACESSOS_E_AUTORIZACOES.md
 7. docs/ativos/PLANO_PRIORIDADES_2026-06.md
 8. docs/ativos/AMBIENTE_CLOUD_ZAPCLIN.md
-9. AGENTS.md (raiz)
+9. AGENTS.md
 
-Depois: resuma em 8–12 linhas (produção FE/SW/GAS ping, PRs abertos, próximo passo humano vs agente) e só então proponha/execute o próximo passo.
+Resuma em 8–12 linhas (FE/SW/GAS ping, PRs abertas, humano vs agente) e só então trabalhe.
 
 ## Premissas P0
-- GAS canônico: AppsScript_v3.45_ATUAL.gs — Deploy ID único (nunca clasp deploy / nunca novo Deploy ID).
-- FE/SW em main: v4.33.9; GAS arquivo 3.52; ping produção ainda 3.51 até humano publicar.
+- GAS: AppsScript_v3.45_ATUAL.gs · Deploy ID único · nunca clasp deploy.
+- Produção 14/08: FE/SW v4.34.0 · GAS arquivo e ping 3.52.
 - Escritas browser→GAS = GET + query string.
-- Nunca commit de segredos. Planilha só com pedido explícito (exceto se eu pedir seed nesta sessão).
-- Site live = repo zapclinslz; docs/scripts ops = zapclin. Não push no remoto errado.
-- WhatsApp = zona crítica. PIN admin 1321 — não alterar sem pedido explícito.
-- Incidente PWA 14/07: não repetir erros de SW/cache.
-- Sempre terminar resposta com: Mudança no AppScript: sim|não + caminho do .gs.
+- Sem secrets no git. Planilha só com pedido explícito (Environment zapclin).
+- Site live = zapclinslz; ops/docs/PWA = zapclin. Confirmar git remote antes de push.
+- WhatsApp zona crítica. PIN 1321 — não alterar sem pedido.
+- Incidente PWA 14/07: não repetir SW/cache.
+- Terminar com: Mudança no AppScript: sim|não + caminho do .gs.
 
-## Estado que você herda (14/08/2026)
-- SEO live + motor em scripts/seo/engine/; PR #15 draft.
-- Bairros: GSC 5/5 já solicitado — não re-spam; medir site: / GSC.
-- Próximo humano SEO de alto impacto: backlink Golden Shopping (texto em docs/ativos/seo/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md).
-- LANÇAMENTOS ago 01–13 já gravados OK; script em PR #16.
-- Cloud Environment zapclin tem GOOGLE_CLIENT_ID / SECRET / REFRESH_TOKEN.
-- Pacote Z: próximo módulo Z.7 (zc-operacao + zc-crm).
+## Estado herdado (14/08/2026 — limpo)
+- PRs abertas: nenhuma.
+- Z.7 feito (zc-operacao + zc-crm). Próximo código: Z.9 zc-app.css, ou NET-TIMEOUT (fila OS/status) se o humano pedir.
+- SEO motor + Reels 01–03 + playbooks em main. Não reinventar SEO. Humano: Golden Shopping (docs/ativos/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md). GSC bairros: não re-spam.
+- Seed LANÇAMENTOS 01–13/08 já na planilha.
+- Loja reportou lentidão/erros ao salvar OS e encerrar: internet ruim (NET-TIMEOUT). Cadastro OS+fotos NÃO tem fila offline.
 
-## Branch / git
-- Trabalhe em branch cursor/<nome>-c633 a partir de main.
-- Commit + push; PR via ManagePullRequest (não gh write).
-- Base PR: main.
+## Git
+- Branch cursor/<nome>-c633 a partir de main.
+- Commit + push; PR via ManagePullRequest. Base: main.
 
-Comece pela leitura e pelo resumo. Não peça esclarecimentos óbvios cobertos pelos docs.
+Comece pela leitura e pelo resumo.
 ```
 
 ---
 
-## Links úteis após merge
+## Links
 
-- Handoff: `docs/ativos/HANDOFF_NOVO_CHAT.md`  
-- Environment: `docs/ativos/AMBIENTE_CLOUD_ZAPCLIN.md`  
-- Produção PWA: https://ribocg-a11y.github.io/zapclin/  
+- PWA: https://ribocg-a11y.github.io/zapclin/?force=v4.34.0  
 - Site: https://www.zapclinslz.com/  
+- Ping GAS: https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping  
