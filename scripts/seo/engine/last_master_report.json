@@ -1,0 +1,1354 @@
+{
+  "ts": "2026-08-11T20:39:45.367034+00:00",
+  "pagerank": {
+    "pages": 12,
+    "edges": 72,
+    "pagerank": [
+      {
+        "path": "/",
+        "pr": 0.137749,
+        "inlinks": 11,
+        "outlinks": 11
+      },
+      {
+        "path": "/higienizacao-capacete-calhau-golden-shopping/",
+        "pr": 0.137749,
+        "inlinks": 11,
+        "outlinks": 11
+      },
+      {
+        "path": "/higienizacao-de-capacetes-sao-luis/",
+        "pr": 0.129979,
+        "inlinks": 11,
+        "outlinks": 6
+      },
+      {
+        "path": "/preco-higienizacao-capacete-sao-luis/",
+        "pr": 0.129979,
+        "inlinks": 11,
+        "outlinks": 6
+      },
+      {
+        "path": "/quanto-tempo-higienizar-capacete/",
+        "pr": 0.098534,
+        "inlinks": 6,
+        "outlinks": 6
+      },
+      {
+        "path": "/higienizacao-vs-lavagem-capacete/",
+        "pr": 0.098534,
+        "inlinks": 6,
+        "outlinks": 6
+      },
+      {
+        "path": "/como-higienizar-capacete/",
+        "pr": 0.098534,
+        "inlinks": 6,
+        "outlinks": 6
+      },
+      {
+        "path": "/higienizacao-capacete-turu-sao-luis/",
+        "pr": 0.033788,
+        "inlinks": 2,
+        "outlinks": 4
+      },
+      {
+        "path": "/higienizacao-capacete-sao-francisco-sao-luis/",
+        "pr": 0.033788,
+        "inlinks": 2,
+        "outlinks": 4
+      },
+      {
+        "path": "/higienizacao-capacete-ponta-d-areia-sao-luis/",
+        "pr": 0.033788,
+        "inlinks": 2,
+        "outlinks": 4
+      },
+      {
+        "path": "/higienizacao-capacete-renascenca-sao-luis/",
+        "pr": 0.033788,
+        "inlinks": 2,
+        "outlinks": 4
+      },
+      {
+        "path": "/higienizacao-capacete-cohama-sao-luis/",
+        "pr": 0.033788,
+        "inlinks": 2,
+        "outlinks": 4
+      }
+    ],
+    "link_suggestions": [
+      {
+        "from": "/higienizacao-de-capacetes-sao-luis/",
+        "to": "/higienizacao-capacete-turu-sao-luis/",
+        "reason": "hub_pr=0.1300 target_in=2 target_pr=0.0338"
+      },
+      {
+        "from": "/higienizacao-de-capacetes-sao-luis/",
+        "to": "/higienizacao-capacete-sao-francisco-sao-luis/",
+        "reason": "hub_pr=0.1300 target_in=2 target_pr=0.0338"
+      },
+      {
+        "from": "/higienizacao-de-capacetes-sao-luis/",
+        "to": "/higienizacao-capacete-ponta-d-areia-sao-luis/",
+        "reason": "hub_pr=0.1300 target_in=2 target_pr=0.0338"
+      },
+      {
+        "from": "/higienizacao-de-capacetes-sao-luis/",
+        "to": "/higienizacao-capacete-renascenca-sao-luis/",
+        "reason": "hub_pr=0.1300 target_in=2 target_pr=0.0338"
+      },
+      {
+        "from": "/higienizacao-de-capacetes-sao-luis/",
+        "to": "/higienizacao-capacete-cohama-sao-luis/",
+        "reason": "hub_pr=0.1300 target_in=2 target_pr=0.0338"
+      }
+    ],
+    "graph": {
+      "/": [
+        "/como-higienizar-capacete/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-capacete-cohama-sao-luis/",
+        "/higienizacao-capacete-ponta-d-areia-sao-luis/",
+        "/higienizacao-capacete-renascenca-sao-luis/",
+        "/higienizacao-capacete-sao-francisco-sao-luis/",
+        "/higienizacao-capacete-turu-sao-luis/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/higienizacao-vs-lavagem-capacete/",
+        "/preco-higienizacao-capacete-sao-luis/",
+        "/quanto-tempo-higienizar-capacete/"
+      ],
+      "/higienizacao-capacete-turu-sao-luis/": [
+        "/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/preco-higienizacao-capacete-sao-luis/"
+      ],
+      "/higienizacao-capacete-sao-francisco-sao-luis/": [
+        "/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/preco-higienizacao-capacete-sao-luis/"
+      ],
+      "/higienizacao-de-capacetes-sao-luis/": [
+        "/",
+        "/como-higienizar-capacete/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-vs-lavagem-capacete/",
+        "/preco-higienizacao-capacete-sao-luis/",
+        "/quanto-tempo-higienizar-capacete/"
+      ],
+      "/quanto-tempo-higienizar-capacete/": [
+        "/",
+        "/como-higienizar-capacete/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/higienizacao-vs-lavagem-capacete/",
+        "/preco-higienizacao-capacete-sao-luis/"
+      ],
+      "/higienizacao-capacete-ponta-d-areia-sao-luis/": [
+        "/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/preco-higienizacao-capacete-sao-luis/"
+      ],
+      "/preco-higienizacao-capacete-sao-luis/": [
+        "/",
+        "/como-higienizar-capacete/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/higienizacao-vs-lavagem-capacete/",
+        "/quanto-tempo-higienizar-capacete/"
+      ],
+      "/higienizacao-capacete-calhau-golden-shopping/": [
+        "/",
+        "/como-higienizar-capacete/",
+        "/higienizacao-capacete-cohama-sao-luis/",
+        "/higienizacao-capacete-ponta-d-areia-sao-luis/",
+        "/higienizacao-capacete-renascenca-sao-luis/",
+        "/higienizacao-capacete-sao-francisco-sao-luis/",
+        "/higienizacao-capacete-turu-sao-luis/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/higienizacao-vs-lavagem-capacete/",
+        "/preco-higienizacao-capacete-sao-luis/",
+        "/quanto-tempo-higienizar-capacete/"
+      ],
+      "/higienizacao-vs-lavagem-capacete/": [
+        "/",
+        "/como-higienizar-capacete/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/preco-higienizacao-capacete-sao-luis/",
+        "/quanto-tempo-higienizar-capacete/"
+      ],
+      "/higienizacao-capacete-renascenca-sao-luis/": [
+        "/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/preco-higienizacao-capacete-sao-luis/"
+      ],
+      "/como-higienizar-capacete/": [
+        "/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/higienizacao-vs-lavagem-capacete/",
+        "/preco-higienizacao-capacete-sao-luis/",
+        "/quanto-tempo-higienizar-capacete/"
+      ],
+      "/higienizacao-capacete-cohama-sao-luis/": [
+        "/",
+        "/higienizacao-capacete-calhau-golden-shopping/",
+        "/higienizacao-de-capacetes-sao-luis/",
+        "/preco-higienizacao-capacete-sao-luis/"
+      ]
+    },
+    "_exit": 0,
+    "ok": true
+  },
+  "coverage": {
+    "clusters": [
+      {
+        "id": "geo_bairro_expand",
+        "intent": "transactional_local",
+        "value": 70,
+        "coverage": 80.0,
+        "gap_priority": 14.0,
+        "paths_present": [],
+        "paths_missing": [],
+        "factory": "local_modifier",
+        "seeds": [
+          "Renascença",
+          "Cohama",
+          "Ponta d'Areia",
+          "São Francisco",
+          "Turu"
+        ],
+        "queries": [
+          {
+            "query": "higienização capacete Renascença São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete Cohama",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete Ponta d'Areia",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete São Francisco São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete Turu",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "local_core",
+        "intent": "transactional_local",
+        "value": 95,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/higienizacao-de-capacetes-sao-luis/",
+          "/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "higienização de capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "limpeza de capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "lavagem de capacete São Luís",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "price",
+        "intent": "commercial_investigate",
+        "value": 90,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/preco-higienizacao-capacete-sao-luis/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "preço higienização capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "quanto custa higienizar capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete valor",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "time",
+        "intent": "commercial_investigate",
+        "value": 85,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/quanto-tempo-higienizar-capacete/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "quanto tempo higienizar capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete 8 minutos",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete rápido",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "howto",
+        "intent": "informational",
+        "value": 80,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/como-higienizar-capacete/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "como higienizar capacete de moto",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "como tirar odor de capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "como limpar forro capacete",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "compare",
+        "intent": "commercial_investigate",
+        "value": 78,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/higienizacao-vs-lavagem-capacete/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "higienização ou lavagem de capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "diferença higienização lavagem capacete",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "geo_calhau",
+        "intent": "transactional_local",
+        "value": 88,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/higienizacao-capacete-calhau-golden-shopping/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "higienização capacete Calhau",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete Golden Shopping",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "limpeza capacete Golden Shopping Calhau",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "social_discovery",
+        "intent": "discovery",
+        "value": 92,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "higienização capacete Instagram São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "ZapClin São Luís",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      }
+    ],
+    "top_gaps": [
+      {
+        "id": "geo_bairro_expand",
+        "intent": "transactional_local",
+        "value": 70,
+        "coverage": 80.0,
+        "gap_priority": 14.0,
+        "paths_present": [],
+        "paths_missing": [],
+        "factory": "local_modifier",
+        "seeds": [
+          "Renascença",
+          "Cohama",
+          "Ponta d'Areia",
+          "São Francisco",
+          "Turu"
+        ],
+        "queries": [
+          {
+            "query": "higienização capacete Renascença São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete Cohama",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete Ponta d'Areia",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete São Francisco São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete Turu",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "local_core",
+        "intent": "transactional_local",
+        "value": 95,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/higienizacao-de-capacetes-sao-luis/",
+          "/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "higienização de capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "limpeza de capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "lavagem de capacete São Luís",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "price",
+        "intent": "commercial_investigate",
+        "value": 90,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/preco-higienizacao-capacete-sao-luis/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "preço higienização capacete São Luís",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "quanto custa higienizar capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete valor",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "time",
+        "intent": "commercial_investigate",
+        "value": 85,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/quanto-tempo-higienizar-capacete/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "quanto tempo higienizar capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienização capacete 8 minutos",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "higienizar capacete rápido",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      },
+      {
+        "id": "howto",
+        "intent": "informational",
+        "value": 80,
+        "coverage": 100.0,
+        "gap_priority": 0.0,
+        "paths_present": [
+          "/como-higienizar-capacete/"
+        ],
+        "paths_missing": [],
+        "factory": null,
+        "seeds": [],
+        "queries": [
+          {
+            "query": "como higienizar capacete de moto",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "como tirar odor de capacete",
+            "token_coverage": 1.0
+          },
+          {
+            "query": "como limpar forro capacete",
+            "token_coverage": 1.0
+          }
+        ],
+        "action": "maintain"
+      }
+    ],
+    "_exit": 0,
+    "ok": true
+  },
+  "schema_lint": {
+    "files": 12,
+    "errors": [],
+    "warnings": [],
+    "ok": true,
+    "_exit": 0
+  },
+  "freshness": {
+    "ts": 1786480784,
+    "total": 17,
+    "changed": [
+      "https://www.zapclinslz.com/",
+      "https://www.zapclinslz.com/higienizacao-capacete-calhau-golden-shopping/"
+    ],
+    "new": [],
+    "removed": [],
+    "indexnow_candidates": [
+      "https://www.zapclinslz.com/",
+      "https://www.zapclinslz.com/higienizacao-capacete-calhau-golden-shopping/"
+    ],
+    "_exit": 0,
+    "ok": true
+  },
+  "social": {
+    "reel_01": {
+      "score": 100,
+      "grade": "A",
+      "checks": {
+        "hook_question_or_pain": true,
+        "geo_sao_luis": true,
+        "geo_calhau_or_golden": true,
+        "price_anchor": true,
+        "time_anchor": true,
+        "cta_whatsapp_or_bio": true,
+        "brand_zapclin": true,
+        "anti_machine_only": true,
+        "hashtag_geo": true,
+        "loop_save_share": true
+      },
+      "gaps": [],
+      "pass_publish_gate": true
+    },
+    "threshold_publish": 80,
+    "_exit": 0,
+    "ok": true
+  },
+  "ctr_lab": {
+    "pages": [
+      {
+        "path": "/quanto-tempo-higienizar-capacete/",
+        "current": {
+          "title": "Quanto Tempo Demora Higienizar Capacete | ZapClin São Luís",
+          "score": 75,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete em 8 Minutos | São Luís — ZapClin",
+          "score": 80,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "number",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 5,
+        "all": [
+          {
+            "title": "Higienização de Capacete em 8 Minutos | São Luís — ZapClin",
+            "score": 80,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "number",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Quanto Tempo Demora Higienizar Capacete? 8 Min | ZapClin São Luís",
+            "score": 77,
+            "reasons": [
+              "long",
+              "geo",
+              "number",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          },
+          {
+            "title": "Quanto Tempo Demora Higienizar Capacete | ZapClin São Luís",
+            "score": 75,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/como-higienizar-capacete/",
+        "current": {
+          "title": "Como Higienizar Capacete de Moto | Processo ZapClin São Luís",
+          "score": 75,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "best_candidate": {
+          "title": "Como Tirar Odor do Capacete em São Luís | Método ZapClin",
+          "score": 75,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Como Tirar Odor do Capacete em São Luís | Método ZapClin",
+            "score": 75,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          },
+          {
+            "title": "Como Higienizar Capacete de Moto | Processo ZapClin São Luís",
+            "score": 75,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          },
+          {
+            "title": "Como Higienizar Capacete de Moto (Passo a Passo) | ZapClin São Luís",
+            "score": 62,
+            "reasons": [
+              "long",
+              "geo",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-capacete-calhau-golden-shopping/",
+        "current": {
+          "title": "Higienização de Capacete no Calhau | Golden Shopping | ZapClin",
+          "score": 45,
+          "reasons": [
+            "length_sweet",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete no Calhau | Golden Shopping | ZapClin",
+          "score": 45,
+          "reasons": [
+            "length_sweet",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacete no Calhau | Golden Shopping | ZapClin",
+            "score": 45,
+            "reasons": [
+              "length_sweet",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacete no Calhau | Golden Shopping | ZapClin",
+            "score": 45,
+            "reasons": [
+              "length_sweet",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Quiosque 01 Golden Shopping Calhau — Higienização de Capacetes",
+            "score": 33,
+            "reasons": [
+              "length_sweet",
+              "pipe"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-capacete-cohama-sao-luis/",
+        "current": {
+          "title": "Higienização de Capacete em Cohama | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete em Cohama | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacete em Cohama | ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacete em Cohama — ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-capacete-ponta-d-areia-sao-luis/",
+        "current": {
+          "title": "Higienização de Capacete em Ponta d'Areia | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete em Ponta d'Areia | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacete em Ponta d'Areia | ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacete em Ponta d'Areia — ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-capacete-renascenca-sao-luis/",
+        "current": {
+          "title": "Higienização de Capacete em Renascença | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete em Renascença | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacete em Renascença | ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacete em Renascença — ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-capacete-sao-francisco-sao-luis/",
+        "current": {
+          "title": "Higienização de Capacete em São Francisco | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete em São Francisco | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacete em São Francisco | ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacete em São Francisco — ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-capacete-turu-sao-luis/",
+        "current": {
+          "title": "Higienização de Capacete em Turu | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacete em Turu | ZapClin São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacete em Turu | ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacete em Turu — ZapClin São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-de-capacetes-sao-luis/",
+        "current": {
+          "title": "Higienização de Capacetes em São Luís | ZapClin Golden Shopping",
+          "score": 52,
+          "reasons": [
+            "long",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização de Capacetes em São Luís | ZapClin Golden Shopping",
+          "score": 52,
+          "reasons": [
+            "long",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização de Capacetes em São Luís | ZapClin Golden Shopping",
+            "score": 52,
+            "reasons": [
+              "long",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Higienização de Capacetes em São Luís — ZapClin Golden Shopping",
+            "score": 52,
+            "reasons": [
+              "long",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/higienizacao-vs-lavagem-capacete/",
+        "current": {
+          "title": "Higienização vs Lavagem de Capacete | Qual Escolher | ZapClin",
+          "score": 55,
+          "reasons": [
+            "length_sweet",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "best_candidate": {
+          "title": "Higienização vs Lavagem de Capacete | Qual Escolher | ZapClin",
+          "score": 55,
+          "reasons": [
+            "length_sweet",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Higienização vs Lavagem de Capacete | Qual Escolher | ZapClin",
+            "score": 55,
+            "reasons": [
+              "length_sweet",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          },
+          {
+            "title": "Higienização vs Lavagem de Capacete — Qual Escolher — ZapClin",
+            "score": 55,
+            "reasons": [
+              "length_sweet",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/",
+        "current": {
+          "title": "ZapClin | Higienização e Limpeza de Capacetes em São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "best_candidate": {
+          "title": "ZapClin | Higienização e Limpeza de Capacetes em São Luís",
+          "score": 65,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "pipe",
+            "brand"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "ZapClin | Higienização e Limpeza de Capacetes em São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "ZapClin — Higienização e Limpeza de Capacetes em São Luís",
+            "score": 65,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/preco-higienizacao-capacete-sao-luis/",
+        "current": {
+          "title": "Quanto Custa Higienizar Capacete em São Luís? R$15 | ZapClin",
+          "score": 90,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "number",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "best_candidate": {
+          "title": "Quanto Custa Higienizar Capacete em São Luís? R$15 | ZapClin",
+          "score": 90,
+          "reasons": [
+            "length_sweet",
+            "geo",
+            "number",
+            "pipe",
+            "brand",
+            "intent_word"
+          ]
+        },
+        "lift": 0,
+        "all": [
+          {
+            "title": "Quanto Custa Higienizar Capacete em São Luís? R$15 | ZapClin",
+            "score": 90,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "number",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          },
+          {
+            "title": "Quanto Custa Higienizar Capacete em São Luís? R$15 | ZapClin",
+            "score": 90,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "number",
+              "pipe",
+              "brand",
+              "intent_word"
+            ]
+          },
+          {
+            "title": "Preço Higienização de Capacete em São Luís | ZapClin",
+            "score": 80,
+            "reasons": [
+              "length_sweet",
+              "geo",
+              "number",
+              "pipe",
+              "brand"
+            ]
+          },
+          {
+            "title": "Tabela de Preços — Higienização de Capacetes São Luís | ZapClin",
+            "score": 67,
+            "reasons": [
+              "long",
+              "geo",
+              "number",
+              "pipe",
+              "brand"
+            ]
+          }
+        ]
+      }
+    ],
+    "apply_policy": "Só aplicar best_candidate se lift>=8 e geo preservada.",
+    "_exit": 0,
+    "ok": true
+  },
+  "serp_gap": {
+    "engine": "duckduckgo_html",
+    "note": "Proxy de SERP. Google real = celular humano (CAPTCHA em VM).",
+    "rows": [
+      {
+        "query": "higienização de capacete São Luís",
+        "titles": [],
+        "classes": [],
+        "gap_score": 0.0,
+        "our_hits": 0,
+        "dominant": "none"
+      },
+      {
+        "query": "ZapClin São Luís",
+        "titles": [],
+        "classes": [],
+        "gap_score": 0.0,
+        "our_hits": 0,
+        "dominant": "none"
+      },
+      {
+        "query": "higienizar capacete Golden Shopping Calhau",
+        "titles": [],
+        "classes": [],
+        "gap_score": 0.0,
+        "our_hits": 0,
+        "dominant": "none"
+      },
+      {
+        "query": "preço higienização capacete São Luís",
+        "titles": [],
+        "classes": [],
+        "gap_score": 0.0,
+        "our_hits": 0,
+        "dominant": "none"
+      }
+    ],
+    "play": [
+      "Se dominant=instagram → priorizar Reels score≥80 + bio geo (sinal social).",
+      "Se dominant=mall_citation → H1 backlink Golden (autoridade local).",
+      "Se our_hits=0 em query serviço → reforçar landing + internal PageRank + title CTR."
+    ],
+    "_exit": 0,
+    "ok": true
+  },
+  "local_factory_dry": {
+    "created": [
+      {
+        "slug": "higienizacao-capacete-renascenca-sao-luis",
+        "bairro": "Renascença",
+        "url": "https://www.zapclinslz.com/higienizacao-capacete-renascenca-sao-luis/"
+      },
+      {
+        "slug": "higienizacao-capacete-cohama-sao-luis",
+        "bairro": "Cohama",
+        "url": "https://www.zapclinslz.com/higienizacao-capacete-cohama-sao-luis/"
+      },
+      {
+        "slug": "higienizacao-capacete-ponta-d-areia-sao-luis",
+        "bairro": "Ponta d'Areia",
+        "url": "https://www.zapclinslz.com/higienizacao-capacete-ponta-d-areia-sao-luis/"
+      },
+      {
+        "slug": "higienizacao-capacete-sao-francisco-sao-luis",
+        "bairro": "São Francisco",
+        "url": "https://www.zapclinslz.com/higienizacao-capacete-sao-francisco-sao-luis/"
+      },
+      {
+        "slug": "higienizacao-capacete-turu-sao-luis",
+        "bairro": "Turu",
+        "url": "https://www.zapclinslz.com/higienizacao-capacete-turu-sao-luis/"
+      }
+    ],
+    "skipped": [],
+    "write": false,
+    "_exit": 0,
+    "ok": true
+  }
+}

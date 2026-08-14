@@ -57,7 +57,7 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | Pacote Z | … `zc-operacao`, `zc-crm` ✅ · **próximo:** `zc-app.css` |
 | PWA | `sw.js`, `manifest.json`, `reparar.html` |
 | OAuth planilha | `scripts/oauth-sheets/` |
-| SEO engine | `scripts/seo/engine/` (PR #15) |
+| SEO engine | `scripts/seo/engine/` |
 | Site live | repo **`ribocg-a11y/zapclinslz`** |
 | Governança | `AGENTS.md`, `docs/ativos/*` |
 
@@ -81,10 +81,11 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 | PR | Estado | Tema |
 |----|--------|------|
 | [#18](https://github.com/ribocg-a11y/zapclin/pull/18) | **MERGED** | Z.7 v4.34.0 |
-| [#17](https://github.com/ribocg-a11y/zapclin/pull/17) | handoff docs | rebase pós-#18 |
-| [#15](https://github.com/ribocg-a11y/zapclin/pull/15) | DRAFT | SEO |
-| [#16](https://github.com/ribocg-a11y/zapclin/pull/16) | DRAFT | seed ago |
-| [#14](https://github.com/ribocg-a11y/zapclin/pull/14) | DRAFT | Extra chuva |
+| [#17](https://github.com/ribocg-a11y/zapclin/pull/17) | **MERGED** | handoff |
+| [#19](https://github.com/ribocg-a11y/zapclin/pull/19) | **MERGED** | GAS ping 3.52 |
+| [#15](https://github.com/ribocg-a11y/zapclin/pull/15) | consolidado | SEO + Reels + motor |
+| [#16](https://github.com/ribocg-a11y/zapclin/pull/16) | **CLOSED** | seed já em main |
+| [#1](https://github.com/ribocg-a11y/zapclin/pull/1) | **CLOSED** | legado obsoleto |
 
 ---
 

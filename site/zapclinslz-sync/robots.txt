@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ribocg-a11y.github.io/zapclin/sitemap.xml
 Sitemap: https://www.zapclinslz.com/sitemap.xml
