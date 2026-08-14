@@ -1,4 +1,4 @@
-# ZapClin — Estado atual (29/07/2026)
+# ZapClin — Estado atual (14/08/2026)
 
 Referência única para alinhamento repo × produção.
 
@@ -17,8 +17,8 @@ Referência única para alinhamento repo × produção.
 
 | Camada | Versão repo / prod | URL / ID |
 |--------|--------------------|----------|
-| **Frontend** | **v4.33.8** | https://ribocg-a11y.github.io/zapclin/?force=v4.33.8 |
-| **Service Worker** | **v4.33.8** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
+| **Frontend** | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
+| **Service Worker** | **v4.34.0** | `sw.js` → `ZAPCLIN_SW_VERSION` (ativo) |
 | **Apps Script (código repo)** | **v3.52** (header no `.gs` canônico) | `AppsScript_v3.45_ATUAL.gs` (nome mantido) |
 | **Apps Script (ping prod.)** | **3.51** (alvo **3.52** após Nova versão Web) | ping ok |
 | **OAuth Desktop** | write OK (21/07) | `scripts/oauth-sheets/` |
@@ -40,9 +40,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | Artefato | Arquivo |
 |----------|---------|
-| GAS | `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.51) |
+| GAS | `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.52) |
 | Frontend | `index.html` + `zc-*.js` |
-| Pacote Z | `zc-version` … `zc-historico-custos`, `zc-nav`, `zc-home`, `zc-registrar`, `zc-clientes` |
+| Pacote Z | `zc-version` … `zc-historico-custos`, `zc-nav`, `zc-home`, `zc-registrar`, `zc-clientes`, `zc-operacao`, `zc-crm` |
 | PWA | `sw.js`, `manifest.json`, `reparar.html` |
 | OAuth planilha | `scripts/oauth-sheets/` |
 | Erros PWA 14/07 | `docs/ativos/ERROS_PWA_2026-07-14.md` |
@@ -55,6 +55,8 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 | Versão / data | Entrega |
 |---------------|---------|
+| **14/08/2026** | Pacote Z.7 — `zc-operacao.js` + `zc-crm.js` (**v4.34.0**) |
+| **08/08/2026** | Isola `/site/` do SW + vitrine pública (**v4.33.9**) |
 | **29/07/2026** | Dashboard: corrige Projeção de Fechamento (**v4.33.8**) |
 | **21/07/2026** | Hotfix Relacionamento FE **v4.33.6** + GAS **v3.51** (preview fotos) |
 | **21/07/2026** | Pacote Z.6 — `zc-registrar.js` + `zc-clientes.js` (**v4.33.5**) |
@@ -69,8 +71,9 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 ## Próximo passo
 
-1. Abrir `?force=v4.33.8` · validar Projeção de Fechamento no Dashboard  
-2. Pacote Z.7 (`zc-operacao` + `zc-crm`) quando Relacionamento estiver ok na loja
+1. Abrir `?force=v4.34.0` · validar Operação (fila/SLA) e Relacionamento (ficha/fotos/Nova OS)  
+2. Humano: Nova versão Web GAS **3.52** no mesmo Deploy ID  
+3. Pacote Z.9 (`zc-app.css`) — próximo módulo de código
 
 ---
 
