@@ -27,7 +27,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | **GAS-CLASP** | Novo Deploy ID / URL quebra app | `clasp deploy` ou “Novo implantar” | **Proibido.** Só “Gerenciar implantações → Nova versão” no ID canônico. |
 | **REPO-MIX** | Diff Movi × ZapClin | Pastas C: misturadas | `MAPA_PASTAS_LOCAL.md` — clones separados. |
 | **ENV-MISS** | Cloud Agent sem secrets Sheets | Run iniciada **antes** de linkar Environment | Novo agente: selecionar Environment **`zapclin`** ao criar. |
-| **NET-TIMEOUT** | Erro ao salvar OS / encerrar (Pronto/Entregue); app lento | Cadastro OS+fotos = POST obrigatório; status = `apiGet` ~10s; SW cache **não** substitui escrita no GAS/Drive | Esperado em internet ruim. Mitigar: Wi-Fi estável; não fechar app no meio do upload; olhar toast “salvo localmente”; futuro: fila offline para OS/status. |
+| **ACEITE-IFRAME** | Cliente abre o link do Zap e não consegue aceitar os termos (página em branco) | HtmlService iframe; form sem `target="_top"` | GAS **3.53** no repo; humano **Nova versão**; smoke no WhatsApp do celular |
 
 ---
 

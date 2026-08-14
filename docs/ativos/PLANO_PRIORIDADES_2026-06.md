@@ -20,7 +20,7 @@
 
 | # | Item | Status |
 |---|------|--------|
-| H1 | GAS Nova versão 3.52 | ✅ |
+| H1 | GAS Nova versão **3.53** (aceite WhatsApp `target=_top`) | ⏳ |
 | H2 | Smoke loja `?force=v4.34.0` | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |

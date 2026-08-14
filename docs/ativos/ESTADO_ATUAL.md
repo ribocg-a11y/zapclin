@@ -18,7 +18,7 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 | Camada | Versão | URL |
 |--------|--------|-----|
 | Frontend / SW | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
-| GAS arquivo + ping | **3.52** ✅ | ping abaixo |
+| GAS arquivo + ping | **3.53** no repo / ping live **3.52** até Nova versão | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **0 abertas** | — |
 

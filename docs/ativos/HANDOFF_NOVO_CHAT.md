@@ -1,6 +1,6 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (auditoria WA + aceite — evidências)  
+**Atualizado:** 14/08/2026 (fix aceite iframe WhatsApp · GAS 3.53 no repo)  
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
@@ -19,8 +19,8 @@
 | Camada | Valor |
 |--------|--------|
 | FE / SW | **v4.34.0** (Pages) |
-| GAS arquivo | **3.52** (`AppsScript_v3.45_ATUAL.gs`) |
-| GAS ping | **3.52** ✅ |
+| GAS arquivo | **3.53** (`AppsScript_v3.45_ATUAL.gs`) — **produção ainda 3.52 até Nova versão** |
+| GAS ping | **3.52** (live) → alvo **3.53** |
 | PRs abertas | **#23** auditoria WA/aceite |
 | Site | https://www.zapclinslz.com/ · sitemap 12 |
 | Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
@@ -52,19 +52,19 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Seed ago 01–13 | ✅ planilha + script |
 | Drafts #1 #14 #15 #16 | **CLOSED / merged** — zero PRs abertas |
 
-### Humano (só você)
+### Humano (só você) — **agora**
 
-1. Loja: Wi-Fi estável + smoke `?force=v4.34.0` (OS, Pronto, Entregue)  
-2. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
-3. Aguardar GSC bairros — **não** re-spam  
-4. Opcional: postar Reels `docs/ativos/marketing-ig/`
+1. **GAS 3.53 — aceite no WhatsApp:** colar `AppsScript_v3.45_ATUAL.gs` completo → **Nova versão** no Deploy ID atual (nunca `clasp deploy`). Guia: `docs/APPSCRIPT_DEPLOY.md`  
+   Smoke: abrir o link de aceite de uma OS **pendente** pelo WhatsApp do celular → botão verde ou o link “Se o botão não responder…”. **Não** usar OS de cliente real se preferir uma OS de teste.  
+2. Loja: Wi-Fi estável + smoke `?force=v4.34.0` (OS, Pronto, Entregue)  
+3. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
+4. Aguardar GSC bairros — **não** re-spam
 
 ### Auditoria WA + aceite (14/08 — executada)
 
 Varredura readonly: [`AUDITORIA_WA_ACEITE_2026-08-14.md`](./AUDITORIA_WA_ACEITE_2026-08-14.md) + JSON em `scripts/testes/evidencias/`.  
-**39 PASS / 7 FAIL / 1 WARN.** Links aceite/VIP/review/wa.me **OK**. Aceite OS #000345 (form) e #000343 (já confirmado) **OK**.  
-FAILs = REGRAS §3 (`confirmarEnvioWA` não insere nono dígito em 10 dígitos, não bloqueia inválido, sem clipboard/fallback). **Não corrigido** — zona crítica, só com pedido.  
-Operacional: 49 OS ativas ainda sem aceite na planilha.
+**Causa do “não consigo aceitar os termos”:** o link abre HtmlService **dentro de um iframe** `googleusercontent`. O form **não tinha** `target="_top"`. No WhatsApp (navegador interno) o toque no botão verde navega o iframe interno → **página em branco**. O Google documenta isso (HTML Service IFRAME sandbox).  
+**Fix no repo (GAS 3.53):** `target="_top"` + `<base target="_top">` + ALLOWALL em aceite/VIP/obrigado + link de fallback. **Só vale em produção depois da Nova versão Web.**
 
 ### Agente (próxima sessão — só com pedido)
 

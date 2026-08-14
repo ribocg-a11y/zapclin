@@ -159,6 +159,14 @@ Envio **não é automático**: o operador confirma no modal. WhatsApp Web/app ab
 
 **Não alterar templates de mensagem nem Deploy ID sem pedido.**
 
+## Correção do aceite no WhatsApp (14/08 — após o relatório)
+
+A auditoria **não abriu o link como o cliente no app WhatsApp**. Por isso o form GET passou (o HTML tinha o botão), mas o sintoma real é outro:
+
+**HtmlService serve a página num iframe `sandboxFrame` (googleusercontent).** O form ia para `script.google.com/.../exec` **sem** `target="_top"`. O toque navega o iframe interno → página em branco / “não consigo aceitar”. Documentado pelo Google (HTML Service IFRAME).
+
+**Correção no arquivo GAS 3.53** (`AppsScript_v3.45_ATUAL.gs`): `target="_top"`, `<base target="_top">`, ALLOWALL nas páginas de obrigado, link de fallback. **Produção continua 3.52 até Nova versão no mesmo Deploy ID.**
+
 JSON bruto (sem PII): `scripts/testes/evidencias/auditoria-wa-aceite-2026-08-14.json`
 
 Mudança no AppScript: **não**. Canônico: `AppsScript_v3.45_ATUAL.gs`.
