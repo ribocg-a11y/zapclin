@@ -24,6 +24,8 @@
 | [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
 | [`ativos/PACOTE_Z_MODULARIZACAO.md`](ativos/PACOTE_Z_MODULARIZACAO.md) | Modularização frontend |
 | [`ativos/OAUTH_PLANILHA_DESKTOP.md`](ativos/OAUTH_PLANILHA_DESKTOP.md) | Escrita planilha via OAuth |
+| [`ativos/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](ativos/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md) | Golden Shopping / ações humanas SEO |
+| [`APPSCRIPT_DEPLOY.md`](APPSCRIPT_DEPLOY.md) | Colar `.gs` + Nova versão Web |
 
 ---
 

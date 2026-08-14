@@ -1,115 +1,69 @@
 # ZapClin — Estado atual (14/08/2026)
 
-Referência única para alinhamento repo × produção.
+Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md)
 
-**Handoff:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md) ← ler primeiro  
-**Prompt novo agente:** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md)  
-**Erros PWA 14/07:** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
-**Erros/eventos ago/2026:** [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EVENTOS_2026-08.md)  
+**Prompt:** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md)  
+**Erros PWA:** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
+**Erros/eventos:** [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EVENTOS_2026-08.md)  
 **Prioridades:** [`PLANO_PRIORIDADES_2026-06.md`](PLANO_PRIORIDADES_2026-06.md)  
-**Environment Cloud:** [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)  
-**Deploy GAS:** [`../APPSCRIPT_DEPLOY.md`](../APPSCRIPT_DEPLOY.md)  
-**Pastas no PC:** [`../MAPA_PASTAS_LOCAL.md`](../MAPA_PASTAS_LOCAL.md)  
-**Fluxos:** [`../FLUXOS_OPERACIONAIS.md`](../FLUXOS_OPERACIONAIS.md)  
-**Equiparação Movi:** [`../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`](../PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md)  
-**Regras:** [`REGRAS_DE_PUBLICACAO_SEGURA.md`](REGRAS_DE_PUBLICACAO_SEGURA.md) (§11 + §12)  
-**OAuth:** [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)  
-**Acessos:** [`ACESSOS_E_AUTORIZACOES.md`](ACESSOS_E_AUTORIZACOES.md)
+**Environment:** [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)  
+**GAS deploy:** [`../APPSCRIPT_DEPLOY.md`](../APPSCRIPT_DEPLOY.md)  
+**Golden (humano):** [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)
 
 ---
 
-## Produção (varredura 14/08/2026 — pós merge #18)
+## Produção (14/08 — alinhada)
 
-| Camada | Versão repo / prod | URL / ID |
-|--------|--------------------|----------|
-| **Frontend** | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
-| **Service Worker** | **v4.34.0** | `sw.js` → `ZAPCLIN_SW_VERSION` |
-| **Apps Script (código repo)** | **v3.52** | `AppsScript_v3.45_ATUAL.gs` |
-| **Apps Script (ping prod.)** | **3.52** ✅ (14/08 redeploy) | ping OK |
-| **Site marketing** | live `zapclinslz` | https://www.zapclinslz.com/ · HTTP 200 · sitemap 12 `<loc>` |
-| **OAuth Desktop / Cloud** | write OK (ago 01–13) | `scripts/oauth-sheets/` + Environment `zapclin` |
+| Camada | Versão | URL |
+|--------|--------|-----|
+| Frontend / SW | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
+| GAS arquivo + ping | **3.52** ✅ | ping abaixo |
+| Site marketing | live | https://www.zapclinslz.com/ |
+| PRs GitHub | **0 abertas** | — |
 
-**Clone local canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`
+**Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
+**`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
+**Deploy ID:** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`  
+**Ping:** https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping  
 
-**Planilha (abre o Apps Script daqui):**  
-https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit
-
-**Código `.gs` para colar (v3.52):**  
-https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs
-
-**Deploy ID GAS (único):** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
-
-**Ping GAS:**  
-https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping
-
-**PIN Admin:** `1321`  
-**WhatsApp loja:** `5598981479616` · **IG:** `@zapclinhigienizacao`
+PIN **1321** · WA `5598981479616` · IG `@zapclinhigienizacao`  
+Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 ---
 
-## Arquivos canônicos
+## Canônico
 
-| Artefato | Arquivo |
+| Artefato | Caminho |
 |----------|---------|
-| GAS | `AppsScript_v3.45_ATUAL.gs` (conteúdo **v3.52**) |
-| Frontend | `index.html` + `zc-*.js` |
-| Versão FE | `zc-version.js` → `APP_VERSION = 'v4.34.0'` |
-| Pacote Z | … `zc-operacao`, `zc-crm` ✅ · **próximo:** `zc-app.css` |
-| PWA | `sw.js`, `manifest.json`, `reparar.html` |
-| OAuth planilha | `scripts/oauth-sheets/` |
-| SEO engine | `scripts/seo/engine/` |
-| Site live | repo **`ribocg-a11y/zapclinslz`** |
-| Governança | `AGENTS.md`, `docs/ativos/*` |
+| GAS | `AppsScript_v3.45_ATUAL.gs` |
+| FE | `index.html` + `zc-*.js` (`APP_VERSION` = v4.34.0) |
+| Pacote Z | até `zc-operacao` + `zc-crm` · próximo `zc-app.css` |
+| PWA | `sw.js`, `manifest.json` |
+| OAuth | `scripts/oauth-sheets/` |
+| SEO | `scripts/seo/engine/` + `docs/ativos/marketing-ig/` |
+| Site live | repo `zapclinslz` (espelho `site/zapclinslz-sync/`) |
 
 ---
 
-## Entregas recentes
+## Entregas 14/08
 
-| Versão / data | Entrega |
-|---------------|---------|
-| **14/08/2026** | Pacote Z.7 — `zc-operacao` + `zc-crm` (**v4.34.0**) · PR **#18 MERGED** |
-| **14/08/2026** | Handoff transição + Environment Cloud `zapclin` |
-| **14/08/2026** | Seed LANÇAMENTOS **01–13/08** OK (PR #16) |
-| **ago/2026** | SEO entity / PAA / IndexNow / motor · live `zapclinslz` · PR #15 |
-| **08/08/2026** | Isola `/site/` do SW (**v4.33.9**) |
-| **29/07/2026** | Dashboard Projeção Fechamento (**v4.33.8**) |
-
----
-
-## PRs (14/08)
-
-| PR | Estado | Tema |
-|----|--------|------|
-| [#18](https://github.com/ribocg-a11y/zapclin/pull/18) | **MERGED** | Z.7 v4.34.0 |
-| [#17](https://github.com/ribocg-a11y/zapclin/pull/17) | **MERGED** | handoff |
-| [#19](https://github.com/ribocg-a11y/zapclin/pull/19) | **MERGED** | GAS ping 3.52 |
-| [#15](https://github.com/ribocg-a11y/zapclin/pull/15) | consolidado | SEO + Reels + motor |
-| [#16](https://github.com/ribocg-a11y/zapclin/pull/16) | **CLOSED** | seed já em main |
-| [#1](https://github.com/ribocg-a11y/zapclin/pull/1) | **CLOSED** | legado obsoleto |
+| Item | PR |
+|------|-----|
+| Z.7 v4.34.0 | #18 MERGED |
+| Handoff / Environment | #17 MERGED |
+| Docs ping 3.52 | #19 MERGED |
+| SEO + Reels + extra-chuva | #20 MERGED |
+| #1 #14 #15 #16 | CLOSED |
 
 ---
 
-## Próximo passo
+## Próximo
 
-### Humano
-1. Loja: Wi-Fi estável · `?force=v4.34.0` · smoke salvar OS / Pronto / Entregue  
-2. Backlink Golden Shopping  
-3. Aguardar GSC bairros (não re-spam)  
-4. GAS **3.52** ✅ já publicado
-
-### Agente
-1. Rede lenta / timeouts → endurecer fila offline / timeouts (se pedido)  
-2. Pacote Z.9 `zc-app.css`  
-3. Planilha só via Environment `zapclin` + pedido explícito  
+**Humano:** Wi-Fi + smoke v4.34.0 · Golden backlink · esperar GSC.  
+**Agente:** Z.9 CSS **ou** fila offline OS/status (pedido) · sem reabrir SEO.
 
 ---
 
-## Lacunas vs Movi (backlog)
+## Lacunas Movi
 
-| Lacuna | Fase |
-|--------|------|
-| FE ainda parcial monolito | Pacote Z.9+ |
-| Sem auth operador | Fase 4 |
-| Sem cockpit narrativo | Fase 5 |
-| Holding só via Movi financeiro | Movi FASE 11 |
-| Cadastro OS+fotos exige internet | fila offline só parcial (lançamentos avulsos) |
+Auth operador (Fase 4) · cockpit (Fase 5) · OS+fotos ainda exigem internet.

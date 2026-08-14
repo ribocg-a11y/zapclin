@@ -1,114 +1,116 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (FE **v4.34.0** · Z.7 ✅ · GAS ping **3.52** ✅ · PRs draft limpos)  
-**Repo canônico:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
+**Atualizado:** 14/08/2026 (fim de sessão — produção limpa)  
+**Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
-**Site marketing:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0
+**Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0  
+**Environment Cursor:** **`zapclin`**
 
-> **Mensagem mínima:** *Vamos dar continuidade ao projeto ZapClin.*  
-> Agente: ler docs em `AGENTS.md` → resumir → só então trabalhar.
+> Mensagem mínima: *Vamos dar continuidade ao projeto ZapClin.*  
+> Ler docs em `AGENTS.md` → resumir 8–12 linhas → só então trabalhar.
 
----
-
-## 0) Prompt de abertura
-
-- [`PROMPT_ABERTURA_NOVO_AGENTE.md`](./PROMPT_ABERTURA_NOVO_AGENTE.md)  
-- Environment Cursor: **`zapclin`**
+**Prompt colável:** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](./PROMPT_ABERTURA_NOVO_AGENTE.md)
 
 ---
 
-## 1) Produção (varredura 14/08)
+## 1) Produção (varredura 14/08 — confirmada)
 
-| Camada | Status |
+| Camada | Valor |
 |--------|--------|
-| FE/SW | **v4.34.0** (PR #18 merged) |
-| GAS arquivo | **3.52** |
-| GAS ping | **3.52** ✅ (redeploy humano 14/08) |
-| Site | https://www.zapclinslz.com/ ✅ · sitemap 12 |
-| Planilha | seed ago 01–13 ✅ |
+| FE / SW | **v4.34.0** (Pages) |
+| GAS arquivo | **3.52** (`AppsScript_v3.45_ATUAL.gs`) |
+| GAS ping | **3.52** ✅ |
+| PRs abertas | **nenhuma** |
+| Site | https://www.zapclinslz.com/ · sitemap 12 |
+| Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
 
-**Deploy ID (nunca outro):** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`  
-**Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
-**`.gs` raw v3.52:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
-**Ping:** https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping
+**Deploy ID (nunca outro / nunca `clasp deploy`):**  
+`AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**Abrir editor GAS:** planilha → **Extensões** → **Apps Script** (não há URL pública fixa no repo). Guia: `docs/APPSCRIPT_DEPLOY.md`.
+**Planilha / editor GAS:**  
+https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
+→ Extensões → Apps Script
+
+**`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
+**Ping:** https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping  
+**Guia:** `docs/APPSCRIPT_DEPLOY.md`
+
+PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 
 ---
 
-## 2) Feito / não refazer
+## 2) O que o agente anterior passou (não refazer)
 
 | Frente | Status |
 |--------|--------|
-| Pacote Z.1–Z.7 | ✅ · próximo Z.9 `zc-app.css` |
-| Handoff + Environment `zapclin` | ✅ |
-| SEO live + motor + playbooks | ✅ em `main` |
-| Seed ago 01–13 | ✅ |
+| Pacote Z.1–Z.7 | ✅ `zc-operacao.js` + `zc-crm.js` · v4.34.0 |
+| GAS 3.52 | arquivo + ping live ✅ |
+| Handoff + Environment `zapclin` | ✅ secrets OAuth |
+| SEO playbooks + motor + Reels 01–03 | ✅ em `main` (PR #20) |
+| Extra chuva (foto loja) | ✅ em `site/` |
+| Seed ago 01–13 | ✅ planilha + script |
+| Drafts #1 #14 #15 #16 | **CLOSED / merged** — zero PRs abertas |
 
-### Humano agora
-1. Homologar balcão em `v4.34.0` com Wi-Fi estável (erros de rede já reportados)  
-2. Golden Shopping backlink  
-3. Não re-spam GSC  
-4. GAS **3.52** ✅ feito
+### Humano (só você)
 
-### Agente agora
-1. Endurecer resiliência a **internet lenta** (salvar OS+fotos, status) — sob pedido  
-2. Z.9 CSS quando pedido
+1. Loja: Wi-Fi estável + smoke `?force=v4.34.0` (OS, Pronto, Entregue)  
+2. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
+3. Aguardar GSC bairros — **não** re-spam  
+4. Opcional: postar Reels `docs/ativos/marketing-ig/`
 
----
+### Agente (próxima sessão — só com pedido)
 
-## 3) Rede lenta × operação (importante)
-
-O PWA **abre** com cache local, mas **não é 100% offline**:
-
-| Ação | Precisa internet? | Se rede lenta |
-|------|-------------------|---------------|
-| Abrir app / telas | Cache SW ajuda | Lento no 1º load |
-| **Cadastrar OS + fotos** | **SIM** (POST + Drive) | Timeout / toast erro — **sem fila offline** |
-| **Marcar Pronto / Entregue** | SIM (apiGet ~10s) | UI atualiza local; toast “salvo localmente”; planilha pode ficar atrás |
-| Lançamento avulso | Fila `zapPendentes` | Melhor resiliência |
-| Listar/atualizar fila | SIM | Timeout; usa cache `localStorage` se houver |
-
-**Conclusão:** internet ruim **causa** erros ao salvar/encerrar. Não é só “sensação”.
+1. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status (hoje só lançamento avulso tem fila)  
+2. Pacote **Z.9** `zc-app.css`  
+3. Planilha: Environment `zapclin` + pedido explícito  
+4. SEO: não reinventar; gap medido só
 
 ---
 
-## 4) Mapa de erros (ler)
+## 3) Rede lenta (loja reportou 14/08)
 
-| ID | Doc |
-|----|-----|
-| PWA-14/07 | `ERROS_PWA_2026-07-14.md` |
-| Cloud/SEO/OAuth/NET | `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md` |
+O PWA **abre** do cache. **Salvar/encerrar não é local:**
+
+| Ação | Internet? | Se lenta |
+|------|-----------|----------|
+| Cadastrar OS + fotos | **Obrigatória** (POST/Drive) | Erro / timeout — **sem** fila offline |
+| Pronto / Entregue | `apiGet` ~10s | UI local; planilha pode atrasar |
+| Lançamento avulso | Fila `zapPendentes` | Melhor |
 
 ---
 
-## 5) PRs
+## 4) Docs de erro / regras
+
+- `ERROS_PWA_2026-07-14.md` — 14 erros SW (não repetir)  
+- `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md` — Cloud-403, OAuth, NET-TIMEOUT  
+- `REGRAS_DE_PUBLICACAO_SEGURA.md` §11 + §12  
+
+---
+
+## 5) PRs (histórico — nada aberto)
 
 | PR | Estado |
 |----|--------|
-| #18 Z.7 · #17 handoff · #19 GAS 3.52 | **MERGED** |
-| #15 SEO | consolidado nesta limpeza |
-| #16 seed | **CLOSED** (já em main via #17) |
-| #1 legado KPI | **CLOSED** (obsoleto; não mergear) |
-| #14 Extra chuva | merge se ainda aberto |
+| #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
+| #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** (conteúdo útil já em main) |
 
-SEO marketing: Reels 01–03 em `docs/ativos/marketing-ig/` · playbooks em `docs/ativos/` · live `zapclinslz`.
-
+---
 
 ## 6) Premissas P0
 
-1. GET + query string para escritas browser→GAS  
+1. Escritas browser→GAS = GET + query string  
 2. Nunca `clasp deploy` / nunca novo Deploy ID  
-3. LockService multioperador  
-4. WhatsApp zona crítica  
+3. LockService multioperador — não remover  
+4. WhatsApp = zona crítica  
 5. Sem commit de secrets  
-6. Dois repos: `zapclin` vs `zapclinslz`  
+6. Ops = `zapclin` · live site = `zapclinslz`  
 7. Planilha só com pedido explícito  
+8. PIN 1321 — não alterar sem pedido  
 
 ---
 
 ## 7) Encerrar sessão
 
-Atualizar este HANDOFF + `ESTADO_ATUAL` + `PLANO_PRIORIDADES` + mapa de erros.  
-Terminar com: `Mudança no AppScript: sim|não` + `.gs` canônico.
+Atualizar este arquivo + `ESTADO_ATUAL.md` + `PLANO_PRIORIDADES` + mapa de erros.  
+Última linha: `Mudança no AppScript: sim|não` + `AppsScript_v3.45_ATUAL.gs`
