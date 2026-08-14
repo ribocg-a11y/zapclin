@@ -1,21 +1,22 @@
 # ZapClin — OAuth planilha (Desktop e Cloud)
 
-**Atualizado:** 21/07/2026  
-**Prioridade:** P1 (manutenção — não é fluxo de balcão)
+**Atualizado:** 14/08/2026  
+**Prioridade:** P1 (manutenção — não é fluxo de balcão)  
+**Cloud:** ver também [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)
 
-## Por que o Cloud Agent não editou a planilha
+## Por que o Cloud Agent sem Environment falha
 
-| Você (notebook) | Cloud Agent (este tipo de chat) |
-|-----------------|----------------------------------|
-| Tem `C:\Users\riboc\...` | Roda em Linux remoto `/workspace` |
-| Tem `token.json` OAuth | **Não** vê seu disco nem o token |
-| PowerShell local funciona | Só acessa o repo GitHub |
+| Você (notebook) | Cloud Agent sem Environment | Cloud Agent + Environment `zapclin` |
+|-----------------|-----------------------------|-------------------------------------|
+| Tem `C:\Users\riboc\...` | Roda em Linux remoto `/workspace` | Mesmo Linux remoto |
+| Tem `token.json` OAuth | **Não** vê seu disco | Lê `GOOGLE_*` do Environment |
+| PowerShell local funciona | Só repo GitHub | Repo + secrets Sheets |
 
-Estar no notebook **não** coloca o agente dentro do Windows. Cloud Agent = execução na nuvem.
+Estar no notebook **não** coloca o agente dentro do Windows. Preferir Environment **`zapclin`** para Cloud.
 
 ## Como o agente edita a planilha sozinho
 
-### Opção A — Agent **local** (recomendado)
+### Opção A — Agent **local** (desktop)
 
 1. No Cursor Desktop: **File → Open Folder** → `C:\Users\riboc\Documents\Codex\zapclin-repo`  
    (token OAuth continua em `%USERPROFILE%\.config\google-api\`; `node_modules` em `google-drive-sheets-auth`)
@@ -24,20 +25,21 @@ Estar no notebook **não** coloca o agente dentro do Windows. Cloud Agent = exec
 
 Scripts canônicos: `scripts/oauth-sheets/` neste repo.
 
-### Opção B — Cloud Agent com secrets (opcional)
+### Opção B — Cloud Agent com Environment `zapclin` (preferido na nuvem)
 
-No Environment do Cursor Cloud, definir (nunca no git):
+Secrets (nunca no git):
 
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `GOOGLE_REFRESH_TOKEN`
 
-Os scripts em `scripts/oauth-sheets/` leem essas env vars primeiro.
+Os scripts em `scripts/oauth-sheets/` leem essas env vars primeiro. Abrir o agente **já** com Environment `zapclin`.
 
-## Estado já feito (21/07/2026)
+## Estado já feito
 
-- ✅ Read + write smoke (`OAUTH_SMOKE`)
+- ✅ Read + write smoke (`OAUTH_SMOKE`) — 21/07/2026
 - ✅ Seed `📊 LANÇAMENTOS` 14–20/07 → 349 / 365 / 435 / 476 / 565 / 0 / 274
+- ✅ Seed `📊 LANÇAMENTOS` **01–13/08/2026** — OK (PR #16 / Environment)
 
 ## Arquivos
 

@@ -1,8 +1,8 @@
 # ZapClin — Mapa do código e arquitetura
 
-**Atualizado:** 21/07/2026 (FE **v4.33.3** · GAS **3.50** · Pacote Z parcial)  
+**Atualizado:** 14/08/2026 (FE **v4.33.9** · GAS arquivo **3.52** · ping **3.51** · Pacote Z.6 ✅ · próximo Z.7)  
 **Função:** anatomia do sistema — o que é cada parte, o que liga com o quê, zonas sensíveis.  
-**Complementa:** `ESTADO_ATUAL.md`, `ACESSOS_E_AUTORIZACOES.md`, `REGRAS_DE_PUBLICACAO_SEGURA.md`, `PROTOCOLO_DIAGNOSTICO_E_TESTES.md`, `AUDITORIA_RANGES_GAS.md`, `../FLUXOS_OPERACIONAIS.md`
+**Complementa:** `ESTADO_ATUAL.md`, `HANDOFF_NOVO_CHAT.md`, `ACESSOS_E_AUTORIZACOES.md`, `REGRAS_DE_PUBLICACAO_SEGURA.md`, `PROTOCOLO_DIAGNOSTICO_E_TESTES.md`, `AUDITORIA_RANGES_GAS.md`, `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`, `../FLUXOS_OPERACIONAIS.md`
 
 ---
 
@@ -28,7 +28,7 @@
 ```
 zapclin-repo/
 ├── CÉREBRO
-│   └── AppsScript_v3.45_ATUAL.gs     ← GAS canônico (conteúdo v3.50)
+│   └── AppsScript_v3.45_ATUAL.gs     ← GAS canônico (conteúdo v3.52)
 ├── CORAÇÃO + MÃOS + OLHOS
 │   ├── index.html                    ← HTML + CSS + JS restante
 │   └── zc-*.js                       ← Pacote Z (version…crm / Z.7)

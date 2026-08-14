@@ -1,129 +1,112 @@
-# ZapClin — Handoff para novo chat (ativo)
+# HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (FE **v4.34.0** · Pacote Z.7 · GAS ping **3.51**)  
-**Função:** único ponto de entrada para qualquer assistente continuar o projeto sem perder contexto.
+**Atualizado:** 14/08/2026 (FE **v4.34.0** · Z.7 ✅ · GAS ping **3.51** · PR #18 MERGED)  
+**Repo canônico:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
+**Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
+**Site marketing:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0
 
-**GitHub:** `ribocg-a11y/zapclin` · branch `main`  
-**Clone canônico:** `C:\Users\riboc\Documents\Codex\zapclin-repo`
-
----
-
-## Modelo operacional
-
-| Papel | Aparelho | Quem | Uso típico |
-|-------|----------|------|------------|
-| **Gestão / dev** | Computador (Cursor) | Sócio/dev | Código, GAS, deploy, testes `.ps1`, OAuth |
-| **Operação** | Celular/tablet na loja | Operadores | Cadastro OS, fila, status, WhatsApp |
-
-**Regras para o agente:**
-
-1. Homologação real de balcão exige **aparelho na loja** — o agente valida ping/HTTP no PC.
-2. Vários operadores simultâneos — backend usa LockService (v3.36); não quebrar travas.
-3. Admin PIN **1321** — não confundir com PIN Movi (1416).
-4. **Antes de mexer em SW/Dashboard/versão:** ler `ERROS_PWA_2026-07-14.md` + `REGRAS` §11.
-5. **Pasta canônica só:** `zapclin-repo` — ver `docs/MAPA_PASTAS_LOCAL.md`. Não editar Continuidade/Downloads.
+> **Mensagem mínima:** *Vamos dar continuidade ao projeto ZapClin.*  
+> Agente: ler docs em `AGENTS.md` → resumir → só então trabalhar.
 
 ---
 
-## Como abrir um chat novo
+## 0) Prompt de abertura
 
-### Opção A — mensagem mínima
-
-```
-Vamos dar continuidade ao projeto ZapClin.
-```
-
-### O que o agente faz sozinho
-
-- Ler: este arquivo → `ESTADO_ATUAL` → `ERROS_PWA_2026-07-14` → `REGRAS` → `ACESSOS` → `PLANO_PRIORIDADES`
-- Conferir pasta = `zapclin-repo` e ping produção
-- **Toda resposta:** `Mudança no AppScript: sim|não` + link/caminho `.gs` canônico
+- [`PROMPT_ABERTURA_NOVO_AGENTE.md`](./PROMPT_ABERTURA_NOVO_AGENTE.md)  
+- Environment Cursor: **`zapclin`**
 
 ---
 
-## Produção (verificar sempre no início)
+## 1) Produção (varredura 14/08)
 
-| Camada | Versão | Verificação |
-|--------|--------|-------------|
-| **Frontend** | **v4.34.0** | `zc-version.js` · `?force=v4.34.0` |
-| **Service Worker** | **v4.34.0** | ativo · toast de update padrão |
-| **Apps Script (ping)** | **3.51** (alvo **3.52**) | ping abaixo |
-| **Apps Script (arquivo)** | `AppsScript_v3.45_ATUAL.gs` | conteúdo **v3.52** |
-| **OAuth planilha** | Desktop OK | `scripts/oauth-sheets/test-zapclin-write.js` |
+| Camada | Status |
+|--------|--------|
+| FE/SW | **v4.34.0** (PR #18 merged) |
+| GAS arquivo | **3.52** |
+| GAS ping | **3.51** ⚠ Nova versão Web pendente |
+| Site | https://www.zapclinslz.com/ ✅ · sitemap 12 |
+| Planilha | seed ago 01–13 ✅ |
 
-**Deploy ID GAS:** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
+**Deploy ID (nunca outro):** `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`  
+**Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
+**`.gs` raw v3.52:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
+**Ping:** https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping
 
-**Planilha:** `1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug`
-
-**Ping GAS:**  
-https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=ping
-
-**GitHub Pages:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0
+**Abrir editor GAS:** planilha → **Extensões** → **Apps Script** (não há URL pública fixa no repo). Guia: `docs/APPSCRIPT_DEPLOY.md`.
 
 ---
 
-## Ordem de leitura (obrigatória)
+## 2) Feito / não refazer
 
-| # | Documento | Para quê |
-|---|-----------|----------|
-| 1 | **Este arquivo** | Contexto, regras, próximo passo |
-| 2 | `ESTADO_ATUAL.md` | Versões, links, arquivos canônicos |
-| 3 | `ERROS_PWA_2026-07-14.md` | **14 erros mapeados — não repetir** |
-| 4 | `REGRAS_DE_PUBLICACAO_SEGURA.md` | Travas (§11 pós-incidente) |
-| 5 | `ACESSOS_E_AUTORIZACOES.md` | Agente vs humano |
-| 6 | `PLANO_PRIORIDADES_2026-06.md` | Checklist vivo |
-| 7 | `../MAPA_PASTAS_LOCAL.md` | Onde está cada pasta no C: |
-| 8 | `../FLUXOS_OPERACIONAIS.md` | Diagramas de fluxo |
-| 9 | `../INDICE.md` | Mapa completo |
+| Frente | Status |
+|--------|--------|
+| Pacote Z.1–Z.7 | ✅ · próximo Z.9 `zc-app.css` |
+| Handoff + Environment `zapclin` | ✅ |
+| SEO live + motor | ✅ · PR #15 draft |
+| Seed ago 01–13 | ✅ |
 
-### Por tarefa
+### Humano agora
+1. Homologar balcão em `v4.34.0` (já lento / erros de rede reportados)  
+2. Nova versão Web GAS **3.52**  
+3. Golden Shopping backlink  
+4. Não re-spam GSC
 
-| Tarefa | Ler |
-|--------|-----|
-| Deploy GAS | `../../APPSCRIPT_DEPLOY.md` · header do `.gs` |
-| Dashboard / SW / versão | `ERROS_PWA_2026-07-14.md` + Regra 11 |
-| Teste ping/KPI | `PROTOCOLO_DIAGNOSTICO_E_TESTES.md` |
-| Arquitetura | `MAPA_CODIGO_ARQUITETURA.md` |
-| Planilha via OAuth | `OAUTH_PLANILHA_DESKTOP.md` |
-| Modularização FE | `PACOTE_Z_MODULARIZACAO.md` |
+### Agente agora
+1. Investigar / endurecer resiliência a **internet lenta** (salvar OS+fotos, status)  
+2. Z.9 CSS quando pedido  
+3. Rebase/merge docs handoff (#17)
 
 ---
 
-## Incidente 14/07/2026 (resumo)
+## 3) Rede lenta × operação (importante)
 
-- Projeção v4.32.0 introduziu SyntaxError → navegação morta.
-- Hotfixes de SW pioraram (HTML→JS, banner, SW off, boot forçado).
-- Restauro estável: base v4.31.1 → projeção republicada com gate → **v4.33.3**.
-- **14 erros** registrados em `ERROS_PWA_2026-07-14.md` e travados na Regra 11.
+O PWA **abre** com cache local, mas **não é 100% offline**:
 
----
+| Ação | Precisa internet? | Se rede lenta |
+|------|-------------------|---------------|
+| Abrir app / telas | Cache SW ajuda | Lento no 1º load |
+| **Cadastrar OS + fotos** | **SIM** (POST + Drive) | Timeout / toast erro — **sem fila offline** |
+| **Marcar Pronto / Entregue** | SIM (apiGet ~10s) | UI atualiza local; toast “salvo localmente”; planilha pode ficar atrás |
+| Lançamento avulso | Fila `zapPendentes` | Melhor resiliência |
+| Listar/atualizar fila | SIM | Timeout; usa cache `localStorage` se houver |
 
-## Próximo passo (14/08/2026)
-
-| # | Ação | Quem |
-|---|------|------|
-| 1 | Abrir `?force=v4.34.0` · validar Operação + Relacionamento | Você |
-| 2 | GAS: Nova versão Web **3.52** no mesmo Deploy ID | Você |
-| 3 | Pacote Z.9 — `zc-app.css` (Z.7 ✅) | Agente |
-| 4 | Não reintroduzir erros do incidente 14/07 | Agente |
+**Conclusão:** internet ruim **causa** erros ao salvar/encerrar. Não é só “sensação”.
 
 ---
 
-## Comportamento esperado do agente
+## 4) Mapa de erros (ler)
 
-| # | Ação |
-|---|------|
-| 1 | Reconhecer continuidade — ler docs ativos **incluindo erros 14/07** |
-| 2 | Antes de push FE: checklist Regra 2 + `node --check` no app inline |
-| 3 | Responder com versões, próximo passo, quem faz o quê |
-| 4 | Ao encerrar: atualizar este arquivo + `ESTADO_ATUAL` se algo mudou |
-| 5 | Mudanças cirúrgicas — não redesenhar fluxo de update no meio de feature visual |
-| 6 | ZapClin e Movi = **repos/pastas separados**; OAuth é infra compartilhada |
+| ID | Doc |
+|----|-----|
+| PWA-14/07 | `ERROS_PWA_2026-07-14.md` |
+| Cloud/SEO/OAuth/NET | `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md` |
 
 ---
 
-## Integração Movi Kids
+## 5) PRs
 
-- Planilha ZapClin é lida pelo **Financeiro Geral** no repo `ribocg-a11y/movikids`
-- Equiparação ≠ merge de código — ver `PLANO_EQUIPARACAO_MOVI_ZAPCLIN.md`
-- Holding unificada = **FASE 11 Movi**
+| PR | Estado |
+|----|--------|
+| #18 Z.7 | **MERGED** |
+| #17 handoff | rebase pós-#18 |
+| #15 SEO · #16 seed · #14 chuva | draft |
+
+---
+
+## 6) Premissas P0
+
+1. GET + query string para escritas browser→GAS  
+2. Nunca `clasp deploy` / nunca novo Deploy ID  
+3. LockService multioperador  
+4. WhatsApp zona crítica  
+5. Sem commit de secrets  
+6. Dois repos: `zapclin` vs `zapclinslz`  
+7. Planilha só com pedido explícito  
+
+---
+
+## 7) Encerrar sessão
+
+Atualizar este HANDOFF + `ESTADO_ATUAL` + `PLANO_PRIORIDADES` + mapa de erros.  
+Terminar com: `Mudança no AppScript: sim|não` + `.gs` canônico.
