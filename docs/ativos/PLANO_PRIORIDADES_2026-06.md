@@ -13,7 +13,7 @@ Checklist vivo — marcar ao concluir.
 | Item | Status |
 |------|--------|
 | FE / SW **v4.34.0** em `main` (PR #18) | ✅ |
-| GAS arquivo **3.52** · ping prod **3.51** | ⚠ humano Nova versão Web |
+| GAS arquivo **3.52** · ping prod **3.52** | ✅ 14/08 |
 | Incidente PWA 14/07 documentado | ✅ |
 | OAuth + Environment `zapclin` | ✅ |
 | Seed LANÇAMENTOS ago 01–13 | ✅ |
@@ -26,7 +26,7 @@ Checklist vivo — marcar ao concluir.
 
 | # | Item | Status | Quem |
 |---|------|--------|------|
-| H1 | Nova versão Web GAS **3.52** (mesmo Deploy ID) | ⬜ | Humano |
+| H1 | Nova versão Web GAS **3.52** (mesmo Deploy ID) | ✅ | Humano |
 | H2 | Homologar `?force=v4.34.0` (Operação + Relacionamento) | ⏳ | Humano |
 | H3 | Backlink Golden Shopping Calhau | ⬜ | Humano |
 | H4 | Aguardar GSC bairros / `site:` (não re-spam) | ⏳ | Humano |

@@ -1,6 +1,6 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (FE **v4.34.0** · Z.7 ✅ · GAS ping **3.51** · PR #18 MERGED)  
+**Atualizado:** 14/08/2026 (FE **v4.34.0** · Z.7 ✅ · GAS ping **3.52** ✅ · PR #18/#17 MERGED)  
 **Repo canônico:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site marketing:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
@@ -24,7 +24,7 @@
 |--------|--------|
 | FE/SW | **v4.34.0** (PR #18 merged) |
 | GAS arquivo | **3.52** |
-| GAS ping | **3.51** ⚠ Nova versão Web pendente |
+| GAS ping | **3.52** ✅ (redeploy humano 14/08) |
 | Site | https://www.zapclinslz.com/ ✅ · sitemap 12 |
 | Planilha | seed ago 01–13 ✅ |
 
@@ -47,15 +47,14 @@
 | Seed ago 01–13 | ✅ |
 
 ### Humano agora
-1. Homologar balcão em `v4.34.0` (já lento / erros de rede reportados)  
-2. Nova versão Web GAS **3.52**  
-3. Golden Shopping backlink  
-4. Não re-spam GSC
+1. Homologar balcão em `v4.34.0` com Wi-Fi estável (erros de rede já reportados)  
+2. Golden Shopping backlink  
+3. Não re-spam GSC  
+4. GAS **3.52** ✅ feito
 
 ### Agente agora
-1. Investigar / endurecer resiliência a **internet lenta** (salvar OS+fotos, status)  
-2. Z.9 CSS quando pedido  
-3. Rebase/merge docs handoff (#17)
+1. Endurecer resiliência a **internet lenta** (salvar OS+fotos, status) — sob pedido  
+2. Z.9 CSS quando pedido
 
 ---
 

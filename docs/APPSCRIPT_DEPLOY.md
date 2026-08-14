@@ -43,4 +43,5 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 ```
 
 Esperado: `"version":"3.52"`  
-Hoje (antes da Nova versão): `"version":"3.51"`.
+
+**Status 14/08/2026:** ping produção = **3.52** ✅ (redeploy humano confirmado).

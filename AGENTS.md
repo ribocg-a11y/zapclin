@@ -62,7 +62,7 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 | Frontend | **v4.34.0** | GitHub Pages |
 | Service Worker | **v4.34.0** | `sw.js` |
 | GAS (código repo) | **v3.52** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
-| GAS (ping) | **3.51** | ⚠ falta Nova versão Web 3.52 |
+| GAS (ping) | **3.52** | ✅ produção (14/08) |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
 
 **Deploy ID GAS (único — nunca criar outro):**  
@@ -93,12 +93,12 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (14/08/2026)
 
-- **Produção alvo:** FE/SW **v4.34.0** (PR #18 merged) · GAS arquivo **3.52** · ping **3.51** até humano publicar
+- **Produção alvo:** FE/SW **v4.34.0** · GAS **3.52** (arquivo + ping ✅)
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
 - **Pacote Z:** Z.7 ✅ (`zc-operacao` + `zc-crm`); **próximo:** Z.9 `zc-app.css`
 - **OAuth:** Environment `zapclin` + seed ago 01–13 ✅
 - **SEO:** live + PR #15; próximo humano = Golden Shopping
-- **Próximo humano:** homologar `?force=v4.34.0` + Nova versão GAS 3.52
+- **Próximo humano:** Wi-Fi estável na loja; Golden backlink; opcional resiliência rede
 
 ## Ao encerrar sessão
 
