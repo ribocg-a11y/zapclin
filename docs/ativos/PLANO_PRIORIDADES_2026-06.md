@@ -41,7 +41,7 @@
 
 ## PRs
 
-Nenhuma aberta no início desta sessão. Z.9 `zc-app.css` v4.35.0 neste PR.
+Nenhuma aberta no início desta sessão. Z.9: [#22](https://github.com/ribocg-a11y/zapclin/pull/22).
 
 ---
 

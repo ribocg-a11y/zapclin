@@ -94,7 +94,7 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 | PR | Estado |
 |----|--------|
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
-| Z.9 `zc-app.css` v4.35.0 | **este PR** |
+| Z.9 `zc-app.css` v4.35.0 | **#22** |
 | #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** (conteúdo útil já em main) |
 
 ---

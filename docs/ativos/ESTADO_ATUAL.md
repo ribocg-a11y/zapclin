@@ -49,7 +49,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 | Item | PR |
 |------|-----|
-| Z.9 `zc-app.css` v4.35.0 | este PR |
+| Z.9 `zc-app.css` v4.35.0 | [#22](https://github.com/ribocg-a11y/zapclin/pull/22) |
 | Z.7 v4.34.0 | #18 MERGED |
 | Handoff / Environment | #17 MERGED |
 | Docs ping 3.52 | #19 MERGED |
