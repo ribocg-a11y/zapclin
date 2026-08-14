@@ -25,7 +25,7 @@ Referência única para alinhamento repo × produção.
 | **Frontend** | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
 | **Service Worker** | **v4.34.0** | `sw.js` → `ZAPCLIN_SW_VERSION` |
 | **Apps Script (código repo)** | **v3.52** | `AppsScript_v3.45_ATUAL.gs` |
-| **Apps Script (ping prod.)** | **3.51** (alvo **3.52**) | ping OK |
+| **Apps Script (ping prod.)** | **3.52** ✅ (14/08 redeploy) | ping OK |
 | **Site marketing** | live `zapclinslz` | https://www.zapclinslz.com/ · HTTP 200 · sitemap 12 `<loc>` |
 | **OAuth Desktop / Cloud** | write OK (ago 01–13) | `scripts/oauth-sheets/` + Environment `zapclin` |
 
@@ -91,13 +91,13 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 ## Próximo passo
 
 ### Humano
-1. Confirmar loja em `?force=v4.34.0` (já validado parcialmente)  
-2. Nova versão Web GAS **3.52** — ver `APPSCRIPT_DEPLOY.md` + links acima  
-3. Backlink Golden Shopping  
-4. Aguardar GSC bairros (não re-spam)
+1. Loja: Wi-Fi estável · `?force=v4.34.0` · smoke salvar OS / Pronto / Entregue  
+2. Backlink Golden Shopping  
+3. Aguardar GSC bairros (não re-spam)  
+4. GAS **3.52** ✅ já publicado
 
 ### Agente
-1. Rede lenta / timeouts em salvar OS e status → endurecer fila offline / timeouts (se pedido)  
+1. Rede lenta / timeouts → endurecer fila offline / timeouts (se pedido)  
 2. Pacote Z.9 `zc-app.css`  
 3. Planilha só via Environment `zapclin` + pedido explícito  
 
