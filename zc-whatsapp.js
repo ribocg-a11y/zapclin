@@ -153,7 +153,7 @@ function clienteVipUrl_(nome,tel){
   return webAppUrl+'?action=cadastroVip&nome='+encodeURIComponent(nome||'')+'&tel='+encodeURIComponent(tel||'');
 }
 function aceiteOsUrl_(os){
-  return webAppUrl+'?action=aceiteOs&os='+encodeURIComponent(os||'');
+  return (typeof ACEITE_PAGE_URL==='string'?ACEITE_PAGE_URL:'https://ribocg-a11y.github.io/zapclin/aceite.html')+'?os='+encodeURIComponent(os||'');
 }
 function isPrimeiraVisita_(detalhes){
   if(!detalhes)return true;

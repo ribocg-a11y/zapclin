@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.34.0 | Data: 14/08/2026
+// Versão: 4.34.1 | Data: 14/08/2026
+// [v4.34.1 CACHE]
+// Página pública aceite.html (não cachear como index.html).
 // [v4.34.0 CACHE]
 // Pacote Z.7: inclui zc-operacao.js + zc-crm.js.
 // [v4.33.9 CACHE]
@@ -19,9 +21,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.34.0';
-const STATIC_CACHE = 'zapclin-static-v4.34.0';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.34.0';
+const ZAPCLIN_SW_VERSION = 'v4.34.1';
+const STATIC_CACHE = 'zapclin-static-v4.34.1';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.34.1';
 
 const APP_SHELL = [
   './',
@@ -99,18 +101,29 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Navegação: rede primeiro; fallback só index.html.
+  // Navegação: rede primeiro. Só o index do PWA vai para o cache de index.html
+  // (nunca gravar aceite.html/sobre.html por cima — incidente 14/07).
   if (req.mode === 'navigate') {
+    const navFile = (url.pathname.split('/').pop() || '').toLowerCase();
+    const isAppIndex = !navFile || navFile === 'index.html' || navFile === 'zapclin';
     event.respondWith(
       fetch(req, { cache: 'no-store' })
         .then(resp => {
-          if (resp && resp.status === 200) {
+          if (resp && resp.status === 200 && isAppIndex) {
             const copy = resp.clone();
             caches.open(STATIC_CACHE).then(cache => cache.put('./index.html', copy));
           }
           return resp;
         })
-        .catch(() => caches.match('./index.html').then(cached => cached || caches.match('./')))
+        .catch(() => {
+          if (navFile === 'aceite.html') {
+            return new Response(
+              '<!doctype html><meta charset="utf-8"><title>ZapClin</title><body style="font-family:sans-serif;background:#07080d;color:#fff;padding:24px">Precisa de internet para confirmar o aceite.</body>',
+              { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+            );
+          }
+          return caches.match('./index.html').then(cached => cached || caches.match('./'));
+        })
     );
     return;
   }

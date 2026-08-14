@@ -20,8 +20,8 @@
 
 | # | Item | Status |
 |---|------|--------|
-| H1 | GAS Nova versão 3.52 | ✅ |
-| H2 | Smoke loja `?force=v4.34.0` | ⏳ |
+| H1 | GAS Nova versão **3.54** (aceite.html + dadosAceiteOs) | ⏳ |
+| H2 | Smoke loja `?force=v4.34.1` + aceite no WhatsApp | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
 | H5 | Toast exato se erro rede | ⏳ |
@@ -33,6 +33,7 @@
 | # | Item | Status |
 |---|------|--------|
 | F3.7 | `zc-operacao` + `zc-crm` | ✅ v4.34.0 |
+| AUD | Auditoria WA + aceite 14/08 | ✅ evidências; FAIL §3 só com pedido |
 | F3.9 | `zc-app.css` | ⬜ próximo |
 | F3.10 | `zc-boot.js` | ⬜ |
 | NET | Fila offline OS + status | ⬜ |

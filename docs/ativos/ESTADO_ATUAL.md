@@ -5,6 +5,7 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 **Prompt:** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md)  
 **Erros PWA:** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
 **Erros/eventos:** [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EVENTOS_2026-08.md)  
+**Auditoria WA/aceite (14/08):** [`AUDITORIA_WA_ACEITE_2026-08-14.md`](AUDITORIA_WA_ACEITE_2026-08-14.md)  
 **Prioridades:** [`PLANO_PRIORIDADES_2026-06.md`](PLANO_PRIORIDADES_2026-06.md)  
 **Environment:** [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)  
 **GAS deploy:** [`../APPSCRIPT_DEPLOY.md`](../APPSCRIPT_DEPLOY.md)  
@@ -16,8 +17,8 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.34.0** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.0 |
-| GAS arquivo + ping | **3.52** ✅ | ping abaixo |
+| Frontend / SW | **v4.34.1** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.1 |
+| GAS arquivo + ping | **3.54** no repo / ping live **3.53** até Nova versão | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **0 abertas** | — |
 
@@ -36,7 +37,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` (`APP_VERSION` = v4.34.0) |
+| FE | `index.html` + `zc-*.js` + `aceite.html` (`APP_VERSION` = v4.34.1) |
 | Pacote Z | até `zc-operacao` + `zc-crm` · próximo `zc-app.css` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` |

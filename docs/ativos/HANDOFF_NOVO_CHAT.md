@@ -1,10 +1,11 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (fim de sessão — produção limpa)  
+**Atualizado:** 14/08/2026 (aceite vira página GitHub Pages · v4.34.1 / GAS 3.54)  
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.0  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.1  
+**Aceite (página, não script):** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cursor:** **`zapclin`**
 
 > Mensagem mínima: *Vamos dar continuidade ao projeto ZapClin.*  
@@ -18,10 +19,10 @@
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.34.0** (Pages) |
-| GAS arquivo | **3.52** (`AppsScript_v3.45_ATUAL.gs`) |
-| GAS ping | **3.52** ✅ |
-| PRs abertas | **nenhuma** |
+| FE / SW | **v4.34.1** (repo; Pages após merge) |
+| GAS arquivo | **3.54** (`AppsScript_v3.45_ATUAL.gs`) |
+| GAS ping | **3.53** live → alvo **3.54** |
+| PRs abertas | **#23** auditoria WA/aceite |
 | Site | https://www.zapclinslz.com/ · sitemap 12 |
 | Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
 
@@ -52,19 +53,27 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Seed ago 01–13 | ✅ planilha + script |
 | Drafts #1 #14 #15 #16 | **CLOSED / merged** — zero PRs abertas |
 
-### Humano (só você)
+### Humano (só você) — **agora**
 
-1. Loja: Wi-Fi estável + smoke `?force=v4.34.0` (OS, Pronto, Entregue)  
-2. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
-3. Aguardar GSC bairros — **não** re-spam  
-4. Opcional: postar Reels `docs/ativos/marketing-ig/`
+1. Merge PR **#23** (sobe `aceite.html` no GitHub Pages)  
+2. Colar `AppsScript_v3.45_ATUAL.gs` **3.54** → **Nova versão** no Deploy ID atual  
+3. Loja: `?force=v4.34.1`  
+4. Teste no WhatsApp: https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
+   Tem que abrir **sem** a faixa azul “criado por um usuário do Google Apps Script”.  
+5. Ping deve ser `"version":"3.54"`
+
+### Auditoria WA + aceite (14/08 — executada)
+
+Varredura readonly: [`AUDITORIA_WA_ACEITE_2026-08-14.md`](./AUDITORIA_WA_ACEITE_2026-08-14.md) + JSON em `scripts/testes/evidencias/`.  
+**Causa do “não consigo aceitar os termos”:** o link abre HtmlService **dentro de um iframe** `googleusercontent`. O form **não tinha** `target="_top"`. No WhatsApp (navegador interno) o toque no botão verde navega o iframe interno → **página em branco**. O Google documenta isso (HTML Service IFRAME sandbox).  
+**Fix no repo (GAS 3.53):** `target="_top"` + `<base target="_top">` + ALLOWALL em aceite/VIP/obrigado + link de fallback. **Só vale em produção depois da Nova versão Web.**
 
 ### Agente (próxima sessão — só com pedido)
 
-1. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status (hoje só lançamento avulso tem fila)  
-2. Pacote **Z.9** `zc-app.css`  
-3. Planilha: Environment `zapclin` + pedido explícito  
-4. SEO: não reinventar; gap medido só
+1. Corrigir `confirmarEnvioWA` na matriz §3 (nono dígito / bloqueio / clipboard / fallback)  
+2. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status  
+3. Pacote **Z.9** `zc-app.css`  
+4. Planilha: Environment `zapclin` + pedido explícito
 
 ---
 
@@ -84,16 +93,18 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 
 - `ERROS_PWA_2026-07-14.md` — 14 erros SW (não repetir)  
 - `MAPA_ERROS_FALHAS_EVENTOS_2026-08.md` — Cloud-403, OAuth, NET-TIMEOUT  
+- `AUDITORIA_WA_ACEITE_2026-08-14.md` — varredura WhatsApp + aceite (14/08)  
 - `REGRAS_DE_PUBLICACAO_SEGURA.md` §11 + §12  
 
 ---
 
-## 5) PRs (histórico — nada aberto)
+## 5) PRs
 
 | PR | Estado |
 |----|--------|
+| auditoria WA + aceite (**#23**) | aberta (draft) |
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
-| #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** (conteúdo útil já em main) |
+| #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** |
 
 ---
 

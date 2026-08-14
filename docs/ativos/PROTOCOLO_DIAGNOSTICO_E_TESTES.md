@@ -31,8 +31,8 @@
 | **Z1** | KPI — Home = Admin | `TESTE_KPI_PARIDADE` | ✅ se divergir |
 | **Z2** | Cadastro OS + fotos | manual / QA v4.19 | ✅ |
 | **Z3** | Fila Operação + SLA | manual Operação | ✅ |
-| **Z4** | WhatsApp por status | matriz REGRAS §3 | ✅ celular |
-| **Z5** | CRM VIP + aceite OS | manual Relacionamento | opcional |
+| **Z4** | WhatsApp por status | `auditoria-wa-aceite-2026-08-14.js` + matriz REGRAS §3 | ✅ celular |
+| **Z5** | CRM VIP + aceite OS | mesmo harness (GET form) + Relacionamento | opcional |
 | **Z6** | Admin PIN + fechamento diário | manual Admin | PC/celular |
 
 ---

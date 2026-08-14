@@ -59,16 +59,16 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Camada | Versão repo | Ping / live |
 |--------|-------------|-------------|
-| Frontend | **v4.34.0** | GitHub Pages |
-| Service Worker | **v4.34.0** | `sw.js` |
-| GAS (código repo) | **v3.52** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
-| GAS (ping) | **3.52** | ✅ produção (14/08) |
+| Frontend | **v4.34.1** | GitHub Pages |
+| Service Worker | **v4.34.1** | `sw.js` |
+| GAS (código repo) | **v3.54** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
+| GAS (ping) | **3.53** live → alvo **3.54** | |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.52)
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.54)
 
 Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
