@@ -1,4 +1,4 @@
-# ZapClin — Estado atual (14/08/2026)
+# ZapClin — Estado atual (26/08/2026)
 
 Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md)
 
@@ -13,14 +13,14 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 ---
 
-## Produção (14/08 — alinhada)
+## Produção (26/08 — alinhada)
 
 | Camada | Versão | URL |
 |--------|--------|-----|
 | Frontend / SW | **v4.34.1** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.1 |
-| GAS arquivo + ping | **3.54** no repo / ping live **3.53** até Nova versão | ping abaixo |
+| GAS arquivo + ping | **3.54** ✅ | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
-| PRs GitHub | **0 abertas** | — |
+| PRs GitHub | **#24** seed 01–25/08 | — |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
 **`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
@@ -54,14 +54,15 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Handoff / Environment | #17 MERGED |
 | Docs ping 3.52 | #19 MERGED |
 | SEO + Reels + extra-chuva | #20 MERGED |
-| #1 #14 #15 #16 | CLOSED |
+| Aceite.html Pages + GAS 3.54 | #23 MERGED |
+| Seed LANÇAMENTOS 01–25/08 | #24 (planilha já gravada 26/08) |
 
 ---
 
 ## Próximo
 
-**Humano:** Wi-Fi + smoke v4.34.0 · Golden backlink · esperar GSC.  
-**Agente:** Z.9 CSS **ou** fila offline OS/status (pedido) · sem reabrir SEO.
+**Humano:** Wi-Fi + smoke v4.34.1 · aceite no WhatsApp do celular · Golden backlink · re-auth OAuth Environment.  
+**Agente:** Z.9 CSS **ou** fila offline OS/status (pedido) · seed 01–25/08 já na planilha.
 
 ---
 

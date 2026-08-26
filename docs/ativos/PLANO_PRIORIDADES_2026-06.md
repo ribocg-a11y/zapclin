@@ -1,4 +1,4 @@
-# ZapClin — Plano de prioridades (14/08/2026)
+# ZapClin — Plano de prioridades (26/08/2026)
 
 **Handoff:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md)
 
@@ -10,8 +10,8 @@
 |------|--------|
 | FE/SW **v4.34.0** | ✅ |
 | GAS **3.52** arquivo + ping | ✅ |
-| PRs abertas | **0** |
-| Environment `zapclin` + seed ago | ✅ |
+| PRs abertas | **#24** seed |
+| Environment `zapclin` + seed ago **01–25/08** | ✅ 26/08 |
 | SEO motor + Reels + extra-chuva em main | ✅ |
 
 ---
@@ -20,7 +20,7 @@
 
 | # | Item | Status |
 |---|------|--------|
-| H1 | GAS Nova versão **3.54** (aceite.html + dadosAceiteOs) | ⏳ |
+| H1 | GAS Nova versão **3.54** (aceite.html + dadosAceiteOs) | ✅ ping 3.54 |
 | H2 | Smoke loja `?force=v4.34.1` + aceite no WhatsApp | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
@@ -42,7 +42,7 @@
 
 ## PRs
 
-Nenhuma aberta. Histórico: #18 #17 #19 #20 merged · #1 #14 #15 #16 closed.
+**#24** seed LANÇAMENTOS 01–25/08 (planilha já gravada). Histórico: #23 #18 #17 #19 #20 merged · #1 #14 #15 #16 closed.
 
 ---
 

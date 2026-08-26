@@ -37,7 +37,7 @@ Resuma em 8–12 linhas (FE/SW/GAS ping, PRs abertas, humano vs agente) e só en
 - PRs abertas: nenhuma.
 - Z.7 feito (zc-operacao + zc-crm). Próximo código: Z.9 zc-app.css, ou NET-TIMEOUT (fila OS/status) se o humano pedir.
 - SEO motor + Reels 01–03 + playbooks em main. Não reinventar SEO. Humano: Golden Shopping (docs/ativos/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md). GSC bairros: não re-spam.
-- Seed LANÇAMENTOS 01–13/08 já na planilha.
+- Seed LANÇAMENTOS 01–25/08 já na planilha (26/08). OAuth Environment está `invalid_grant` — humano precisa re-auth.
 - Loja reportou lentidão/erros ao salvar OS e encerrar: internet ruim (NET-TIMEOUT). Cadastro OS+fotos NÃO tem fila offline.
 
 ## Git

@@ -1,6 +1,6 @@
 # Mapa de erros, falhas, bugs e eventos — ago/2026
 
-**Atualizado:** 14/08/2026  
+**Atualizado:** 26/08/2026  
 **Complementa (não substitui):** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)
 
 Usar este arquivo no handoff de novo agente para não repetir falhas operacionais de Cloud/SEO/OAuth.
@@ -20,7 +20,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | ID | Sintoma | Causa | Mitigação (protocolo) |
 |----|---------|-------|------------------------|
 | **CLOUD-403** | `git push` 403 para `zapclin` | Agente clonou / trabalhou em **`zapclinslz`** e tentou push no remoto errado | Confirmar `git remote -v` = `ribocg-a11y/zapclin` para ops/docs/PWA. Site live = `zapclinslz` só com sync consciente. |
-| **OAUTH-GRANT** | `invalid_grant` nos seeds | `token.json` local expirado / revogado | Usar **Environment Cursor `zapclin`** com `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`. Re-auth local só no desktop do humano. |
+| **OAUTH-GRANT** | `invalid_grant` nos seeds | Refresh token Environment expirado/revogado (app OAuth em Testing ~7 dias) | Humano: `npm run auth` no desktop e atualizar `GOOGLE_REFRESH_TOKEN`. Seed 01–25/08 usou fallback GAS (`listar`/`salvar`/`editarLancamento`) sem cancelar OS. |
 | **SECRET-CHAT** | Credenciais coladas no chat | Contorno de OAuth na sessão | Secrets vão para Environment; **nunca** commit; rotacionar quando possível. |
 | **SERP-CAPTCHA** | Scrape Google SERP falha | Anti-bot | Não depender de scrape; humano usa GSC / `site:`; IndexNow só para URLs novas/alteradas. |
 | **GSC-RESPAM** | Re-solicitar indexação em loop | Impaciência pós-GSC | Bairros: **5/5 já solicitado** (ago/2026). Aguardar. Não re-spam. |
@@ -42,6 +42,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | ago/2026 | GSC bairros 5/5 solicitado | Aguardar indexação `site:` |
 | ago/2026 | Reels 01–03 gerados | `docs/ativos/marketing-ig/` |
 | 14/08/2026 | Seed LANÇAMENTOS 01–13/08 | 13 dias OK · PR #16 |
+| 26/08/2026 | Seed LANÇAMENTOS 01–25/08 | 25 dias OK · PR #24 · via GAS (OAuth `invalid_grant`) · OS 346/347 preservadas |
 | 14/08/2026 | Environment Cloud `zapclin` | Secrets OAuth salvos |
 | 14/08/2026 | Handoff transição | Este pacote de docs |
 | 14/08/2026 | PR #18 Z.7 merged → **v4.34.0** | Operação/CRM módulos |

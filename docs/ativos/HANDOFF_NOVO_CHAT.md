@@ -1,6 +1,6 @@
 # HANDOFF — Novo chat / novo agente Cloud
 
-**Atualizado:** 14/08/2026 (aceite vira página GitHub Pages · v4.34.1 / GAS 3.54)  
+**Atualizado:** 26/08/2026 (seed LANÇAMENTOS 01–25/08 · v4.34.1 / GAS 3.54)  
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone local:** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
@@ -15,16 +15,16 @@
 
 ---
 
-## 1) Produção (varredura 14/08 — confirmada)
+## 1) Produção (varredura 26/08 — confirmada)
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.34.1** (repo; Pages após merge) |
+| FE / SW | **v4.34.1** (repo; Pages) |
 | GAS arquivo | **3.54** (`AppsScript_v3.45_ATUAL.gs`) |
-| GAS ping | **3.53** live → alvo **3.54** |
-| PRs abertas | **#23** auditoria WA/aceite |
+| GAS ping | **3.54** ✅ |
+| PRs abertas | **#24** seed LANÇAMENTOS 01–25/08 |
 | Site | https://www.zapclinslz.com/ · sitemap 12 |
-| Planilha | seed LANÇAMENTOS 01–13/08 ✅ |
+| Planilha | seed LANÇAMENTOS **01–25/08** ✅ |
 
 **Deploy ID (nunca outro / nunca `clasp deploy`):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
@@ -50,30 +50,30 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Handoff + Environment `zapclin` | ✅ secrets OAuth |
 | SEO playbooks + motor + Reels 01–03 | ✅ em `main` (PR #20) |
 | Extra chuva (foto loja) | ✅ em `site/` |
-| Seed ago 01–13 | ✅ planilha + script |
-| Drafts #1 #14 #15 #16 | **CLOSED / merged** — zero PRs abertas |
+| Seed ago 01–13 | ✅ (superado pelo 01–25) |
+| Seed ago 01–25 | ✅ planilha 26/08 (via GAS; OAuth `invalid_grant`) |
+| Aceite.html no Pages | ✅ PR **#23** MERGED · ping 3.54 |
+| Drafts #1 #14 #15 #16 | **CLOSED / merged** |
 
-### Humano (só você) — **agora**
+### Humano (só você)
 
-1. Merge PR **#23** (sobe `aceite.html` no GitHub Pages)  
-2. Colar `AppsScript_v3.45_ATUAL.gs` **3.54** → **Nova versão** no Deploy ID atual  
-3. Loja: `?force=v4.34.1`  
-4. Teste no WhatsApp: https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
-   Tem que abrir **sem** a faixa azul “criado por um usuário do Google Apps Script”.  
-5. Ping deve ser `"version":"3.54"`
+1. Loja: smoke `?force=v4.34.1` + abrir aceite **dentro do WhatsApp no celular**  
+2. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
+3. Re-auth OAuth Desktop e atualizar `GOOGLE_REFRESH_TOKEN` no Environment `zapclin` (`invalid_grant` em 26/08)  
+4. Aguardar GSC bairros — **não** re-spam
 
 ### Auditoria WA + aceite (14/08 — executada)
 
 Varredura readonly: [`AUDITORIA_WA_ACEITE_2026-08-14.md`](./AUDITORIA_WA_ACEITE_2026-08-14.md) + JSON em `scripts/testes/evidencias/`.  
 **Causa do “não consigo aceitar os termos”:** o link abre HtmlService **dentro de um iframe** `googleusercontent`. O form **não tinha** `target="_top"`. No WhatsApp (navegador interno) o toque no botão verde navega o iframe interno → **página em branco**. O Google documenta isso (HTML Service IFRAME sandbox).  
-**Fix no repo (GAS 3.53):** `target="_top"` + `<base target="_top">` + ALLOWALL em aceite/VIP/obrigado + link de fallback. **Só vale em produção depois da Nova versão Web.**
+**Fix no repo (GAS 3.54 live):** página `aceite.html` no GitHub Pages + `dadosAceiteOs`. Humano: abrir o link **dentro do WhatsApp no celular**.
 
 ### Agente (próxima sessão — só com pedido)
 
-1. Corrigir `confirmarEnvioWA` na matriz §3 (nono dígito / bloqueio / clipboard / fallback)  
+1. Pacote **Z.9** `zc-app.css`  
 2. Resiliência **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status  
-3. Pacote **Z.9** `zc-app.css`  
-4. Planilha: Environment `zapclin` + pedido explícito
+3. Planilha: só com pedido explícito (seed 01–25 já feito)  
+4. SEO: não reinventar; gap medido só
 
 ---
 
@@ -102,7 +102,8 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 
 | PR | Estado |
 |----|--------|
-| auditoria WA + aceite (**#23**) | aberta (draft) |
+| seed LANÇAMENTOS 01–25/08 (**#24**) | aberta |
+| auditoria WA + aceite (**#23**) | **MERGED** |
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO consolidado | **MERGED** |
 | #1 legado · #14 chuva · #15 SEO draft · #16 seed | **CLOSED** |
 
