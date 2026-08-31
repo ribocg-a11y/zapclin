@@ -46,9 +46,44 @@ function sincronizarPendentes(){var p=getPendentes();if(!p.length){showToast('�
 function _syncNext(p,idx,total){if(idx>=p.length){var r=getPendentes();localStorage.setItem('zapLastSyncCycle',dataHoraLocal_());if(!r.length)showToast('✅ '+(total||p.length)+' registro(s) sincronizado(s)!');else showToast('⚠️ '+r.length+' ainda pendentes','orange');atualizarBadgePendentes();return;}var item=p[idx];apiGet('salvar',{svcs:item.svcs,vals:item.vals},15000).then(function(resp){if(resp&&resp.ok){var atual=getPendentes();atual.splice(0,1);setPendentes(atual);atualizarBadgePendentes();setTimeout(function(){_syncNext(p,idx+1,total);},500);}else{var pend=getPendentes();if(pend[0])pend[0].tentativas=(parseInt(pend[0].tentativas||0,10)||0)+1;setPendentes(pend);showToast('❌ Erro ao sincronizar','error');atualizarBadgePendentes();}}).catch(function(){var pend=getPendentes();if(pend[0])pend[0].tentativas=(parseInt(pend[0].tentativas||0,10)||0)+1;setPendentes(pend);showToast('⚠️ Sem conexão.','orange');atualizarBadgePendentes();});}
 
 // ═══ BUSCAR / LISTAR (sync backend → cache local) ═══
-function buscarLancamentos(){return apiGet('listar',{},12000).then(function(j){if(j&&j.ok&&j.items){lancamentos=j.items;localStorage.setItem('zapLanc',JSON.stringify(lancamentos));return true;}return false;}).catch(function(){return false;});}
-function buscarCustos(){return apiGet('listarCustos',{},12000).then(function(j){if(j&&j.ok&&j.items){custos=j.items;localStorage.setItem('zapCustos',JSON.stringify(custos));return true;}return false;}).catch(function(){return false;});}
-function buscarClientes(){return apiGet('listarClientes',{},12000).then(function(j){if(j&&j.ok&&j.items){clientes=j.items;clientesFiltrados=clientes.slice();localStorage.setItem('zapClientes',JSON.stringify(clientes));return true;}return false;}).catch(function(){return false;});}
+var _refreshGeracao = 0;
+function zcAuthParamsListarSafe_(){
+  return typeof zcAuthParamsListar_==='function'?zcAuthParamsListar_():{};
+}
+function buscarLancamentos(geracao){
+  return apiGet('listar',zcAuthParamsListarSafe_(),12000).then(function(j){
+    if(geracao!=null&&geracao!==_refreshGeracao)return false;
+    if(j&&j.ok&&Array.isArray(j.items)){
+      lancamentos=j.items;
+      localStorage.setItem('zapLanc',JSON.stringify(lancamentos));
+      return true;
+    }
+    return false;
+  }).catch(function(){return false;});
+}
+function buscarCustos(geracao){
+  return apiGet('listarCustos',zcAuthParamsListarSafe_(),12000).then(function(j){
+    if(geracao!=null&&geracao!==_refreshGeracao)return false;
+    if(j&&j.ok&&Array.isArray(j.items)){
+      custos=j.items;
+      localStorage.setItem('zapCustos',JSON.stringify(custos));
+      return true;
+    }
+    return false;
+  }).catch(function(){return false;});
+}
+function buscarClientes(geracao){
+  return apiGet('listarClientes',zcAuthParamsListarSafe_(),12000).then(function(j){
+    if(geracao!=null&&geracao!==_refreshGeracao)return false;
+    if(j&&j.ok&&Array.isArray(j.items)){
+      clientes=j.items;
+      clientesFiltrados=clientes.slice();
+      localStorage.setItem('zapClientes',JSON.stringify(clientes));
+      return true;
+    }
+    return false;
+  }).catch(function(){return false;});
+}
 
 // ═══ PERFORMANCE — ATUALIZAÇÃO AUTOMÁTICA ═══
 var _refreshInterval = null;
@@ -70,13 +105,15 @@ function renderDadosDependentes_(opts){
 
 function refreshDados(force) {
   var agora = Date.now();
-  if(_refreshRodando)return;
+  if (!force && _refreshRodando) return;
   if (!force && agora - _lastRefresh < REFRESH_COOLDOWN) return;
   _lastRefresh = agora;
+  var geracao = ++_refreshGeracao;
   _refreshRodando = true;
 
-  Promise.all([buscarLancamentos(), buscarClientes(), buscarCustos()])
+  Promise.all([buscarLancamentos(geracao), buscarClientes(geracao), buscarCustos(geracao)])
     .then(function(results) {
+      if (geracao !== _refreshGeracao) return;
       var algumOk = results.some(function(r){ return r; });
       if (algumOk) {
         renderDadosDependentes_({historico:true,historicoCustos:true});
@@ -84,10 +121,14 @@ function refreshDados(force) {
           var pageAdmin = document.getElementById('page-admin');
           if (pageAdmin && pageAdmin.classList.contains('active')) carregarPainelAdmin();
         }
+      } else {
+        try{_calcStatsHome();}catch(e){}
       }
     })
     .catch(function(e){ console.error('refreshDados:', e); })
-    .finally(function(){_refreshRodando=false;});
+    .finally(function(){
+      if (geracao === _refreshGeracao) _refreshRodando = false;
+    });
 }
 
 function agendarRefreshAposEscrita_(delay){

@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.5  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.6  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -45,7 +45,7 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.36.5** (Painel organizado · Equipe página própria) |
+| FE / SW | **v4.36.6** (troca de loja: stats na hora, sem herdar a outra unidade) |
 | GAS arquivo | **3.57** no repo (`AppsScript_v3.45_ATUAL.gs`) — ping 3.55 até Nova versão |
 | GAS ping | **3.57** (colado 31/08) |
 | PRs | **#30** RFC · **#28** menu Rede · L1 v4.36.3 |
@@ -81,15 +81,17 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Login de turno v4.36 / GAS 3.55 | ✅ PR **#26** MERGED · ping 3.55 |
 | Menu balcão + cockpit Rede (sem dump ADMINISTRAÇÃO) | ✅ PR **#28** MERGED · Pages **v4.36.2** |
 | RFC Rede / gestão de mudança | ✅ PR **#30** · sócio marcou **pode L1** |
-| L1 Equipe visível + Painel Rede soma | ⏳ **v4.36.3** |
+| L1 Equipe visível + Painel Rede soma | ✅ **v4.36.3** / Equipe página **v4.36.5** |
+| Troca de loja mostra dados da unidade errada | ✅ **v4.36.6** — filtra cache na hora + ignora fetch atrasado |
 
 ### Humano (só você)
 
 1. **Colar GAS 3.57** no editor (mesmo Deploy ID) — sem isso a tela de troca de PIN não grava
-2. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.5
-3. Home Rede → **Equipe** — cadastrar pelo **nome** (login joao é gerado)
-4. Operador entra com 123456 → tela força PIN próprio; o novo PIN aparece na Equipe (PIN_RECUPERA)
-5. Aceite **dentro do WhatsApp no celular**
+2. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.6
+3. Home: toque Golden → Rio Anil e confira os números da Home (Rio Anil sem lançamento = **0**, não os do Golden)
+4. Home Rede → **Equipe** — cadastrar pelo **nome** (login joao é gerado)
+5. Operador entra com 123456 → tela força PIN próprio; o novo PIN aparece na Equipe (PIN_RECUPERA)
+6. Aceite **dentro do WhatsApp no celular**
 
 ### Agente no C: (só com pedido)
 

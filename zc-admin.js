@@ -77,8 +77,12 @@ function copiarResumoDiarioAdmin_(){copiarTexto_(_resumoDiarioAdminTexto||'Resum
 var _fechamentoDiarioAdminTexto='';
 
 function fechamentoDiarioAdmin_(kpis){
-  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
-  var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var lanc=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(lancamentos,'zapLanc'):(Array.isArray(lancamentos)?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]'));
+  var cli=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(clientes,'zapClientes'):(Array.isArray(clientes)?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]'));
+  if(typeof zcAuthFiltrarPorLoja_==='function'){
+    lanc=zcAuthFiltrarPorLoja_(lanc);
+    cli=zcAuthFiltrarPorLoja_(cli);
+  }
   var hoje=hojeBR_();
   var lancHoje=lanc.filter(function(l){
     var svc=String(l&&l.svc||'');
@@ -330,8 +334,9 @@ function calcularKpisAdminLocal_(unidadeId){
   // [v4.1 NOVO]
   // Fallback preservando exatamente a lógica anterior do v4.0 baseada em cache local.
   // Usado imediatamente ao abrir o painel e também quando o servidor não responder.
-  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
-  var cst=custos.length>0?custos:JSON.parse(localStorage.getItem('zapCustos')||'[]');
+  var lanc=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(lancamentos,'zapLanc'):(Array.isArray(lancamentos)?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]'));
+  var cst=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(custos,'zapCustos'):(Array.isArray(custos)?custos:JSON.parse(localStorage.getItem('zapCustos')||'[]'));
+  if(!unidadeId&&typeof zcAuthEscopoUnidade_==='function')unidadeId=zcAuthEscopoUnidade_();
   if(unidadeId&&unidadeId!=='rede'){
     lanc=lanc.filter(function(l){return (typeof zcAuthLinhaUnidade_==='function'?zcAuthLinhaUnidade_(l):'golden')===unidadeId;});
     cst=cst.filter(function(c){return (typeof zcAuthLinhaUnidade_==='function'?zcAuthLinhaUnidade_(c):'golden')===unidadeId;});
@@ -356,8 +361,12 @@ function calcularKpisAdminLocal_(unidadeId){
 }
 
 function calcularConsistenciaOperacional_(){
-  var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
-  var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var lanc=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(lancamentos,'zapLanc'):(Array.isArray(lancamentos)?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]'));
+  var cli=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(clientes,'zapClientes'):(Array.isArray(clientes)?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]'));
+  if(typeof zcAuthFiltrarPorLoja_==='function'){
+    lanc=zcAuthFiltrarPorLoja_(lanc);
+    cli=zcAuthFiltrarPorLoja_(cli);
+  }
   var hoje=hojeBR_();
   var lancHoje=lanc.filter(function(l){
     var svc=String(l&&l.svc||'');
