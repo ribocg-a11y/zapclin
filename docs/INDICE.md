@@ -10,6 +10,7 @@
 |-----------|-----------|
 | [`../AGENTS.md`](../AGENTS.md) | Instruções para agentes |
 | [`ativos/HANDOFF_NOVO_CHAT.md`](ativos/HANDOFF_NOVO_CHAT.md) | Handoff ativo (14/08) |
+| [`ativos/ARQUITETURA_MULTIUNIDADE.md`](ativos/ARQUITETURA_MULTIUNIDADE.md) | Golden + Rio Anil + HQ — decisão de arquitetura |
 | [`ativos/PROMPT_ABERTURA_NOVO_AGENTE.md`](ativos/PROMPT_ABERTURA_NOVO_AGENTE.md) | Texto colar no novo agente |
 | [`ativos/ESTADO_ATUAL.md`](ativos/ESTADO_ATUAL.md) | Versões e links |
 | [`ativos/ERROS_PWA_2026-07-14.md`](ativos/ERROS_PWA_2026-07-14.md) | **14 erros do incidente PWA — proibido repetir** |
