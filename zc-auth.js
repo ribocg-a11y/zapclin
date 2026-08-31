@@ -27,8 +27,19 @@ function zcAuthUnidadeFiltro_(){
   if(zcAuthPerfil_()!=='adm')return zcAuthUnidadeId_();
   try{
     var f=sessionStorage.getItem(ZC_AUTH_UNIDADE_KEY)||'';
-    return f?String(f).toLowerCase():'golden';
-  }catch(e){return 'golden';}
+    return f?String(f).toLowerCase():'rede';
+  }catch(e){return 'rede';}
+}
+function zcAuthNomeLojaFiltro_(){
+  var f=zcAuthUnidadeFiltro_();
+  if(f==='anil')return 'Rio Anil';
+  if(f==='rede')return 'Rede (as duas)';
+  return 'Golden Shopping';
+}
+function zcAuthPodeEscreverNaUnidade_(){
+  if(zcAuthPerfil_()!=='adm')return true;
+  var f=zcAuthUnidadeFiltro_();
+  return f==='golden'||f==='anil';
 }
 function zcAuthPode_(recurso){
   var p=zcAuthPerfil_();
@@ -103,47 +114,123 @@ function zcAuthRenderSessao_(){
   if(!wrap)return;
   if(!s){wrap.style.display='none';return;}
   wrap.style.display='block';
-  var perfilLbl=s.perfil==='adm'?'ADM':(s.perfil==='supervisor'?'Supervisor':'Operador');
-  var loja=s.perfil==='adm'?(zcAuthUnidadeFiltro_()==='anil'?'Rio Anil':(zcAuthUnidadeFiltro_()==='rede'?'Rede':'Golden')):(s.unidadeNome||s.unidadeId||'');
+  var loja=s.perfil==='adm'?zcAuthNomeLojaFiltro_():(s.unidadeNome||s.unidadeId||'');
   if(nomeEl)nomeEl.textContent=s.nome||s.usuario;
-  if(metaEl)metaEl.textContent=perfilLbl+(loja?' · '+loja:'')+(s.turno?' · '+s.turno:'');
-  var sel=document.getElementById('zcUnidadeFiltro');
-  var selWrap=document.getElementById('zcUnidadeFiltroWrap');
-  if(selWrap)selWrap.style.display=s.perfil==='adm'?'block':'none';
-  if(sel&&s.perfil==='adm'){
-    var cur=zcAuthUnidadeFiltro_()||'golden';
-    if(sel.value!==cur)sel.value=cur;
+  if(metaEl)metaEl.textContent=(loja||'Turno')+(s.turno?' · '+s.turno:'');
+  zcAuthRenderLojaSwitch_();
+  zcAuthAtualizarHomeRede_();
+}
+
+function zcAuthRenderLojaSwitch_(){
+  var wrap=document.getElementById('zcLojaSwitch');
+  if(!wrap)return;
+  if(zcAuthPerfil_()!=='adm'){wrap.style.display='none';return;}
+  wrap.style.display='flex';
+  var cur=zcAuthUnidadeFiltro_()||'rede';
+  var chips=wrap.querySelectorAll('[data-loja]');
+  for(var i=0;i<chips.length;i++){
+    chips[i].classList.toggle('on',chips[i].getAttribute('data-loja')===cur);
+  }
+}
+
+function zcAuthSetUnidadeFiltro_(id){
+  if(zcAuthPerfil_()!=='adm')return;
+  var v=String(id||'rede').toLowerCase();
+  if(v!=='golden'&&v!=='anil')v='rede';
+  try{sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,v);}catch(e){}
+  zcAuthRenderSessao_();
+  if(v==='rede'&&typeof mostrarHome==='function')mostrarHome();
+  if(typeof refreshDados==='function')refreshDados(true);
+  if(typeof carregarPainelAdmin==='function'&&typeof isAdmin!=='undefined'&&isAdmin){
+    var pageAdmin=document.getElementById('page-admin');
+    if(pageAdmin&&pageAdmin.classList.contains('active'))carregarPainelAdmin();
+  }
+}
+function zcAuthEntrarLoja_(id){
+  zcAuthSetUnidadeFiltro_(id);
+  if(typeof mostrarHome==='function')mostrarHome();
+  if(typeof showToast==='function')showToast('Loja: '+zcAuthNomeLojaFiltro_(),'blue');
+}
+function zcAuthVoltarRede_(){
+  zcAuthSetUnidadeFiltro_('rede');
+}
+
+function zcAuthStatsLoja_(unidadeId){
+  var src=typeof lancamentos!=='undefined'&&lancamentos.length?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var cli=typeof clientes!=='undefined'&&clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var hoje=typeof hojeBR_==='function'?hojeBR_():'';
+  var atd=src.filter(function(l){
+    var u=String((l&&l.unidade)||'golden').toLowerCase()||'golden';
+    var svc=String(l&&l.svc||'');
+    return u===unidadeId&&fmtData(l&&l.data)===hoje&&!l.cancelado&&!/^CANCELADO\b/i.test(svc);
+  }).reduce(function(total,l){
+    var qtd=parseInt(l&&l.qtd||1,10);
+    return total+(qtd>0?qtd:1);
+  },0);
+  var ativos=cli.filter(function(c){
+    var u=String((c&&c.unidade)||'golden').toLowerCase()||'golden';
+    return u===unidadeId&&typeof clienteAberto_==='function'&&clienteAberto_(c);
+  }).length;
+  return {atend:atd,ativos:ativos};
+}
+
+function zcAuthAtualizarHomeRede_(){
+  var adm=zcAuthPerfil_()==='adm';
+  var filtro=adm?zcAuthUnidadeFiltro_():'';
+  var naRede=adm&&filtro==='rede';
+  var naLoja=adm&&(filtro==='golden'||filtro==='anil');
+  var cockpit=document.getElementById('homeRedeCockpit');
+  var balcao=document.getElementById('homeBalcaoBlock');
+  var bar=document.getElementById('homeLojaBar');
+  var sub=document.getElementById('homeTopoSub');
+  var barNome=document.getElementById('homeLojaBarNome');
+  if(cockpit)cockpit.style.display=naRede?'block':'none';
+  if(balcao)balcao.style.display=naRede?'none':'block';
+  if(bar)bar.style.display=naLoja?'flex':'none';
+  if(barNome)barNome.textContent=zcAuthNomeLojaFiltro_();
+  if(sub){
+    if(naRede)sub.textContent='As duas lojas juntas. Toque numa unidade para operar como no sistema de sempre.';
+    else if(naLoja)sub.textContent='Balcão de '+zcAuthNomeLojaFiltro_()+' — como uma loja só.';
+    else sub.textContent='Pronto para atender!';
+  }
+  if(naRede){
+    var g=zcAuthStatsLoja_('golden');
+    var a=zcAuthStatsLoja_('anil');
+    var ge=document.getElementById('homeStoreGoldenAtend');
+    var ga=document.getElementById('homeStoreGoldenAtivos');
+    var ae=document.getElementById('homeStoreAnilAtend');
+    var aa=document.getElementById('homeStoreAnilAtivos');
+    if(ge)ge.textContent=g.atend;
+    if(ga)ga.textContent=g.ativos;
+    if(ae)ae.textContent=a.atend;
+    if(aa)aa.textContent=a.ativos;
   }
 }
 
 function zcAuthAplicarPermissoes_(){
-  var p=zcAuthPerfil_();
-  var custosBtn=document.querySelector('.sb-btn[data-page="custos"]');
+  var p=zcAuthPerfil_()||'operador';
+  document.body.classList.remove('zc-perfil-adm','zc-perfil-supervisor','zc-perfil-operador');
+  document.body.classList.add('zc-perfil-'+p);
+  var custosBtn=document.getElementById('sbBtnCustos')||document.querySelector('.sb-btn[data-page="custos"]');
   if(custosBtn)custosBtn.style.display=zcAuthPode_('custos')?'':'none';
+  var homeCustos=document.getElementById('homeCardCustos');
+  if(homeCustos)homeCustos.style.display=zcAuthPode_('custos')?'':'none';
   var ger=document.getElementById('sbGerenciarBtn');
-  if(ger)ger.style.display=p==='adm'?'':'none';
+  if(ger)ger.style.display=p==='adm'?'flex':'none';
+  var homePainel=document.getElementById('homeCardPainel');
+  if(homePainel)homePainel.style.display=p==='adm'?'':'none';
   var adminSec=document.getElementById('sbAdminSection');
-  if(p==='adm'){
-    isAdmin=true;
-    if(adminSec){adminSec.classList.add('visible');adminSec.style.display='';}
-    var bar=document.getElementById('sbAdminBar');
-    if(bar)bar.style.display='none';
-    if(ger)ger.style.display='none';
-  }else if(adminSec){
-    adminSec.style.display='none';
-  }
+  if(adminSec){adminSec.classList.remove('visible');adminSec.style.display='none';}
+  var bar=document.getElementById('sbAdminBar');
+  if(bar)bar.style.display='none';
+  if(p==='adm')isAdmin=true;
   var users=document.getElementById('zcUsersAdmin');
   if(users)users.style.display=p==='adm'?'block':'none';
   zcAuthRenderSessao_();
 }
 
 function zcAuthOnUnidadeChange_(){
-  var sel=document.getElementById('zcUnidadeFiltro');
-  if(!sel)return;
-  try{sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,sel.value||'golden');}catch(e){}
-  zcAuthRenderSessao_();
-  if(typeof refreshDados==='function')refreshDados(true);
-  if(typeof carregarPainelAdmin==='function'&&typeof isAdmin!=='undefined'&&isAdmin)carregarPainelAdmin();
+  zcAuthSetUnidadeFiltro_(zcAuthUnidadeFiltro_());
 }
 
 function zcAuthEncerrarTurno_(){
@@ -160,6 +247,11 @@ function zcAuthEncerrarTurno_(){
 
 function zcAuthBoot_(){
   if(zcAuthSessao_()){
+    if(zcAuthPerfil_()==='adm'){
+      try{
+        if(!sessionStorage.getItem(ZC_AUTH_UNIDADE_KEY))sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,'rede');
+      }catch(e){}
+    }
     zcAuthEsconderLogin_();
     if(!_zcAuthBootouApp_){
       _zcAuthBootouApp_=true;
@@ -201,7 +293,7 @@ function zcAuthLoginSubmit_(ev){
     }
     zcAuthGravarSessao_(r);
     try{
-      sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,r.unidadeId||'golden');
+      sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,String(r.perfil||'').toLowerCase()==='adm'?'rede':(r.unidadeId||'golden'));
       localStorage.removeItem('zapClientes');
       localStorage.removeItem('zapLanc');
       localStorage.removeItem('zapCustos');

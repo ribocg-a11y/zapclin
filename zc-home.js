@@ -6,10 +6,13 @@ function mostrarHome(){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
   var hbtn=document.querySelector('.sb-btn[data-page="home"]');
   if(hbtn)hbtn.classList.add('active');
+  var gbtn=document.getElementById('sbGerenciarBtn');
+  if(gbtn)gbtn.classList.remove('active');
   // [v4.7 ALTERAÇÃO]
   // Mantém o selo de versão visível na Home. O textContent removia o <span> da versão.
   setMobileTitle_('ZapClin');
   atualizarStatsHome();
+  if(typeof zcAuthAtualizarHomeRede_==='function')zcAuthAtualizarHomeRede_();
   animarCardsHome();
 }
 
@@ -61,6 +64,7 @@ function _calcStatsHome(){
 function atualizarStatsHome(){
   // Mostra cache imediatamente
   _calcStatsHome();
+  if(typeof zcAuthAtualizarHomeRede_==='function')zcAuthAtualizarHomeRede_();
   // Se não tem dados, busca agora
   if(lancamentos.length===0 || clientes.length===0){
     refreshDados(true);

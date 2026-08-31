@@ -28,6 +28,11 @@ function goTo(page, btn){
     if(typeof showToast==='function')showToast('Seu perfil não acessa esta tela','orange');
     return;
   }
+  if(typeof zcAuthPodeEscreverNaUnidade_==='function' && page==='registrar' && !zcAuthPodeEscreverNaUnidade_()){
+    fecharSidebar();
+    if(typeof showToast==='function')showToast('Toque em Golden ou Rio Anil para registrar. Na Rede você vê as duas juntas.','orange');
+    return;
+  }
   var paginasAdmin=['admin','dashboard','historico','historico-custos','lancamentos','relatorio','logs','aceites'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     fecharSidebar();
@@ -40,6 +45,11 @@ function goTo(page, btn){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
   var match=btn||document.querySelector('.sb-btn[data-page="'+page+'"]');
   if(match)match.classList.add('active');
+  var gbtn=document.getElementById('sbGerenciarBtn');
+  if(gbtn){
+    if(paginasAdmin.indexOf(page)>=0)gbtn.classList.add('active');
+    else gbtn.classList.remove('active');
+  }
   // [v4.7 ALTERAÇÃO]
   // Usa helper para preservar o selo de versão quando a rota volta para Home.
   setMobileTitle_(PAGE_TITLES[page]||'ZapClin');
