@@ -1,5 +1,5 @@
 /* Pacote Z.1 — fonte única de versão e endpoints GAS */
-var APP_VERSION = 'v4.36.0';
+var APP_VERSION = 'v4.36.1';
 var BACKEND_MIN_VERSION = '3.55';
 var WEB_APP = 'https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec';
 var ACEITE_PAGE_URL = 'https://ribocg-a11y.github.io/zapclin/aceite.html';

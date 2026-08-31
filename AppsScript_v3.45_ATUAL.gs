@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.55 | Data: 31/08/2026
+// VersÃ£o: 3.56 | Data: 31/08/2026
+// NOVO v3.56:
+//   - Login sem LockService (evita timeout de 15s no PWA); ensureAuth so UNIDADES/USUARIOS
 // NOVO v3.55:
 //   - Login operador/supervisor/ADM (PIN com hash), sessao de turno, carimbo UNIDADE+OPERADOR
 //   - Filtro por loja no listar/KPIs; abas UNIDADES e USUARIOS
@@ -140,7 +142,7 @@ var SHEET_UNIDADES    = 'UNIDADES';
 var SHEET_USUARIOS    = 'USUARIOS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.55';
+var VERSION           = '3.56';
 var AUTH_PEPPER       = 'zapclin-auth-v1';
 var AUTH_SESS_TTL     = 21600;
 var ACEITE_PAGE_URL   = 'https://ribocg-a11y.github.io/zapclin/aceite.html';
@@ -248,19 +250,12 @@ function ensureAuthSheets_(ss) {
     var agora = Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm');
     usr.getRange(2, 1, 1, 8).setValues([['antonio', 'Antonio', hashPinAuth_('antonio', '1321'), 'adm', '', 'SIM', agora, '']]);
   }
-  try {
-    var lanc = getLancamentosSheet_(ss);
-    if (lanc && !String(lanc.getRange(8, 10).getValue() || '')) lanc.getRange(8, 10, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
-    var cli = getOrCreateClientesSheet(ss);
-    if (cli && !String(cli.getRange(8, 17).getValue() || '')) cli.getRange(8, 17, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
-    var cus = ss.getSheetByName(SHEET_CUSTOS);
-    if (cus && !String(cus.getRange(8, 7).getValue() || '')) cus.getRange(8, 7, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
-  } catch (eHead) {}
   return usr;
 }
 
 function lerUsuarios_(ss) {
-  var sh = ensureAuthSheets_(ss);
+  var sh = ss.getSheetByName(SHEET_USUARIOS);
+  if (!sh) sh = ensureAuthSheets_(ss);
   var last = Math.max(2, sh.getLastRow());
   var rows = sh.getRange(2, 1, last, 8).getValues();
   var out = [];
@@ -390,7 +385,7 @@ function actionPrecisaLock_(action) {
     'editarCusto','cancelarCusto','atualizarStatus','editarCliente',
     'cancelarCliente','salvarCadastroVip','registrarEventoFrontend',
     'gerarOsPdf','enviarRelatorio','repararLancamentosClientesHoje',
-    'confirmarAceiteOs','loginOperador','salvarUsuario'
+    'confirmarAceiteOs','salvarUsuario'
   ].indexOf(String(action || '')) >= 0;
 }
 
