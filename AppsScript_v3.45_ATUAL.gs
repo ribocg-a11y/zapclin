@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.56 | Data: 31/08/2026
+// VersÃ£o: 3.57 | Data: 31/08/2026
+// NOVO v3.57:
+//   - Primeiro acesso operador/supervisor: PIN inicial 123456, troca obrigatória, PIN_RECUPERA na aba USUARIOS (só ADM)
 // NOVO v3.56:
 //   - Login sem LockService (evita timeout de 15s no PWA); ensureAuth so UNIDADES/USUARIOS
 // NOVO v3.55:
@@ -142,7 +144,8 @@ var SHEET_UNIDADES    = 'UNIDADES';
 var SHEET_USUARIOS    = 'USUARIOS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.56';
+var VERSION           = '3.57';
+var PIN_INICIAL_AUTH  = '123456';
 var AUTH_PEPPER       = 'zapclin-auth-v1';
 var AUTH_SESS_TTL     = 21600;
 var ACEITE_PAGE_URL   = 'https://ribocg-a11y.github.io/zapclin/aceite.html';
@@ -244,11 +247,12 @@ function ensureAuthSheets_(ss) {
   var usr = ss.getSheetByName(SHEET_USUARIOS);
   if (!usr) {
     usr = ss.insertSheet(SHEET_USUARIOS);
-    usr.getRange(1, 1, 1, 8).setValues([['USUARIO', 'NOME', 'PIN_HASH', 'PERFIL', 'UNIDADE_ID', 'ATIVO', 'CRIADO', 'TURNO']]).setFontWeight('bold');
   }
+  usr.getRange(1, 1, 1, 10).setValues([['USUARIO', 'NOME', 'PIN_HASH', 'PERFIL', 'UNIDADE_ID', 'ATIVO', 'CRIADO', 'TURNO', 'TROCAR_PIN', 'PIN_RECUPERA']]).setFontWeight('bold');
+  usr.getRange(1, 10).setNote('PIN atual em texto so para o ADM recuperar se o operador esquecer. Nao compartilhe esta aba.');
   if (usr.getLastRow() < 2 || !String(usr.getRange(2, 1).getValue() || '').trim()) {
     var agora = Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm');
-    usr.getRange(2, 1, 1, 8).setValues([['antonio', 'Antonio', hashPinAuth_('antonio', '1321'), 'adm', '', 'SIM', agora, '']]);
+    usr.getRange(2, 1, 1, 10).setValues([['antonio', 'Antonio', hashPinAuth_('antonio', '1321'), 'adm', '', 'SIM', agora, '', 'NAO', '']]);
   }
   return usr;
 }
@@ -257,20 +261,25 @@ function lerUsuarios_(ss) {
   var sh = ss.getSheetByName(SHEET_USUARIOS);
   if (!sh) sh = ensureAuthSheets_(ss);
   var last = Math.max(2, sh.getLastRow());
-  var rows = sh.getRange(2, 1, last, 8).getValues();
+  var rows = sh.getRange(2, 1, last, 10).getValues();
   var out = [];
   for (var i = 0; i < rows.length; i++) {
     var u = String(rows[i][0] || '').trim().toLowerCase();
     if (!u) continue;
+    var perfil = String(rows[i][3] || 'operador').toLowerCase();
+    var trocarRaw = String(rows[i][8] || '').trim().toUpperCase();
+    var trocarPin = trocarRaw === 'SIM' || trocarRaw === 'TRUE' || trocarRaw === '1';
     out.push({
       row: 2 + i,
       usuario: u,
       nome: String(rows[i][1] || u),
       pinHash: String(rows[i][2] || ''),
-      perfil: String(rows[i][3] || 'operador').toLowerCase(),
+      perfil: perfil,
       unidadeId: String(rows[i][4] || '').toLowerCase(),
       ativo: String(rows[i][5] || 'SIM').toUpperCase() !== 'NAO' && String(rows[i][5] || '').toUpperCase() !== 'NÃO',
-      turno: String(rows[i][7] || '')
+      turno: String(rows[i][7] || ''),
+      trocarPin: trocarPin,
+      pinRecupera: String(rows[i][9] || '')
     });
   }
   return out;
@@ -299,6 +308,7 @@ function loginOperador_(ss, p) {
   }
   CacheService.getScriptCache().remove(failKey);
   var token = Utilities.getUuid();
+  var mustChangePin = !!(found.trocarPin && found.perfil !== 'adm');
   var sess = {
     token: token,
     usuario: found.usuario,
@@ -307,14 +317,16 @@ function loginOperador_(ss, p) {
     unidadeId: found.unidadeId,
     unidadeNome: nomeUnidade_(found.unidadeId),
     turno: found.turno,
+    mustChangePin: mustChangePin,
     t: new Date().getTime()
   };
   gravarSessaoAuth_(sess);
-  registrarLogSistema_('AUTH', 'loginOperador', 'OK', 'Turno iniciado', { usuario: found.usuario, perfil: found.perfil, unidade: found.unidadeId || 'rede' });
+  registrarLogSistema_('AUTH', 'loginOperador', 'OK', 'Turno iniciado', { usuario: found.usuario, perfil: found.perfil, unidade: found.unidadeId || 'rede', trocarPin: mustChangePin });
   return {
     ok: true, version: VERSION, auth: true, token: token,
     usuario: found.usuario, nome: found.nome, perfil: found.perfil,
-    unidadeId: found.unidadeId, unidadeNome: sess.unidadeNome, turno: found.turno
+    unidadeId: found.unidadeId, unidadeNome: sess.unidadeNome, turno: found.turno,
+    mustChangePin: mustChangePin
   };
 }
 
@@ -328,7 +340,10 @@ function logoutOperador_(p) {
 function listarUsuarios_(ss, sess) {
   if (!sess || sess.perfil !== 'adm') return { ok: false, error: 'Somente ADM.', version: VERSION };
   var users = lerUsuarios_(ss).map(function(u) {
-    return { usuario: u.usuario, nome: u.nome, perfil: u.perfil, unidadeId: u.unidadeId, ativo: u.ativo, turno: u.turno };
+    return {
+      usuario: u.usuario, nome: u.nome, perfil: u.perfil, unidadeId: u.unidadeId,
+      ativo: u.ativo, turno: u.turno, trocarPin: !!u.trocarPin, pinRecupera: u.pinRecupera || ''
+    };
   });
   return { ok: true, version: VERSION, items: users };
 }
@@ -353,6 +368,8 @@ function salvarUsuario_(ss, sess, p) {
   var turno = String(p.turno || '').trim();
   var ativo = String(p.ativo || 'SIM').toUpperCase();
   var pin = String(p.pin || '');
+  var resetInicial = String(p.resetPinInicial || '') === '1';
+  var isStaff = perfil === 'operador' || perfil === 'supervisor';
   if (!usuario) return { ok: false, error: 'Usuario obrigatorio.', version: VERSION };
   if (['operador', 'supervisor', 'adm'].indexOf(perfil) < 0) perfil = 'operador';
   if (perfil !== 'adm' && !unidadeId) return { ok: false, error: 'Operador e supervisor precisam da loja.', version: VERSION };
@@ -366,17 +383,70 @@ function salvarUsuario_(ss, sess, p) {
   if (pin && (pin.length < 4 || pin.length > 6 || !/^\d+$/.test(pin))) {
     return { ok: false, error: 'PIN deve ter 4 a 6 digitos.', version: VERSION };
   }
-  if (!alvo && !pin) return { ok: false, error: 'PIN obrigatorio para usuario novo.', version: VERSION };
   var hash = alvo ? alvo.pinHash : '';
-  if (pin) hash = hashPinAuth_(usuario, pin);
-  var agora = Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm');
-  if (alvo) {
-    sh.getRange(alvo.row, 2, 1, 7).setValues([[nome, hash, perfil, unidadeId, ativo === 'NAO' ? 'NAO' : 'SIM', agora, turno]]);
-  } else {
-    sh.appendRow([usuario, nome, hash, perfil, unidadeId, ativo === 'NAO' ? 'NAO' : 'SIM', agora, turno]);
+  var trocar = alvo && alvo.trocarPin ? 'SIM' : 'NAO';
+  var recupera = alvo ? String(alvo.pinRecupera || '') : '';
+  if (!alvo && isStaff) {
+    pin = PIN_INICIAL_AUTH;
+    hash = hashPinAuth_(usuario, PIN_INICIAL_AUTH);
+    trocar = 'SIM';
+    recupera = PIN_INICIAL_AUTH;
+  } else if (!alvo && !pin) {
+    return { ok: false, error: 'PIN obrigatorio para usuario novo.', version: VERSION };
+  } else if (resetInicial && isStaff) {
+    hash = hashPinAuth_(usuario, PIN_INICIAL_AUTH);
+    trocar = 'SIM';
+    recupera = PIN_INICIAL_AUTH;
+  } else if (pin) {
+    hash = hashPinAuth_(usuario, pin);
+    if (isStaff) recupera = pin;
+    if (perfil === 'adm') { trocar = 'NAO'; recupera = ''; }
   }
-  registrarLogSistema_('AUTH', 'salvarUsuario', 'OK', 'Usuario gravado', { usuario: usuario, perfil: perfil, unidade: unidadeId });
-  return { ok: true, version: VERSION, usuario: usuario };
+  var agora = Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm');
+  var linha = [nome, hash, perfil, unidadeId, ativo === 'NAO' ? 'NAO' : 'SIM', agora, turno, trocar, perfil === 'adm' ? '' : recupera];
+  if (alvo) {
+    sh.getRange(alvo.row, 2, 1, 9).setValues([linha]);
+  } else {
+    sh.appendRow([usuario].concat(linha));
+  }
+  registrarLogSistema_('AUTH', 'salvarUsuario', 'OK', 'Usuario gravado', { usuario: usuario, perfil: perfil, unidade: unidadeId, trocarPin: trocar });
+  return { ok: true, version: VERSION, usuario: usuario, pinInicial: (!alvo && isStaff) || resetInicial };
+}
+
+function pinValidoNovo_(pin) {
+  return pin && pin.length >= 4 && pin.length <= 6 && /^\d+$/.test(pin) && pin !== PIN_INICIAL_AUTH;
+}
+
+function trocarPinPrimeiroAcesso_(ss, sess, p) {
+  if (!sess || !sess.usuario) return { ok: false, error: 'Sessao invalida.', version: VERSION };
+  if (sess.perfil === 'adm') return { ok: false, error: 'ADM nao usa PIN inicial.', version: VERSION };
+  var pin = String(p.pin || '');
+  if (!pinValidoNovo_(pin)) {
+    return { ok: false, error: 'Escolha um PIN de 4 a 6 digitos, diferente de 123456.', version: VERSION };
+  }
+  ensureAuthSheets_(ss);
+  var users = lerUsuarios_(ss);
+  var alvo = null;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].usuario === sess.usuario) { alvo = users[i]; break; }
+  }
+  if (!alvo) return { ok: false, error: 'Usuario nao encontrado.', version: VERSION };
+  var sh = ss.getSheetByName(SHEET_USUARIOS);
+  sh.getRange(alvo.row, 3).setValue(hashPinAuth_(alvo.usuario, pin));
+  sh.getRange(alvo.row, 9).setValue('NAO');
+  sh.getRange(alvo.row, 10).setValue(pin);
+  sess.mustChangePin = false;
+  gravarSessaoAuth_(sess);
+  registrarLogSistema_('AUTH', 'trocarPinPrimeiroAcesso', 'OK', 'PIN inicial trocado', { usuario: alvo.usuario });
+  return { ok: true, version: VERSION, mustChangePin: false };
+}
+
+function actionLivreTrocaPin_(action) {
+  return [
+    'ping', 'loginOperador', 'logoutOperador', 'trocarPinPrimeiroAcesso',
+    'cadastroVip', 'salvarCadastroVip', 'aceiteOs', 'dadosAceiteOs', 'confirmarAceiteOs',
+    'registrarEventoFrontend'
+  ].indexOf(String(action || '')) >= 0;
 }
 
 function actionPrecisaLock_(action) {
@@ -385,7 +455,7 @@ function actionPrecisaLock_(action) {
     'editarCusto','cancelarCusto','atualizarStatus','editarCliente',
     'cancelarCliente','salvarCadastroVip','registrarEventoFrontend',
     'gerarOsPdf','enviarRelatorio','repararLancamentosClientesHoje',
-    'confirmarAceiteOs','salvarUsuario'
+    'confirmarAceiteOs','salvarUsuario','trocarPinPrimeiroAcesso'
   ].indexOf(String(action || '')) >= 0;
 }
 
@@ -1306,7 +1376,10 @@ function doGet(e) {
     var sess   = resolverSessao_(p);
     if (actionPrecisaLock_(action)) actionLock = obterLockEscrita_(action);
 
-    if (action === 'cadastroVip') {
+    if (sess && sess.mustChangePin && !actionLivreTrocaPin_(action)) {
+      result = { ok: false, code: 'MUST_CHANGE_PIN', error: 'Troque o PIN inicial antes de continuar.', version: VERSION };
+
+    } else if (action === 'cadastroVip') {
       return renderCadastroVipForm_(p);
 
     } else if (action === 'salvarCadastroVip' && p.form === '1') {
@@ -1338,6 +1411,9 @@ function doGet(e) {
 
     } else if (action === 'salvarUsuario') {
       result = salvarUsuario_(ss, sess, p);
+
+    } else if (action === 'trocarPinPrimeiroAcesso') {
+      result = trocarPinPrimeiroAcesso_(ss, sess, p);
 
     } else if (action === 'salvar') {
       var lanc = getLancamentosSheet_(ss);
@@ -1900,6 +1976,11 @@ function doPost(e) {
     postLock = obterLockEscrita_('doPost');
     var data = JSON.parse(e.postData.contents);
     var sess             = resolverSessao_({ sess: data.sess || data.token || '' });
+    if (sess && sess.mustChangePin) {
+      return ContentService.createTextOutput(JSON.stringify({
+        ok: false, code: 'MUST_CHANGE_PIN', error: 'Troque o PIN inicial antes de cadastrar OS.', version: VERSION
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
     var stamp            = { unidade: unidadeEscrita_(sess, data), operador: sess && sess.usuario ? sess.usuario : '' };
     var nome             = data.nome        || 'Cliente';
     var telefone         = data.telefone    || '';

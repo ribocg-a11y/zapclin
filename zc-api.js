@@ -11,7 +11,7 @@ function apiGet(action,params,timeout){
     var tok=typeof zcAuthSessToken_==='function'?zcAuthSessToken_():'';
     if(tok)params.sess=tok;
   }
-  if(action!=='loginOperador'&&!params.unidade&&typeof zcAuthUnidadeFiltro_==='function'){
+  if(action!=='loginOperador'&&action!=='trocarPinPrimeiroAcesso'&&!params.unidade&&typeof zcAuthUnidadeFiltro_==='function'){
     var uni=zcAuthUnidadeFiltro_();
     if(uni)params.unidade=uni;
   }
@@ -25,6 +25,11 @@ function apiGet(action,params,timeout){
     if(resp && resp.code==='NO_SESSION' && action!=='loginOperador' && typeof zcAuthMostrarLogin_==='function'){
       zcAuthLimparSessao_();
       zcAuthMostrarLogin_('Sessão expirada. Entre novamente.');
+    }
+    if(resp && resp.code==='MUST_CHANGE_PIN' && typeof zcAuthMostrarTrocaPin_==='function'){
+      var s=typeof zcAuthSessao_==='function'?zcAuthSessao_():null;
+      if(s){s.mustChangePin=true;try{localStorage.setItem('zapSessao',JSON.stringify(s));}catch(e){}}
+      zcAuthMostrarTrocaPin_();
     }
     if(resp && resp.ok===false){
       logEventoSistema_('API','apiGet:'+action,'ERRO',String(resp.error||'Resposta ok=false'),{action:action});

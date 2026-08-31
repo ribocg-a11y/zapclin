@@ -1066,5 +1066,6 @@
   .admin-rede-break td b{font-family:var(--font-data)}
   .sb-footer .sb-gerenciar+#sbEquipeBtn{margin-top:8px}
   .zc-user-row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .zc-user-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
   .zc-user-form .form-group{margin-bottom:10px}
 

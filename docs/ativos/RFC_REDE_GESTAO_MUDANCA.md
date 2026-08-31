@@ -121,7 +121,7 @@ Fora de escopo deste RFC (L3+): nova cara, redesign celular/desktop, microsservi
 
 ### L0 humano (você)
 
-- [ ] Colar GAS **3.56** no editor (ping ainda 3.55)
+- [ ] Colar GAS **3.57** no editor (ping ainda 3.55)
 - [x] Não criar aba Rio Anil
 
 ### L1 — correção do contrato (código)
@@ -129,7 +129,7 @@ Fora de escopo deste RFC (L3+): nova cara, redesign celular/desktop, microsservi
 1. [x] Atalho **Equipe** visível na Home Rede, na loja, no rodapé e no Painel
 2. [x] Painel em Rede: KPIs = **soma**, título Rede, duas linhas Golden / Anil
 3. [x] Auditoria dry-run `UNIDADE` vazia = golden (1604 LANC / 349 CLIENTES / 88 CUSTOS; **não gravou**)
-4. [ ] Você cadastra os operadores no Painel (golden)
+4. [ ] Você cadastra os operadores no Painel (PIN inicial 123456; 1º login força troca — precisa GAS 3.57)
 5. [ ] Backfill real na planilha — **só com pedido explícito**
 
 ### L2 — fechar furos de modelo

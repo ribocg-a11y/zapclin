@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.36.3 | Data: 31/08/2026
+  Versão : 4.36.4 | Data: 31/08/2026
+  NOVO v4.36.4:
+  - Primeiro acesso do operador: PIN inicial 123456 e tela obrigatória para cadastrar o PIN próprio (GAS 3.57).
   NOVO v4.36.3:
-  - L1 Rede: atalho Equipe + Painel visíveis na Home Rede; Painel em Rede rotula a soma e quebra Golden / Rio Anil.
   NOVO v4.36.2:
   - Menu do balcão + cockpit Rede: chips Rede/Golden/Rio Anil; toque na loja = sistema de uma unidade.
     Painel só no rodapé e no card da Home do ADM. Dashboard/Vendas/Relatório saem da lateral.
@@ -341,7 +342,7 @@
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zc-app.css?v=v4.36.3">
+<link rel="stylesheet" href="zc-app.css?v=v4.36.4">
 
 </head>
 <body>
@@ -349,13 +350,26 @@
 <div class="zc-login-gate show" id="zcLoginGate" aria-hidden="false">
   <form class="zc-login-card" onsubmit="zcAuthLoginSubmit_(event)">
     <div class="zc-login-brand"><span class="z">Zap</span>Clin</div>
-    <div class="zc-login-sub">Entre com o seu usuário e o PIN do turno.<br>Quem está logado é quem registra cada OS.</div>
+    <div class="zc-login-sub">Entre com o seu usuário e o PIN do turno.<br>Quem está logado é quem registra cada OS.<br><strong>Operador novo:</strong> PIN inicial <code>123456</code> — o app pede um PIN só seu na hora.</div>
     <label class="zc-login-label" for="zcLoginUsuario">Usuário</label>
     <input class="zc-login-input" id="zcLoginUsuario" name="usuario" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="ex: joao">
     <label class="zc-login-label" for="zcLoginPin">PIN (4 a 6 dígitos)</label>
     <input class="zc-login-input" id="zcLoginPin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••">
     <div class="zc-login-erro" id="zcLoginErro"></div>
     <button class="zc-login-btn" id="zcLoginBtn" type="submit">Entrar no turno</button>
+  </form>
+</div>
+
+<div class="zc-login-gate" id="zcPinTrocaGate" aria-hidden="true">
+  <form class="zc-login-card" onsubmit="zcAuthTrocarPinSubmit_(event)">
+    <div class="zc-login-brand"><span class="z">Zap</span>Clin</div>
+    <div class="zc-login-sub">Primeiro acesso. O PIN <code>123456</code> é só para entrar agora.<br>Cadastre um PIN de 4 a 6 dígitos que só você sabe. O ADM consegue recuperar na Equipe se você esquecer.</div>
+    <label class="zc-login-label" for="zcPinNovo">Novo PIN</label>
+    <input class="zc-login-input" id="zcPinNovo" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password" placeholder="••••">
+    <label class="zc-login-label" for="zcPinNovo2">Repita o PIN</label>
+    <input class="zc-login-input" id="zcPinNovo2" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password" placeholder="••••">
+    <div class="zc-login-erro" id="zcPinTrocaErro"></div>
+    <button class="zc-login-btn" id="zcPinTrocaBtn" type="submit">Salvar meu PIN</button>
   </form>
 </div>
 
@@ -370,7 +384,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.3</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.4</span>
       </div>
     </div>
   </div>
@@ -434,7 +448,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.3</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.4</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1153,12 +1167,12 @@
 
   <div class="zc-users-admin" id="zcUsersAdmin">
     <div class="section-title">Equipe e turnos</div>
-    <p class="zc-login-sub" style="text-align:left;margin:0 0 12px">Cadastre operador (balcão), supervisor (responsável da loja) e ADM. Cada um tem o próprio PIN — o que registrar no turno fica no nome dele.</p>
+    <p class="zc-login-sub" style="text-align:left;margin:0 0 12px">Cadastre operador ou supervisor. O PIN inicial é sempre <strong>123456</strong>; no primeiro login o app obriga a troca. O PIN novo fica na planilha (coluna PIN_RECUPERA) para você recuperar se alguém esquecer. ADM não usa esse fluxo.</p>
     <div id="zcUsersLista"><div class="skeleton-card sm"></div></div>
     <div class="zc-user-form" style="margin-top:16px">
       <div class="form-group"><label class="form-label">Usuário (login)</label><input class="form-input blue" id="zcUserUsuario" placeholder="joao" autocomplete="off"></div>
       <div class="form-group"><label class="form-label">Nome</label><input class="form-input blue" id="zcUserNome" placeholder="João"></div>
-      <div class="form-group"><label class="form-label">PIN novo (4–6 dígitos; vazio = manter)</label><input class="form-input blue" id="zcUserPin" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+      <div class="form-group"><label class="form-label">PIN (só ADM; operador novo ignora — usa 123456)</label><input class="form-input blue" id="zcUserPin" type="password" inputmode="numeric" maxlength="6" placeholder="vazio = 123456 no operador novo"></div>
       <div class="form-group"><label class="form-label">Perfil</label>
         <select class="form-input blue" id="zcUserPerfil">
           <option value="operador">Operador (turno / balcão)</option>
@@ -1394,21 +1408,21 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.36.3"></script>
-<script src="zc-globals.js?v=v4.36.3"></script>
-<script src="zc-api.js?v=v4.36.3"></script>
-<script src="zc-core.js?v=v4.36.3"></script>
-<script src="zc-nav.js?v=v4.36.3"></script>
-<script src="zc-home.js?v=v4.36.3"></script>
-<script src="zc-sync.js?v=v4.36.3"></script>
-<script src="zc-whatsapp.js?v=v4.36.3"></script>
-<script src="zc-admin.js?v=v4.36.3"></script>
-<script src="zc-auth.js?v=v4.36.3"></script>
-<script src="zc-historico-custos.js?v=v4.36.3"></script>
-<script src="zc-registrar.js?v=v4.36.3"></script>
-<script src="zc-clientes.js?v=v4.36.3"></script>
-<script src="zc-operacao.js?v=v4.36.3"></script>
-<script src="zc-crm.js?v=v4.36.3"></script>
+<script src="zc-version.js?v=v4.36.4"></script>
+<script src="zc-globals.js?v=v4.36.4"></script>
+<script src="zc-api.js?v=v4.36.4"></script>
+<script src="zc-core.js?v=v4.36.4"></script>
+<script src="zc-nav.js?v=v4.36.4"></script>
+<script src="zc-home.js?v=v4.36.4"></script>
+<script src="zc-sync.js?v=v4.36.4"></script>
+<script src="zc-whatsapp.js?v=v4.36.4"></script>
+<script src="zc-admin.js?v=v4.36.4"></script>
+<script src="zc-auth.js?v=v4.36.4"></script>
+<script src="zc-historico-custos.js?v=v4.36.4"></script>
+<script src="zc-registrar.js?v=v4.36.4"></script>
+<script src="zc-clientes.js?v=v4.36.4"></script>
+<script src="zc-operacao.js?v=v4.36.4"></script>
+<script src="zc-crm.js?v=v4.36.4"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)

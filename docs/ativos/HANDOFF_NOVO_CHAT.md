@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.3  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.4  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -45,9 +45,9 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.36.3** (L1 Rede — Equipe + Painel soma) |
-| GAS arquivo | **3.56** no repo (`AppsScript_v3.45_ATUAL.gs`) — ping pode ainda ser 3.55 até Nova versão |
-| GAS ping | **3.55** até você colar 3.56 |
+| FE / SW | **v4.36.4** (PIN inicial + troca no 1º acesso) |
+| GAS arquivo | **3.57** no repo (`AppsScript_v3.45_ATUAL.gs`) — ping 3.55 até Nova versão |
+| GAS ping | **3.55** até você colar 3.57 |
 | PRs | **#30** RFC · **#28** menu Rede · L1 v4.36.3 |
 | Site | https://www.zapclinslz.com/ |
 | Planilha | seed LANÇAMENTOS **01–25/08/2026** ✅ |
@@ -85,12 +85,11 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 
 ### Humano (só você)
 
-1. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.3
-2. Entrar como `antonio` / PIN **1321** — chip **Rede**
-3. Home Rede: cards **Painel** e **Equipe** — cadastrar operadores (golden; PIN 4–6 dígitos)
-4. Painel: conferir título “soma” e tabela Golden / Rio Anil
+1. **Colar GAS 3.57** no editor (mesmo Deploy ID) — sem isso a tela de troca de PIN não grava
+2. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.4
+3. Home Rede → **Equipe** — cadastrar operadores (PIN inicial sempre 123456)
+4. Operador entra com 123456 → tela força PIN próprio; o novo PIN aparece na Equipe (PIN_RECUPERA)
 5. Aceite **dentro do WhatsApp no celular**
-6. Colar GAS **3.56** no editor (mesmo Deploy ID)
 
 ### Agente no C: (só com pedido)
 
