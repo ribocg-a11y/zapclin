@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.36.4 | Data: 31/08/2026
+  Versão : 4.36.5 | Data: 31/08/2026
+  NOVO v4.36.5:
+  - Equipe em página própria; Painel só números + atalhos; checagens recolhidas. Login gerado do nome.
   NOVO v4.36.4:
   - Primeiro acesso do operador: PIN inicial 123456 e tela obrigatória para cadastrar o PIN próprio (GAS 3.57).
   NOVO v4.36.3:
@@ -342,7 +344,7 @@
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zc-app.css?v=v4.36.4">
+<link rel="stylesheet" href="zc-app.css?v=v4.36.5">
 
 </head>
 <body>
@@ -384,7 +386,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.4</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.5</span>
       </div>
     </div>
   </div>
@@ -448,7 +450,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.4</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.5</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1049,6 +1051,51 @@
     <div class="kpi-card yellow"><div class="kpi-label">Resultado Mês</div><div class="kpi-value yellow" id="kAdminResultado">—</div><div class="kpi-sub" id="kAdminMargem">margem —%</div></div>
   </div>
   <div class="admin-rede-break" id="adminRedeBreakdown" hidden></div>
+
+  <div class="section-title">Ir para</div>
+  <div class="admin-atalhos">
+    <div class="atalho-card" onclick="goTo('equipe',null)">
+      <span class="atalho-icon">👥</span>
+      <div class="atalho-info"><div class="atalho-title">Equipe</div><div class="atalho-sub">Cadastrar quem entra no turno</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('dashboard',null)">
+      <span class="atalho-icon">📈</span>
+      <div class="atalho-info"><div class="atalho-title">Dashboard</div><div class="atalho-sub">Gráficos por dia e tipo</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('lancamentos',null)">
+      <span class="atalho-icon">💹</span>
+      <div class="atalho-info"><div class="atalho-title">Vendas</div><div class="atalho-sub">Lançamentos do caixa</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('relatorio',null)">
+      <span class="atalho-icon">📋</span>
+      <div class="atalho-info"><div class="atalho-title">Relatório Mensal</div><div class="atalho-sub">Enviar e salvar PDF</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('historico',null)">
+      <span class="atalho-icon">🗂️</span>
+      <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Atendimentos por período</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('historico-custos',null)">
+      <span class="atalho-icon">💸</span>
+      <div class="atalho-info"><div class="atalho-title">Histórico de Custos</div><div class="atalho-sub">KPIs, categorias e extrato</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('aceites',null)">
+      <span class="atalho-icon">✅</span>
+      <div class="atalho-info"><div class="atalho-title">Aceites de OS</div><div class="atalho-sub">Pendências e confirmações</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+    <div class="atalho-card" onclick="goTo('logs',null)">
+      <span class="atalho-icon">🧭</span>
+      <div class="atalho-info"><div class="atalho-title">Logs</div><div class="atalho-sub">Eventos, erros e alertas recentes</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
+  </div>
+
   <div class="section-title">Resumo diário</div>
   <div class="strategy-card" id="adminResumoDiario">
     <div class="strategy-head">
@@ -1071,6 +1118,9 @@
     </div>
     <div class="closing-list" id="closeChecklist"><div class="skeleton-card sm"></div></div>
   </div>
+
+  <details class="admin-tools">
+    <summary>Checagens do sistema <span>consistência, diagnóstico e fila offline</span></summary>
   <div class="section-title">Consistência operacional</div>
   <div class="consistency-card warn" id="adminConsistencia">
     <div class="consistency-head">
@@ -1121,58 +1171,33 @@
       <button class="logs-refresh" onclick="sincronizarPendentes()">Sincronizar pendentes</button>
     </div>
   </div>
-  <div class="section-title">Gestão</div>
-  <div class="admin-atalhos">
-    <div class="atalho-card" onclick="zcAuthAbrirEquipe_()">
-      <span class="atalho-icon">👥</span>
-      <div class="atalho-info"><div class="atalho-title">Equipe e turnos</div><div class="atalho-sub">Cadastrar operador, PIN e loja</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('dashboard',null)">
-      <span class="atalho-icon">📈</span>
-      <div class="atalho-info"><div class="atalho-title">Dashboard</div><div class="atalho-sub">Gráficos por dia e tipo</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('lancamentos',null)">
-      <span class="atalho-icon">💹</span>
-      <div class="atalho-info"><div class="atalho-title">Vendas</div><div class="atalho-sub">Lançamentos do caixa</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('relatorio',null)">
-      <span class="atalho-icon">📋</span>
-      <div class="atalho-info"><div class="atalho-title">Relatório Mensal</div><div class="atalho-sub">Enviar e salvar PDF</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('historico',null)">
-      <span class="atalho-icon">🗂️</span>
-      <div class="atalho-info"><div class="atalho-title">Histórico</div><div class="atalho-sub">Atendimentos por período</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('historico-custos',null)">
-      <span class="atalho-icon">💸</span>
-      <div class="atalho-info"><div class="atalho-title">Histórico de Custos</div><div class="atalho-sub">KPIs, categorias e extrato</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('aceites',null)">
-      <span class="atalho-icon">✅</span>
-      <div class="atalho-info"><div class="atalho-title">Aceites de OS</div><div class="atalho-sub">Pendências e confirmações</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-    <div class="atalho-card" onclick="goTo('logs',null)">
-      <span class="atalho-icon">🧭</span>
-      <div class="atalho-info"><div class="atalho-title">Logs</div><div class="atalho-sub">Eventos, erros e alertas recentes</div></div>
-      <span class="atalho-arr">›</span>
-    </div>
-  </div>
+  </details>
+</div>
 
+<!-- ═══════════════════════════════ PAGE: EQUIPE ═══════════════════════════════ -->
+<div class="page" id="page-equipe">
+  <div class="admin-badge">
+    <div>
+      <div class="admin-badge-left">👥 Equipe</div>
+      <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayEquipe">1:00</span></div>
+    </div>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
+  </div>
+  <p class="admin-escopo-sub">Quem entra no turno. Digite o nome da pessoa; o login (sem acento) é gerado sozinho. PIN inicial sempre <strong>123456</strong> — no primeiro acesso o app pede um PIN só dela.</p>
   <div class="zc-users-admin" id="zcUsersAdmin">
-    <div class="section-title">Equipe e turnos</div>
-    <p class="zc-login-sub" style="text-align:left;margin:0 0 12px">Cadastre operador ou supervisor. O PIN inicial é sempre <strong>123456</strong>; no primeiro login o app obriga a troca. O PIN novo fica na planilha (coluna PIN_RECUPERA) para você recuperar se alguém esquecer. ADM não usa esse fluxo.</p>
+    <div class="section-title">Pessoas cadastradas</div>
     <div id="zcUsersLista"><div class="skeleton-card sm"></div></div>
     <div class="zc-user-form" style="margin-top:16px">
-      <div class="form-group"><label class="form-label">Usuário (login)</label><input class="form-input blue" id="zcUserUsuario" placeholder="joao" autocomplete="off"></div>
-      <div class="form-group"><label class="form-label">Nome</label><input class="form-input blue" id="zcUserNome" placeholder="João"></div>
-      <div class="form-group"><label class="form-label">PIN (só ADM; operador novo ignora — usa 123456)</label><input class="form-input blue" id="zcUserPin" type="password" inputmode="numeric" maxlength="6" placeholder="vazio = 123456 no operador novo"></div>
+      <div class="section-title">Nova pessoa / editar</div>
+      <div class="form-group">
+        <label class="form-label">Nome no turno</label>
+        <input class="form-input blue" id="zcUserNome" placeholder="João" autocomplete="off" oninput="zcAuthNomeDigitou_()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Login de entrada</label>
+        <input class="form-input blue" id="zcUserUsuario" placeholder="gerado do nome" autocomplete="off" oninput="window._zcLoginManual_=true">
+        <div class="zc-field-hint" id="zcUserLoginHint">João vira joao. É o que ela digita na tela preta de login.</div>
+      </div>
       <div class="form-group"><label class="form-label">Perfil</label>
         <select class="form-input blue" id="zcUserPerfil">
           <option value="operador">Operador (turno / balcão)</option>
@@ -1187,7 +1212,8 @@
           <option value="">Todas (só ADM)</option>
         </select>
       </div>
-      <div class="form-group"><label class="form-label">Turno (texto, opcional)</label><input class="form-input blue" id="zcUserTurno" placeholder="10h–18h"></div>
+      <div class="form-group"><label class="form-label">Turno (opcional)</label><input class="form-input blue" id="zcUserTurno" placeholder="10h–18h"></div>
+      <input type="hidden" id="zcUserPin" value="">
       <button class="save-btn blue" type="button" onclick="zcAuthSalvarUsuario_()">Salvar pessoa</button>
     </div>
   </div>
@@ -1408,21 +1434,21 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.36.4"></script>
-<script src="zc-globals.js?v=v4.36.4"></script>
-<script src="zc-api.js?v=v4.36.4"></script>
-<script src="zc-core.js?v=v4.36.4"></script>
-<script src="zc-nav.js?v=v4.36.4"></script>
-<script src="zc-home.js?v=v4.36.4"></script>
-<script src="zc-sync.js?v=v4.36.4"></script>
-<script src="zc-whatsapp.js?v=v4.36.4"></script>
-<script src="zc-admin.js?v=v4.36.4"></script>
-<script src="zc-auth.js?v=v4.36.4"></script>
-<script src="zc-historico-custos.js?v=v4.36.4"></script>
-<script src="zc-registrar.js?v=v4.36.4"></script>
-<script src="zc-clientes.js?v=v4.36.4"></script>
-<script src="zc-operacao.js?v=v4.36.4"></script>
-<script src="zc-crm.js?v=v4.36.4"></script>
+<script src="zc-version.js?v=v4.36.5"></script>
+<script src="zc-globals.js?v=v4.36.5"></script>
+<script src="zc-api.js?v=v4.36.5"></script>
+<script src="zc-core.js?v=v4.36.5"></script>
+<script src="zc-nav.js?v=v4.36.5"></script>
+<script src="zc-home.js?v=v4.36.5"></script>
+<script src="zc-sync.js?v=v4.36.5"></script>
+<script src="zc-whatsapp.js?v=v4.36.5"></script>
+<script src="zc-admin.js?v=v4.36.5"></script>
+<script src="zc-auth.js?v=v4.36.5"></script>
+<script src="zc-historico-custos.js?v=v4.36.5"></script>
+<script src="zc-registrar.js?v=v4.36.5"></script>
+<script src="zc-clientes.js?v=v4.36.5"></script>
+<script src="zc-operacao.js?v=v4.36.5"></script>
+<script src="zc-crm.js?v=v4.36.5"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)

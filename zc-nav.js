@@ -33,7 +33,7 @@ function goTo(page, btn){
     if(typeof showToast==='function')showToast('Toque em Golden ou Rio Anil para registrar. Na Rede você vê as duas juntas.','orange');
     return;
   }
-  var paginasAdmin=['admin','dashboard','historico','historico-custos','lancamentos','relatorio','logs','aceites'];
+  var paginasAdmin=['admin','equipe','dashboard','historico','historico-custos','lancamentos','relatorio','logs','aceites'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     fecharSidebar();
     abrirAdmin();
@@ -63,6 +63,8 @@ function goTo(page, btn){
   if(page==='relatorio')carregarRelatorio();
   if(page==='admin'){
     carregarPainelAdmin();
+  }
+  if(page==='equipe'){
     if(typeof zcAuthCarregarUsuarios_==='function')zcAuthCarregarUsuarios_();
   }
   if(page==='historico')carregarHistorico();

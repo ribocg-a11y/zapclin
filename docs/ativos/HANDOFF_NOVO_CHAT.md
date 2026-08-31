@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.4  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.5  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -45,9 +45,9 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.36.4** (PIN inicial + troca no 1º acesso) |
+| FE / SW | **v4.36.5** (Painel organizado · Equipe página própria) |
 | GAS arquivo | **3.57** no repo (`AppsScript_v3.45_ATUAL.gs`) — ping 3.55 até Nova versão |
-| GAS ping | **3.55** até você colar 3.57 |
+| GAS ping | **3.57** (colado 31/08) |
 | PRs | **#30** RFC · **#28** menu Rede · L1 v4.36.3 |
 | Site | https://www.zapclinslz.com/ |
 | Planilha | seed LANÇAMENTOS **01–25/08/2026** ✅ |
@@ -86,8 +86,8 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 ### Humano (só você)
 
 1. **Colar GAS 3.57** no editor (mesmo Deploy ID) — sem isso a tela de troca de PIN não grava
-2. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.4
-3. Home Rede → **Equipe** — cadastrar operadores (PIN inicial sempre 123456)
+2. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.5
+3. Home Rede → **Equipe** — cadastrar pelo **nome** (login joao é gerado)
 4. Operador entra com 123456 → tela força PIN próprio; o novo PIN aparece na Equipe (PIN_RECUPERA)
 5. Aceite **dentro do WhatsApp no celular**
 
