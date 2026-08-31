@@ -7,6 +7,14 @@ function jsonp(url,timeout){timeout=timeout||12000;return new Promise(function(r
 // Motivo: reduzir duplicação de URL/action/callback e padronizar timeout/cache-buster.
 function apiGet(action,params,timeout){
   params=params||{};
+  if(action!=='loginOperador'&&action!=='logoutOperador'&&!params.sess){
+    var tok=typeof zcAuthSessToken_==='function'?zcAuthSessToken_():'';
+    if(tok)params.sess=tok;
+  }
+  if(action!=='loginOperador'&&!params.unidade&&typeof zcAuthUnidadeFiltro_==='function'){
+    var uni=zcAuthUnidadeFiltro_();
+    if(uni)params.unidade=uni;
+  }
   var qs='action='+encodeURIComponent(action);
   Object.keys(params).forEach(function(k){
     if(params[k]!==undefined&&params[k]!==null)qs+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]);
@@ -14,6 +22,10 @@ function apiGet(action,params,timeout){
   // [v4.8.6 ALTERAÇÃO]
   // Padroniza observabilidade de falhas de API sem bloquear o fluxo principal.
   return jsonp(webAppUrl+'?'+qs,timeout||12000).then(function(resp){
+    if(resp && resp.code==='NO_SESSION' && action!=='loginOperador' && typeof zcAuthMostrarLogin_==='function'){
+      zcAuthLimparSessao_();
+      zcAuthMostrarLogin_('Sessão expirada. Entre novamente.');
+    }
     if(resp && resp.ok===false){
       logEventoSistema_('API','apiGet:'+action,'ERRO',String(resp.error||'Resposta ok=false'),{action:action});
     }

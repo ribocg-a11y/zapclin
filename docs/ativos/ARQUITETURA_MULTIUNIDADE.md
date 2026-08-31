@@ -1,7 +1,7 @@
 # ZapClin — Arquitetura multi-unidade
 
 **Data:** 31/08/2026  
-**Status:** decisão proposta (não implementada no PWA)  
+**Status:** implementado no branch `cursor/auth-turnos-v436` (FE v4.36.0 / GAS 3.55). Live após Nova versão GAS + merge.  
 **Não apaga dados atuais.** Golden recebe `UNIDADE=golden` em todas as linhas existentes.
 
 **Mockup ao vivo (teste):** https://ribocg-a11y.github.io/zapclin/rede.html  
@@ -70,9 +70,8 @@ Você configura no cadastro: nome, PIN, **perfil**, **unidade** (ou “todas” 
 | Código | Nome na UI | Unidade | Lança OS / status | Vê caixa e KPI do dia | Vê outras lojas |
 |--------|------------|---------|-------------------|------------------------|-----------------|
 | `operador` | Operador balcão | 1 | Sim | Não | Não |
-| `caixa` | Caixa do dia | 1 | Sim | Só hoje, só a loja | Não |
-| `gerente` | Gerente da unidade | 1 | Sim | Tudo da loja | Não |
-| `hq` | Administração rede | todas | Não (não opera balcão) | Todas, uma tela | Sim |
+| `supervisor` | Responsável da loja | 1 | Sim | Custos e operação da loja | Não |
+| `adm` | Administração (sócio) | todas | Sim | Todas, uma tela | Sim |
 
 Novos perfis = linha de permissões, não fork do app.
 
@@ -148,6 +147,6 @@ GAS: **Nova versão** no Deploy ID atual. FE bump (`v4.36+` sugerido) + `?force=
 
 ## 9. Diagnóstico agora
 
-Produção continua **uma unidade** (v4.35.0 / GAS 3.54). Esta arquitetura **não está no ar**. Próximo passo de código: **U0** (planilha) quando você pedir.
+Produção live ainda **uma unidade sem login** (v4.35.0 / GAS 3.54). Código de login/unidade está no branch `cursor/auth-turnos-v436`.
 
 Mudança no AppScript deste arquivo: não (só doc).

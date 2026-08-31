@@ -19,8 +19,9 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.35.0** (esta branch · PR #22) | https://ribocg-a11y.github.io/zapclin/?force=v4.35.0 |
-| GAS arquivo + ping | **3.54** ✅ | ping abaixo |
+| Frontend / SW | **v4.36.0** (branch auth — Pages após merge) | https://ribocg-a11y.github.io/zapclin/?force=v4.36.0 |
+| GAS arquivo | **3.55** | Nova versão Web pendente |
+| GAS ping live | **3.54** | até implantar 3.55 |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **#22** Z.9 `zc-app.css` · **#24** MERGED | — |
 
@@ -39,7 +40,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.35.0) |
+| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.0) |
 | Pacote Z | até Z.9 `zc-app.css` · próximo Z.10 `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` + token em `%USERPROFILE%\.config\google-api\` |
@@ -62,7 +63,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 ## Próximo
 
-**Humano:** smoke `?force=v4.35.0` após merge #22 · aceite no WhatsApp · Golden.  
+**Humano:** 1) Nova versão GAS 3.55 2) smoke `?force=v4.36.0` 3) cadastrar operadores 4) aceite WhatsApp · Golden.  
 **Agente:** Z.10 `zc-boot.js` ou fila NET-TIMEOUT **só com pedido**. Seed 01–25 já na planilha.
 
 ---

@@ -1,4 +1,4 @@
-# Deploy do Apps Script v3.54
+# Deploy do Apps Script v3.55
 
 ## Regra de ouro
 
@@ -22,7 +22,7 @@
 | Item | Valor |
 |------|-------|
 | Arquivo | `AppsScript_v3.45_ATUAL.gs` |
-| Versão no código | **3.54** (`var VERSION = '3.54'`) |
+| Versão no código | **3.55** (`var VERSION = '3.55'`) |
 | PC clone | `C:\Users\riboc\Documents\Codex\zapclin-repo\AppsScript_v3.45_ATUAL.gs` |
 
 ## Download direto
@@ -42,6 +42,6 @@
 https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?path=ping
 ```
 
-Esperado após Nova versão: `"version":"3.54"`  
+Esperado após Nova versão: `"version":"3.55"`  
 
-**Status 14/08/2026:** ping produção **3.53** (humano já colou 3.53). Alvo seguinte: **3.54** (página `aceite.html` + `dadosAceiteOs`).
+**Status 31/08/2026:** ping produção ainda **3.54**. Alvo: **3.55** (login de turno + UNIDADE/OPERADOR).
