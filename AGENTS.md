@@ -62,7 +62,7 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 | Frontend | **v4.34.1** | GitHub Pages |
 | Service Worker | **v4.34.1** | `sw.js` |
 | GAS (código repo) | **v3.54** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
-| GAS (ping) | **3.53** live → alvo **3.54** | |
+| GAS (ping) | **3.54** ✅ | |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
 
 **Deploy ID GAS (único — nunca criar outro):**  
@@ -91,16 +91,17 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 - Dois repos + Environment — ver regras §12 e `AMBIENTE_CLOUD_ZAPCLIN.md`
 - Escritas críticas (OS+fotos, status) **dependem de internet** — timeout ~10–15s; ver `MAPA_ERROS`
 
-## Estado do projeto (14/08/2026)
+## Estado do projeto (31/08/2026)
 
-- **Produção alvo:** FE/SW **v4.34.0** · GAS **3.52** (arquivo + ping ✅)
+- **Produção:** FE/SW **v4.34.1** · GAS **3.54** (arquivo + ping ✅)
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
-- **Pacote Z:** Z.7 ✅ (`zc-operacao` + `zc-crm`); **próximo:** Z.9 `zc-app.css`
-- **OAuth:** Environment `zapclin` + seed ago 01–13 ✅
+- **Pacote Z:** Z.7 ✅ (`zc-operacao` + `zc-crm`); **próximo:** Z.9 `zc-app.css` (PR #22 draft — só com pedido)
+- **OAuth Desktop:** re-auth 26/08 ✅ (`token.json` no C:) · Environment refresh colado, Cloud novo não testou
+- **Planilha:** seed LANÇAMENTOS **01–25/08** ✅
 - **SEO:** motor + Reels + playbooks em `main` (não reinventar); humano = Golden Shopping
-- **PRs:** nenhuma aberta
-- **Próximo humano:** Wi-Fi loja + smoke v4.34.0; Golden backlink
-- **Próximo agente:** Z.9 CSS ou NET-TIMEOUT (só com pedido)
+- **PRs:** #24 seed+handoff (merge para o C:) · #22 Z.9 draft
+- **Próximo humano:** merge #24 + `git pull` no clone do C: · smoke v4.34.1 · aceite no WhatsApp · Golden
+- **Próximo agente:** **local no C:** (`zapclin-repo`) — Z.9 ou NET-TIMEOUT só com pedido
 
 ## Ao encerrar sessão
 

@@ -1,9 +1,19 @@
 # ZapClin — Mapa de pastas no PC (C:)
 
-**Atualizado:** 21/07/2026  
+**Atualizado:** 31/08/2026  
 **Regra:** um só lugar canônico para código e docs ativos. O resto é **arquivo histórico** ou **infra compartilhada**.
 
 ---
+
+## 0. Abrir agente no C: (Cursor Desktop)
+
+1. Pasta: `C:\Users\riboc\Documents\Codex\zapclin-repo`  
+2. `git checkout main` + `git pull origin main` (depois do merge do PR #24)  
+3. Cursor: **File → Open Folder** nessa pasta  
+4. Chat **Agent** (não Cloud)  
+5. Prompt: `docs/ativos/PROMPT_ABERTURA_NOVO_AGENTE.md`
+
+Detalhe: [`docs/ativos/HANDOFF_NOVO_CHAT.md`](ativos/HANDOFF_NOVO_CHAT.md) §0.
 
 ## 1. Canônico (trabalhar só aqui)
 
