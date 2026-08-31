@@ -1,7 +1,7 @@
 # Pacote Z — Modularização do frontend ZapClin
 
 **Início:** 11/06/2026  
-**Atualizado:** 14/08/2026 (Z.9 · **v4.35.0**)  
+**Atualizado:** 31/08/2026 (Z.9 · **v4.35.0** — rebase na `main`)  
 **Objetivo:** reduzir monólito `index.html` sem mudar comportamento — espelhar Pacote M do Movi Kids.
 
 ---

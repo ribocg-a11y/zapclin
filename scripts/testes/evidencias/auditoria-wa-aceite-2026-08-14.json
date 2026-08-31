@@ -1,0 +1,521 @@
+{
+  "startedAt": "2026-08-14T14:32:36.717Z",
+  "policy": {
+    "readonly": true,
+    "skippedWriteActions": [
+      "confirmarAceiteOs",
+      "salvarCadastroVip",
+      "salvar",
+      "atualizarStatus"
+    ],
+    "note": "Aceite confirmado na planilha só ocorre com GET action=confirmarAceiteOs. Este harness nunca chama isso."
+  },
+  "live": {
+    "ping": {
+      "status": 200,
+      "finalUrl": "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQ9AqyuJWe6EBpQ0Z468ipNAgA-yUv0iOW0m2DpyC57nqPCP0ty1HhgkYaxm6jHvuKVEsO1Sh2vP3LTAVBsRWRy1l1qCq9wzf4avQ-5klb_6ZET1MF-mQeeZTZH0WQpbmM8I4ovY_AZfVauq0OtJMqLSZUJ433L7UsWR8jfWTLUd2QZZGLmafr_VuHX6b2mYycFWPLk9MBKBvjYmgAK1DMR4rKKkNa_DsG6vd29JYpEdGutKJJMGqyy5jmLWD0LIg2OC2s228e4ByEuI3umk3Jb1Q6qddUO6S_gmGI7&lib=M5VdZa5QnoEQeBBOiVgVms361d9usigkX",
+      "json": {
+        "ok": true,
+        "version": "3.52",
+        "timezone": "America/Los_Angeles"
+      },
+      "timeSec": 2.431777
+    },
+    "pagesVersion": {
+      "status": 200,
+      "appVersion": "v4.34.0",
+      "webApp": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec"
+    },
+    "pagesWhatsapp": {
+      "status": 200,
+      "bytes": 14901,
+      "confirmarEnvioWA": "function confirmarEnvioWA(){var tel=waData.tel.replace(/\\D/g,'');if(tel.startsWith('0'))tel=tel.substring(1);if(!tel.startsWith('55'))tel='55'+tel;logEventoSistema_('WHATSAPP','confirmarEnvioWA','OK','Mensagem WhatsApp gerada',{tipo:waData.tipo||'',nome:waData.nome||'',telefone:tel,qtd:waData.qtd||'',temOS:(waData.msg||'').indexOf('OS #')>=0}"
+    },
+    "sw": {
+      "status": 200,
+      "hint": "// ============================================================ // ZAPCLIN — SERVICE WORKER // Versão: 4.34.0 | Data: 14/08/2026 // [v4.34.0 CACHE] // Pacote Z."
+    },
+    "aceiteSemOs": {
+      "status": 200,
+      "finalUrl": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=aceiteOs",
+      "timeSec": 4.093527,
+      "snippet": "<!doctype html> <html> <head> <script nonce=\"vx8iRfdi2N6j-bbHZgQ6jw\">window['ppConfig'] = {productName: '26981ed0d57bbad37e728ff58134270c', deleteIsEnforced: false , sealIsEnforced: false , heartbeatRate: 0.5 , periodicReportingRateMillis: "
+    },
+    "aceiteOsInexistente": {
+      "status": 200,
+      "timeSec": 1.937086,
+      "snippet": "<!doctype html> <html> <head> <script nonce=\"21rnKIH81c5R7R7BtB156A\">window['ppConfig'] = {productName: '26981ed0d57bbad37e728ff58134270c', deleteIsEnforced: false , sealIsEnforced: false , heartbeatR"
+    },
+    "listarClientes": {
+      "status": 200,
+      "ok": true,
+      "version": "3.52",
+      "count": 345,
+      "timeSec": 3.736768
+    },
+    "aceiteStats": {
+      "total": 345,
+      "pendente": 321,
+      "confirmado": 24,
+      "urlOk": 321,
+      "urlMissing": 24,
+      "urlMismatch": 0,
+      "ativosPendentes": 49,
+      "ativosConfirmados": 6
+    },
+    "sampleOs": {
+      "pendenteAtivo": {
+        "os": 345,
+        "statusOs": "Em andamento",
+        "aceiteStatus": "PENDENTE",
+        "hasUrl": true
+      },
+      "confirmado": {
+        "os": 343,
+        "statusOs": "Em andamento",
+        "aceiteStatus": "CONFIRMADO",
+        "hasUrl": false
+      }
+    },
+    "aceiteFormPendente": {
+      "os": 345,
+      "status": 200,
+      "finalUrl": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=aceiteOs&os=345",
+      "timeSec": 2.38987,
+      "markers": {
+        "titleAceite": true,
+        "botaoVerde": true,
+        "formConfirm": true,
+        "formFlag": true,
+        "methodGet": true,
+        "jaConfirmado": false,
+        "osNaoEncontrada": false,
+        "actionExec": true
+      },
+      "formSnippet": "<form method=\"get\" action=\"https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec\"><input type=\"hidden\" name=\"action\" value=\"confirmarAceiteOs\"><input type=\"hidden\" name=\"form\" value=\"1\"><input type=\"hidden\" name=\"os\" value=\"345\"><button type=\"submit\">Aceito as condições da OS</button></form></div></main></body></html>\",\"ncc\":\"\\x7b\"awhs\":true\\x7d\"\\x7d\", \"\", undefined, true , false , \"false\", \"https://n-hretg2me3fvtjah32lqxlwls7cumci443xyruka-0lu-script.go"
+    },
+    "aceiteFormConfirmado": {
+      "os": 343,
+      "status": 200,
+      "finalUrl": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=aceiteOs&os=343",
+      "timeSec": 1.722917,
+      "markers": {
+        "titleAceite": true,
+        "botaoVerde": false,
+        "formConfirm": false,
+        "formFlag": false,
+        "methodGet": false,
+        "jaConfirmado": true,
+        "osNaoEncontrada": false,
+        "actionExec": true
+      },
+      "formSnippet": "<!doctype html> <html> <head> <script nonce=\"xWqrtDIEAE8__0jpING0JQ\">window['ppConfig'] = {productName: '26981ed0d57bbad37e728ff58134270c', deleteIsEnforced: false , sealIsEnforced: false , heartbeatRate: 0.5 , periodicReportingRateMillis: 60000.0 , disableAll"
+    },
+    "cadastroVip": {
+      "status": 200,
+      "timeSec": 1.409264,
+      "snippet": "<!doctype html> <html> <head> <script nonce=\"syB72BI-pv-mfXopB0Lmyg\">window['ppConfig'] = {productName: '26981ed0d57bbad37e728ff58134270c', deleteIsEnforced: false , sealIsEnforced: false , heartbeatRate: 0.5 , periodicReportingRateMillis: ",
+      "hasForm": true
+    },
+    "googleReview": {
+      "status": 200,
+      "finalUrl": "https://accounts.google.com/v3/signin/identifier?continue=https://search.google.com/local/writereview?placeid%3DChIJ4XW3sEOT9gcRxMidft1jEvA%26source%3Dg.page.m.ia._%26laa%3Dnmx-review-solicitation-ia2&flowName=WebLiteSignIn&flowEntry=ServiceLogin&dsh=S-549771593:1786717975058873",
+      "timeSec": 0.82706
+    },
+    "waMeLoja": {
+      "status": 200,
+      "finalUrl": "https://api.whatsapp.com/send/?phone=5598981479616&text&type=phone_number&app_absent=0",
+      "timeSec": 0.595821
+    },
+    "instagram": {
+      "status": 200,
+      "finalUrl": "https://www.instagram.com/accounts/login/?next=https%3A%2F%2Fwww.instagram.com%2Fzapclinhigienizacao%2F&is_from_rle"
+    },
+    "site": {
+      "status": 200,
+      "finalUrl": "https://www.zapclinslz.com/",
+      "hasWa": true
+    }
+  },
+  "phone": {
+    "matrix": [
+      {
+        "raw": "98 9242-8208",
+        "label": "10 dígitos + nono",
+        "current": "559892428208",
+        "expected": "5598992428208",
+        "currentMatchesSpec": false,
+        "expectedHelperOk": true
+      },
+      {
+        "raw": "98 99242-8208",
+        "label": "11 dígitos sem duplicar 9",
+        "current": "5598992428208",
+        "expected": "5598992428208",
+        "currentMatchesSpec": true,
+        "expectedHelperOk": true
+      },
+      {
+        "raw": "(98) 99242-8208",
+        "label": "formatado 11 dígitos",
+        "current": "5598992428208",
+        "expected": "5598992428208",
+        "currentMatchesSpec": true,
+        "expectedHelperOk": true
+      },
+      {
+        "raw": "5598992428208",
+        "label": "já internacional",
+        "current": "5598992428208",
+        "expected": "5598992428208",
+        "currentMatchesSpec": true,
+        "expectedHelperOk": true
+      },
+      {
+        "raw": "98 98147-9616",
+        "label": "loja 11 dígitos",
+        "current": "5598981479616",
+        "expected": "5598981479616",
+        "currentMatchesSpec": true,
+        "expectedHelperOk": true
+      },
+      {
+        "raw": "098 99242-8208",
+        "label": "zero à esquerda",
+        "current": "5598992428208",
+        "expected": "5598992428208",
+        "currentMatchesSpec": true,
+        "expectedHelperOk": true
+      },
+      {
+        "raw": "(vazio)",
+        "current": "55",
+        "expectedBlock": true,
+        "specOk": true,
+        "currentBlocks": false
+      },
+      {
+        "raw": "123",
+        "current": "55123",
+        "expectedBlock": true,
+        "specOk": true,
+        "currentBlocks": false
+      },
+      {
+        "raw": "999",
+        "current": "55999",
+        "expectedBlock": true,
+        "specOk": true,
+        "currentBlocks": false
+      },
+      {
+        "raw": "abcdefgh",
+        "current": "55",
+        "expectedBlock": true,
+        "specOk": true,
+        "currentBlocks": false
+      }
+    ],
+    "currentFunction": "function confirmarEnvioWA(){var tel=waData.tel.replace(/\\D/g,'');if(tel.startsWith('0'))tel=tel.substring(1);if(!tel.startsWith('55'))tel='55'+tel;logEventoSistema_('WHATSAPP','confirmarEnvioWA','OK','Mensagem WhatsApp gerada',{tipo:waData.tipo||'',nome:waData.nome||'',telefone:tel,qtd:waData.qtd||'',temOS:(waData.msg||'').indexOf('OS #')>=0}",
+    "sampleOpen": "https://wa.me/559892428208"
+  },
+  "messages": {
+    "aceiteUrl": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=aceiteOs&os=176",
+    "vipUrl": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=cadastroVip&nome=Cliente%20Teste&tel=98992428208",
+    "boasHasAceite": true,
+    "boasHasVip": true,
+    "prontoHasReview": true,
+    "prontoHasIg": true,
+    "agradeceHasIg": true,
+    "aceiteMsgHasUrl": true,
+    "boasPreview": "Seja muito bem-vindo(a) à *ZapClin*! *Atendimento:* OS #000176 *Cliente:* Cliente Teste *Telefone:* (98) 99242-8208 *Data do recebimento:* 14/08/2026 14:32 Recebemos seu atendimento e registramos abaixo as informações identificadas no cadastro: ------------------------------ *CAPACETE 1* *Serviço escolhido:* Higienização Profunda *Valor:* R$ 23,00 *Condições identificadas no recebimento:* - Arranh"
+  },
+  "code": {
+    "appVersion": "v4.34.0",
+    "webApp": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec",
+    "googleReview": "https://g.page/r/CcTInX7dYxLwEBM/review",
+    "confirmarEnvioWA": "function confirmarEnvioWA(){var tel=waData.tel.replace(/\\D/g,'');if(tel.startsWith('0'))tel=tel.substring(1);if(!tel.startsWith('55'))tel='55'+tel;logEventoSistema_('WHATSAPP','confirmarEnvioWA','OK','Mensagem WhatsApp gerada',{tipo:waData.tipo||'',nome:waData.nome||'',telefone:tel,qtd:waData.qtd||'',temOS:(waData.msg||'').indexOf('OS #')>=0}"
+  },
+  "finishedAt": "2026-08-14T14:32:56.673Z",
+  "counts": {
+    "PASS": 39,
+    "FAIL": 7,
+    "WARN": 1
+  },
+  "checks": [
+    {
+      "id": "CODE-WEBAPP",
+      "status": "PASS",
+      "detail": "zc-version.js WEB_APP bate com Deploy ID canônico",
+      "extra": {
+        "webApp": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec"
+      }
+    },
+    {
+      "id": "CODE-DEPLOY",
+      "status": "PASS",
+      "detail": "Deploy ID único presente em WEB_APP"
+    },
+    {
+      "id": "CODE-REVIEW-CONST",
+      "status": "PASS",
+      "detail": "GOOGLE_REVIEW_URL constante"
+    },
+    {
+      "id": "CODE-MODAL",
+      "status": "PASS",
+      "detail": "Modal #waModal + botão Enviar no WhatsApp → confirmarEnvioWA()"
+    },
+    {
+      "id": "CODE-PAINEL-ACEITE",
+      "status": "PASS",
+      "detail": "Painel Admin Aceites: WhatsApp + copiar link"
+    },
+    {
+      "id": "CODE-GATILHOS",
+      "status": "PASS",
+      "detail": "Gatilhos: cadastro OS, Pronto (status+Operação), Entregue, CRM nova OS",
+      "extra": {
+        "cadastro": true,
+        "prontoStatus": true,
+        "entrega": true,
+        "operacao": true,
+        "crm": true
+      }
+    },
+    {
+      "id": "CODE-GAS-ACEITE-GET",
+      "status": "PASS",
+      "detail": "GAS doGet aceiteOs renderiza formulário HTML (leitura)"
+    },
+    {
+      "id": "CODE-GAS-CONFIRM-FORM",
+      "status": "PASS",
+      "detail": "Confirmação documental exige form=1 (GET HTML) — harness não executa"
+    },
+    {
+      "id": "CODE-GAS-CONFIRM-JSON-SURFACE",
+      "status": "WARN",
+      "detail": "doGet também aceita confirmarAceiteOs sem form=1 (JSON) — superfície de escrita pública por OS"
+    },
+    {
+      "id": "CODE-GAS-VIP",
+      "status": "PASS",
+      "detail": "GAS cadastroVip HTML público"
+    },
+    {
+      "id": "CODE-CLIPBOARD-ANTES-WA",
+      "status": "FAIL",
+      "detail": "REGRAS §3: copiar mensagem antes de abrir WA — NÃO implementado em confirmarEnvioWA (clipboard só em copiarLinkAceiteOs / resumo OS)"
+    },
+    {
+      "id": "CODE-FALLBACK-WA",
+      "status": "FAIL",
+      "detail": "REGRAS §3: fallback se app WhatsApp não abrir — NÃO implementado (só window.open wa.me)"
+    },
+    {
+      "id": "TEL-10_dígitos_+_nono",
+      "status": "FAIL",
+      "detail": "\"98 9242-8208\" → atual wa.me/559892428208 ≠ spec 5598992428208"
+    },
+    {
+      "id": "TEL-11_dígitos_sem_duplicar_9",
+      "status": "PASS",
+      "detail": "\"98 99242-8208\" → atual wa.me/5598992428208 = spec"
+    },
+    {
+      "id": "TEL-formatado_11_dígitos",
+      "status": "PASS",
+      "detail": "\"(98) 99242-8208\" → atual wa.me/5598992428208 = spec"
+    },
+    {
+      "id": "TEL-já_internacional",
+      "status": "PASS",
+      "detail": "\"5598992428208\" → atual wa.me/5598992428208 = spec"
+    },
+    {
+      "id": "TEL-loja_11_dígitos",
+      "status": "PASS",
+      "detail": "\"98 98147-9616\" → atual wa.me/5598981479616 = spec"
+    },
+    {
+      "id": "TEL-zero_à_esquerda",
+      "status": "PASS",
+      "detail": "\"098 99242-8208\" → atual wa.me/5598992428208 = spec"
+    },
+    {
+      "id": "TEL-INVALIDO-1",
+      "status": "FAIL",
+      "detail": "Entrada \"(vazio)\" deveria bloquear envio; código atual monta wa.me/55"
+    },
+    {
+      "id": "TEL-INVALIDO-2",
+      "status": "FAIL",
+      "detail": "Entrada \"123\" deveria bloquear envio; código atual monta wa.me/55123"
+    },
+    {
+      "id": "TEL-INVALIDO-3",
+      "status": "FAIL",
+      "detail": "Entrada \"999\" deveria bloquear envio; código atual monta wa.me/55999"
+    },
+    {
+      "id": "TEL-INVALIDO-4",
+      "status": "FAIL",
+      "detail": "Entrada \"abcdefgh\" deveria bloquear envio; código atual monta wa.me/55"
+    },
+    {
+      "id": "SEND-WA-ME-HOST",
+      "status": "PASS",
+      "detail": "confirmarEnvioWA abre https://wa.me/<tel>?text=… (número 10 dígitos coberto em TEL-*) → https://wa.me/559892428208"
+    },
+    {
+      "id": "MSG-ACEITE-URL",
+      "status": "PASS",
+      "detail": "aceiteOsUrl_ = WEB_APP?action=aceiteOs&os=",
+      "extra": {
+        "aceiteUrl": "https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg/exec?action=aceiteOs&os=176"
+      }
+    },
+    {
+      "id": "MSG-VIP-URL",
+      "status": "PASS",
+      "detail": "clienteVipUrl_ aponta para cadastroVip no mesmo WEB_APP"
+    },
+    {
+      "id": "MSG-BOAS-LINKS",
+      "status": "PASS",
+      "detail": "Boas-vindas inclui link de aceite digital + Clube VIP"
+    },
+    {
+      "id": "MSG-PRONTO-LINKS",
+      "status": "PASS",
+      "detail": "Pronto inclui Google review + @zapclinhigienizacao"
+    },
+    {
+      "id": "MSG-ACEITE-DEDICADA",
+      "status": "PASS",
+      "detail": "Mensagem dedicada do painel Aceites carrega a URL da OS"
+    },
+    {
+      "id": "MSG-AGRADECIMENTO",
+      "status": "PASS",
+      "detail": "Agradecimento pós-retirada cita Instagram da loja"
+    },
+    {
+      "id": "SITE-WA-LOJA",
+      "status": "PASS",
+      "detail": "site/index.html usa wa.me/5598981479616"
+    },
+    {
+      "id": "LIVE-PING",
+      "status": "PASS",
+      "detail": "GAS ping version=3.52 tz=America/Los_Angeles 2.431777s"
+    },
+    {
+      "id": "LIVE-PAGES-VERSION",
+      "status": "PASS",
+      "detail": "GitHub Pages APP_VERSION=v4.34.0 WEB_APP canônico"
+    },
+    {
+      "id": "LIVE-PAGES-WA-PARITY",
+      "status": "PASS",
+      "detail": "confirmarEnvioWA Pages = repo main"
+    },
+    {
+      "id": "LIVE-SW",
+      "status": "PASS",
+      "detail": "sw.js Pages HTTP 200 v4.34.0"
+    },
+    {
+      "id": "LIVE-ACEITE-SEM-OS",
+      "status": "PASS",
+      "detail": "aceiteOs sem OS → página \"OS não encontrada\" (HTTP 200, 4.093527s)"
+    },
+    {
+      "id": "LIVE-ACEITE-OS-INEXISTENTE",
+      "status": "PASS",
+      "detail": "aceiteOs&os=999999 → OS não encontrada"
+    },
+    {
+      "id": "LIVE-LISTAR-CLIENTES",
+      "status": "PASS",
+      "detail": "listarClientes ok version=3.52 items=345 3.736768s"
+    },
+    {
+      "id": "LIVE-ACEITE-URLS-GAS",
+      "status": "PASS",
+      "detail": "URLs aceite do GAS: ok=321 missing=24 mismatch=0 (missing esperado em CONFIRMADO: mapa da aba não grava url)"
+    },
+    {
+      "id": "LIVE-ACEITE-CONTADORES",
+      "status": "PASS",
+      "detail": "Aceites: 24 confirmados / 321 pendentes · ativos pendentes=49 · ativos confirmados=6"
+    },
+    {
+      "id": "LIVE-ACEITE-FORM-PENDENTE",
+      "status": "PASS",
+      "detail": "OS #000345 GET readonly: botão verde + form GET confirmarAceiteOs&form=1 (2.38987s)",
+      "extra": {
+        "markers": {
+          "titleAceite": true,
+          "botaoVerde": true,
+          "formConfirm": true,
+          "formFlag": true,
+          "methodGet": true,
+          "jaConfirmado": false,
+          "osNaoEncontrada": false,
+          "actionExec": true
+        },
+        "os": 345
+      }
+    },
+    {
+      "id": "LIVE-ACEITE-FORM-CONFIRMADO",
+      "status": "PASS",
+      "detail": "OS #000343 já CONFIRMADO: tela \"já confirmado\" sem botão",
+      "extra": {
+        "markers": {
+          "titleAceite": true,
+          "botaoVerde": false,
+          "formConfirm": false,
+          "formFlag": false,
+          "methodGet": false,
+          "jaConfirmado": true,
+          "osNaoEncontrada": false,
+          "actionExec": true
+        },
+        "os": 343
+      }
+    },
+    {
+      "id": "LIVE-VIP-FORM",
+      "status": "PASS",
+      "detail": "cadastroVip HTML público carrega formulário (sem submit) 1.409264s"
+    },
+    {
+      "id": "LIVE-GOOGLE-REVIEW",
+      "status": "PASS",
+      "detail": "Google review HTTP 200 final=https://accounts.google.com/v3/signin/identifier?continue=https://search.google.com/local/writereview?placeid%3DChIJ4XW3sEOT9gcRxMidft1jEvA%26source%3Dg.page.m.ia._%26laa%3Dnmx-review-solicitation-ia2&flowName=WebLiteSignIn&flowEntry=ServiceLogin&dsh=S-549771593:1786717975058873"
+    },
+    {
+      "id": "LIVE-WAME-LOJA",
+      "status": "PASS",
+      "detail": "wa.me/5598981479616 HTTP 200 final=https://api.whatsapp.com/send/?phone=5598981479616&text&type=phone_number&app_absent=0"
+    },
+    {
+      "id": "LIVE-INSTAGRAM",
+      "status": "PASS",
+      "detail": "instagram.com/zapclinhigienizacao HTTP 200 (handle nas msgs; não é URL clicável no PWA)"
+    },
+    {
+      "id": "LIVE-SITE-WA",
+      "status": "PASS",
+      "detail": "www.zapclinslz.com HTTP 200 contém wa.me da loja"
+    },
+    {
+      "id": "LIVE-NO-WRITE",
+      "status": "PASS",
+      "detail": "Nenhuma action de escrita chamada (confirmarAceiteOs, salvarCadastroVip, salvar, atualizarStatus)"
+    }
+  ]
+}

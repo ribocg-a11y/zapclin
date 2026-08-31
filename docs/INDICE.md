@@ -22,6 +22,7 @@
 | [`FLUXOS_OPERACIONAIS.md`](FLUXOS_OPERACIONAIS.md) | Diagramas de fluxos |
 | [`ativos/MAPA_CODIGO_ARQUITETURA.md`](ativos/MAPA_CODIGO_ARQUITETURA.md) | Anatomia código |
 | [`ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md`](ativos/PROTOCOLO_DIAGNOSTICO_E_TESTES.md) | Protocolo testes Z0–Z6 |
+| [`ativos/AUDITORIA_WA_ACEITE_2026-08-14.md`](ativos/AUDITORIA_WA_ACEITE_2026-08-14.md) | Varredura WhatsApp + aceite (evidências) |
 | [`ativos/PACOTE_Z_MODULARIZACAO.md`](ativos/PACOTE_Z_MODULARIZACAO.md) | Modularização frontend |
 | [`ativos/OAUTH_PLANILHA_DESKTOP.md`](ativos/OAUTH_PLANILHA_DESKTOP.md) | Escrita planilha via OAuth |
 | [`ativos/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](ativos/ALAVANCAS_HUMANAS_ALTO_IMPACTO.md) | Golden Shopping / ações humanas SEO |

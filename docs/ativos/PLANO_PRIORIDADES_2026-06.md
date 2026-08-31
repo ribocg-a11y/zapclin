@@ -1,4 +1,4 @@
-# ZapClin — Plano de prioridades (14/08/2026)
+# ZapClin — Plano de prioridades (31/08/2026)
 
 **Handoff:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md)
 
@@ -8,11 +8,12 @@
 
 | Item | Status |
 |------|--------|
-| FE/SW **v4.35.0** | ⏳ merge |
-| GAS **3.52** arquivo + ping | ✅ |
-| PRs abertas | **0** |
-| Environment `zapclin` + seed ago | ✅ |
-| SEO motor + Reels + extra-chuva em main | ✅ |
+| FE/SW **v4.35.0** | ⏳ PR **#22** (Pages após merge) |
+| GAS **3.54** arquivo + ping | ✅ |
+| Seed LANÇAMENTOS 01–25/08 | ✅ planilha |
+| OAuth Desktop `token.json` | ✅ re-auth 26/08 |
+| Environment `zapclin` refresh | ⏳ colado 26/08; Cloud Agent novo ainda não testou |
+| SEO motor + Reels em main | ✅ |
 
 ---
 
@@ -20,11 +21,13 @@
 
 | # | Item | Status |
 |---|------|--------|
-| H1 | GAS Nova versão 3.52 | ✅ |
-| H2 | Smoke loja `?force=v4.35.0` | ⬜ |
+| H0 | Merge **#24** + `git pull` no clone do C: | ✅ 31/08 |
+| H1 | GAS Nova versão **3.54** | ✅ ping 3.54 |
+| H2 | Smoke loja `?force=v4.35.0` (após merge #22) + aceite no WhatsApp | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
 | H5 | Toast exato se erro rede | ⏳ |
+| H6 | Opcional: OAuth consent **In production** (evita expirar ~7 dias) | ⬜ |
 
 ---
 
@@ -33,15 +36,17 @@
 | # | Item | Status |
 |---|------|--------|
 | F3.7 | `zc-operacao` + `zc-crm` | ✅ v4.34.0 |
-| F3.9 | `zc-app.css` | ✅ v4.35.0 |
-| F3.10 | `zc-boot.js` | ⬜ próximo |
+| AUD | Auditoria WA + aceite 14/08 | ✅; FAIL §3 só com pedido |
+| F3.9 | `zc-app.css` | ⏳ PR **#22** — rebaseado na `main` |
+| F3.10 | `zc-boot.js` | ⬜ |
 | NET | Fila offline OS + status | ⬜ |
 
 ---
 
 ## PRs
 
-Nenhuma aberta no início desta sessão. Z.9: [#22](https://github.com/ribocg-a11y/zapclin/pull/22).
+- **#22** Z.9 CSS — draft atualizado (main + aceite v4.34.1); merge só com pedido  
+- Histórico merged: **#24** seed · #23 aceite · #18 Z.7 · #17 · #19 · #20 · closed #1 #14 #15 #16  
 
 ---
 

@@ -1,6 +1,13 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.52 | Data: 30/07/2026
+// VersÃ£o: 3.54 | Data: 14/08/2026
+// NOVO v3.54:
+//   - Aceite pÃºblico vira pÃ¡gina GitHub Pages (aceite.html); GAS sÃ³ API JSON dadosAceiteOs
+//   - Links novos: https://ribocg-a11y.github.io/zapclin/aceite.html?os=
+//   - action=aceiteOs HTML legado permanece para mensagens jÃ¡ enviadas
+// NOVO v3.53:
+//   - Aceite OS / VIP: form target=_top + ALLOWALL em todas as pÃ¡ginas pÃºblicas
+//     (HtmlService iframe; sem isso o cliente no WhatsApp vÃª pÃ¡gina em branco ao aceitar)
 // NOVO v3.52:
 //   - Action getFotoPreview: preview maior sob demanda para abrir foto do capacete no CRM
 // NOVO v3.51:
@@ -128,7 +135,8 @@ var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 var SHEET_LOGS        = 'LOGS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.52';
+var VERSION           = '3.54';
+var ACEITE_PAGE_URL   = 'https://ribocg-a11y.github.io/zapclin/aceite.html';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
 var LOG_FUSO_OFFSET_HORAS = -3;
@@ -497,8 +505,21 @@ function cadastroVipUrl_(nome, telefone) {
 }
 
 function aceiteOsUrl_(os) {
+  return ACEITE_PAGE_URL + '?os=' + encodeURIComponent(os || '');
+}
+
+function confirmarAceiteOsUrl_(os) {
   var base = ScriptApp.getService().getUrl();
-  return base + '?action=aceiteOs&os=' + encodeURIComponent(os || '');
+  return base + '?action=confirmarAceiteOs&form=1&os=' + encodeURIComponent(os || '');
+}
+
+// Páginas públicas (aceite / VIP): HtmlService sempre embute iframe googleusercontent.
+// Sem target=_top o submit navega o iframe interno → página em branco no WhatsApp.
+function htmlPublicoCliente_(html, title) {
+  return HtmlService.createHtmlOutput(html)
+    .setTitle(String(title || 'ZapClin'))
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover');
 }
 
 function escapeHtmlOs_(v) {
@@ -639,15 +660,15 @@ function renderCadastroVipForm_(p) {
   var nome = String(p.nome || '').replace(/"/g, '&quot;');
   var tel = String(p.tel || '').replace(/"/g, '&quot;');
   var actionUrl = ScriptApp.getService().getUrl();
-  var html = '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Clube VIP ZapClin</title><style>'+
+  var html = '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><base target="_top"><title>Clube VIP ZapClin</title><style>'+
     '*{box-sizing:border-box}html{min-height:100%;background:#090a0f}body{margin:0;min-height:100%;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;-webkit-text-size-adjust:100%}'+
     'main{width:100%;max-width:720px;margin:0 auto;padding:18px;min-height:100dvh}.card{background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}'+
     'h1{font-size:30px;line-height:1.05;margin:0 0 10px;color:#00d7f5}p{color:#aab0cc;line-height:1.45;margin:0 0 14px;font-size:16px}label{display:block;margin:16px 0 7px;font-weight:700;font-size:14px;color:#eef2ff}'+
     'input,textarea{width:100%;padding:16px;border-radius:14px;border:1px solid #2a2f42;background:#0f1118;color:#fff;font-size:18px;line-height:1.25;outline:none}input:focus,textarea:focus{border-color:#00d7f5;box-shadow:0 0 0 3px rgba(0,215,245,.16)}'+
     'button{width:100%;margin-top:20px;border:0;border-radius:16px;padding:17px;background:#17d982;color:#04120b;font-weight:900;font-size:17px;line-height:1.1;min-height:56px}.gift{background:rgba(23,217,130,.1);border:1px solid rgba(23,217,130,.25);border-radius:16px;padding:15px;margin:16px 0;color:#d9ffe9;font-size:16px;line-height:1.35}.fine{font-size:13px;color:#8b90ad}'+
     '@media(max-width:640px){main{max-width:none;padding:0;min-height:100dvh}.card{min-height:100dvh;border-radius:0;border-left:0;border-right:0;padding:22px 18px 28px}h1{font-size:32px}p,.gift{font-size:17px}label{font-size:15px}input,textarea{font-size:19px;padding:17px}button{font-size:18px;padding:18px}}'+
-    '</style></head><body><main><div class="card"><h1>Clube VIP ZapClin</h1><p>Complete seu cadastro para receber benefícios exclusivos, campanhas antecipadas e seu presente de aniversário.</p><div class="gift">No mês do seu aniversário, você pode ganhar <b>30% de desconto em 1 serviço</b>, sempre calculado sobre o serviço de menor valor do atendimento e limitado a R$ 15,00.</div><p class="fine">O benefício só é aplicado quando cadastro, aniversário e atendimento aberto batem com a regra da ZapClin.</p><form method="get" action="'+actionUrl+'"><input type="hidden" name="action" value="salvarCadastroVip"><input type="hidden" name="form" value="1"><label>Nome</label><input name="nome" required autocomplete="name" value="'+nome+'"><label>WhatsApp</label><input name="telefone" required inputmode="tel" autocomplete="tel" value="'+tel+'"><label>Data de aniversário</label><input name="aniversario" type="date" required><label>E-mail opcional</label><input name="email" type="email" inputmode="email" autocomplete="email"><label>Modelo ou observação do capacete</label><textarea name="modelo" rows="3" placeholder="Ex: LS2 preto, capacete de trilha..."></textarea><button type="submit">Entrar para o Clube VIP</button></form></div></main></body></html>';
-  return HtmlService.createHtmlOutput(html).setTitle('Clube VIP ZapClin').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    '</style></head><body><main><div class="card"><h1>Clube VIP ZapClin</h1><p>Complete seu cadastro para receber benefícios exclusivos, campanhas antecipadas e seu presente de aniversário.</p><div class="gift">No mês do seu aniversário, você pode ganhar <b>30% de desconto em 1 serviço</b>, sempre calculado sobre o serviço de menor valor do atendimento e limitado a R$ 15,00.</div><p class="fine">O benefício só é aplicado quando cadastro, aniversário e atendimento aberto batem com a regra da ZapClin.</p><form method="get" action="'+actionUrl+'" target="_top"><input type="hidden" name="action" value="salvarCadastroVip"><input type="hidden" name="form" value="1"><label>Nome</label><input name="nome" required autocomplete="name" value="'+nome+'"><label>WhatsApp</label><input name="telefone" required inputmode="tel" autocomplete="tel" value="'+tel+'"><label>Data de aniversário</label><input name="aniversario" type="date" required><label>E-mail opcional</label><input name="email" type="email" inputmode="email" autocomplete="email"><label>Modelo ou observação do capacete</label><textarea name="modelo" rows="3" placeholder="Ex: LS2 preto, capacete de trilha..."></textarea><button type="submit">Entrar para o Clube VIP</button></form></div></main></body></html>';
+  return htmlPublicoCliente_(html, 'Clube VIP ZapClin');
 }
 
 function salvarCadastroVip_(ss, p) {
@@ -667,7 +688,7 @@ function renderCadastroVipObrigado_(res) {
   var b = res && res.beneficio;
   var msg = b && b.aplicado ? 'Seu benefício de aniversário foi aplicado no atendimento aberto. Desconto: R$ ' + String((b.desconto || 0).toFixed ? b.desconto.toFixed(2) : b.desconto).replace('.', ',') + '.' : 'Agora você faz parte do Clube VIP ZapClin. Quando cadastro, aniversário e atendimento aberto baterem com a regra, o benefício é aplicado pela equipe.';
   var html = '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Cadastro confirmado</title><style>*{box-sizing:border-box}body{margin:0;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;display:grid;min-height:100dvh;place-items:center;padding:18px}div{width:100%;max-width:520px;background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:30px 22px;text-align:center}h1{color:#17d982;margin:0 0 12px;font-size:30px}p{color:#aab0cc;line-height:1.45;font-size:17px}@media(max-width:640px){body{padding:0;display:block}div{max-width:none;min-height:100dvh;border-radius:0;border-left:0;border-right:0;padding:44px 20px}}</style></head><body><div><h1>Cadastro confirmado!</h1><p>'+msg+'</p></div></body></html>';
-  return HtmlService.createHtmlOutput(html).setTitle('Cadastro confirmado');
+  return htmlPublicoCliente_(html, 'Cadastro confirmado');
 }
 
 function buscarClientePorOs_(ss, os) {
@@ -716,6 +737,29 @@ function listarAceitesOsMap_(ss) {
   return out;
 }
 
+function dadosAceiteOs_(ss, p) {
+  var os = parseInt(p.os || 0, 10);
+  if (!os) return { ok: false, error: 'OS obrigatoria', version: VERSION };
+  var cliente = buscarClientePorOs_(ss, os);
+  if (!cliente) return { ok: false, error: 'OS nao encontrada', version: VERSION, os: os };
+  var mapa = listarAceitesOsMap_(ss);
+  var ace = mapa[String(os)] || { status: 'PENDENTE' };
+  return {
+    ok: true,
+    version: VERSION,
+    os: os,
+    nome: cliente.nome,
+    telefone: cliente.telefone,
+    data: cliente.data,
+    hora: cliente.hora,
+    servicos: cliente.servicos || [],
+    observacoes: cliente.observacoes || [],
+    total: cliente.total || 0,
+    statusOs: cliente.status || '',
+    aceite: { status: String(ace.status || 'PENDENTE') }
+  };
+}
+
 function confirmarAceiteOs_(ss, p) {
   var os = parseInt(p.os || 0, 10);
   if (!os) throw new Error('OS obrigatoria');
@@ -737,25 +781,26 @@ function renderAceiteOsForm_(ss, p) {
   var os = parseInt(p.os || 0, 10);
   var cliente = buscarClientePorOs_(ss, os);
   if (!cliente) {
-    return HtmlService.createHtmlOutput('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>OS nao encontrada</title><style>body{margin:0;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;display:grid;min-height:100dvh;place-items:center;padding:20px}div{max-width:520px;background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:28px}h1{color:#ff5252}</style></head><body><div><h1>OS não encontrada</h1><p>Confira o link enviado pela ZapClin.</p></div></body></html>').setTitle('OS nao encontrada');
+    return htmlPublicoCliente_('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_top"><title>OS nao encontrada</title><style>body{margin:0;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;display:grid;min-height:100dvh;place-items:center;padding:20px}div{max-width:520px;background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:28px}h1{color:#ff5252}</style></head><body><div><h1>OS não encontrada</h1><p>Confira o link enviado pela ZapClin.</p></div></body></html>', 'OS nao encontrada');
   }
   var mapa = listarAceitesOsMap_(ss);
   var confirmado = mapa[String(os)] && mapa[String(os)].status === 'CONFIRMADO';
   var actionUrl = ScriptApp.getService().getUrl();
+  var confirmUrl = confirmarAceiteOsUrl_(os);
   var servHtml = (cliente.servicos || []).map(function(s,i){
     if (!s) return '';
     var obs = cliente.observacoes && cliente.observacoes[i] ? '<div class="obs">Condições: '+escapeHtmlOs_(cliente.observacoes[i])+'</div>' : '';
     return '<div class="svc"><strong>Capacete '+(i+1)+'</strong><span>'+escapeHtmlOs_(s)+'</span>'+obs+'</div>';
   }).join('');
-  var btn = confirmado ? '<div class="ok">Aceite já confirmado. Obrigado!</div>' : '<form method="get" action="'+actionUrl+'"><input type="hidden" name="action" value="confirmarAceiteOs"><input type="hidden" name="form" value="1"><input type="hidden" name="os" value="'+os+'"><button type="submit">Aceito as condições da OS</button></form>';
-  var html = '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Aceite OS '+formatarOsNumero_(os)+'</title><style>*{box-sizing:border-box}body{margin:0;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;-webkit-text-size-adjust:100%}main{width:100%;max-width:760px;margin:0 auto;padding:18px;min-height:100dvh}.card{background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}h1{margin:0;color:#00d7f5;font-size:30px}.sub{color:#aab0cc;margin:8px 0 18px;line-height:1.45}.box{border:1px solid #2a2f42;background:#0f1118;border-radius:16px;padding:14px;margin:12px 0}.lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8b90ad}.val{font-size:18px;font-weight:800;margin-top:4px}.svc{border-top:1px solid #2a2f42;padding:13px 0}.svc:first-child{border-top:0}.svc strong{display:block;color:#5b8cff;margin-bottom:4px}.obs{color:#aab0cc;margin-top:5px;line-height:1.35}.terms{font-size:14px;color:#cbd5e1;line-height:1.5;background:rgba(0,215,245,.07);border:1px solid rgba(0,215,245,.20);border-radius:16px;padding:14px;margin:16px 0}button{width:100%;border:0;border-radius:16px;background:#17d982;color:#04120b;font-weight:900;font-size:18px;min-height:58px;padding:18px}.ok{background:rgba(23,217,130,.12);border:1px solid rgba(23,217,130,.28);border-radius:16px;padding:16px;color:#d9ffe9;font-weight:800;text-align:center}@media(max-width:640px){main{padding:0;max-width:none}.card{min-height:100dvh;border-radius:0;border-left:0;border-right:0;padding:24px 18px 30px}h1{font-size:32px}.val{font-size:20px}}</style></head><body><main><div class="card"><h1>Aceite da OS '+formatarOsNumero_(os)+'</h1><p class="sub">Confira os dados registrados no recebimento do capacete. O aceite confirma ciência das condições e autoriza a execução do serviço.</p><div class="box"><div class="lbl">Cliente</div><div class="val">'+escapeHtmlOs_(cliente.nome)+'</div><div class="sub">'+escapeHtmlOs_(cliente.telefone)+' · '+escapeHtmlOs_(cliente.data)+' '+escapeHtmlOs_(cliente.hora)+'</div></div><div class="box"><div class="lbl">Serviços registrados</div>'+servHtml+'</div><div class="box"><div class="lbl">Total</div><div class="val">R$ '+String(cliente.total.toFixed(2)).replace('.', ',')+'</div></div><div class="terms">Ao tocar em aceitar, declaro que conferi as informações da OS, condições registradas e serviço contratado, autorizando a ZapClin a executar o atendimento conforme descrito.</div>'+btn+'</div></main></body></html>';
-  return HtmlService.createHtmlOutput(html).setTitle('Aceite OS '+formatarOsNumero_(os)).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  var btn = confirmado ? '<div class="ok">Aceite já confirmado. Obrigado!</div>' : '<form method="get" action="'+actionUrl+'" target="_top"><input type="hidden" name="action" value="confirmarAceiteOs"><input type="hidden" name="form" value="1"><input type="hidden" name="os" value="'+os+'"><button type="submit">Aceito as condições da OS</button></form><p class="fine"><a href="'+confirmUrl+'" target="_top">Se o botão não responder no WhatsApp, toque aqui para confirmar o aceite</a></p>';
+  var html = '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><base target="_top"><title>Aceite OS '+formatarOsNumero_(os)+'</title><style>*{box-sizing:border-box}body{margin:0;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;-webkit-text-size-adjust:100%}main{width:100%;max-width:760px;margin:0 auto;padding:18px;min-height:100dvh}.card{background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}h1{margin:0;color:#00d7f5;font-size:30px}.sub{color:#aab0cc;margin:8px 0 18px;line-height:1.45}.box{border:1px solid #2a2f42;background:#0f1118;border-radius:16px;padding:14px;margin:12px 0}.lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8b90ad}.val{font-size:18px;font-weight:800;margin-top:4px}.svc{border-top:1px solid #2a2f42;padding:13px 0}.svc:first-child{border-top:0}.svc strong{display:block;color:#5b8cff;margin-bottom:4px}.obs{color:#aab0cc;margin-top:5px;line-height:1.35}.terms{font-size:14px;color:#cbd5e1;line-height:1.5;background:rgba(0,215,245,.07);border:1px solid rgba(0,215,245,.20);border-radius:16px;padding:14px;margin:16px 0}button{width:100%;border:0;border-radius:16px;background:#17d982;color:#04120b;font-weight:900;font-size:18px;min-height:58px;padding:18px}.ok{background:rgba(23,217,130,.12);border:1px solid rgba(23,217,130,.28);border-radius:16px;padding:16px;color:#d9ffe9;font-weight:800;text-align:center}a{color:#00d7f5}.fine{font-size:13px;color:#8b90ad;text-align:center;margin-top:14px;line-height:1.45}@media(max-width:640px){main{padding:0;max-width:none}.card{min-height:100dvh;border-radius:0;border-left:0;border-right:0;padding:24px 18px 30px}h1{font-size:32px}.val{font-size:20px}}</style></head><body><main><div class="card"><h1>Aceite da OS '+formatarOsNumero_(os)+'</h1><p class="sub">Confira os dados registrados no recebimento do capacete. O aceite confirma ciência das condições e autoriza a execução do serviço.</p><div class="box"><div class="lbl">Cliente</div><div class="val">'+escapeHtmlOs_(cliente.nome)+'</div><div class="sub">'+escapeHtmlOs_(cliente.telefone)+' · '+escapeHtmlOs_(cliente.data)+' '+escapeHtmlOs_(cliente.hora)+'</div></div><div class="box"><div class="lbl">Serviços registrados</div>'+servHtml+'</div><div class="box"><div class="lbl">Total</div><div class="val">R$ '+String(cliente.total.toFixed(2)).replace('.', ',')+'</div></div><div class="terms">Ao tocar em aceitar, declaro que conferi as informações da OS, condições registradas e serviço contratado, autorizando a ZapClin a executar o atendimento conforme descrito.</div>'+btn+'</div></main></body></html>';
+  return htmlPublicoCliente_(html, 'Aceite OS '+formatarOsNumero_(os));
 }
 
 function renderAceiteOsObrigado_(res) {
   var os = res && res.os ? formatarOsNumero_(res.os) : '';
   var html = '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Aceite confirmado</title><style>*{box-sizing:border-box}body{margin:0;background:#090a0f;color:#eef2ff;font-family:Arial,sans-serif;display:grid;min-height:100dvh;place-items:center;padding:18px}div{width:100%;max-width:520px;background:#151821;border:1px solid #2a2f42;border-radius:20px;padding:30px 22px;text-align:center}h1{color:#17d982;margin:0 0 12px;font-size:30px}p{color:#aab0cc;line-height:1.45;font-size:17px}@media(max-width:640px){body{padding:0;display:block}div{max-width:none;min-height:100dvh;border-radius:0;border-left:0;border-right:0;padding:44px 20px}}</style></head><body><div><h1>Aceite confirmado!</h1><p>Registramos sua confirmação da '+os+'. Obrigado pela confiança na ZapClin.</p></div></body></html>';
-  return HtmlService.createHtmlOutput(html).setTitle('Aceite confirmado');
+  return htmlPublicoCliente_(html, 'Aceite confirmado');
 }
 
 function proximaLinhaLancamento_(lanc) {
@@ -1028,6 +1073,9 @@ function doGet(e) {
 
     } else if (action === 'aceiteOs') {
       return renderAceiteOsForm_(ss, p);
+
+    } else if (action === 'dadosAceiteOs') {
+      result = dadosAceiteOs_(ss, p);
 
     } else if (action === 'confirmarAceiteOs' && p.form === '1') {
       return renderAceiteOsObrigado_(confirmarAceiteOs_(ss, p));

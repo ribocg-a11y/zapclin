@@ -1,25 +1,28 @@
-# ZapClin — Estado atual (14/08/2026)
+# ZapClin — Estado atual (31/08/2026)
 
 Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md)
 
-**Prompt:** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md)  
+**Prompt (agente no C:):** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md)  
 **Erros PWA:** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
 **Erros/eventos:** [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EVENTOS_2026-08.md)  
+**Auditoria WA/aceite (14/08):** [`AUDITORIA_WA_ACEITE_2026-08-14.md`](AUDITORIA_WA_ACEITE_2026-08-14.md)  
 **Prioridades:** [`PLANO_PRIORIDADES_2026-06.md`](PLANO_PRIORIDADES_2026-06.md)  
-**Environment:** [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)  
+**OAuth PC:** [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)  
+**Environment Cloud:** [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)  
+**Pastas C:** [`../MAPA_PASTAS_LOCAL.md`](../MAPA_PASTAS_LOCAL.md)  
 **GAS deploy:** [`../APPSCRIPT_DEPLOY.md`](../APPSCRIPT_DEPLOY.md)  
 **Golden (humano):** [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)
 
 ---
 
-## Produção (14/08 — alinhada)
+## Produção (31/08 — alinhada)
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.35.0** (após merge) | https://ribocg-a11y.github.io/zapclin/?force=v4.35.0 |
-| GAS arquivo + ping | **3.52** ✅ | ping abaixo |
+| Frontend / SW | **v4.35.0** (esta branch · PR #22) | https://ribocg-a11y.github.io/zapclin/?force=v4.35.0 |
+| GAS arquivo + ping | **3.54** ✅ | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
-| PRs GitHub | **0 abertas** | — |
+| PRs GitHub | **#22** Z.9 `zc-app.css` · **#24** MERGED | — |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
 **`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
@@ -36,32 +39,31 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` + `zc-app.css` (`APP_VERSION` = v4.35.0) |
-| Pacote Z | até `zc-app.css` (Z.9) · próximo `zc-boot.js` |
+| FE | `index.html` + `zc-*.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.35.0) |
+| Pacote Z | até Z.9 `zc-app.css` · próximo Z.10 `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
-| OAuth | `scripts/oauth-sheets/` |
+| OAuth | `scripts/oauth-sheets/` + token em `%USERPROFILE%\.config\google-api\` |
 | SEO | `scripts/seo/engine/` + `docs/ativos/marketing-ig/` |
 | Site live | repo `zapclinslz` (espelho `site/zapclinslz-sync/`) |
 
 ---
 
-## Entregas 14/08
+## Entregas
 
 | Item | PR |
 |------|-----|
-| Z.9 `zc-app.css` v4.35.0 | [#22](https://github.com/ribocg-a11y/zapclin/pull/22) |
 | Z.7 v4.34.0 | #18 MERGED |
-| Handoff / Environment | #17 MERGED |
-| Docs ping 3.52 | #19 MERGED |
-| SEO + Reels + extra-chuva | #20 MERGED |
-| #1 #14 #15 #16 | CLOSED |
+| Aceite.html Pages + GAS 3.54 | #23 MERGED |
+| Seed LANÇAMENTOS 01–25/08 | planilha 26/08 · script+docs **#24 MERGED** |
+| OAuth Desktop re-auth | 26/08 · `npm test` OK no PC |
+| Z.9 CSS | **#22** — rebaseado na `main` (aceite v4.34.1 + GAS 3.54) |
 
 ---
 
 ## Próximo
 
-**Humano:** Wi-Fi + smoke `?force=v4.35.0` · Golden backlink · esperar GSC.  
-**Agente:** Z.10 `zc-boot.js` **ou** fila offline OS/status (pedido) · sem reabrir SEO.
+**Humano:** smoke `?force=v4.35.0` após merge #22 · aceite no WhatsApp · Golden.  
+**Agente:** Z.10 `zc-boot.js` ou fila NET-TIMEOUT **só com pedido**. Seed 01–25 já na planilha.
 
 ---
 

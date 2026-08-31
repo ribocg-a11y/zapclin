@@ -1,6 +1,6 @@
 # Ambiente Cloud Cursor — `zapclin`
 
-**Atualizado:** 14/08/2026
+**Atualizado:** 31/08/2026
 
 ## Para quê
 
@@ -8,10 +8,14 @@ Permitir que Cloud Agents escrevam na planilha ZapClin via OAuth **sem** colar s
 
 ## Como abrir o próximo agente
 
+**Preferido agora (31/08):** Cursor **Desktop** na pasta `C:\Users\riboc\Documents\Codex\zapclin-repo` — ver [`HANDOFF_NOVO_CHAT.md`](HANDOFF_NOVO_CHAT.md) §0. Token = `token.json` no PC.
+
+**Cloud** (só se for nuvem de novo):
+
 1. Cursor → Cloud Agent / Background Agent.  
 2. Selecionar **Environment: `zapclin`** (não “default” vazio).  
 3. Repo padrão: **`ribocg-a11y/zapclin`**.  
-4. Colar o prompt de [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md).
+4. Colar o prompt de [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md) (há um bloco focado no Desktop; adapte se for Cloud).
 
 Se o Environment não estiver selecionado, seeds Sheets vão falhar com `invalid_grant` / missing env.
 
