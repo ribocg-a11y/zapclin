@@ -1,6 +1,7 @@
 # RFC — Rede ZapClin: levantamento, contrato e gestão de mudança
 
-**Status:** aberto — **não implementar produto** até o sócio marcar o lote  
+**Status:** L1 em execução (sócio marcou **pode L1** em 31/08/2026)  
+**FE alvo:** v4.36.3 — Equipe visível + Painel Rede rotulado como soma  
 **Data:** 31/08/2026  
 **Varredura:** planilha live (OAuth leitura) + GAS arquivo 3.56 + PWA v4.36.2  
 **Canvas:** abrir ao lado do chat `zapclin-gestao-mudanca-rede.canvas.tsx`
@@ -56,7 +57,15 @@ Planilha `ZapClin_Sistema_Gerenciamento` — **16 abas**. Entre elas: `UNIDADES`
 
 Linha operacional com `UNIDADE` vazio o GAS trata como **golden**. Rio Anil está **catalogada e sem movimento**.
 
-Script de backfill (dry-run): `scripts/oauth-sheets/bootstrap-unidades-usuarios.js` — **não gravar** sem pedido.
+**Dry-run OAuth 31/08 (não gravou):** `bootstrap-unidades-usuarios.js --dry-run`
+
+| Aba | Última linha | Células vazias que receberiam `golden` | Já preenchidas |
+|-----|--------------|----------------------------------------|----------------|
+| LANÇAMENTOS | 1613 | **1604** | 0 |
+| CLIENTES | 358 | **349** | 0 |
+| CUSTOS | 97 | **88** | 0 |
+
+Ou seja: a coluna existe no cabeçalho e **nenhuma linha operacional está carimbada**. O filtro funciona porque vazio = golden. **Não gravar** até o sócio pedir o backfill (L1-write).
 
 ---
 
@@ -104,33 +113,34 @@ Fora de escopo deste RFC (L3+): nova cara, redesign celular/desktop, microsservi
 
 ## 7. Lotes (só avançar com “pode o L1”)
 
-### L0 — agora (organização)
+### L0 — organização
 
 - [x] Varredura planilha + código
 - [x] Este RFC + canvas
-- [ ] Sócio: ler e dizer **pode L1** ou ajustar o contrato
+- [x] Sócio: **pode L1** (31/08)
 
 ### L0 humano (você)
 
 - [ ] Colar GAS **3.56** no editor (ping ainda 3.55)
-- [ ] Não criar aba Rio Anil
+- [x] Não criar aba Rio Anil
 
-### L1 — correção do contrato (código, depois do ok)
+### L1 — correção do contrato (código)
 
-1. Atalho **Equipe** visível na Home Rede (não esconder Painel)
-2. Painel em Rede: KPIs = **soma**, título Rede, duas linhas Golden / Anil
-3. Auditoria/backfill `UNIDADE` vazia = golden (dry-run primeiro)
-4. Você cadastra os dois operadores no Painel (golden)
+1. [x] Atalho **Equipe** visível na Home Rede, na loja, no rodapé e no Painel
+2. [x] Painel em Rede: KPIs = **soma**, título Rede, duas linhas Golden / Anil
+3. [x] Auditoria dry-run `UNIDADE` vazia = golden (1604 LANC / 349 CLIENTES / 88 CUSTOS; **não gravou**)
+4. [ ] Você cadastra os operadores no Painel (golden)
+5. [ ] Backfill real na planilha — **só com pedido explícito**
 
 ### L2 — fechar furos de modelo
 
-- Matriz nas demais telas admin
-- WhatsApp Anil na aba `UNIDADES`
-- `UNIDADE` em RELACIONAMENTO / ACEITES / LOGS (sem aba nova)
+- [ ] Matriz nas demais telas admin
+- [ ] WhatsApp Anil na aba `UNIDADES`
+- [ ] `UNIDADE` em RELACIONAMENTO / ACEITES / LOGS (sem aba nova)
 
 ### L3 — UX / layout / responsivo
 
-- Só com dados e equipe estáveis
+- [ ] Só com dados e equipe estáveis
 
 ---
 

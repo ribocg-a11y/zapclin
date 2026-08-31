@@ -1028,7 +1028,7 @@
   .zc-loja-switch{display:none;margin:10px 12px 0;gap:6px}
   .zc-loja-chip{flex:1;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer}
   .zc-loja-chip.on{background:rgba(0,212,238,.12);border-color:rgba(0,212,238,.4);color:var(--cyan)}
-  #homeRedeCockpit,#homeLojaBar{display:none}
+  #homeRedeCockpit,#homeLojaBar,#homeRedeGestao{display:none}
   .home-loja-bar{align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:16px}
   .home-loja-bar-k{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
   .home-loja-bar-v{font-family:var(--font-head);font-size:16px;font-weight:800;margin-top:2px}
@@ -1047,12 +1047,24 @@
   body.zc-perfil-operador #sbBtnCustos,
   body.zc-perfil-operador #homeCardCustos,
   body.zc-perfil-operador #sbGerenciarBtn,
+  body.zc-perfil-operador #sbEquipeBtn,
   body.zc-perfil-operador #homeCardPainel,
+  body.zc-perfil-operador #homeCardEquipe,
   body.zc-perfil-supervisor #sbGerenciarBtn,
-  body.zc-perfil-supervisor #homeCardPainel{display:none !important}
+  body.zc-perfil-supervisor #sbEquipeBtn,
+  body.zc-perfil-supervisor #homeCardPainel,
+  body.zc-perfil-supervisor #homeCardEquipe{display:none !important}
   body.zc-perfil-adm .sb-admin-bar,
   body.zc-perfil-adm .admin-badge-timer{display:none !important}
-  .zc-users-admin{margin-top:8px}
+  .zc-users-admin{margin-top:8px;scroll-margin-top:16px}
+  .admin-escopo-pill{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(0,212,238,.12);color:var(--cyan);vertical-align:middle}
+  .admin-escopo-sub{font-size:13px;color:var(--muted);margin:-4px 0 14px}
+  .admin-rede-break{margin:0 0 22px;padding:14px 16px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+  .admin-rede-break table{width:100%;border-collapse:collapse;font-size:13px}
+  .admin-rede-break th,.admin-rede-break td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border)}
+  .admin-rede-break th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .admin-rede-break td b{font-family:var(--font-data)}
+  .sb-footer .sb-gerenciar+#sbEquipeBtn{margin-top:8px}
   .zc-user-row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
   .zc-user-form .form-group{margin-bottom:10px}
 

@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.2  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.3  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -45,10 +45,10 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.36.2** live (PR **#28** MERGED) |
+| FE / SW | **v4.36.3** (L1 Rede — Equipe + Painel soma) |
 | GAS arquivo | **3.56** no repo (`AppsScript_v3.45_ATUAL.gs`) — ping pode ainda ser 3.55 até Nova versão |
 | GAS ping | **3.55** até você colar 3.56 |
-| PRs | **#28 MERGED** (menu Rede) · **#27** timeout · **#26** login |
+| PRs | **#30** RFC · **#28** menu Rede · L1 v4.36.3 |
 | Site | https://www.zapclinslz.com/ |
 | Planilha | seed LANÇAMENTOS **01–25/08/2026** ✅ |
 
@@ -80,15 +80,17 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Z.9 `zc-app.css` | ✅ PR **#22** MERGED |
 | Login de turno v4.36 / GAS 3.55 | ✅ PR **#26** MERGED · ping 3.55 |
 | Menu balcão + cockpit Rede (sem dump ADMINISTRAÇÃO) | ✅ PR **#28** MERGED · Pages **v4.36.2** |
-| RFC Rede / gestão de mudança | ⏳ **não implementar** até o sócio marcar L1 — [`RFC_REDE_GESTAO_MUDANCA.md`](./RFC_REDE_GESTAO_MUDANCA.md) |
+| RFC Rede / gestão de mudança | ✅ PR **#30** · sócio marcou **pode L1** |
+| L1 Equipe visível + Painel Rede soma | ⏳ **v4.36.3** |
 
 ### Humano (só você)
 
-1. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.2 (uma vez se o tablet ainda mostrar menu antigo)
-2. Entrar como `antonio` / PIN **1321** — Home = **Rede** (duas lojas); toque numa unidade para o balcão
-3. Cadastrar os dois operadores (ex. 10h–18h e 14h–22h)
-4. Aceite **dentro do WhatsApp no celular**
-5. Backlink Golden Shopping
+1. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.3
+2. Entrar como `antonio` / PIN **1321** — chip **Rede**
+3. Home Rede: cards **Painel** e **Equipe** — cadastrar operadores (golden; PIN 4–6 dígitos)
+4. Painel: conferir título “soma” e tabela Golden / Rio Anil
+5. Aceite **dentro do WhatsApp no celular**
+6. Colar GAS **3.56** no editor (mesmo Deploy ID)
 
 ### Agente no C: (só com pedido)
 

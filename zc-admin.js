@@ -287,14 +287,55 @@ function aplicarKpisAdmin_(kpis, origem){
   if(td2&&td1)td2.textContent=td1.textContent;
   renderResumoDiarioAdmin_(kpis);
   renderFechamentoDiarioAdmin_(kpis);
+  renderPainelEscopo_(kpis);
 }
 
-function calcularKpisAdminLocal_(){
+function zcPainelNaRede_(){
+  return typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm' &&
+    typeof zcAuthUnidadeFiltro_==='function' && zcAuthUnidadeFiltro_()==='rede';
+}
+
+function renderPainelEscopo_(kpis){
+  var naRede=zcPainelNaRede_();
+  var loja=typeof zcAuthNomeLojaFiltro_==='function'?zcAuthNomeLojaFiltro_():'';
+  var titulo=document.getElementById('adminVisaoTitulo');
+  var sub=document.getElementById('adminEscopoSub');
+  var pill=document.getElementById('adminBadgeEscopo');
+  var box=document.getElementById('adminRedeBreakdown');
+  if(titulo)titulo.textContent=naRede?'Visão geral da rede (soma)':'Visão geral — '+loja;
+  if(sub)sub.textContent=naRede
+    ?'Os quatro números grandes somam Golden Shopping + Rio Anil. A tabela abaixo separa cada loja.'
+    :'Somente a unidade '+loja+'. Para ver a soma, volte ao chip Rede.';
+  if(pill)pill.textContent=naRede?'Rede · soma':loja;
+  if(!box)return;
+  if(!naRede){box.hidden=true;box.innerHTML='';return;}
+  var g=calcularKpisAdminLocal_('golden');
+  var a=calcularKpisAdminLocal_('anil');
+  var cli=typeof clientes!=='undefined'&&clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  function ativos(uid){
+    return cli.filter(function(c){
+      return (typeof zcAuthLinhaUnidade_==='function'?zcAuthLinhaUnidade_(c):'golden')===uid &&
+        typeof clienteAberto_==='function' && clienteAberto_(c);
+    }).length;
+  }
+  var fmt=typeof fmtBRL==='function'?fmtBRL:function(n){return n;};
+  box.hidden=false;
+  box.innerHTML='<table><thead><tr><th>Unidade</th><th>Hoje</th><th>Mês</th><th>Custos mês</th><th>OS ativas</th></tr></thead><tbody>'+
+    '<tr><td>Golden Shopping</td><td><b>'+fmt(g.recHoje)+'</b> · '+g.atHoje+' svc</td><td><b>'+fmt(g.recMes)+'</b></td><td>'+fmt(g.cusMes)+'</td><td>'+ativos('golden')+'</td></tr>'+
+    '<tr><td>Rio Anil</td><td><b>'+fmt(a.recHoje)+'</b> · '+a.atHoje+' svc</td><td><b>'+fmt(a.recMes)+'</b></td><td>'+fmt(a.cusMes)+'</td><td>'+ativos('anil')+'</td></tr>'+
+    '</tbody></table>';
+}
+
+function calcularKpisAdminLocal_(unidadeId){
   // [v4.1 NOVO]
   // Fallback preservando exatamente a lógica anterior do v4.0 baseada em cache local.
   // Usado imediatamente ao abrir o painel e também quando o servidor não responder.
   var lanc=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
   var cst=custos.length>0?custos:JSON.parse(localStorage.getItem('zapCustos')||'[]');
+  if(unidadeId&&unidadeId!=='rede'){
+    lanc=lanc.filter(function(l){return (typeof zcAuthLinhaUnidade_==='function'?zcAuthLinhaUnidade_(l):'golden')===unidadeId;});
+    cst=cst.filter(function(c){return (typeof zcAuthLinhaUnidade_==='function'?zcAuthLinhaUnidade_(c):'golden')===unidadeId;});
+  }
   var now=new Date();
   var dd=String(now.getDate()).padStart(2,'0'),mm=String(now.getMonth()+1).padStart(2,'0'),yyyy=now.getFullYear();
   var hoje=dd+'/'+mm+'/'+yyyy, mes=mm+'/'+yyyy;

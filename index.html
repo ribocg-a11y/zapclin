@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.36.2 | Data: 31/08/2026
+  Versão : 4.36.3 | Data: 31/08/2026
+  NOVO v4.36.3:
+  - L1 Rede: atalho Equipe + Painel visíveis na Home Rede; Painel em Rede rotula a soma e quebra Golden / Rio Anil.
   NOVO v4.36.2:
   - Menu do balcão + cockpit Rede: chips Rede/Golden/Rio Anil; toque na loja = sistema de uma unidade.
     Painel só no rodapé e no card da Home do ADM. Dashboard/Vendas/Relatório saem da lateral.
@@ -339,7 +341,7 @@
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zc-app.css?v=v4.36.2">
+<link rel="stylesheet" href="zc-app.css?v=v4.36.3">
 
 </head>
 <body>
@@ -368,7 +370,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.2</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.3</span>
       </div>
     </div>
   </div>
@@ -416,6 +418,9 @@
     <button class="sb-gerenciar" id="sbGerenciarBtn" data-page="admin" onclick="abrirAdmin()" style="display:none">
       Painel
     </button>
+    <button class="sb-gerenciar" id="sbEquipeBtn" type="button" onclick="zcAuthAbrirEquipe_()" style="display:none">
+      Equipe
+    </button>
     <!-- Input oculto para manter webAppUrl funcional -->
     <input type="hidden" id="webAppUrl">
     <input type="hidden" id="statusConexao">
@@ -429,7 +434,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.2</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.3</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -525,12 +530,12 @@
       <div class="home-stat hs-cyan">
         <div class="hs-label">Atendimentos hoje</div>
         <div class="hs-val cyan" id="homeAtend">—</div>
-        <div class="hs-sub">serviços lançados hoje</div>
+        <div class="hs-sub" id="homeAtendSub">serviços lançados hoje</div>
       </div>
       <div class="home-stat hs-orange">
         <div class="hs-label">Clientes ativos</div>
         <div class="hs-val orange" id="homeAtivos">—</div>
-        <div class="hs-sub">em andamento ou pronto</div>
+        <div class="hs-sub" id="homeAtivosSub">em andamento ou pronto</div>
       </div>
     </div>
     <div class="home-source-note" id="homeLancInfo"></div>
@@ -560,6 +565,24 @@
           <div class="home-store-row"><span>Clientes ativos</span><b id="homeStoreAnilAtivos">—</b></div>
           <div class="home-store-cta">Abrir a loja ›</div>
         </button>
+      </div>
+    </div>
+
+    <div id="homeRedeGestao">
+      <div class="home-sec-label">Gestão da rede</div>
+      <div class="home-grid">
+        <div class="home-card" style="--hc:var(--blue)" onclick="abrirAdmin()">
+          <div class="hc-icon">📊</div>
+          <div class="hc-name">Painel</div>
+          <div class="hc-desc">Soma das duas lojas, números e relatórios</div>
+          <div class="hc-arr">›</div>
+        </div>
+        <div class="home-card" style="--hc:var(--purple)" onclick="zcAuthAbrirEquipe_()">
+          <div class="hc-icon">👥</div>
+          <div class="hc-name">Equipe</div>
+          <div class="hc-desc">Cadastrar operadores, PIN e turno</div>
+          <div class="hc-arr">›</div>
+        </div>
       </div>
     </div>
 
@@ -601,6 +624,12 @@
         <div class="hc-icon">📊</div>
         <div class="hc-name">Painel</div>
         <div class="hc-desc">Números, equipe e relatórios</div>
+        <div class="hc-arr">›</div>
+      </div>
+      <div class="home-card" id="homeCardEquipe" style="--hc:var(--purple);display:none" onclick="zcAuthAbrirEquipe_()">
+        <div class="hc-icon">👥</div>
+        <div class="hc-name">Equipe</div>
+        <div class="hc-desc">Cadastrar operadores, PIN e turno</div>
         <div class="hc-arr">›</div>
       </div>
     </div>
@@ -992,18 +1021,20 @@
 <div class="page" id="page-admin">
   <div class="admin-badge">
     <div>
-      <div class="admin-badge-left">📊 Painel</div>
+      <div class="admin-badge-left">📊 Painel <span class="admin-escopo-pill" id="adminBadgeEscopo"></span></div>
       <div class="admin-badge-timer">Sessão encerra em <span id="adminTimerDisplay">1:00</span></div>
     </div>
     <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
-  <div class="section-title">Visão Geral</div>
+  <div class="section-title" id="adminVisaoTitulo">Visão Geral</div>
+  <p class="admin-escopo-sub" id="adminEscopoSub">Números do escopo atual (Rede ou uma loja).</p>
   <div class="kpi-grid">
     <div class="kpi-card cyan"><div class="kpi-label">Faturamento Hoje</div><div class="kpi-value cyan" id="kAdminHoje">—</div><div class="kpi-sub" id="kAdminHojeN">— serviços</div></div>
     <div class="kpi-card red"><div class="kpi-label">Custos Hoje</div><div class="kpi-value red" id="kAdminCusHoje">—</div><div class="kpi-sub">gastos</div></div>
     <div class="kpi-card green"><div class="kpi-label">Faturamento Mês</div><div class="kpi-value green" id="kAdminMes">—</div><div class="kpi-sub" id="kAdminMesN">— serviços</div></div>
     <div class="kpi-card yellow"><div class="kpi-label">Resultado Mês</div><div class="kpi-value yellow" id="kAdminResultado">—</div><div class="kpi-sub" id="kAdminMargem">margem —%</div></div>
   </div>
+  <div class="admin-rede-break" id="adminRedeBreakdown" hidden></div>
   <div class="section-title">Resumo diário</div>
   <div class="strategy-card" id="adminResumoDiario">
     <div class="strategy-head">
@@ -1078,6 +1109,11 @@
   </div>
   <div class="section-title">Gestão</div>
   <div class="admin-atalhos">
+    <div class="atalho-card" onclick="zcAuthAbrirEquipe_()">
+      <span class="atalho-icon">👥</span>
+      <div class="atalho-info"><div class="atalho-title">Equipe e turnos</div><div class="atalho-sub">Cadastrar operador, PIN e loja</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
     <div class="atalho-card" onclick="goTo('dashboard',null)">
       <span class="atalho-icon">📈</span>
       <div class="atalho-info"><div class="atalho-title">Dashboard</div><div class="atalho-sub">Gráficos por dia e tipo</div></div>
@@ -1358,21 +1394,21 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.36.2"></script>
-<script src="zc-globals.js?v=v4.36.2"></script>
-<script src="zc-api.js?v=v4.36.2"></script>
-<script src="zc-core.js?v=v4.36.2"></script>
-<script src="zc-nav.js?v=v4.36.2"></script>
-<script src="zc-home.js?v=v4.36.2"></script>
-<script src="zc-sync.js?v=v4.36.2"></script>
-<script src="zc-whatsapp.js?v=v4.36.2"></script>
-<script src="zc-admin.js?v=v4.36.2"></script>
-<script src="zc-auth.js?v=v4.36.2"></script>
-<script src="zc-historico-custos.js?v=v4.36.2"></script>
-<script src="zc-registrar.js?v=v4.36.2"></script>
-<script src="zc-clientes.js?v=v4.36.2"></script>
-<script src="zc-operacao.js?v=v4.36.2"></script>
-<script src="zc-crm.js?v=v4.36.2"></script>
+<script src="zc-version.js?v=v4.36.3"></script>
+<script src="zc-globals.js?v=v4.36.3"></script>
+<script src="zc-api.js?v=v4.36.3"></script>
+<script src="zc-core.js?v=v4.36.3"></script>
+<script src="zc-nav.js?v=v4.36.3"></script>
+<script src="zc-home.js?v=v4.36.3"></script>
+<script src="zc-sync.js?v=v4.36.3"></script>
+<script src="zc-whatsapp.js?v=v4.36.3"></script>
+<script src="zc-admin.js?v=v4.36.3"></script>
+<script src="zc-auth.js?v=v4.36.3"></script>
+<script src="zc-historico-custos.js?v=v4.36.3"></script>
+<script src="zc-registrar.js?v=v4.36.3"></script>
+<script src="zc-clientes.js?v=v4.36.3"></script>
+<script src="zc-operacao.js?v=v4.36.3"></script>
+<script src="zc-crm.js?v=v4.36.3"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)

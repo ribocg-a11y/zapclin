@@ -36,6 +36,17 @@ function zcAuthNomeLojaFiltro_(){
   if(f==='rede')return 'Rede (as duas)';
   return 'Golden Shopping';
 }
+function zcAuthLinhaUnidade_(obj){
+  var u=String((obj&&obj.unidade)||'').trim().toLowerCase();
+  return u||'golden';
+}
+function zcAuthAbrirEquipe_(){
+  if(typeof abrirAdmin==='function')abrirAdmin();
+  setTimeout(function(){
+    var el=document.getElementById('zcUsersAdmin');
+    if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});
+  },280);
+}
 function zcAuthPodeEscreverNaUnidade_(){
   if(zcAuthPerfil_()!=='adm')return true;
   var f=zcAuthUnidadeFiltro_();
@@ -160,7 +171,7 @@ function zcAuthStatsLoja_(unidadeId){
   var cli=typeof clientes!=='undefined'&&clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
   var hoje=typeof hojeBR_==='function'?hojeBR_():'';
   var atd=src.filter(function(l){
-    var u=String((l&&l.unidade)||'golden').toLowerCase()||'golden';
+    var u=zcAuthLinhaUnidade_(l);
     var svc=String(l&&l.svc||'');
     return u===unidadeId&&fmtData(l&&l.data)===hoje&&!l.cancelado&&!/^CANCELADO\b/i.test(svc);
   }).reduce(function(total,l){
@@ -168,7 +179,7 @@ function zcAuthStatsLoja_(unidadeId){
     return total+(qtd>0?qtd:1);
   },0);
   var ativos=cli.filter(function(c){
-    var u=String((c&&c.unidade)||'golden').toLowerCase()||'golden';
+    var u=zcAuthLinhaUnidade_(c);
     return u===unidadeId&&typeof clienteAberto_==='function'&&clienteAberto_(c);
   }).length;
   return {atend:atd,ativos:ativos};
@@ -180,14 +191,20 @@ function zcAuthAtualizarHomeRede_(){
   var naRede=adm&&filtro==='rede';
   var naLoja=adm&&(filtro==='golden'||filtro==='anil');
   var cockpit=document.getElementById('homeRedeCockpit');
+  var gestao=document.getElementById('homeRedeGestao');
   var balcao=document.getElementById('homeBalcaoBlock');
   var bar=document.getElementById('homeLojaBar');
   var sub=document.getElementById('homeTopoSub');
   var barNome=document.getElementById('homeLojaBarNome');
   if(cockpit)cockpit.style.display=naRede?'block':'none';
+  if(gestao)gestao.style.display=naRede?'block':'none';
   if(balcao)balcao.style.display=naRede?'none':'block';
   if(bar)bar.style.display=naLoja?'flex':'none';
   if(barNome)barNome.textContent=zcAuthNomeLojaFiltro_();
+  var atendSub=document.getElementById('homeAtendSub');
+  var ativosSub=document.getElementById('homeAtivosSub');
+  if(atendSub)atendSub.textContent=naRede?'soma das duas lojas':'serviços lançados hoje';
+  if(ativosSub)ativosSub.textContent=naRede?'soma das duas lojas':'em andamento ou pronto';
   if(sub){
     if(naRede)sub.textContent='As duas lojas juntas. Toque numa unidade para operar como no sistema de sempre.';
     else if(naLoja)sub.textContent='Balcão de '+zcAuthNomeLojaFiltro_()+' — como uma loja só.';
@@ -217,8 +234,12 @@ function zcAuthAplicarPermissoes_(){
   if(homeCustos)homeCustos.style.display=zcAuthPode_('custos')?'':'none';
   var ger=document.getElementById('sbGerenciarBtn');
   if(ger)ger.style.display=p==='adm'?'flex':'none';
+  var eq=document.getElementById('sbEquipeBtn');
+  if(eq)eq.style.display=p==='adm'?'flex':'none';
   var homePainel=document.getElementById('homeCardPainel');
   if(homePainel)homePainel.style.display=p==='adm'?'':'none';
+  var homeEquipe=document.getElementById('homeCardEquipe');
+  if(homeEquipe)homeEquipe.style.display=p==='adm'?'':'none';
   var adminSec=document.getElementById('sbAdminSection');
   if(adminSec){adminSec.classList.remove('visible');adminSec.style.display='none';}
   var bar=document.getElementById('sbAdminBar');
