@@ -31,8 +31,13 @@ function animarCardsHome(){
 
 function _calcStatsHome(){
   // Atendimentos hoje = servicos lancados hoje em LANCAMENTOS (soma QTD), nao OS cadastradas.
-  var src=lancamentos.length>0?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
-  var cli=clientes.length>0?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  // Array vazio é dado válido da loja (ex.: Rio Anil sem lançamento). Não cair no cache da outra unidade.
+  var src=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(lancamentos,'zapLanc'):(Array.isArray(lancamentos)?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]'));
+  var cli=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(clientes,'zapClientes'):(Array.isArray(clientes)?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]'));
+  if(typeof zcAuthFiltrarPorLoja_==='function'){
+    src=zcAuthFiltrarPorLoja_(src);
+    cli=zcAuthFiltrarPorLoja_(cli);
+  }
   var hoje=hojeBR_();
   var validosHoje=src.filter(function(l){
     var svc=String(l&&l.svc||'');

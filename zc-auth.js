@@ -40,6 +40,24 @@ function zcAuthLinhaUnidade_(obj){
   var u=String((obj&&obj.unidade)||'').trim().toLowerCase();
   return u||'golden';
 }
+function zcAuthEscopoUnidade_(){
+  var f=typeof zcAuthUnidadeFiltro_==='function'?String(zcAuthUnidadeFiltro_()||'').toLowerCase():'';
+  return (f==='golden'||f==='anil')?f:'';
+}
+function zcAuthFonteArray_(mem,key){
+  if(Array.isArray(mem))return mem;
+  try{return JSON.parse(localStorage.getItem(key)||'[]')||[];}catch(e){return [];}
+}
+function zcAuthFiltrarPorLoja_(arr){
+  if(!Array.isArray(arr))return [];
+  var f=zcAuthEscopoUnidade_();
+  if(!f)return arr;
+  return arr.filter(function(row){return zcAuthLinhaUnidade_(row)===f;});
+}
+function zcAuthParamsListar_(){
+  if(typeof zcAuthPerfil_==='function'&&zcAuthPerfil_()==='adm')return {unidade:'rede'};
+  return {};
+}
 function zcAuthAbrirEquipe_(){
   if(typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm'){
     if(typeof isAdmin!=='undefined')isAdmin=true;
@@ -215,6 +233,10 @@ function zcAuthSetUnidadeFiltro_(id){
   if(v!=='golden'&&v!=='anil')v='rede';
   try{sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,v);}catch(e){}
   zcAuthRenderSessao_();
+  try{
+    if(typeof renderDadosDependentes_==='function')renderDadosDependentes_({historico:true,historicoCustos:true});
+    else if(typeof _calcStatsHome==='function')_calcStatsHome();
+  }catch(e){}
   if(v==='rede'&&typeof mostrarHome==='function')mostrarHome();
   if(typeof refreshDados==='function')refreshDados(true);
   if(typeof carregarPainelAdmin==='function'&&typeof isAdmin!=='undefined'&&isAdmin){
@@ -232,8 +254,8 @@ function zcAuthVoltarRede_(){
 }
 
 function zcAuthStatsLoja_(unidadeId){
-  var src=typeof lancamentos!=='undefined'&&lancamentos.length?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
-  var cli=typeof clientes!=='undefined'&&clientes.length?clientes:JSON.parse(localStorage.getItem('zapClientes')||'[]');
+  var src=zcAuthFonteArray_(typeof lancamentos!=='undefined'?lancamentos:null,'zapLanc');
+  var cli=zcAuthFonteArray_(typeof clientes!=='undefined'?clientes:null,'zapClientes');
   var hoje=typeof hojeBR_==='function'?hojeBR_():'';
   var atd=src.filter(function(l){
     var u=zcAuthLinhaUnidade_(l);

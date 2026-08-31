@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.36.5 | Data: 31/08/2026
+  Versão : 4.36.6 | Data: 31/08/2026
+  NOVO v4.36.6:
+  - Troca de loja: Home filtra na hora (Rio Anil não herda números do Golden) e ignora resposta atrasada da loja anterior.
   NOVO v4.36.5:
   - Equipe em página própria; Painel só números + atalhos; checagens recolhidas. Login gerado do nome.
   NOVO v4.36.4:
@@ -344,7 +346,7 @@
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zc-app.css?v=v4.36.5">
+<link rel="stylesheet" href="zc-app.css?v=v4.36.6">
 
 </head>
 <body>
@@ -386,7 +388,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.5</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.6</span>
       </div>
     </div>
   </div>
@@ -450,7 +452,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.5</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.6</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1434,21 +1436,21 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.36.5"></script>
-<script src="zc-globals.js?v=v4.36.5"></script>
-<script src="zc-api.js?v=v4.36.5"></script>
-<script src="zc-core.js?v=v4.36.5"></script>
-<script src="zc-nav.js?v=v4.36.5"></script>
-<script src="zc-home.js?v=v4.36.5"></script>
-<script src="zc-sync.js?v=v4.36.5"></script>
-<script src="zc-whatsapp.js?v=v4.36.5"></script>
-<script src="zc-admin.js?v=v4.36.5"></script>
-<script src="zc-auth.js?v=v4.36.5"></script>
-<script src="zc-historico-custos.js?v=v4.36.5"></script>
-<script src="zc-registrar.js?v=v4.36.5"></script>
-<script src="zc-clientes.js?v=v4.36.5"></script>
-<script src="zc-operacao.js?v=v4.36.5"></script>
-<script src="zc-crm.js?v=v4.36.5"></script>
+<script src="zc-version.js?v=v4.36.6"></script>
+<script src="zc-globals.js?v=v4.36.6"></script>
+<script src="zc-api.js?v=v4.36.6"></script>
+<script src="zc-core.js?v=v4.36.6"></script>
+<script src="zc-nav.js?v=v4.36.6"></script>
+<script src="zc-home.js?v=v4.36.6"></script>
+<script src="zc-sync.js?v=v4.36.6"></script>
+<script src="zc-whatsapp.js?v=v4.36.6"></script>
+<script src="zc-admin.js?v=v4.36.6"></script>
+<script src="zc-auth.js?v=v4.36.6"></script>
+<script src="zc-historico-custos.js?v=v4.36.6"></script>
+<script src="zc-registrar.js?v=v4.36.6"></script>
+<script src="zc-clientes.js?v=v4.36.6"></script>
+<script src="zc-operacao.js?v=v4.36.6"></script>
+<script src="zc-crm.js?v=v4.36.6"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)
@@ -3247,7 +3249,8 @@ function labelPeriodoVendas_(){return vendasPeriodo==='hoje'?'hoje':vendasPeriod
 function setVendasPeriodo(p,btn){vendasPeriodo=p||'hoje';document.querySelectorAll('.venda-filter-btn').forEach(function(b){b.classList.remove('ativo');});if(btn)btn.classList.add('ativo');renderVendasGerencial();}
 function renderVendasGerencial(){
   var list=document.getElementById('lancList');if(!list)return;
-  var base=lancamentos.length?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]');
+  var base=typeof zcAuthFonteArray_==='function'?zcAuthFonteArray_(lancamentos,'zapLanc'):(lancamentos.length?lancamentos:JSON.parse(localStorage.getItem('zapLanc')||'[]'));
+  if(typeof zcAuthFiltrarPorLoja_==='function')base=zcAuthFiltrarPorLoja_(base);
   var periodo=filtrarVendasPeriodo_(base);
   var validos=periodo.filter(function(l){return !l.cancelado&&parseFloat(l.val||0)>0;});
   var cancelados=periodo.length-validos.length;
