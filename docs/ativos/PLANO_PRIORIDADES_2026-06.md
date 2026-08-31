@@ -9,7 +9,7 @@
 | Item | Status |
 |------|--------|
 | FE/SW **v4.36.1** | ✅ PR **#27** MERGED |
-| Menu balcão **v4.36.2** | ⏳ branch `cursor/menu-balcao-v4362` |
+| FE/SW **v4.36.2** | ✅ PR **#28** MERGED |
 | GAS **3.55** arquivo + ping | ✅ |
 | Seed LANÇAMENTOS 01–25/08 | ✅ planilha |
 | OAuth Desktop `token.json` | ✅ re-auth 26/08 |

@@ -37,14 +37,15 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 ## Agente vs você (resumo)
 
-| Eu (agente) sozinho | Só com seu pedido | Só você |
-|---------------------|-------------------|---------|
-| Ler docs, editar código, ping GAS, testes | `git commit`, `git push` | Nova versão Web GAS no editor Google |
-| Validar versões no repo | Mudanças em `api()` / planilha prod | Homologação no celular/tablet da loja |
-| Preparar `.gs` para download | Merge de PR | Script Properties / triggers no GAS |
-| Docs SEO / motor em `zapclin` | Push live `zapclinslz` | GSC, Golden backlink, posts IG |
+| Eu (agente) sozinho | Só você |
+|---------------------|---------|
+| Ler docs, editar código, ping GAS, testes | **Nova versão Web** no editor Google (colar o `.gs`) |
+| **`git commit` + `git push` + PR + merge** — sempre, sem pedir | Homologação no celular/tablet da loja |
+| Validar versões no repo e no Pages | Script Properties / triggers no GAS |
+| Preparar `.gs` para você colar | GSC, Golden backlink, posts IG |
+| Docs SEO / motor em `zapclin` | |
 
-**Nunca:** `clasp deploy` (criar novo Deploy ID), commit de segredos, alterar PIN admin sem pedido explícito, push no remoto errado.
+**Nunca:** `clasp deploy` (criar novo Deploy ID), commit de segredos, alterar PIN admin sem pedido explícito, push no remoto errado (`zapclinslz`). **Nunca** esperar o sócio lembrar de commit/push/PR/merge do frontend.
 
 ## Papéis no app (resumo)
 
@@ -60,8 +61,8 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Camada | Versão repo | Ping / live |
 |--------|-------------|-------------|
-| Frontend | **v4.36.1** live · **v4.36.2** no branch de menu | GitHub Pages `?force=v4.36.1` |
-| Service Worker | **v4.36.1** live · **v4.36.2** no branch | `sw.js` |
+| Frontend | **v4.36.2** live | GitHub Pages `?force=v4.36.2` |
+| Service Worker | **v4.36.2** live | `sw.js` |
 | GAS (código repo) | **v3.56** (`AppsScript_v3.45_ATUAL.gs`) | arquivo — Nova versão 3.56 pendente se ping ainda 3.55 |
 | GAS (ping) | **3.55** até você implantar 3.56 | |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
@@ -94,13 +95,13 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (31/08/2026)
 
-- **Produção live:** FE/SW **v4.36.1** (PR **#27**) · GAS ping **3.55** (arquivo **3.56** — Nova versão pendente)
-- **Branch `cursor/menu-balcao-v4362`:** FE/SW **v4.36.2** — menu do balcão (sem dump ADMINISTRAÇÃO)
+- **Produção live:** FE/SW **v4.36.2** (PR **#28**) · GAS ping **3.55** (arquivo **3.56** — Nova versão pendente)
+- **Menu:** balcão + cockpit Rede (chips Rede/Golden/Rio Anil); SW auto-update
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
 - **Pacote Z:** Z.9 ✅; login em `zc-auth.js`
 - **OAuth Desktop:** re-auth 26/08 ✅ (`token.json` no C:)
 - **Planilha:** seed LANÇAMENTOS **01–25/08** ✅ · UNIDADES/USUARIOS no primeiro login 3.55
-- **Próximo humano:** 1) merge/push v4.36.2 2) smoke `?force=v4.36.2` 3) cadastrar operadores 4) aceite WhatsApp · Golden
+- **Próximo humano:** 1) se o tablet ainda estiver velho, uma vez `?force=v4.36.2` 2) cadastrar operadores 3) aceite WhatsApp · Golden
 - **Próximo agente:** NET-TIMEOUT só com pedido; não re-seed ago
 
 ## Ao encerrar sessão

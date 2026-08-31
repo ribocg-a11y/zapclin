@@ -1,0 +1,21 @@
+---
+description: Publicar FE sozinho (commit, push, PR, merge). Apps Script só o humano.
+alwaysApply: true
+---
+
+# Publicação ZapClin (sem pedir)
+
+Depois de qualquer mudança no repo `zapclin` que precise ir ao ar, **não espere o sócio pedir**. Faça nesta ordem:
+
+1. `scripts/pre-push-check.ps1` (pode `-SkipNetworkTests` se o ping falhar)
+2. `git commit`
+3. `git push`
+4. abrir o PR
+5. **merge na `main`** (GitHub Pages atualiza sozinho)
+
+O sócio **só** cola **Nova versão** do Apps Script no editor Google (mesmo Deploy ID). Nunca `clasp deploy`. Nunca novo Deploy ID.
+
+**Não** commitar segredos / `token.json` / PIN. **Não** gravar a planilha sem pedido. Site marketing `zapclinslz` não entra neste fluxo automático.
+
+Errado: terminar o chat com “quando quiser, peço o PR”.  
+Certo: PR merged e URL Pages já na versão nova.

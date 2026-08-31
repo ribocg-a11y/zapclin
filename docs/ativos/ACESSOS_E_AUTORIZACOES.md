@@ -36,14 +36,15 @@ Quem pode fazer o quê — app, infraestrutura, agente vs humano.
 
 ## 3. Agente vs humano
 
-| Agente (Cursor/Codex) | Com pedido explícito | Só humano |
-|------------------------|----------------------|-----------|
-| Ler/editar código repo | `git commit` / `git push` | Nova versão Web no editor GAS |
-| Ping GAS readonly | Merge PR | Script Properties / triggers |
-| Rodar testes `.ps1` / `node --check` | Escrita na planilha (OAuth Environment ou GAS+PIN) | Homologação física na loja |
-| Preparar `.gs` para colar | Alterar PIN admin | Login Google / re-auth OAuth Desktop |
-| Criar/atualizar docs | Deploy Pages (via merge) | Compartilhar planilha com terceiros |
-| SEO docs / scripts em `zapclin` | Push live em `zapclinslz` | GSC, Golden backlink, posts IG |
+| Agente (Cursor/Codex) sozinho | Só humano |
+|-------------------------------|-----------|
+| Ler/editar código, `git commit`, `git push`, PR, **merge** (Pages) | **Nova versão Web** no editor GAS (colar o `.gs`) |
+| Ping GAS readonly, testes `.ps1` / `node --check` | Script Properties / triggers |
+| Preparar `.gs` para o sócio colar | Homologação física na loja |
+| Criar/atualizar docs | Login Google / re-auth OAuth Desktop |
+| SEO docs / scripts em `zapclin` | GSC, Golden backlink, posts IG |
+
+Planilha de produção e PIN admin: só com pedido explícito. Site `zapclinslz`: não publicar neste fluxo automático.
 
 **Nunca pelo agente:**
 

@@ -42,6 +42,7 @@ Resuma em 8–12 linhas (FE/SW/GAS ping, PRs, humano vs agente, OAuth local) e s
 - Produção 31/08: FE/SW v4.34.1 · GAS arquivo e ping 3.54.
 - Escritas browser→GAS = GET + query string.
 - Sem secrets no git. Planilha só com pedido explícito (token.json local).
+- **Publicar FE sozinho:** commit + push + PR + merge, sem o sócio pedir. Só ele cola Nova versão GAS. Nunca clasp deploy.
 - Site live = zapclinslz; ops/docs/PWA = zapclin.
 - WhatsApp zona crítica. PIN 1321 — não alterar sem pedido.
 - Incidente PWA 14/07: não repetir SW/cache.
