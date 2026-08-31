@@ -80,6 +80,7 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Z.9 `zc-app.css` | ✅ PR **#22** MERGED |
 | Login de turno v4.36 / GAS 3.55 | ✅ PR **#26** MERGED · ping 3.55 |
 | Menu balcão + cockpit Rede (sem dump ADMINISTRAÇÃO) | ✅ PR **#28** MERGED · Pages **v4.36.2** |
+| RFC Rede / gestão de mudança | ⏳ **não implementar** até o sócio marcar L1 — [`RFC_REDE_GESTAO_MUDANCA.md`](./RFC_REDE_GESTAO_MUDANCA.md) |
 
 ### Humano (só você)
 
