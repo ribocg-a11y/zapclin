@@ -10,12 +10,13 @@ Quem pode fazer o quê — app, infraestrutura, agente vs humano.
 
 | Papel | Como entra | O que vê |
 |-------|------------|----------|
-| **Operador balcão** | App aberto (sem login hoje) | Home, Registrar, Clientes, Operação, CRM |
-| **Admin** | PIN **1321** | Dashboard, Vendas, Relatório, Histórico, Custos, Admin |
+| **Operador balcão** | Usuário + PIN do turno | Home, Registrar, Clientes, Operação, CRM (só a loja dele) |
+| **Supervisor** | Usuário + PIN | Igual ao operador + Custos da loja |
+| **ADM** | `antonio` + PIN **1321** | As duas lojas, Painel, cadastro de equipe |
 | **Cliente VIP** | Link formulário público | Cadastro Clube VIP |
 | **Cliente aceite** | Link na OS | Confirma aceite digital |
 
-**Backlog Fase 4:** auth operador (nome + PIN) como no Movi Kids.
+**Backlog feito (v4.36 / GAS 3.55):** auth operador (nome + PIN) com carimbo de turno. Live após Nova versão GAS + merge.
 
 ---
 

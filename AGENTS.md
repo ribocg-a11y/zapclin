@@ -50,8 +50,9 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Papel | Entrada |
 |-------|---------|
-| Operador balcão | App aberto (sem login operador hoje — Fase 4 equiparação) |
-| Admin | PIN **1321** |
+| Operador balcão | Usuário + PIN do turno (perfil `operador`) |
+| Supervisor da loja | Usuário + PIN (perfil `supervisor` — custos da unidade) |
+| ADM (sócio) | Usuário `antonio` + PIN **1321** (perfil `adm` — as duas lojas + cadastro de equipe) |
 | Cliente VIP | Formulário público Clube VIP |
 | Cliente aceite OS | Link na mensagem de recebimento |
 
@@ -59,16 +60,16 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Camada | Versão repo | Ping / live |
 |--------|-------------|-------------|
-| Frontend | **v4.35.0** | GitHub Pages (após merge #22) |
-| Service Worker | **v4.35.0** | `sw.js` |
-| GAS (código repo) | **v3.54** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
-| GAS (ping) | **3.54** ✅ | |
+| Frontend | **v4.36.0** (branch `cursor/auth-turnos-v436` — Pages após merge) | GitHub Pages |
+| Service Worker | **v4.36.0** | `sw.js` |
+| GAS (código repo) | **v3.55** (`AppsScript_v3.45_ATUAL.gs`) | arquivo — **Nova versão Web pendente** |
+| GAS (ping) | **3.54** até você implantar 3.55 | |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.54)
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.55)
 
 Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
@@ -93,15 +94,14 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (31/08/2026)
 
-- **Produção:** FE/SW **v4.35.0** (PR #22) · GAS **3.54** (arquivo + ping ✅)
+- **Produção live:** FE/SW **v4.35.0** · GAS ping **3.54** (até merge + Nova versão)
+- **Branch `cursor/auth-turnos-v436`:** FE/SW **v4.36.0** · GAS arquivo **3.55** (login de turno)
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
-- **Pacote Z:** Z.9 ✅ (`zc-app.css`); **próximo:** Z.10 `zc-boot.js` (só com pedido)
-- **OAuth Desktop:** re-auth 26/08 ✅ (`token.json` no C:) · Environment refresh colado, Cloud novo não testou
-- **Planilha:** seed LANÇAMENTOS **01–25/08** ✅
-- **SEO:** motor + Reels + playbooks em `main` (não reinventar); humano = Golden Shopping
-- **PRs:** #22 Z.9 (esta branch) · **#24 MERGED**
-- **Próximo humano:** merge #22 + smoke `?force=v4.35.0` · aceite no WhatsApp · Golden
-- **Próximo agente:** Z.10 ou NET-TIMEOUT só com pedido
+- **Pacote Z:** Z.9 ✅; login em `zc-auth.js` (v4.36.0)
+- **OAuth Desktop:** re-auth 26/08 ✅ (`token.json` no C:)
+- **Planilha:** seed LANÇAMENTOS **01–25/08** ✅ · U0 UNIDADES/USUARIOS (script bootstrap)
+- **Próximo humano:** 1) Nova versão GAS **3.55** no Deploy ID atual 2) merge/push v4.36.0 3) cadastrar operadores no Painel 4) aceite WhatsApp · Golden
+- **Próximo agente:** NET-TIMEOUT só com pedido; não re-seed ago
 
 ## Ao encerrar sessão
 

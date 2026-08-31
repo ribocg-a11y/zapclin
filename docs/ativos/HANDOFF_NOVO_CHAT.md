@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.35.0  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.0 (após merge; live ainda v4.35.0 até Pages)  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -45,9 +45,9 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.35.0** (PR #22 — Pages após merge) |
-| GAS arquivo | **3.54** (`AppsScript_v3.45_ATUAL.gs`) |
-| GAS ping | **3.54** ✅ |
+| FE / SW | **v4.36.0** no branch `cursor/auth-turnos-v436` (live Pages ainda v4.35.0 até merge) |
+| GAS arquivo | **3.55** (`AppsScript_v3.45_ATUAL.gs`) — **Nova versão Web pendente** |
+| GAS ping | **3.54** até implantar 3.55 |
 | PRs | **#22** Z.9 CSS *draft* (rebaseado na main) · **#24 MERGED** |
 | Site | https://www.zapclinslz.com/ |
 | Planilha | seed LANÇAMENTOS **01–25/08/2026** ✅ |
@@ -77,15 +77,17 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Seed ago 01–25 | ✅ planilha 26/08 (via GAS). Script `scripts/oauth-sheets/seed-lancamentos-ago01-25.js` |
 | OAuth Desktop | ✅ `npm run auth` + `npm test` 26/08 · `token.json` no PC |
 | Environment `GOOGLE_REFRESH_TOKEN` | ✅ colado 26/08 · **não verificado** em Cloud Agent novo |
-| Z.9 `zc-app.css` | ⏳ PR **#22** — rebaseado na `main` (aceite v4.34.1 + GAS 3.54) |
+| Z.9 `zc-app.css` | ✅ PR **#22** MERGED |
+| Login de turno v4.36 / GAS 3.55 | ⏳ branch `cursor/auth-turnos-v436` — aguarda Nova versão GAS + merge |
 
 ### Humano (só você)
 
-1. Merge **#22** (Z.9) quando o smoke local estiver ok  
-2. Loja: smoke `?force=v4.35.0` + aceite **dentro do WhatsApp no celular**  
-3. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
-4. Opcional: tela OAuth Google **Testing → In production** (senão refresh token cai ~7 dias)  
-5. GSC bairros — **não** re-spam
+1. **Nova versão** GAS **3.55** no mesmo Deploy ID (`docs/APPSCRIPT_DEPLOY.md`) — **antes** de usar o PWA v4.36
+2. Merge/push da branch de login; smoke `?force=v4.36.0`
+3. Entrar como `antonio` / PIN **1321** e cadastrar os dois operadores (ex. 10h–18h e 14h–22h)
+4. Aceite **dentro do WhatsApp no celular**
+5. Backlink Golden Shopping
+6. Opcional: OAuth Google **Testing → In production**
 
 ### Agente no C: (só com pedido)
 

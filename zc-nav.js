@@ -23,6 +23,11 @@ function goTo(page, btn){
   // Valida rota, fecha menu mobile sempre, atualiza título e sobe a tela para evitar estado visual quebrado no celular.
   var target=document.getElementById('page-'+page);
   if(!target){page='home';target=document.getElementById('page-home');}
+  if(typeof zcAuthPodePagina_==='function' && !zcAuthPodePagina_(page)){
+    fecharSidebar();
+    if(typeof showToast==='function')showToast('Seu perfil não acessa esta tela','orange');
+    return;
+  }
   var paginasAdmin=['admin','dashboard','historico','historico-custos','lancamentos','relatorio','logs','aceites'];
   if(paginasAdmin.indexOf(page)>=0 && !isAdmin){
     fecharSidebar();
@@ -46,7 +51,10 @@ function goTo(page, btn){
   if(page==='relacionamento')carregarRelacionamento(false);
   if(page==='dashboard')carregarDashboard();
   if(page==='relatorio')carregarRelatorio();
-  if(page==='admin')carregarPainelAdmin();
+  if(page==='admin'){
+    carregarPainelAdmin();
+    if(typeof zcAuthCarregarUsuarios_==='function')zcAuthCarregarUsuarios_();
+  }
   if(page==='historico')carregarHistorico();
   if(page==='historico-custos')carregarHistoricoCustos();
   if(page==='logs')carregarLogsAdmin(false);

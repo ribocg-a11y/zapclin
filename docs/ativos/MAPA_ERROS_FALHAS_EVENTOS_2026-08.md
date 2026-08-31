@@ -60,9 +60,10 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 
 | Item | Nota | Prioridade |
 |------|------|------------|
-| Ping GAS **3.54** = arquivo **3.54** | live 31/08 | ✅ |
+| Ping GAS **3.54** live; arquivo **3.55** no branch | 31/08 | ⏳ Nova versão |
 | Pacote Z.7 | `zc-operacao` + `zc-crm` em v4.34.0 | ✅ |
-| Pacote Z.9 | `zc-app.css` v4.35.0 — PR #22 | ⏳ |
+| Pacote Z.9 | `zc-app.css` v4.35.0 — PR #22 | ✅ |
+| Login de turno | v4.36.0 + GAS 3.55 | ⏳ merge + Nova versão |
 | Auth operador ausente | Fase 4 equiparação | P2 |
 | Cockpit narrativo ausente | Fase 5 | P2 |
 | Indexação parcial site | bairros em fila GSC | P1 humano/aguardar |

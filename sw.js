@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.35.0 | Data: 31/08/2026
+// Versão: 4.36.0 | Data: 31/08/2026
+// [v4.36.0 CACHE]
+// Login de turno (zc-auth.js): operador / supervisor / ADM.
 // [v4.35.0 CACHE]
 // Pacote Z.9: inclui zc-app.css (nunca HTML no lugar de CSS).
 // [v4.34.1 CACHE]
@@ -23,9 +25,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.35.0';
-const STATIC_CACHE = 'zapclin-static-v4.35.0';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.35.0';
+const ZAPCLIN_SW_VERSION = 'v4.36.0';
+const STATIC_CACHE = 'zapclin-static-v4.36.0';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.36.0';
 
 const APP_SHELL = [
   './',
@@ -47,6 +49,7 @@ const APP_SHELL = [
   './zc-sync.js',
   './zc-whatsapp.js',
   './zc-admin.js',
+  './zc-auth.js',
   './zc-historico-custos.js',
   './zc-registrar.js',
   './zc-clientes.js',

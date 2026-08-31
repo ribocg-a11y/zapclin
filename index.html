@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.35.0 | Data: 31/08/2026
+  Versão : 4.36.0 | Data: 31/08/2026
+  NOVO v4.36.0:
+  - Login de turno: operador, supervisor e ADM; carimbo de quem registrou; mesma PWA nas duas lojas
   NOVO v4.35.0:
   - Pacote Z.9: extrai zc-app.css (zero mudança visual; SW trata CSS como shell crítico)
   NOVO v4.34.1:
@@ -331,10 +333,23 @@
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zc-app.css?v=v4.35.0">
+<link rel="stylesheet" href="zc-app.css?v=v4.36.0">
 
 </head>
 <body>
+
+<div class="zc-login-gate show" id="zcLoginGate" aria-hidden="false">
+  <form class="zc-login-card" onsubmit="zcAuthLoginSubmit_(event)">
+    <div class="zc-login-brand"><span class="z">Zap</span>Clin</div>
+    <div class="zc-login-sub">Entre com o seu usuário e o PIN do turno.<br>Quem está logado é quem registra cada OS.</div>
+    <label class="zc-login-label" for="zcLoginUsuario">Usuário</label>
+    <input class="zc-login-input" id="zcLoginUsuario" name="usuario" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="ex: joao">
+    <label class="zc-login-label" for="zcLoginPin">PIN (4 a 6 dígitos)</label>
+    <input class="zc-login-input" id="zcLoginPin" name="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="••••">
+    <div class="zc-login-erro" id="zcLoginErro"></div>
+    <button class="zc-login-btn" id="zcLoginBtn" type="submit">Entrar no turno</button>
+  </form>
+</div>
 
 <!-- ═══ SIDEBAR OVERLAY (mobile) ═══ -->
 <div class="sb-overlay" id="sbOverlay" onclick="fecharSidebar()"></div>
@@ -347,9 +362,22 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.35.0</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.0</span>
       </div>
     </div>
+  </div>
+
+  <div class="zc-sessao-chip" id="zcSessaoChip">
+    <div class="zc-sessao-nome" id="zcSessaoNome">—</div>
+    <div class="zc-sessao-meta" id="zcSessaoMeta">—</div>
+    <button type="button" class="zc-sessao-sair" onclick="zcAuthEncerrarTurno_()">Encerrar turno</button>
+  </div>
+  <div class="zc-unidade-filtro" id="zcUnidadeFiltroWrap">
+    <select id="zcUnidadeFiltro" onchange="zcAuthOnUnidadeChange_()">
+      <option value="golden">Golden Shopping</option>
+      <option value="anil">Rio Anil</option>
+      <option value="rede">Rede (as duas)</option>
+    </select>
   </div>
 
   <nav class="sb-nav">
@@ -426,7 +454,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.35.0</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.0</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -1076,6 +1104,33 @@
       <span class="atalho-arr">›</span>
     </div>
   </div>
+
+  <div class="zc-users-admin" id="zcUsersAdmin">
+    <div class="section-title">Equipe e turnos</div>
+    <p class="zc-login-sub" style="text-align:left;margin:0 0 12px">Cadastre operador (balcão), supervisor (responsável da loja) e ADM. Cada um tem o próprio PIN — o que registrar no turno fica no nome dele.</p>
+    <div id="zcUsersLista"><div class="skeleton-card sm"></div></div>
+    <div class="zc-user-form" style="margin-top:16px">
+      <div class="form-group"><label class="form-label">Usuário (login)</label><input class="form-input blue" id="zcUserUsuario" placeholder="joao" autocomplete="off"></div>
+      <div class="form-group"><label class="form-label">Nome</label><input class="form-input blue" id="zcUserNome" placeholder="João"></div>
+      <div class="form-group"><label class="form-label">PIN novo (4–6 dígitos; vazio = manter)</label><input class="form-input blue" id="zcUserPin" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+      <div class="form-group"><label class="form-label">Perfil</label>
+        <select class="form-input blue" id="zcUserPerfil">
+          <option value="operador">Operador (turno / balcão)</option>
+          <option value="supervisor">Supervisor (responsável da loja)</option>
+          <option value="adm">ADM (você — as duas lojas)</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Loja</label>
+        <select class="form-input blue" id="zcUserUnidade">
+          <option value="golden">Golden Shopping</option>
+          <option value="anil">Rio Anil</option>
+          <option value="">Todas (só ADM)</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Turno (texto, opcional)</label><input class="form-input blue" id="zcUserTurno" placeholder="10h–18h"></div>
+      <button class="save-btn blue" type="button" onclick="zcAuthSalvarUsuario_()">Salvar pessoa</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════ PAGE: ACEITES ═══════════════════════════════ -->
@@ -1293,20 +1348,21 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.35.0"></script>
-<script src="zc-globals.js?v=v4.35.0"></script>
-<script src="zc-api.js?v=v4.35.0"></script>
-<script src="zc-core.js?v=v4.35.0"></script>
-<script src="zc-nav.js?v=v4.35.0"></script>
-<script src="zc-home.js?v=v4.35.0"></script>
-<script src="zc-sync.js?v=v4.35.0"></script>
-<script src="zc-whatsapp.js?v=v4.35.0"></script>
-<script src="zc-admin.js?v=v4.35.0"></script>
-<script src="zc-historico-custos.js?v=v4.35.0"></script>
-<script src="zc-registrar.js?v=v4.35.0"></script>
-<script src="zc-clientes.js?v=v4.35.0"></script>
-<script src="zc-operacao.js?v=v4.35.0"></script>
-<script src="zc-crm.js?v=v4.35.0"></script>
+<script src="zc-version.js?v=v4.36.0"></script>
+<script src="zc-globals.js?v=v4.36.0"></script>
+<script src="zc-api.js?v=v4.36.0"></script>
+<script src="zc-core.js?v=v4.36.0"></script>
+<script src="zc-nav.js?v=v4.36.0"></script>
+<script src="zc-home.js?v=v4.36.0"></script>
+<script src="zc-sync.js?v=v4.36.0"></script>
+<script src="zc-whatsapp.js?v=v4.36.0"></script>
+<script src="zc-admin.js?v=v4.36.0"></script>
+<script src="zc-auth.js?v=v4.36.0"></script>
+<script src="zc-historico-custos.js?v=v4.36.0"></script>
+<script src="zc-registrar.js?v=v4.36.0"></script>
+<script src="zc-clientes.js?v=v4.36.0"></script>
+<script src="zc-operacao.js?v=v4.36.0"></script>
+<script src="zc-crm.js?v=v4.36.0"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)
@@ -3203,7 +3259,7 @@ function avisarAtualizacaoSW_(){
 
 registrarServiceWorkerZapClin_();
 avisarAtualizacaoSW_();
-init();
+zcAuthBoot_();
 </script>
 </body>
 </html>

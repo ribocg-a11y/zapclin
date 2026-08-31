@@ -1,6 +1,9 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.54 | Data: 14/08/2026
+// VersÃ£o: 3.55 | Data: 31/08/2026
+// NOVO v3.55:
+//   - Login operador/supervisor/ADM (PIN com hash), sessao de turno, carimbo UNIDADE+OPERADOR
+//   - Filtro por loja no listar/KPIs; abas UNIDADES e USUARIOS
 // NOVO v3.54:
 //   - Aceite pÃºblico vira pÃ¡gina GitHub Pages (aceite.html); GAS sÃ³ API JSON dadosAceiteOs
 //   - Links novos: https://ribocg-a11y.github.io/zapclin/aceite.html?os=
@@ -133,9 +136,13 @@ var SHEET_ACEITES_OS  = 'ACEITES OS';
 var SHEET_DASHBOARD   = '\uD83D\uDCC8 DASHBOARD';
 // [v3.20 NOVO] Aba de observabilidade operacional. Criada automaticamente quando necessÃ¡rio.
 var SHEET_LOGS        = 'LOGS';
+var SHEET_UNIDADES    = 'UNIDADES';
+var SHEET_USUARIOS    = 'USUARIOS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.54';
+var VERSION           = '3.55';
+var AUTH_PEPPER       = 'zapclin-auth-v1';
+var AUTH_SESS_TTL     = 21600;
 var ACEITE_PAGE_URL   = 'https://ribocg-a11y.github.io/zapclin/aceite.html';
 var DATA_ROW_START    = 10;
 var DATA_ROW_MAX      = 2000;
@@ -151,13 +158,239 @@ var PRECOS = {
   'Limpeza + Hig. Profunda': 30, 'Revitaliza\u00e7\u00e3o': 70
 };
 
+function hashPinAuth_(usuario, pin) {
+  var raw = String(usuario || '').toLowerCase().trim() + ':' + String(pin || '') + ':' + AUTH_PEPPER;
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, raw, Utilities.Charset.UTF_8);
+  var hex = '';
+  for (var i = 0; i < bytes.length; i++) {
+    var x = bytes[i];
+    if (x < 0) x += 256;
+    var h = x.toString(16);
+    hex += (h.length === 1 ? '0' : '') + h;
+  }
+  return hex;
+}
+
+function unidadeLinha_(raw) {
+  var u = String(raw || '').trim().toLowerCase();
+  return u || 'golden';
+}
+
+function nomeUnidade_(id) {
+  var u = String(id || '').toLowerCase();
+  if (u === 'anil' || u === 'rio-anil' || u === 'rioanil') return 'Rio Anil Shopping';
+  if (u === 'golden') return 'Golden Shopping Calhau';
+  if (!u) return 'Rede';
+  return id;
+}
+
+function unidadeEscrita_(sess, p) {
+  if (sess && sess.perfil === 'adm') {
+    var f = String((p && p.unidade) || sess.unidadeFiltro || sess.unidadeId || '').trim().toLowerCase();
+    if (f && f !== 'rede' && f !== '*') return f;
+    return 'golden';
+  }
+  if (sess && sess.unidadeId) return String(sess.unidadeId).toLowerCase();
+  return 'golden';
+}
+
+function unidadeVisivel_(sess, unidadeRaw, unidadeFiltroParam) {
+  if (!sess) return true;
+  var u = unidadeLinha_(unidadeRaw);
+  if (sess.perfil === 'adm') {
+    var f = String(unidadeFiltroParam || sess.unidadeFiltro || '').trim().toLowerCase();
+    if (!f || f === 'rede' || f === '*') return true;
+    return u === f;
+  }
+  return u === String(sess.unidadeId || '').toLowerCase();
+}
+
+function gravarSessaoAuth_(sess) {
+  CacheService.getScriptCache().put('sess_' + sess.token, JSON.stringify(sess), AUTH_SESS_TTL);
+}
+
+function resolverSessao_(p) {
+  var token = String((p && (p.sess || p.token)) || '').trim();
+  if (!token) return null;
+  var raw = CacheService.getScriptCache().get('sess_' + token);
+  if (!raw) return null;
+  try {
+    var sess = JSON.parse(raw);
+    gravarSessaoAuth_(sess);
+    return sess;
+  } catch (eSess) {
+    return null;
+  }
+}
+
+function carimboOperacional_(sheet, row, colUnidade, colOperador, sess, p) {
+  if (!sheet || !row) return;
+  sheet.getRange(row, colUnidade).setValue(unidadeEscrita_(sess, p));
+  sheet.getRange(row, colOperador).setValue(sess && sess.usuario ? sess.usuario : '');
+}
+
+function ensureAuthSheets_(ss) {
+  var uni = ss.getSheetByName(SHEET_UNIDADES);
+  if (!uni) {
+    uni = ss.insertSheet(SHEET_UNIDADES);
+    uni.getRange(1, 1, 1, 5).setValues([['ID', 'NOME', 'SLUG', 'WHATSAPP', 'ATIVA']]).setFontWeight('bold');
+    uni.getRange(2, 1, 2, 5).setValues([
+      ['golden', 'Golden Shopping Calhau', 'golden', '5598981479616', 'SIM'],
+      ['anil', 'Rio Anil Shopping', 'anil', '', 'SIM']
+    ]);
+  }
+  var usr = ss.getSheetByName(SHEET_USUARIOS);
+  if (!usr) {
+    usr = ss.insertSheet(SHEET_USUARIOS);
+    usr.getRange(1, 1, 1, 8).setValues([['USUARIO', 'NOME', 'PIN_HASH', 'PERFIL', 'UNIDADE_ID', 'ATIVO', 'CRIADO', 'TURNO']]).setFontWeight('bold');
+  }
+  if (usr.getLastRow() < 2 || !String(usr.getRange(2, 1).getValue() || '').trim()) {
+    var agora = Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm');
+    usr.getRange(2, 1, 1, 8).setValues([['antonio', 'Antonio', hashPinAuth_('antonio', '1321'), 'adm', '', 'SIM', agora, '']]);
+  }
+  try {
+    var lanc = getLancamentosSheet_(ss);
+    if (lanc && !String(lanc.getRange(8, 10).getValue() || '')) lanc.getRange(8, 10, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
+    var cli = getOrCreateClientesSheet(ss);
+    if (cli && !String(cli.getRange(8, 17).getValue() || '')) cli.getRange(8, 17, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
+    var cus = ss.getSheetByName(SHEET_CUSTOS);
+    if (cus && !String(cus.getRange(8, 7).getValue() || '')) cus.getRange(8, 7, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
+  } catch (eHead) {}
+  return usr;
+}
+
+function lerUsuarios_(ss) {
+  var sh = ensureAuthSheets_(ss);
+  var last = Math.max(2, sh.getLastRow());
+  var rows = sh.getRange(2, 1, last, 8).getValues();
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    var u = String(rows[i][0] || '').trim().toLowerCase();
+    if (!u) continue;
+    out.push({
+      row: 2 + i,
+      usuario: u,
+      nome: String(rows[i][1] || u),
+      pinHash: String(rows[i][2] || ''),
+      perfil: String(rows[i][3] || 'operador').toLowerCase(),
+      unidadeId: String(rows[i][4] || '').toLowerCase(),
+      ativo: String(rows[i][5] || 'SIM').toUpperCase() !== 'NAO' && String(rows[i][5] || '').toUpperCase() !== 'NÃO',
+      turno: String(rows[i][7] || '')
+    });
+  }
+  return out;
+}
+
+function loginOperador_(ss, p) {
+  ensureAuthSheets_(ss);
+  var usuario = String(p.usuario || '').trim().toLowerCase();
+  var pin = String(p.pin || '');
+  var pinHash = String(p.pinHash || '').trim().toLowerCase();
+  if (!usuario) return { ok: false, error: 'Informe o usuario.', version: VERSION };
+  var failKey = 'login_fail_' + usuario;
+  var fails = parseInt(CacheService.getScriptCache().get(failKey) || '0', 10) || 0;
+  if (fails >= 8) return { ok: false, error: 'Muitas tentativas. Aguarde 15 minutos.', version: VERSION };
+  var users = lerUsuarios_(ss);
+  var found = null;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].usuario === usuario) { found = users[i]; break; }
+  }
+  var esperado = found ? String(found.pinHash || '').toLowerCase() : '';
+  var enviado = pinHash || (pin ? hashPinAuth_(usuario, pin) : '');
+  if (!found || !found.ativo || !esperado || enviado !== esperado) {
+    CacheService.getScriptCache().put(failKey, String(fails + 1), 900);
+    registrarLogSistema_('AUTH', 'loginOperador', 'ALERTA', 'Login recusado', { usuario: usuario });
+    return { ok: false, error: 'Usuario ou PIN invalido.', version: VERSION };
+  }
+  CacheService.getScriptCache().remove(failKey);
+  var token = Utilities.getUuid();
+  var sess = {
+    token: token,
+    usuario: found.usuario,
+    nome: found.nome,
+    perfil: found.perfil,
+    unidadeId: found.unidadeId,
+    unidadeNome: nomeUnidade_(found.unidadeId),
+    turno: found.turno,
+    t: new Date().getTime()
+  };
+  gravarSessaoAuth_(sess);
+  registrarLogSistema_('AUTH', 'loginOperador', 'OK', 'Turno iniciado', { usuario: found.usuario, perfil: found.perfil, unidade: found.unidadeId || 'rede' });
+  return {
+    ok: true, version: VERSION, auth: true, token: token,
+    usuario: found.usuario, nome: found.nome, perfil: found.perfil,
+    unidadeId: found.unidadeId, unidadeNome: sess.unidadeNome, turno: found.turno
+  };
+}
+
+function logoutOperador_(p) {
+  var token = String((p && (p.sess || p.token)) || '').trim();
+  if (token) CacheService.getScriptCache().remove('sess_' + token);
+  registrarLogSistema_('AUTH', 'logoutOperador', 'OK', 'Turno encerrado', {});
+  return { ok: true, version: VERSION };
+}
+
+function listarUsuarios_(ss, sess) {
+  if (!sess || sess.perfil !== 'adm') return { ok: false, error: 'Somente ADM.', version: VERSION };
+  var users = lerUsuarios_(ss).map(function(u) {
+    return { usuario: u.usuario, nome: u.nome, perfil: u.perfil, unidadeId: u.unidadeId, ativo: u.ativo, turno: u.turno };
+  });
+  return { ok: true, version: VERSION, items: users };
+}
+
+function listarUnidades_(ss) {
+  ensureAuthSheets_(ss);
+  return {
+    ok: true, version: VERSION,
+    items: [
+      { id: 'golden', nome: 'Golden Shopping Calhau' },
+      { id: 'anil', nome: 'Rio Anil Shopping' }
+    ]
+  };
+}
+
+function salvarUsuario_(ss, sess, p) {
+  if (!sess || sess.perfil !== 'adm') return { ok: false, error: 'Somente ADM.', version: VERSION };
+  var usuario = String(p.usuario || '').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+  var nome = String(p.nome || usuario).trim();
+  var perfil = String(p.perfil || 'operador').toLowerCase();
+  var unidadeId = String(p.unidadeId || '').trim().toLowerCase();
+  var turno = String(p.turno || '').trim();
+  var ativo = String(p.ativo || 'SIM').toUpperCase();
+  var pin = String(p.pin || '');
+  if (!usuario) return { ok: false, error: 'Usuario obrigatorio.', version: VERSION };
+  if (['operador', 'supervisor', 'adm'].indexOf(perfil) < 0) perfil = 'operador';
+  if (perfil !== 'adm' && !unidadeId) return { ok: false, error: 'Operador e supervisor precisam da loja.', version: VERSION };
+  if (perfil === 'adm') unidadeId = '';
+  var sh = ensureAuthSheets_(ss);
+  var users = lerUsuarios_(ss);
+  var alvo = null;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].usuario === usuario) { alvo = users[i]; break; }
+  }
+  if (pin && (pin.length < 4 || pin.length > 6 || !/^\d+$/.test(pin))) {
+    return { ok: false, error: 'PIN deve ter 4 a 6 digitos.', version: VERSION };
+  }
+  if (!alvo && !pin) return { ok: false, error: 'PIN obrigatorio para usuario novo.', version: VERSION };
+  var hash = alvo ? alvo.pinHash : '';
+  if (pin) hash = hashPinAuth_(usuario, pin);
+  var agora = Utilities.formatDate(new Date(), FUSO, 'dd/MM/yyyy HH:mm');
+  if (alvo) {
+    sh.getRange(alvo.row, 2, 1, 7).setValues([[nome, hash, perfil, unidadeId, ativo === 'NAO' ? 'NAO' : 'SIM', agora, turno]]);
+  } else {
+    sh.appendRow([usuario, nome, hash, perfil, unidadeId, ativo === 'NAO' ? 'NAO' : 'SIM', agora, turno]);
+  }
+  registrarLogSistema_('AUTH', 'salvarUsuario', 'OK', 'Usuario gravado', { usuario: usuario, perfil: perfil, unidade: unidadeId });
+  return { ok: true, version: VERSION, usuario: usuario };
+}
+
 function actionPrecisaLock_(action) {
   return [
     'salvar','salvarCusto','editarLancamento','cancelarLancamento',
     'editarCusto','cancelarCusto','atualizarStatus','editarCliente',
     'cancelarCliente','salvarCadastroVip','registrarEventoFrontend',
     'gerarOsPdf','enviarRelatorio','repararLancamentosClientesHoje',
-    'confirmarAceiteOs'
+    'confirmarAceiteOs','loginOperador','salvarUsuario'
   ].indexOf(String(action || '')) >= 0;
 }
 
@@ -249,15 +482,15 @@ function numLinhasDados_(sheet, colNum) {
 }
 
 function getLancamentosListaValues_(lanc) {
-  return lanc.getRange(DATA_ROW_START, 2, numLinhasDados_(lanc, 2), 8).getValues();
+  return lanc.getRange(DATA_ROW_START, 2, numLinhasDados_(lanc, 2), 10).getValues();
 }
 
 function getCustosListaValues_(custos) {
-  return custos.getRange(DATA_ROW_START, 1, numLinhasDados_(custos, 2), 6).getValues();
+  return custos.getRange(DATA_ROW_START, 1, numLinhasDados_(custos, 2), 8).getValues();
 }
 
 function getClientesListaValues_(clientes) {
-  return clientes.getRange(DATA_ROW_START, 1, numLinhasDados_(clientes, 1), 16).getValues();
+  return clientes.getRange(DATA_ROW_START, 1, numLinhasDados_(clientes, 1), 18).getValues();
 }
 
 function getClientesOsColValues_(clientes) {
@@ -271,6 +504,7 @@ function getOrCreateClientesSheet(ss) {
   try {
     var headers = s.getRange('N8:P8').getValues()[0].join('');
     if (!headers) s.getRange('N8:P8').setValues([['ENCERRADO EM','TEMPO MIN','PRAZO MIN']]).setFontWeight('bold').setBackground('#1a1a1a').setFontColor('#00e5ff');
+    if (!String(s.getRange(8, 17).getValue() || '')) s.getRange(8, 17, 1, 2).setValues([['UNIDADE', 'OPERADOR']]);
   } catch(e) {}
   return s;
 }
@@ -462,7 +696,13 @@ function aplicarBeneficioVipNaLinha_(ss, clientes, linha, lanc, criarLancamentoD
   var totalDepois = Math.max(0, Math.round((totalAtual - desconto) * 100) / 100);
   clientes.getRange(linha,11).setValue(totalDepois).setNumberFormat('R$ #,##0.00');
   clientes.getRange(linha,13).setValue(desconto).setNumberFormat('R$ #,##0.00');
-  if (criarLancamentoDesconto && lanc) criarLancamentoServico_(lanc, 'Desconto Clube VIP', fmtData_(row[1]), fmtHora_(row[2]), -desconto, os);
+  if (criarLancamentoDesconto && lanc) {
+    var stampVip = {
+      unidade: String(clientes.getRange(linha, 17).getValue() || 'golden'),
+      operador: String(clientes.getRange(linha, 18).getValue() || '')
+    };
+    criarLancamentoServico_(lanc, 'Desconto Clube VIP', fmtData_(row[1]), fmtHora_(row[2]), -desconto, os, stampVip);
+  }
   var info = { aplicado:true, os:os, nome:nome, telefone:telefone, aniversario:vip.aniversario, regra:'ANIVERSARIO_CLUBE_VIP', elegivel:true, motivo:vip.dia === diaAtual ? 'Aniversario hoje' : 'Mes de aniversario', servicoBase:base.servico, valorBase:base.valor, percentual:VIP_ANIVERSARIO_PERCENTUAL, teto:VIP_ANIVERSARIO_TETO, desconto:desconto, totalAntes:totalAtual, totalDepois:totalDepois, aniversarioHoje:vip.dia === diaAtual };
   registrarBeneficioVip_(ss, info);
   registrarLogSistema_('RELACIONAMENTO', 'aplicarBeneficioVip', 'OK', 'Beneficio Clube VIP aplicado', info);
@@ -813,7 +1053,7 @@ function proximaLinhaLancamento_(lanc) {
   return linha;
 }
 
-function criarLancamentoServico_(lanc, svc, dataStr, horaStr, valor, clienteId) {
+function criarLancamentoServico_(lanc, svc, dataStr, horaStr, valor, clienteId, stamp) {
   var linha = proximaLinhaLancamento_(lanc);
   lanc.getRange(linha, 2).setValue(linha - 9);
   lanc.getRange(linha, 3).setValue(svc);
@@ -823,6 +1063,10 @@ function criarLancamentoServico_(lanc, svc, dataStr, horaStr, valor, clienteId) 
   lanc.getRange(linha, 7).setValue(valor);
   lanc.getRange(linha, 7).setNumberFormat('R$ #,##0.00');
   lanc.getRange(linha, 9).setValue(clienteId);
+  if (stamp) {
+    lanc.getRange(linha, 10).setValue(stamp.unidade || 'golden');
+    lanc.getRange(linha, 11).setValue(stamp.operador || '');
+  }
   return linha;
 }
 
@@ -834,7 +1078,7 @@ function repararLancamentosClientesHoje_(ss) {
   var vinculos = {};
   var vincRows = lanc.getRange('I10:I2000').getValues();
   for (var i = 0; i < vincRows.length; i++) if (vincRows[i][0]) vinculos[String(vincRows[i][0])] = true;
-  var rows = clientes.getRange('A10:M2000').getValues();
+  var rows = clientes.getRange('A10:R2000').getValues();
   var criados = 0, clientesReparados = 0;
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
@@ -846,16 +1090,17 @@ function repararLancamentosClientesHoje_(ss) {
     var servicos = [];
     try { servicos = JSON.parse(String(row[7] || '[]')); } catch(e) { servicos = []; }
     var hora = fmtHora_(row[2]);
+    var stampRep = { unidade: unidadeLinha_(row[16]), operador: String(row[17] || '') };
     var antes = criados;
     for (var s = 0; s < servicos.length; s++) {
       var svc = servicos[s];
       if (!svc) continue;
-      criarLancamentoServico_(lanc, svc, hoje, hora, precoServicoOs_(svc), row[0]);
+      criarLancamentoServico_(lanc, svc, hoje, hora, precoServicoOs_(svc), row[0], stampRep);
       criados++;
     }
     var desconto = parseFloat(row[12] || 0) || 0;
     if (desconto > 0 && criados > antes) {
-      criarLancamentoServico_(lanc, 'Desconto', hoje, hora, -desconto, row[0]);
+      criarLancamentoServico_(lanc, 'Desconto', hoje, hora, -desconto, row[0], stampRep);
       criados++;
     }
     if (criados > antes) clientesReparados++;
@@ -1063,6 +1308,7 @@ function doGet(e) {
   try {
     var ss     = SpreadsheetApp.openById(SHEET_ID);
     var action = p.action || 'ping';
+    var sess   = resolverSessao_(p);
     if (actionPrecisaLock_(action)) actionLock = obterLockEscrita_(action);
 
     if (action === 'cadastroVip') {
@@ -1081,7 +1327,22 @@ function doGet(e) {
       return renderAceiteOsObrigado_(confirmarAceiteOs_(ss, p));
 
     } else if (action === 'ping') {
-      result = { ok: true, version: VERSION, timezone: ss.getSpreadsheetTimeZone() };
+      result = { ok: true, version: VERSION, timezone: ss.getSpreadsheetTimeZone(), auth: true };
+
+    } else if (action === 'loginOperador') {
+      result = loginOperador_(ss, p);
+
+    } else if (action === 'logoutOperador') {
+      result = logoutOperador_(p);
+
+    } else if (action === 'listarUnidades') {
+      result = listarUnidades_(ss);
+
+    } else if (action === 'listarUsuarios') {
+      result = listarUsuarios_(ss, sess);
+
+    } else if (action === 'salvarUsuario') {
+      result = salvarUsuario_(ss, sess, p);
 
     } else if (action === 'salvar') {
       var lanc = getLancamentosSheet_(ss);
@@ -1105,6 +1366,7 @@ function doGet(e) {
         lanc.getRange(linha, 6).setValue(1);
         lanc.getRange(linha, 7).setValue(parseFloat(vals[i] || 0));
         lanc.getRange(linha, 7).setNumberFormat('R$ #,##0.00');
+        carimboOperacional_(lanc, linha, 10, 11, sess, p);
       }
       result = { ok: true, version: VERSION };
 
@@ -1117,7 +1379,11 @@ function doGet(e) {
         if (!rows[i][1]) break;
         var svcLista = String(rows[i][1] || '');
         var canceladoLanc = /^CANCELADO\b/i.test(svcLista);
-        items.push({ row: 10 + i, num: rows[i][0], svc: svcLista, data: fmtData_(rows[i][2]), hora: fmtHora_(rows[i][3]), qtd: rows[i][4], val: rows[i][5], clienteId: String(rows[i][7] || ''), cancelado: canceladoLanc });
+        items.push({ row: 10 + i, num: rows[i][0], svc: svcLista, data: fmtData_(rows[i][2]), hora: fmtHora_(rows[i][3]), qtd: rows[i][4], val: rows[i][5], clienteId: String(rows[i][7] || ''), cancelado: canceladoLanc, unidade: unidadeLinha_(rows[i][8]), operador: String(rows[i][9] || '') });
+      }
+      if (sess) {
+        var filtroLanc = p.unidade;
+        items = items.filter(function(it) { return unidadeVisivel_(sess, it.unidade, filtroLanc); });
       }
       result = { ok: true, version: VERSION, items: items.reverse() };
 
@@ -1170,6 +1436,7 @@ function doGet(e) {
       custos.getRange(linhaCusto, 5).setValue(categoria);
       custos.getRange(linhaCusto, 6).setValue(valor);
       custos.getRange(linhaCusto, 6).setNumberFormat('R$ #,##0.00');
+      carimboOperacional_(custos, linhaCusto, 7, 8, sess, p);
       result = { ok: true, version: VERSION, categoria: categoria };
 
     } else if (action === 'listarCustos') {
@@ -1181,7 +1448,11 @@ function doGet(e) {
         if (!rows[i][1]) break;
         var descLista = String(rows[i][3] || '');
         var canceladoCusto = /^CANCELADO\b/i.test(descLista);
-        items.push({ row: 10 + i, num: rows[i][0], data: fmtData_(rows[i][1]), hora: fmtHora_(rows[i][2]), desc: descLista, cat: String(rows[i][4]), val: rows[i][5], cancelado: canceladoCusto });
+        items.push({ row: 10 + i, num: rows[i][0], data: fmtData_(rows[i][1]), hora: fmtHora_(rows[i][2]), desc: descLista, cat: String(rows[i][4]), val: rows[i][5], cancelado: canceladoCusto, unidade: unidadeLinha_(rows[i][6]), operador: String(rows[i][7] || '') });
+      }
+      if (sess) {
+        var filtroCusto = p.unidade;
+        items = items.filter(function(it) { return unidadeVisivel_(sess, it.unidade, filtroCusto); });
       }
       result = { ok: true, version: VERSION, items: items.reverse() };
 
@@ -1274,8 +1545,13 @@ function doGet(e) {
           encerradoEm: String(r[13] || ''),
           tempoEncerradoMin: r[14] === '' ? '' : parseInt(r[14], 10),
           prazoMin: r[15] === '' ? '' : parseInt(r[15], 10),
-          numVisita: phoneOrder[tel], totalVisitas: phoneCounts[tel] || 1
+          numVisita: phoneOrder[tel], totalVisitas: phoneCounts[tel] || 1,
+          unidade: unidadeLinha_(r[16]), operador: String(r[17] || '')
         });
+      }
+      if (sess) {
+        var filtroCli = p.unidade;
+        items = items.filter(function(it) { return unidadeVisivel_(sess, it.unidade, filtroCli); });
       }
       result = { ok: true, version: VERSION, items: items.reverse() };
 
@@ -1403,7 +1679,7 @@ function doGet(e) {
 
     // â”€â”€ NOVO v3.17: KPIs admin calculados server-side â”€â”€
     } else if (action === 'buscarKpisAdmin') {
-      result = buscarKpisAdmin_(ss);
+      result = buscarKpisAdmin_(ss, sess, p);
 
     // â”€â”€ NOVO v3.22: Logs recentes para Painel Admin â”€â”€
     } else if (action === 'listarLogsAdmin') {
@@ -1452,7 +1728,7 @@ function doGet(e) {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  NOVO v3.17: buscarKpisAdmin â€” KPIs server-side
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function buscarKpisAdmin_(ss) {
+function buscarKpisAdmin_(ss, sess, p) {
   try {
     var LN  = getLancamentosSheet_(ss);
     var CST = ss.getSheetByName(SHEET_CUSTOS);
@@ -1463,15 +1739,17 @@ function buscarKpisAdmin_(ss) {
     var hojeKey  = Utilities.formatDate(agora, FUSO, 'dd/MM/yyyy');
     var mesAtual = parseInt(Utilities.formatDate(agora, FUSO, 'M'), 10);
     var anoAtual = parseInt(Utilities.formatDate(agora, FUSO, 'yyyy'), 10);
+    var filtroUnidade = p && p.unidade;
 
     var lLast = LN.getLastRow();
     var recHoje = 0, atHoje = 0, recMes = 0, atMes = 0;
 
     if (lLast >= DATA_ROW_START) {
-      var lDados = LN.getRange(DATA_ROW_START, 3, numLinhasDados_(LN, 3), 5).getValues();
+      var lDados = LN.getRange(DATA_ROW_START, 3, numLinhasDados_(LN, 3), 8).getValues();
       for (var i = 0; i < lDados.length; i++) {
         var row = lDados[i];
         if (!row[0]) break;
+        if (sess && !unidadeVisivel_(sess, row[7], filtroUnidade)) continue;
 
         // [v3.18 CORREÃ‡ÃƒO]
         // A data em LANÃ‡AMENTOS pode vir como objeto Date do Google Sheets,
@@ -1501,10 +1779,11 @@ function buscarKpisAdmin_(ss) {
     var cusHoje = 0, cusMes = 0;
 
     if (cLast >= DATA_ROW_START) {
-      var cDados = CST.getRange(DATA_ROW_START, 1, numLinhasDados_(CST, 2), 6).getValues();
+      var cDados = CST.getRange(DATA_ROW_START, 1, numLinhasDados_(CST, 2), 8).getValues();
       for (var j = 0; j < cDados.length; j++) {
         var crow = cDados[j];
         if (!crow[1]) break;
+        if (sess && !unidadeVisivel_(sess, crow[6], filtroUnidade)) continue;
 
         // [v3.18 CORREÃ‡ÃƒO]
         // Mesma proteÃ§Ã£o aplicada aos custos: aceita Date real do Sheets
@@ -1625,6 +1904,8 @@ function doPost(e) {
     var ss   = SpreadsheetApp.openById(SHEET_ID);
     postLock = obterLockEscrita_('doPost');
     var data = JSON.parse(e.postData.contents);
+    var sess             = resolverSessao_({ sess: data.sess || data.token || '' });
+    var stamp            = { unidade: unidadeEscrita_(sess, data), operador: sess && sess.usuario ? sess.usuario : '' };
     var nome             = data.nome        || 'Cliente';
     var telefone         = data.telefone    || '';
     var qtd              = parseInt(data.qtd || 0);
@@ -1696,6 +1977,8 @@ function doPost(e) {
     clientes.getRange(linha, 12).setValue('');
     clientes.getRange(linha, 13).setValue(desconto);
     clientes.getRange(linha, 13).setNumberFormat('R$ #,##0.00');
+    clientes.getRange(linha, 17).setValue(stamp.unidade);
+    clientes.getRange(linha, 18).setValue(stamp.operador);
     if (criarLancamentos && servicos.length > 0) {
       var lanc = lancamentosSheet || getLancamentosSheet_(ss);
       if (!lanc) throw new Error('Aba LANCAMENTOS nao encontrada apos cadastro');
@@ -1716,6 +1999,8 @@ function doPost(e) {
         lanc.getRange(linhaL, 7).setValue(preco);
         lanc.getRange(linhaL, 7).setNumberFormat('R$ #,##0.00');
         lanc.getRange(linhaL, 9).setValue(linha - 9);
+        lanc.getRange(linhaL, 10).setValue(stamp.unidade);
+        lanc.getRange(linhaL, 11).setValue(stamp.operador);
       }
       if (desconto > 0) {
         var dadosDesc = lanc.getRange('C10:C2000').getValues();
@@ -1731,6 +2016,8 @@ function doPost(e) {
         lanc.getRange(linhaDesc, 7).setValue(-desconto);
         lanc.getRange(linhaDesc, 7).setNumberFormat('R$ #,##0.00');
         lanc.getRange(linhaDesc, 9).setValue(linha - 9);
+        lanc.getRange(linhaDesc, 10).setValue(stamp.unidade);
+        lanc.getRange(linhaDesc, 11).setValue(stamp.operador);
       }
     }
     var beneficioVip = null;

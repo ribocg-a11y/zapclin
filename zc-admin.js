@@ -129,8 +129,13 @@ function copiarFechamentoDiarioAdmin_(){
 }
 
 function abrirAdmin(){
-  // [v4.8 ALTERAÇÃO]
-  // Antes de abrir o PIN, verifica bloqueio temporário por excesso de tentativas incorretas.
+  if(typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm'){
+    isAdmin=true;
+    var sec=document.getElementById('sbAdminSection');
+    if(sec){sec.classList.add('visible');sec.style.display='';}
+    goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));
+    return;
+  }
   if(isAdmin){goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));return;}
   if(adminIsLocked_()){adminShowLocked_();return;}
   pinBuffer='';
