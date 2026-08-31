@@ -97,6 +97,15 @@ try {
     Add-Check "versao.index-cache-bust" "ok" ("zc-* ?v=" + $appVer)
   }
 
+  $cssHref = "zc-app.css?v=" + $appVer
+  if ($indexRaw -notmatch [regex]::Escape($cssHref)) {
+    Add-Check "versao.index-css" "fail" "zc-app.css sem $cssHref"
+  } elseif ($swRaw -notmatch [regex]::Escape("./zc-app.css")) {
+    Add-Check "versao.index-css" "fail" "APP_SHELL sem ./zc-app.css"
+  } else {
+    Add-Check "versao.index-css" "ok" $cssHref
+  }
+
   if ($indexRaw -notmatch 'AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg') {
     Add-Check "gas.deploy-id" "fail" "WEB_APP Deploy ID ausente ou alterado"
   } else {

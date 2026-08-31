@@ -19,10 +19,10 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.34.1** | https://ribocg-a11y.github.io/zapclin/?force=v4.34.1 |
+| Frontend / SW | **v4.35.0** (esta branch · PR #22) | https://ribocg-a11y.github.io/zapclin/?force=v4.35.0 |
 | GAS arquivo + ping | **3.54** ✅ | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
-| PRs GitHub | **#24** seed+handoff · **#22** Z.9 draft | — |
+| PRs GitHub | **#22** Z.9 `zc-app.css` · **#24** MERGED | — |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
 **`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
@@ -39,8 +39,8 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` + `aceite.html` (`APP_VERSION` = v4.34.1) |
-| Pacote Z | até `zc-operacao` + `zc-crm` · próximo `zc-app.css` (PR #22 draft) |
+| FE | `index.html` + `zc-*.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.35.0) |
+| Pacote Z | até Z.9 `zc-app.css` · próximo Z.10 `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` + token em `%USERPROFILE%\.config\google-api\` |
 | SEO | `scripts/seo/engine/` + `docs/ativos/marketing-ig/` |
@@ -54,16 +54,16 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 |------|-----|
 | Z.7 v4.34.0 | #18 MERGED |
 | Aceite.html Pages + GAS 3.54 | #23 MERGED |
-| Seed LANÇAMENTOS 01–25/08 | planilha 26/08 · script+docs **#24** |
+| Seed LANÇAMENTOS 01–25/08 | planilha 26/08 · script+docs **#24 MERGED** |
 | OAuth Desktop re-auth | 26/08 · `npm test` OK no PC |
-| Z.9 CSS | #22 draft — parado |
+| Z.9 CSS | **#22** — rebaseado na `main` (aceite v4.34.1 + GAS 3.54) |
 
 ---
 
 ## Próximo
 
-**Humano:** merge #24 → `git pull` no C: → abrir Agent local · smoke v4.34.1 · aceite no WhatsApp · Golden.  
-**Agente no C:** Z.9 CSS **ou** fila offline OS/status **só com pedido** · seed 01–25 já na planilha.
+**Humano:** smoke `?force=v4.35.0` após merge #22 · aceite no WhatsApp · Golden.  
+**Agente:** Z.10 `zc-boot.js` ou fila NET-TIMEOUT **só com pedido**. Seed 01–25 já na planilha.
 
 ---
 

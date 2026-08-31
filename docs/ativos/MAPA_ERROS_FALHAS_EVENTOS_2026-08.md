@@ -62,14 +62,14 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 |------|------|------------|
 | Ping GAS **3.54** = arquivo **3.54** | live 31/08 | ✅ |
 | Pacote Z.7 | `zc-operacao` + `zc-crm` em v4.34.0 | ✅ |
+| Pacote Z.9 | `zc-app.css` v4.35.0 — PR #22 | ⏳ |
 | Auth operador ausente | Fase 4 equiparação | P2 |
 | Cockpit narrativo ausente | Fase 5 | P2 |
 | Indexação parcial site | bairros em fila GSC | P1 humano/aguardar |
 | Backlink Golden Shopping | `ALAVANCAS_HUMANAS_ALTO_IMPACTO.md` | P1 humano |
 | NET-TIMEOUT OS/status | sem fila offline para cadastro/fotos | P2 sob pedido |
 | Aceite no WhatsApp (celular) | Pages + GAS 3.54; falta teste humano | P0 humano |
-| PR #22 Z.9 draft | não retomar sem pedido | P2 |
-| PR #24 seed+handoff | merge para o clone do C: | P0 humano |
+| PR #24 seed+handoff | **MERGED** 31/08 | ✅ |
 
 ---
 

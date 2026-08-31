@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.34.1  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.35.0  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -19,7 +19,7 @@
 
 Não use Cloud Agent para esta sessão. O token OAuth novo está no **disco do PC**.
 
-1. Merge (se ainda aberto): https://github.com/ribocg-a11y/zapclin/pull/24  
+1. `git checkout main` + `git pull origin main` (PR **#24** já merged 31/08)  
 2. PowerShell:
 
 ```powershell
@@ -28,14 +28,6 @@ git checkout main
 git pull origin main
 git remote -v
 # tem que ser ribocg-a11y/zapclin  — NÃO zapclinslz
-```
-
-Se o #24 ainda não estiver na `main`:
-
-```powershell
-git fetch origin
-git checkout cursor/seed-lancamentos-ago01-25-62bf
-git pull origin cursor/seed-lancamentos-ago01-25-62bf
 ```
 
 3. Cursor Desktop: **File → Open Folder** → `C:\Users\riboc\Documents\Codex\zapclin-repo`  
@@ -53,10 +45,10 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.34.1** (repo + GitHub Pages) |
+| FE / SW | **v4.35.0** (PR #22 — Pages após merge) |
 | GAS arquivo | **3.54** (`AppsScript_v3.45_ATUAL.gs`) |
 | GAS ping | **3.54** ✅ |
-| PRs | **#24** seed 01–25 (merge para o clone do C: puxar o handoff) · **#22** Z.9 CSS *draft* — não continuar sem pedido |
+| PRs | **#22** Z.9 CSS *draft* (rebaseado na main) · **#24 MERGED** |
 | Site | https://www.zapclinslz.com/ |
 | Planilha | seed LANÇAMENTOS **01–25/08/2026** ✅ |
 
@@ -85,19 +77,19 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Seed ago 01–25 | ✅ planilha 26/08 (via GAS). Script `scripts/oauth-sheets/seed-lancamentos-ago01-25.js` |
 | OAuth Desktop | ✅ `npm run auth` + `npm test` 26/08 · `token.json` no PC |
 | Environment `GOOGLE_REFRESH_TOKEN` | ✅ colado 26/08 · **não verificado** em Cloud Agent novo |
-| Z.9 `zc-app.css` | ⬜ PR **#22** draft — não misturar com v4.34.1 sem pedido |
+| Z.9 `zc-app.css` | ⏳ PR **#22** — rebaseado na `main` (aceite v4.34.1 + GAS 3.54) |
 
 ### Humano (só você)
 
-1. Merge **#24** + `git pull` no clone do C: (passo 0)  
-2. Loja: smoke `?force=v4.34.1` + aceite **dentro do WhatsApp no celular**  
+1. Merge **#22** (Z.9) quando o smoke local estiver ok  
+2. Loja: smoke `?force=v4.35.0` + aceite **dentro do WhatsApp no celular**  
 3. Backlink Golden Shopping — [`ALAVANCAS_HUMANAS_ALTO_IMPACTO.md`](./ALAVANCAS_HUMANAS_ALTO_IMPACTO.md)  
 4. Opcional: tela OAuth Google **Testing → In production** (senão refresh token cai ~7 dias)  
 5. GSC bairros — **não** re-spam
 
 ### Agente no C: (só com pedido)
 
-1. Pacote **Z.9** `zc-app.css` — só se pedir; há draft #22, revisar antes de retomar  
+1. Pacote **Z.10** `zc-boot.js`  
 2. **NET-TIMEOUT**: fila offline para cadastro OS+fotos e status  
 3. Planilha: OAuth local (`token.json`) + pedido explícito. Seed 01–25 já feito  
 4. SEO: não reinventar; gap medido só
@@ -141,8 +133,8 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 
 | PR | Estado |
 |----|--------|
-| seed LANÇAMENTOS 01–25/08 (**#24**) | aberta — **merge para o C: puxar este handoff** |
-| Z.9 CSS (**#22**) | **draft** — não mergear / não continuar sem pedido |
+| seed LANÇAMENTOS 01–25/08 (**#24**) | **MERGED** 31/08 |
+| Z.9 CSS (**#22**) | **draft** — rebaseado na `main` (v4.35.0 + aceite) |
 | aceite Pages (**#23**) | **MERGED** |
 | #18 Z.7 · #17 handoff · #19 GAS docs · #20 SEO | **MERGED** |
 | #1 · #14 · #15 · #16 | **CLOSED** |
