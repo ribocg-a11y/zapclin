@@ -172,6 +172,12 @@ Complementa o mapa [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EV
 3. **GAS:** nunca `clasp deploy` / nunca novo Deploy ID.
 4. **Indexação:** não re-solicitar GSC/IndexNow em URLs já pedidas sem evidência de falha.
 5. **SEO:** não reinventar motor/landings sem gap (coverage/PageRank/schema). Alavanca humana #1: Golden Shopping.
+
+---
+
+## Regra 13 — Publicar frontend sem pedir
+
+O sócio **não** precisa lembrar commit / push / PR / merge. Depois de trabalho no repo `zapclin`, o agente publica o FE até a `main` (Pages). O sócio **só** faz **Nova versão** do Apps Script no editor Google. Nunca `clasp deploy`. Nunca novo Deploy ID.
 6. **Handoff:** ao encerrar sessão, atualizar `HANDOFF_NOVO_CHAT.md` + este mapa de erros se houver incidente novo.
 7. **WhatsApp / PIN:** continuam zona crítica / pedido explícito (regras 3 e acessos).
 

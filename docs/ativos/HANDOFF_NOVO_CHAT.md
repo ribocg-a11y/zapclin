@@ -4,7 +4,7 @@
 **Repo:** [`ribocg-a11y/zapclin`](https://github.com/ribocg-a11y/zapclin) · `main`  
 **Clone canônico (abrir só este):** `C:\Users\riboc\Documents\Codex\zapclin-repo`  
 **Site live:** [`ribocg-a11y/zapclinslz`](https://github.com/ribocg-a11y/zapclinslz) · https://www.zapclinslz.com/  
-**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.1  
+**PWA:** https://ribocg-a11y.github.io/zapclin/?force=v4.36.2  
 **Aceite:** https://ribocg-a11y.github.io/zapclin/aceite.html?os=345  
 **Environment Cloud (se for nuvem):** **`zapclin`**
 
@@ -45,10 +45,10 @@ Re-auth 26/08 + `npm test` OK. Agente local lê o token do disco — **não** pr
 
 | Camada | Valor |
 |--------|--------|
-| FE / SW | **v4.36.1** live (PR **#27**) · branch `cursor/menu-balcao-v4362` = **v4.36.2** (menu balcão, ainda local) |
+| FE / SW | **v4.36.2** live (PR **#28** MERGED) |
 | GAS arquivo | **3.56** no repo (`AppsScript_v3.45_ATUAL.gs`) — ping pode ainda ser 3.55 até Nova versão |
 | GAS ping | **3.55** até você colar 3.56 |
-| PRs | **#27 MERGED** (timeout login) · **#26** login · **#22** Z.9 · **#24** seed |
+| PRs | **#28 MERGED** (menu Rede) · **#27** timeout · **#26** login |
 | Site | https://www.zapclinslz.com/ |
 | Planilha | seed LANÇAMENTOS **01–25/08/2026** ✅ |
 
@@ -79,11 +79,11 @@ PIN admin **1321** · WhatsApp `5598981479616` · IG `@zapclinhigienizacao`
 | Environment `GOOGLE_REFRESH_TOKEN` | ✅ colado 26/08 · **não verificado** em Cloud Agent novo |
 | Z.9 `zc-app.css` | ✅ PR **#22** MERGED |
 | Login de turno v4.36 / GAS 3.55 | ✅ PR **#26** MERGED · ping 3.55 |
-| Menu balcão + cockpit Rede (sem dump ADMINISTRAÇÃO) | ⏳ branch `cursor/menu-balcao-v4362` · FE **v4.36.2** — falta commit/PR |
+| Menu balcão + cockpit Rede (sem dump ADMINISTRAÇÃO) | ✅ PR **#28** MERGED · Pages **v4.36.2** |
 
 ### Humano (só você)
 
-1. Smoke loja: https://ribocg-a11y.github.io/zapclin/?force=v4.36.1 (menu novo só depois do merge v4.36.2)
+1. Smoke: https://ribocg-a11y.github.io/zapclin/?force=v4.36.2 (uma vez se o tablet ainda mostrar menu antigo)
 2. Entrar como `antonio` / PIN **1321** — Home = **Rede** (duas lojas); toque numa unidade para o balcão
 3. Cadastrar os dois operadores (ex. 10h–18h e 14h–22h)
 4. Aceite **dentro do WhatsApp no celular**
@@ -154,6 +154,7 @@ O PWA **abre** do cache. **Salvar/encerrar não é local:**
 7. Planilha só com pedido explícito  
 8. PIN 1321 — não alterar sem pedido  
 9. Clone canônico = `C:\Users\riboc\Documents\Codex\zapclin-repo`  
+10. **Publicar FE sem pedir:** commit + push + PR + merge. Só o humano cola Nova versão GAS. Nunca `clasp deploy`.  
 
 ---
 
