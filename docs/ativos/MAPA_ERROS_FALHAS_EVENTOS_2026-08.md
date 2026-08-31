@@ -1,6 +1,6 @@
 # Mapa de erros, falhas, bugs e eventos — ago/2026
 
-**Atualizado:** 14/08/2026  
+**Atualizado:** 31/08/2026  
 **Complementa (não substitui):** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)
 
 Usar este arquivo no handoff de novo agente para não repetir falhas operacionais de Cloud/SEO/OAuth.
@@ -20,14 +20,14 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | ID | Sintoma | Causa | Mitigação (protocolo) |
 |----|---------|-------|------------------------|
 | **CLOUD-403** | `git push` 403 para `zapclin` | Agente clonou / trabalhou em **`zapclinslz`** e tentou push no remoto errado | Confirmar `git remote -v` = `ribocg-a11y/zapclin` para ops/docs/PWA. Site live = `zapclinslz` só com sync consciente. |
-| **OAUTH-GRANT** | `invalid_grant` nos seeds | `token.json` local expirado / revogado | Usar **Environment Cursor `zapclin`** com `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`. Re-auth local só no desktop do humano. |
+| **OAUTH-GRANT** | `invalid_grant` nos seeds | Refresh token Environment expirado (app OAuth em **Testing** ~7 dias) | Desktop: `npm run auth` em `google-drive-sheets-auth` + `npm test`. Copiar **só** `refresh_token` para secret `GOOGLE_REFRESH_TOKEN` (nunca no chat). Agente **local no C:** usa `token.json` e não precisa do Environment. Opcional: publicar consent OAuth em Production. |
 | **SECRET-CHAT** | Credenciais coladas no chat | Contorno de OAuth na sessão | Secrets vão para Environment; **nunca** commit; rotacionar quando possível. |
 | **SERP-CAPTCHA** | Scrape Google SERP falha | Anti-bot | Não depender de scrape; humano usa GSC / `site:`; IndexNow só para URLs novas/alteradas. |
 | **GSC-RESPAM** | Re-solicitar indexação em loop | Impaciência pós-GSC | Bairros: **5/5 já solicitado** (ago/2026). Aguardar. Não re-spam. |
 | **GAS-CLASP** | Novo Deploy ID / URL quebra app | `clasp deploy` ou “Novo implantar” | **Proibido.** Só “Gerenciar implantações → Nova versão” no ID canônico. |
 | **REPO-MIX** | Diff Movi × ZapClin | Pastas C: misturadas | `MAPA_PASTAS_LOCAL.md` — clones separados. |
 | **ENV-MISS** | Cloud Agent sem secrets Sheets | Run iniciada **antes** de linkar Environment | Novo agente: selecionar Environment **`zapclin`** ao criar. |
-| **ACEITE-IFRAME** | Cliente abre o link do Zap e não consegue aceitar / página “de script” com faixa Google | HtmlService em script.google.com | Página **`aceite.html`** no GitHub Pages + GAS `dadosAceiteOs` (v3.54). Humano: merge + Nova versão 3.54 + `?force=v4.34.1` |
+| **ACEITE-IFRAME** | Cliente abre o link do Zap e não consegue aceitar / página “de script” com faixa Google | HtmlService em script.google.com | Página **`aceite.html`** no GitHub Pages + GAS `dadosAceiteOs` (v3.54 live). Humano: testar o link **dentro do WhatsApp no celular**. |
 
 ---
 
@@ -42,6 +42,9 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | ago/2026 | GSC bairros 5/5 solicitado | Aguardar indexação `site:` |
 | ago/2026 | Reels 01–03 gerados | `docs/ativos/marketing-ig/` |
 | 14/08/2026 | Seed LANÇAMENTOS 01–13/08 | 13 dias OK · PR #16 |
+| 26/08/2026 | Seed LANÇAMENTOS 01–25/08 | 25 dias OK · PR #24 · via GAS · OS 346/347 preservadas |
+| 26/08/2026 | Re-auth OAuth Desktop | `npm run auth` + `npm test` OK · `GOOGLE_REFRESH_TOKEN` colado no Environment |
+| 31/08/2026 | Handoff para agente local no C: | Clone `zapclin-repo` · Agent Desktop · não Cloud |
 | 14/08/2026 | Environment Cloud `zapclin` | Secrets OAuth salvos |
 | 14/08/2026 | Handoff transição | Este pacote de docs |
 | 14/08/2026 | PR #18 Z.7 merged → **v4.34.0** | Operação/CRM módulos |
@@ -57,14 +60,16 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 
 | Item | Nota | Prioridade |
 |------|------|------------|
-| Ping GAS **3.52** = arquivo **3.52** | Redeploy 14/08 | ✅ resolvido |
+| Ping GAS **3.54** = arquivo **3.54** | live 31/08 | ✅ |
 | Pacote Z.7 | `zc-operacao` + `zc-crm` em v4.34.0 | ✅ |
 | Auth operador ausente | Fase 4 equiparação | P2 |
 | Cockpit narrativo ausente | Fase 5 | P2 |
 | Indexação parcial site | bairros em fila GSC | P1 humano/aguardar |
 | Backlink Golden Shopping | `ALAVANCAS_HUMANAS_ALTO_IMPACTO.md` | P1 humano |
 | NET-TIMEOUT OS/status | sem fila offline para cadastro/fotos | P2 sob pedido |
-| PRs abertas | 0 (14/08 limpeza #20) | ✅ |
+| Aceite no WhatsApp (celular) | Pages + GAS 3.54; falta teste humano | P0 humano |
+| PR #22 Z.9 draft | não retomar sem pedido | P2 |
+| PR #24 seed+handoff | merge para o clone do C: | P0 humano |
 
 ---
 

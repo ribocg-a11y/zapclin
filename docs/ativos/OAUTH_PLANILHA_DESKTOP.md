@@ -1,6 +1,6 @@
 # ZapClin — OAuth planilha (Desktop e Cloud)
 
-**Atualizado:** 14/08/2026  
+**Atualizado:** 31/08/2026  
 **Prioridade:** P1 (manutenção — não é fluxo de balcão)  
 **Cloud:** ver também [`AMBIENTE_CLOUD_ZAPCLIN.md`](AMBIENTE_CLOUD_ZAPCLIN.md)
 
@@ -40,6 +40,9 @@ Os scripts em `scripts/oauth-sheets/` leem essas env vars primeiro. Abrir o agen
 - ✅ Read + write smoke (`OAUTH_SMOKE`) — 21/07/2026
 - ✅ Seed `📊 LANÇAMENTOS` 14–20/07 → 349 / 365 / 435 / 476 / 565 / 0 / 274
 - ✅ Seed `📊 LANÇAMENTOS` **01–13/08/2026** — OK (PR #16 / Environment)
+- ✅ Seed `📊 LANÇAMENTOS` **01–25/08/2026** — OK 26/08 (PR #24). Escrita via GAS (`listar`/`salvar`/`editarLancamento`). OS 346 (19/08) e 347 (22/08) preservadas.
+- ✅ Re-auth Desktop 26/08: `npm run auth` + `npm test` OK em `C:\Users\riboc\Projects\google-drive-sheets-auth`. `token.json` no PC. Secret `GOOGLE_REFRESH_TOKEN` do Environment `zapclin` atualizado (Cloud Agent **novo** ainda precisa confirmar).
+- Agente **local no C:** usa o `token.json` — não depende do Environment.
 
 ## Arquivos
 
