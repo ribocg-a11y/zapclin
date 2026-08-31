@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ZapClin Rede — mockup</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#07080d">
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d;--surface:#10131b;--card:#151924;--card2:#1b2130;--line:#293144;
+  --text:#f5f7ff;--muted:#9aa3bf;--muted2:#68718e;
+  --cyan:#00d4ee;--green:#19d27f;--orange:#ffae43;--red:#ff5967;--blue:#5b8dff;--purple:#b879ff;--money:#18db84;
+  --radius:16px;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-data:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body)}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input{font-family:inherit}
+.screen{display:none;min-height:100vh}
+.screen.on{display:block}
+.wrap{width:min(1180px,100%);margin:0 auto;padding:22px 18px 48px}
+.login-wrap{width:min(420px,100%);margin:0 auto;padding:48px 18px 40px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.brand img{width:48px;height:48px;border-radius:12px;border:1px solid var(--line)}
+.brand h1{font-family:var(--font-head);font-size:22px;font-weight:800;line-height:1}
+.brand h1 span{color:var(--cyan)}
+.brand p{color:var(--muted);font-size:13px;margin-top:4px}
+.badge{display:inline-block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(0,212,238,.35);background:rgba(0,212,238,.08);padding:4px 8px;border-radius:999px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+input{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:0 14px;font-size:16px}
+input:focus{outline:none;border-color:var(--cyan)}
+.btn{width:100%;height:52px;border:0;border-radius:14px;background:var(--cyan);color:#041018;font-family:var(--font-head);font-weight:800;font-size:15px;cursor:pointer;margin-top:18px}
+.btn:active{transform:scale(.98)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.hint{margin-top:18px;font-size:13px;color:var(--muted);line-height:1.5}
+.hint code{color:var(--cyan);font-family:var(--font-data);font-size:12px}
+.err{display:none;margin-top:12px;color:var(--red);font-size:13px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.top h2{font-family:var(--font-head);font-size:26px;font-weight:800}
+.top .sub{color:var(--muted);font-size:14px;margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.chip{height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer;font-size:13px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2)}
+.kpi .v{font-family:var(--font-data);font-size:22px;font-weight:800;margin-top:6px}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:4px}
+.section{margin-top:22px}
+.section h3{font-family:var(--font-head);font-size:15px;margin-bottom:12px;color:var(--muted)}
+.store{cursor:pointer;transition:border-color .15s}
+.store:hover{border-color:var(--cyan)}
+.store h4{font-family:var(--font-head);font-size:16px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--muted)}
+.row b{color:var(--text);font-family:var(--font-data)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+.bar{width:100%;border-radius:6px 6px 2px 2px;min-height:4px}
+.bar.g{background:var(--cyan)}
+.bar.a{background:var(--purple)}
+.bar-col span{font-size:10px;color:var(--muted2)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.banner{background:rgba(255,174,67,.1);border:1px solid rgba(255,174,67,.35);color:var(--orange);border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:18px}
+.unit-hero{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+@media(max-width:800px){
+  .grid2,.grid4{grid-template-columns:1fr 1fr}
+  .grid4 .kpi:nth-child(n+3){ }
+}
+@media(max-width:560px){
+  .grid4{grid-template-columns:1fr 1fr}
+  .login-wrap{padding-top:28px}
+}
+</style>
+</head>
+<body>
+
+<section id="sc-login" class="screen on">
+  <div class="login-wrap">
+    <div class="brand">
+      <img src="apple-touch-icon.png" alt="">
+      <div>
+        <h1><span>Zap</span>Clin</h1>
+        <p>Rede de unidades — mockup de teste</p>
+      </div>
+    </div>
+    <span class="badge">Protótipo · dados fictícios da Anil</span>
+    <div class="card">
+      <p style="color:var(--muted);font-size:14px;line-height:1.45">Entre com o usuário. A loja não se escolhe: ela já vem no cadastro.</p>
+      <label for="user">Usuário</label>
+      <input id="user" autocomplete="username" placeholder="antonio">
+      <label for="pin">PIN</label>
+      <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="••••">
+      <div class="err" id="err">Usuário ou PIN inválido.</div>
+      <button class="btn" id="btnLogin" type="button">Entrar</button>
+      <p class="hint">
+        Contas de teste (não é a loja real):<br>
+        HQ — <code>antonio</code> / <code>0000</code><br>
+        Golden — <code>golden</code> / <code>1111</code> (só a loja)<br>
+        Rio Anil — <code>anil</code> / <code>2222</code> (só a loja)
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="sc-hq" class="screen">
+  <div class="wrap">
+    <div class="banner">Mockup. Golden usa números ilustrativos (fila zerada hoje). Rio Anil é loja nova, números de demonstração.</div>
+    <div class="top">
+      <div>
+        <h2>Rede ZapClin</h2>
+        <p class="sub" id="hqWho"></p>
+      </div>
+      <div class="actions">
+        <button class="chip" type="button" id="btnOut1">Sair</button>
+      </div>
+    </div>
+    <div class="grid4">
+      <div class="kpi"><div class="k">Receita hoje · rede</div><div class="v" id="kRec"></div><div class="s">soma das lojas</div></div>
+      <div class="kpi"><div class="k">OS abertas</div><div class="v" id="kOs"></div><div class="s">em andamento + prontos</div></div>
+      <div class="kpi"><div class="k">Atrasos SLA</div><div class="v" id="kAtr"></div><div class="s">fila de atenção</div></div>
+      <div class="kpi"><div class="k">Margem mês</div><div class="v" id="kMar"></div><div class="s">receita − custos</div></div>
+    </div>
+
+    <div class="section">
+      <h3>Unidades — toque para o detalhe</h3>
+      <div class="grid2" id="storeCards"></div>
+    </div>
+
+    <div class="section">
+      <h3>Operação</h3>
+      <div class="grid2" id="opTable"></div>
+    </div>
+
+    <div class="section">
+      <h3>Financeiro e custos (mês)</h3>
+      <div class="grid2" id="finTable"></div>
+    </div>
+
+    <div class="section">
+      <h3>Gráfico · receita 7 dias (R$)</h3>
+      <div class="card">
+        <div class="bars" id="chart"></div>
+        <div class="legend"><span><i class="dot" style="background:var(--cyan)"></i>Golden</span><span><i class="dot" style="background:var(--purple)"></i>Rio Anil</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sc-unit" class="screen">
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h2 id="unitTitle"></h2>
+        <p class="sub" id="unitSub"></p>
+      </div>
+      <div class="actions">
+        <button class="chip" type="button" id="btnBack">Voltar à rede</button>
+        <button class="chip" type="button" id="btnOut2">Sair</button>
+      </div>
+    </div>
+    <div class="unit-hero">
+      <div>
+        <div class="k" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2)">Caixa de hoje</div>
+        <div class="v" id="uRec" style="font-family:var(--font-data);font-size:28px;font-weight:800;margin-top:4px"></div>
+      </div>
+      <div style="text-align:right;color:var(--muted);font-size:13px" id="uMeta"></div>
+    </div>
+    <div class="grid4" id="uKpis"></div>
+    <div class="section">
+      <h3>O que o operador desta loja veria</h3>
+      <div class="card" id="uOps"></div>
+    </div>
+    <p class="hint" style="margin-top:16px">No sistema real, este clique abre o PWA já filtrado — Home, Operação, Registrar — só desta unidade. Esta página é só o desenho.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var USERS={
+    antonio:{pin:'0000',role:'hq',name:'Antonio · HQ'},
+    golden:{pin:'1111',role:'store',unit:'golden',name:'Operador Golden'},
+    anil:{pin:'2222',role:'store',unit:'anil',name:'Operador Rio Anil'}
+  };
+  var DAYS=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  var STORES={
+    golden:{
+      id:'golden',nome:'Golden Shopping Calhau',end:'Quiosque 01 · São Luís',
+      recHoje:0,atHoje:0,osAbertas:0,atrasos:0,prontos:0,
+      recMes:18420,cusMes:4120,ticket:38,
+      serie:[210,340,280,410,390,180,0]
+    },
+    anil:{
+      id:'anil',nome:'Rio Anil',end:'Nova unidade · demonstração',
+      recHoje:180,atHoje:6,osAbertas:2,atrasos:0,prontos:1,
+      recMes:180,cusMes:40,ticket:30,
+      serie:[0,0,0,0,0,0,180]
+    }
+  };
+  function brl(n){return 'R$ '+Number(n).toLocaleString('pt-BR');}
+  function $(id){return document.getElementById(id);}
+  function show(id){
+    ['sc-login','sc-hq','sc-unit'].forEach(function(s){$(s).classList.toggle('on',s===id);});
+  }
+  var session=null;
+
+  function login(){
+    var u=($('user').value||'').trim().toLowerCase();
+    var p=($('pin').value||'').trim();
+    var acc=USERS[u];
+    if(!acc||acc.pin!==p){$('err').style.display='block';return;}
+    $('err').style.display='none';
+    session=acc;
+    if(acc.role==='hq') renderHq();
+    else renderUnit(acc.unit,false);
+  }
+  function logout(){session=null;$('pin').value='';show('sc-login');}
+
+  function renderHq(){
+    $('hqWho').textContent=session.name+' · todas as lojas numa tela';
+    var g=STORES.golden,a=STORES.anil;
+    $('kRec').textContent=brl(g.recHoje+a.recHoje);
+    $('kOs').textContent=String(g.osAbertas+a.osAbertas);
+    $('kAtr').textContent=String(g.atrasos+a.atrasos);
+    var rec=g.recMes+a.recMes,cus=g.cusMes+a.cusMes;
+    $('kMar').textContent=(rec?Math.round((rec-cus)/rec*100):0)+'%';
+    $('storeCards').innerHTML=[g,a].map(cardHtml).join('');
+    $('opTable').innerHTML=[g,a].map(function(s){
+      return '<div class="card"><h4 style="font-family:var(--font-head);margin-bottom:8px">'+s.nome+'</h4>'+
+        row('OS abertas',s.osAbertas)+row('Atrasos SLA',s.atrasos)+row('Prontos',s.prontos)+'</div>';
+    }).join('');
+    $('finTable').innerHTML=[g,a].map(function(s){
+      return '<div class="card"><h4 style="font-family:var(--font-head);margin-bottom:8px">'+s.nome+'</h4>'+
+        row('Receita mês',brl(s.recMes))+row('Custos mês',brl(s.cusMes))+row('Ticket médio',brl(s.ticket))+'</div>';
+    }).join('');
+    var max=1;
+    g.serie.concat(a.serie).forEach(function(v){if(v>max)max=v;});
+    $('chart').innerHTML=DAYS.map(function(d,i){
+      var hg=Math.round(g.serie[i]/max*100);
+      var ha=Math.round(a.serie[i]/max*100);
+      return '<div class="bar-col"><div class="bar g" style="height:'+hg+'%"></div><div class="bar a" style="height:'+ha+'%"></div><span>'+d+'</span></div>';
+    }).join('');
+    show('sc-hq');
+    $('storeCards').onclick=function(ev){
+      var el=ev.target.closest('[data-unit]');
+      if(el) renderUnit(el.getAttribute('data-unit'),true);
+    };
+  }
+  function cardHtml(s){
+    return '<div class="card store" data-unit="'+s.id+'"><h4>'+s.nome+'</h4>'+
+      row('Hoje',brl(s.recHoje)+' · '+s.atHoje+' atend.')+
+      row('OS / atraso',s.osAbertas+' / '+s.atrasos)+
+      '<p style="margin-top:10px;font-size:12px;color:var(--cyan)">Abrir detalhe da unidade →</p></div>';
+  }
+  function row(l,v){return '<div class="row"><span>'+l+'</span><b>'+v+'</b></div>';}
+
+  function renderUnit(id,fromHq){
+    var s=STORES[id];
+    $('unitTitle').textContent=s.nome;
+    $('unitSub').textContent=s.end+' · '+session.name;
+    $('uRec').textContent=brl(s.recHoje);
+    $('uMeta').innerHTML=s.atHoje+' serviços hoje<br>'+(fromHq?'Volte à rede quando quiser':'Sem acesso às outras lojas');
+    $('btnBack').style.display=fromHq||session.role==='hq'?'inline-flex':'none';
+    $('uKpis').innerHTML=
+      kpi('OS abertas',s.osAbertas)+kpi('Atrasos',s.atrasos)+kpi('Prontos',s.prontos)+kpi('Ticket',brl(s.ticket));
+    $('uOps').innerHTML='<p style="color:var(--muted);font-size:14px;line-height:1.55">Home, Registrar, Clientes, Operação e CRM desta loja. '+
+      (session.role==='store'?'Este perfil não vê o caixa da rede nem a outra unidade.':'HQ pode voltar ao consolidado.')+'</p>';
+    show('sc-unit');
+  }
+  function kpi(k,v){return '<div class="kpi"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>';}
+
+  $('btnLogin').onclick=login;
+  $('pin').addEventListener('keydown',function(e){if(e.key==='Enter')login();});
+  $('btnOut1').onclick=logout;
+  $('btnOut2').onclick=logout;
+  $('btnBack').onclick=function(){if(session&&session.role==='hq')renderHq();};
+})();
+</script>
+</body>
+</html>
