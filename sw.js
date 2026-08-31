@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.36.4 | Data: 31/08/2026
+// Versão: 4.36.5 | Data: 31/08/2026
+// [v4.36.5 CACHE]
+// Painel organizado; Equipe em pagina propria.
 // [v4.36.4 CACHE]
 // Primeiro acesso: troca obrigatória do PIN inicial 123456.
 // [v4.36.3 CACHE]
@@ -33,9 +35,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.36.4';
-const STATIC_CACHE = 'zapclin-static-v4.36.4';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.36.4';
+const ZAPCLIN_SW_VERSION = 'v4.36.5';
+const STATIC_CACHE = 'zapclin-static-v4.36.5';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.36.5';
 
 const APP_SHELL = [
   './',

@@ -1056,7 +1056,11 @@
   body.zc-perfil-supervisor #homeCardEquipe{display:none !important}
   body.zc-perfil-adm .sb-admin-bar,
   body.zc-perfil-adm .admin-badge-timer{display:none !important}
-  .zc-users-admin{margin-top:8px;scroll-margin-top:16px}
+  .admin-tools{margin:8px 0 24px;border:1px solid var(--border);border-radius:16px;background:var(--card);padding:4px 14px 12px}
+  .admin-tools>summary{cursor:pointer;padding:14px 4px;font-family:var(--font-head);font-weight:700;list-style:none}
+  .admin-tools>summary::-webkit-details-marker{display:none}
+  .admin-tools>summary span{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-top:4px}
+  .zc-field-hint{font-size:12px;color:var(--muted);margin-top:-8px;margin-bottom:12px;line-height:1.4}
   .admin-escopo-pill{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(0,212,238,.12);color:var(--cyan);vertical-align:middle}
   .admin-escopo-sub{font-size:13px;color:var(--muted);margin:-4px 0 14px}
   .admin-rede-break{margin:0 0 22px;padding:14px 16px;border:1px solid var(--border);border-radius:16px;background:var(--card)}

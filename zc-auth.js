@@ -41,11 +41,23 @@ function zcAuthLinhaUnidade_(obj){
   return u||'golden';
 }
 function zcAuthAbrirEquipe_(){
+  if(typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm'){
+    if(typeof isAdmin!=='undefined')isAdmin=true;
+    if(typeof goTo==='function')goTo('equipe');
+    return;
+  }
   if(typeof abrirAdmin==='function')abrirAdmin();
-  setTimeout(function(){
-    var el=document.getElementById('zcUsersAdmin');
-    if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});
-  },280);
+}
+function zcAuthLoginDeNome_(nome){
+  var s=String(nome||'');
+  try{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){}
+  return s.toLowerCase().replace(/[^a-z0-9._-]/g,'').slice(0,20);
+}
+function zcAuthNomeDigitou_(){
+  if(window._zcLoginManual_)return;
+  var nome=(document.getElementById('zcUserNome')||{}).value||'';
+  var loginEl=document.getElementById('zcUserUsuario');
+  if(loginEl)loginEl.value=zcAuthLoginDeNome_(nome);
 }
 function zcAuthPodeEscreverNaUnidade_(){
   if(zcAuthPerfil_()!=='adm')return true;
@@ -427,7 +439,9 @@ function zcAuthEditarUsuario_(usuario){
   if(!u)return;
   document.getElementById('zcUserUsuario').value=u.usuario||'';
   document.getElementById('zcUserNome').value=u.nome||'';
-  document.getElementById('zcUserPin').value='';
+  window._zcLoginManual_=true;
+  var pinEl=document.getElementById('zcUserPin');
+  if(pinEl)pinEl.value='';
   document.getElementById('zcUserPerfil').value=u.perfil||'operador';
   document.getElementById('zcUserUnidade').value=u.unidadeId||'';
   document.getElementById('zcUserTurno').value=u.turno||'';
@@ -441,7 +455,10 @@ function zcAuthSalvarUsuario_(){
   var unidadeId=(document.getElementById('zcUserUnidade')||{}).value||'';
   var turno=(document.getElementById('zcUserTurno')||{}).value||'';
   usuario=String(usuario).trim().toLowerCase();
-  if(!usuario||!nome){showToast('Preencha usuário e nome','error');return;}
+  nome=String(nome).trim();
+  if(!nome){showToast('Preencha o nome da pessoa','error');return;}
+  if(!usuario)usuario=zcAuthLoginDeNome_(nome);
+  if(!usuario){showToast('O login precisa de letras. Ajuste o nome.','orange');return;}
   if(perfil!=='adm'&&!unidadeId){showToast('Operador e supervisor precisam da loja','orange');return;}
   if(perfil!=='adm'&&!String(pin).trim())pin='123456';
   apiGet('salvarUsuario',{usuario:usuario,nome:nome,pin:pin,perfil:perfil,unidadeId:unidadeId,turno:turno,ativo:'SIM'},15000).then(function(r){
@@ -449,6 +466,9 @@ function zcAuthSalvarUsuario_(){
       var extra=perfil!=='adm'?' · PIN inicial 123456 até o primeiro login':'';
       showToast('Pessoa salva: '+usuario+extra,'blue');
       document.getElementById('zcUserPin').value='';
+      document.getElementById('zcUserNome').value='';
+      document.getElementById('zcUserUsuario').value='';
+      window._zcLoginManual_=false;
       zcAuthCarregarUsuarios_();
     }else showToast((r&&r.error)||'Erro ao salvar','error');
   }).catch(function(){showToast('Falha ao salvar pessoa','error');});
