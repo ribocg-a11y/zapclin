@@ -131,12 +131,10 @@ function copiarFechamentoDiarioAdmin_(){
 function abrirAdmin(){
   if(typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm'){
     isAdmin=true;
-    var sec=document.getElementById('sbAdminSection');
-    if(sec){sec.classList.add('visible');sec.style.display='';}
-    goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));
+    goTo('admin');
     return;
   }
-  if(isAdmin){goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));return;}
+  if(isAdmin){goTo('admin');return;}
   if(adminIsLocked_()){adminShowLocked_();return;}
   pinBuffer='';
   atualizarDotsPIN();
@@ -218,12 +216,10 @@ function entrarAdmin(){
 
   adminResetSessionTimer_();
 
-  var sec=document.getElementById('sbAdminSection');
-  if(sec)sec.classList.add('visible');
   var bar=document.getElementById('sbAdminBar');
   if(bar)bar.classList.add('visible');
   var gbtn=document.getElementById('sbGerenciarBtn');
-  if(gbtn)gbtn.style.display='none';
+  if(gbtn && !(typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm'))gbtn.style.display='none';
 
   adminTimerInt=setInterval(function(){
     adminCountdown--;
@@ -234,7 +230,7 @@ function entrarAdmin(){
   document.addEventListener('click',resetAdminTimer);
   document.addEventListener('touchstart',resetAdminTimer);
   showToast('✅ Bem-vindo, Administrador!','blue');
-  goTo('admin',document.querySelector('.sb-btn[data-page="admin"]'));
+  goTo('admin');
 }
 function resetAdminTimer(){
   if(!isAdmin)return;
@@ -251,6 +247,11 @@ function atualizarTimerAdmin(){
 }
 function adminLogout(){
   logEventoSistema_('ADMIN','adminLogout','OK','Sessão admin encerrada',{});
+  if(typeof zcAuthPerfil_==='function' && zcAuthPerfil_()==='adm'){
+    isAdmin=true;
+    mostrarHome();
+    return;
+  }
   isAdmin=false;
   pinBuffer='';
   if(adminTimerInt){clearInterval(adminTimerInt);adminTimerInt=null;}

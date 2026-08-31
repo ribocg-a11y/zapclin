@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.36.1 | Data: 31/08/2026
+// Versão: 4.36.2 | Data: 31/08/2026
+// [v4.36.2 CACHE]
+// Menu do balcão + cockpit Rede; SW auto-update (poll + skipWaiting).
 // [v4.36.1 CACHE]
 // Login: timeout 30s (GAS ~15s na 1a entrada).
 // [v4.36.0 CACHE]
@@ -27,9 +29,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.36.1';
-const STATIC_CACHE = 'zapclin-static-v4.36.1';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.36.1';
+const ZAPCLIN_SW_VERSION = 'v4.36.2';
+const STATIC_CACHE = 'zapclin-static-v4.36.2';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.36.2';
 
 const APP_SHELL = [
   './',

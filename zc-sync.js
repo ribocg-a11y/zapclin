@@ -59,6 +59,7 @@ var _refreshRodando = false;
 function renderDadosDependentes_(opts){
   opts=opts||{};
   try{_calcStatsHome();}catch(e){}
+  try{if(typeof zcAuthAtualizarHomeRede_==='function')zcAuthAtualizarHomeRede_();}catch(e){}
   if(opts.clientes!==false){try{renderClienteList();}catch(e){}}
   if(opts.lancamentos!==false){try{renderVendasGerencial();}catch(e){}}
   if(opts.crm!==false){try{crmClientes=consolidarClientesCRM_();renderRelacionamento();}catch(e){}}

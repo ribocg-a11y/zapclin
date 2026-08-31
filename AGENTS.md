@@ -60,16 +60,16 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Camada | Versão repo | Ping / live |
 |--------|-------------|-------------|
-| Frontend | **v4.36.0** | GitHub Pages `?force=v4.36.0` |
-| Service Worker | **v4.36.0** | `sw.js` |
-| GAS (código repo) | **v3.55** (`AppsScript_v3.45_ATUAL.gs`) | arquivo |
-| GAS (ping) | **3.55** ✅ | |
+| Frontend | **v4.36.1** live · **v4.36.2** no branch de menu | GitHub Pages `?force=v4.36.1` |
+| Service Worker | **v4.36.1** live · **v4.36.2** no branch | `sw.js` |
+| GAS (código repo) | **v3.56** (`AppsScript_v3.45_ATUAL.gs`) | arquivo — Nova versão 3.56 pendente se ping ainda 3.55 |
+| GAS (ping) | **3.55** até você implantar 3.56 | |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
 
 **Deploy ID GAS (único — nunca criar outro):**  
 `AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTcowMkq2iDLUiqhokUPQ2Hf_d5w_8yLg`
 
-**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.55)
+**GAS canônico:** `AppsScript_v3.45_ATUAL.gs` (conteúdo v3.56)
 
 Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW_VERSION` em `sw.js`, ping GAS.
 
@@ -94,12 +94,13 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (31/08/2026)
 
-- **Produção live:** FE/SW **v4.36.0** (PR **#26** MERGED) · GAS ping **3.55** ✅
+- **Produção live:** FE/SW **v4.36.1** (PR **#27**) · GAS ping **3.55** (arquivo **3.56** — Nova versão pendente)
+- **Branch `cursor/menu-balcao-v4362`:** FE/SW **v4.36.2** — menu do balcão (sem dump ADMINISTRAÇÃO)
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
-- **Pacote Z:** Z.9 ✅; login em `zc-auth.js` (v4.36.0)
+- **Pacote Z:** Z.9 ✅; login em `zc-auth.js`
 - **OAuth Desktop:** re-auth 26/08 ✅ (`token.json` no C:)
 - **Planilha:** seed LANÇAMENTOS **01–25/08** ✅ · UNIDADES/USUARIOS no primeiro login 3.55
-- **Próximo humano:** 1) smoke `?force=v4.36.0` 2) entrar `antonio` / **1321** e cadastrar operadores 3) aceite WhatsApp · Golden
+- **Próximo humano:** 1) merge/push v4.36.2 2) smoke `?force=v4.36.2` 3) cadastrar operadores 4) aceite WhatsApp · Golden
 - **Próximo agente:** NET-TIMEOUT só com pedido; não re-seed ago
 
 ## Ao encerrar sessão

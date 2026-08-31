@@ -8,7 +8,8 @@
 
 | Item | Status |
 |------|--------|
-| FE/SW **v4.36.0** | ✅ PR **#26** MERGED |
+| FE/SW **v4.36.1** | ✅ PR **#27** MERGED |
+| Menu balcão **v4.36.2** | ⏳ branch `cursor/menu-balcao-v4362` |
 | GAS **3.55** arquivo + ping | ✅ |
 | Seed LANÇAMENTOS 01–25/08 | ✅ planilha |
 | OAuth Desktop `token.json` | ✅ re-auth 26/08 |
@@ -23,7 +24,7 @@
 |---|------|--------|
 | H0 | Merge **#24** + `git pull` no clone do C: | ✅ 31/08 |
 | H1 | GAS Nova versão **3.55** (login de turno) no Deploy ID atual | ✅ ping 3.55 |
-| H2 | Smoke loja `?force=v4.36.0` + cadastrar operadores + aceite no WhatsApp | ⏳ |
+| H2 | Smoke loja `?force=v4.36.2` (após merge) + cadastrar operadores + aceite no WhatsApp | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
 | H5 | Toast exato se erro rede | ⏳ |

@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <!--
   ZAPCLIN — INDEX.HTML (GitHub Pages)
-  Versão : 4.36.1 | Data: 31/08/2026
+  Versão : 4.36.2 | Data: 31/08/2026
+  NOVO v4.36.2:
+  - Menu do balcão + cockpit Rede: chips Rede/Golden/Rio Anil; toque na loja = sistema de uma unidade.
+    Painel só no rodapé e no card da Home do ADM. Dashboard/Vendas/Relatório saem da lateral.
+  - SW puxa versão nova sozinho (updateViaCache none + poll 60s). Sem depender de ?force=.
   NOVO v4.36.1:
   - Login: espera 30s o Apps Script (a 1ª entrada demora ~15s; o corte aos 15s fingia “sem conexão”)
   NOVO v4.36.0:
@@ -335,7 +339,7 @@
 <title>ZapClin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zc-app.css?v=v4.36.1">
+<link rel="stylesheet" href="zc-app.css?v=v4.36.2">
 
 </head>
 <body>
@@ -364,7 +368,7 @@
       <div class="sb-brand-name"><span class="sb-brand-z">Zap</span><span class="sb-brand-c">Clin</span></div>
       <div class="sb-status">
         <span class="sb-dot sb-offline" id="sbDot"></span>
-        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.1</span>
+        <span class="sb-status-txt" id="sbStatusTxt">Verificando... · v4.36.2</span>
       </div>
     </div>
   </div>
@@ -374,12 +378,10 @@
     <div class="zc-sessao-meta" id="zcSessaoMeta">—</div>
     <button type="button" class="zc-sessao-sair" onclick="zcAuthEncerrarTurno_()">Encerrar turno</button>
   </div>
-  <div class="zc-unidade-filtro" id="zcUnidadeFiltroWrap">
-    <select id="zcUnidadeFiltro" onchange="zcAuthOnUnidadeChange_()">
-      <option value="golden">Golden Shopping</option>
-      <option value="anil">Rio Anil</option>
-      <option value="rede">Rede (as duas)</option>
-    </select>
+  <div class="zc-loja-switch" id="zcLojaSwitch" aria-label="Ver loja">
+    <button type="button" class="zc-loja-chip" data-loja="rede" onclick="zcAuthSetUnidadeFiltro_('rede')">Rede</button>
+    <button type="button" class="zc-loja-chip" data-loja="golden" onclick="zcAuthSetUnidadeFiltro_('golden')">Golden</button>
+    <button type="button" class="zc-loja-chip" data-loja="anil" onclick="zcAuthSetUnidadeFiltro_('anil')">Rio Anil</button>
   </div>
 
   <nav class="sb-nav">
@@ -393,55 +395,26 @@
     <button class="sb-btn" data-page="clientes" onclick="goTo('clientes',this)">
       <span class="sb-icon">👥</span> Clientes
     </button>
-    <button class="sb-btn" data-page="relacionamento" onclick="goTo('relacionamento',this)">
-      <span class="sb-icon">💎</span> Relacionamento
-    </button>
     <button class="sb-btn" data-page="operacao" onclick="goTo('operacao',this)">
       <span class="sb-icon">🧭</span> Operação
     </button>
-    <button class="sb-btn" data-page="custos" onclick="goTo('custos',this)">
+    <button class="sb-btn" data-page="relacionamento" onclick="goTo('relacionamento',this)">
+      <span class="sb-icon">💎</span> Relacionamento
+    </button>
+    <button class="sb-btn" data-page="custos" id="sbBtnCustos" onclick="goTo('custos',this)" style="display:none">
       <span class="sb-icon">💸</span> Custos
     </button>
-
-    <!-- ═══ ADMIN SECTION — aparece na Fase 3 ═══ -->
-    <div class="sb-admin-section" id="sbAdminSection">
-      <div class="sb-divider">ADMINISTRAÇÃO</div>
-      <button class="sb-btn" data-page="admin" onclick="goTo('admin',this)">
-        <span class="sb-icon">📊</span> Painel Admin
-      </button>
-      <button class="sb-btn" data-page="dashboard" onclick="goTo('dashboard',this)">
-        <span class="sb-icon">📈</span> Dashboard
-      </button>
-      <button class="sb-btn" data-page="lancamentos" onclick="goTo('lancamentos',this)">
-        <span class="sb-icon">💹</span> Vendas
-      </button>
-      <button class="sb-btn" data-page="relatorio" onclick="goTo('relatorio',this)">
-        <span class="sb-icon">📋</span> Relatório
-      </button>
-      <button class="sb-btn" data-page="historico" onclick="goTo('historico',this)">
-        <span class="sb-icon">🗂️</span> Histórico
-      </button>
-      <button class="sb-btn" data-page="historico-custos" onclick="goTo('historico-custos',this)">
-        <span class="sb-icon">💸</span> Hist. Custos
-      </button>
-      <button class="sb-btn" data-page="aceites" onclick="goTo('aceites',this)">
-        <span class="sb-icon">✅</span> Aceites
-      </button>
-      <button class="sb-btn" data-page="logs" onclick="goTo('logs',this)">
-        <span class="sb-icon">🧭</span> Logs
-      </button>
-    </div>
   </nav>
 
   <div class="sb-footer">
     <!-- Timer admin — Fase 3 -->
     <div class="sb-admin-bar" id="sbAdminBar">
       <span>🔐 Admin <span id="sbTimer">1:00</span></span>
-      <button class="sb-sair" onclick="adminLogout()">Sair</button>
+      <button class="sb-sair" onclick="adminLogout()">Voltar ao balcão</button>
     </div>
     <!-- Botão gerenciar -->
-    <button class="sb-gerenciar" id="sbGerenciarBtn" onclick="abrirAdmin()">
-      🔐 Gerenciar
+    <button class="sb-gerenciar" id="sbGerenciarBtn" data-page="admin" onclick="abrirAdmin()" style="display:none">
+      Painel
     </button>
     <!-- Input oculto para manter webAppUrl funcional -->
     <input type="hidden" id="webAppUrl">
@@ -456,7 +429,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
       <button class="mh-hamburger" onclick="toggleSidebar()">☰</button>
-      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.1</span></span>
+      <span class="mh-title" id="mobileTitle">ZapClin <span class="mh-version" id="mobileVersion">v4.36.2</span></span>
       <!-- [v4.4 MOBILE]
            Botão/casa removido definitivamente do topo mobile.
            A área direita passa a mostrar somente a data para evitar duplicidade de Home. -->
@@ -539,7 +512,7 @@
     <div class="home-topo">
       <div class="home-topo-left">
         <div class="home-topo-greeting" id="homeGreeting">Bom dia 👋</div>
-        <div class="home-topo-sub">Pronto para atender!</div>
+        <div class="home-topo-sub" id="homeTopoSub">Pronto para atender!</div>
       </div>
       <!-- [v4.7 REMOÇÃO]
            A data da Home foi removida para evitar duplicidade no mobile
@@ -562,7 +535,36 @@
     </div>
     <div class="home-source-note" id="homeLancInfo"></div>
 
+    <div class="home-loja-bar" id="homeLojaBar">
+      <div>
+        <div class="home-loja-bar-k">Você está na loja</div>
+        <div class="home-loja-bar-v" id="homeLojaBarNome">Golden Shopping</div>
+      </div>
+      <button type="button" class="home-loja-bar-btn" onclick="zcAuthVoltarRede_()">Voltar à rede</button>
+    </div>
+
+    <div id="homeRedeCockpit">
+      <div class="home-sec-label">Unidades — toque para operar como uma loja só</div>
+      <div class="home-store-grid">
+        <button type="button" class="home-store-card" id="homeStoreGolden" onclick="zcAuthEntrarLoja_('golden')">
+          <div class="home-store-name">Golden Shopping</div>
+          <div class="home-store-end">Calhau · São Luís</div>
+          <div class="home-store-row"><span>Atendimentos hoje</span><b id="homeStoreGoldenAtend">—</b></div>
+          <div class="home-store-row"><span>Clientes ativos</span><b id="homeStoreGoldenAtivos">—</b></div>
+          <div class="home-store-cta">Abrir a loja ›</div>
+        </button>
+        <button type="button" class="home-store-card anil" id="homeStoreAnil" onclick="zcAuthEntrarLoja_('anil')">
+          <div class="home-store-name">Rio Anil</div>
+          <div class="home-store-end">Nova unidade</div>
+          <div class="home-store-row"><span>Atendimentos hoje</span><b id="homeStoreAnilAtend">—</b></div>
+          <div class="home-store-row"><span>Clientes ativos</span><b id="homeStoreAnilAtivos">—</b></div>
+          <div class="home-store-cta">Abrir a loja ›</div>
+        </button>
+      </div>
+    </div>
+
     <!-- Grid de menu -->
+    <div id="homeBalcaoBlock">
     <div class="home-sec-label">Menu principal</div>
     <div class="home-grid">
       <div class="home-card" style="--hc:var(--cyan)" onclick="goTo('registrar',null)">
@@ -577,30 +579,31 @@
         <div class="hc-desc">Cadastro e atendimentos</div>
         <div class="hc-arr">›</div>
       </div>
-      <div class="home-card" style="--hc:var(--blue)" onclick="goTo('relacionamento',null)">
-        <div class="hc-icon">💎</div>
-        <div class="hc-name">Relacionamento</div>
-        <div class="hc-desc">Retorno, fidelidade e campanhas</div>
-        <div class="hc-arr">›</div>
-      </div>
       <div class="home-card" style="--hc:var(--green)" onclick="goTo('operacao',null)">
         <div class="hc-icon">🧭</div>
         <div class="hc-name">Operação</div>
         <div class="hc-desc">Fila de produção e SLA</div>
         <div class="hc-arr">›</div>
       </div>
-      <div class="home-card" style="--hc:var(--orange)" onclick="goTo('custos',null)">
+      <div class="home-card" style="--hc:var(--blue)" onclick="goTo('relacionamento',null)">
+        <div class="hc-icon">💎</div>
+        <div class="hc-name">Relacionamento</div>
+        <div class="hc-desc">Retorno, fidelidade e campanhas</div>
+        <div class="hc-arr">›</div>
+      </div>
+      <div class="home-card" id="homeCardCustos" style="--hc:var(--orange);display:none" onclick="goTo('custos',null)">
         <div class="hc-icon">💸</div>
         <div class="hc-name">Custos</div>
         <div class="hc-desc">Controle de gastos</div>
         <div class="hc-arr">›</div>
       </div>
-      <div class="home-card" style="--hc:var(--blue)" onclick="abrirAdmin()">
-        <div class="hc-icon">🔐</div>
-        <div class="hc-name">Gerenciar</div>
-        <div class="hc-desc">Área administrativa</div>
+      <div class="home-card" id="homeCardPainel" style="--hc:var(--blue);display:none" onclick="abrirAdmin()">
+        <div class="hc-icon">📊</div>
+        <div class="hc-name">Painel</div>
+        <div class="hc-desc">Números, equipe e relatórios</div>
         <div class="hc-arr">›</div>
       </div>
+    </div>
     </div>
 
   </div>
@@ -795,7 +798,7 @@
       <div class="admin-badge-left">📈 Dashboard</div>
       <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplay3">1:00</span></div>
     </div>
-    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
 
   <!-- Seletor de mês -->
@@ -989,10 +992,10 @@
 <div class="page" id="page-admin">
   <div class="admin-badge">
     <div>
-      <div class="admin-badge-left">🔐 Modo Administrador</div>
+      <div class="admin-badge-left">📊 Painel</div>
       <div class="admin-badge-timer">Sessão encerra em <span id="adminTimerDisplay">1:00</span></div>
     </div>
-    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
   <div class="section-title">Visão Geral</div>
   <div class="kpi-grid">
@@ -1080,6 +1083,11 @@
       <div class="atalho-info"><div class="atalho-title">Dashboard</div><div class="atalho-sub">Gráficos por dia e tipo</div></div>
       <span class="atalho-arr">›</span>
     </div>
+    <div class="atalho-card" onclick="goTo('lancamentos',null)">
+      <span class="atalho-icon">💹</span>
+      <div class="atalho-info"><div class="atalho-title">Vendas</div><div class="atalho-sub">Lançamentos do caixa</div></div>
+      <span class="atalho-arr">›</span>
+    </div>
     <div class="atalho-card" onclick="goTo('relatorio',null)">
       <span class="atalho-icon">📋</span>
       <div class="atalho-info"><div class="atalho-title">Relatório Mensal</div><div class="atalho-sub">Enviar e salvar PDF</div></div>
@@ -1142,7 +1150,7 @@
       <div class="admin-badge-left">✅ Aceites de OS</div>
       <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayAceites">1:00</span></div>
     </div>
-    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
 
   <div class="section-title">Controle de aceite</div>
@@ -1171,7 +1179,7 @@
       <div class="admin-badge-left">🗂️ Histórico de Atendimentos</div>
       <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplay2">1:00</span></div>
     </div>
-    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
 
   <!-- Filtros de período -->
@@ -1219,7 +1227,7 @@
       <div class="admin-badge-left">💸 Histórico de Custos</div>
       <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayHc">1:00</span></div>
     </div>
-    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
 
   <div class="hist-filtros">
@@ -1300,7 +1308,7 @@
       <div class="admin-badge-left">🧭 Observabilidade</div>
       <div class="admin-badge-timer">Sessão: <span id="adminTimerDisplayLogs">1:00</span></div>
     </div>
-    <button class="admin-badge-sair" onclick="adminLogout()">Sair</button>
+    <button class="admin-badge-sair" onclick="adminLogout()">Voltar ao balcão</button>
   </div>
 
   <div class="section-title">Resumo recente</div>
@@ -1350,21 +1358,21 @@
 
 </div>
 
-<script src="zc-version.js?v=v4.36.1"></script>
-<script src="zc-globals.js?v=v4.36.1"></script>
-<script src="zc-api.js?v=v4.36.1"></script>
-<script src="zc-core.js?v=v4.36.1"></script>
-<script src="zc-nav.js?v=v4.36.1"></script>
-<script src="zc-home.js?v=v4.36.1"></script>
-<script src="zc-sync.js?v=v4.36.1"></script>
-<script src="zc-whatsapp.js?v=v4.36.1"></script>
-<script src="zc-admin.js?v=v4.36.1"></script>
-<script src="zc-auth.js?v=v4.36.1"></script>
-<script src="zc-historico-custos.js?v=v4.36.1"></script>
-<script src="zc-registrar.js?v=v4.36.1"></script>
-<script src="zc-clientes.js?v=v4.36.1"></script>
-<script src="zc-operacao.js?v=v4.36.1"></script>
-<script src="zc-crm.js?v=v4.36.1"></script>
+<script src="zc-version.js?v=v4.36.2"></script>
+<script src="zc-globals.js?v=v4.36.2"></script>
+<script src="zc-api.js?v=v4.36.2"></script>
+<script src="zc-core.js?v=v4.36.2"></script>
+<script src="zc-nav.js?v=v4.36.2"></script>
+<script src="zc-home.js?v=v4.36.2"></script>
+<script src="zc-sync.js?v=v4.36.2"></script>
+<script src="zc-whatsapp.js?v=v4.36.2"></script>
+<script src="zc-admin.js?v=v4.36.2"></script>
+<script src="zc-auth.js?v=v4.36.2"></script>
+<script src="zc-historico-custos.js?v=v4.36.2"></script>
+<script src="zc-registrar.js?v=v4.36.2"></script>
+<script src="zc-clientes.js?v=v4.36.2"></script>
+<script src="zc-operacao.js?v=v4.36.2"></script>
+<script src="zc-crm.js?v=v4.36.2"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // ZAPCLIN — app inline (Pacote Z.7: zc-operacao + zc-crm extraídos)
@@ -3216,10 +3224,22 @@ function registrarServiceWorkerZapClin_(){
     return;
   }
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js?v=4.33.3',{scope:'./'})
+    var swUrl='./sw.js?v='+encodeURIComponent(APP_VERSION);
+    navigator.serviceWorker.register(swUrl,{scope:'./',updateViaCache:'none'})
       .then(function(reg){
         console.log('[ZapClin] Service Worker registrado:',reg.scope);
-        try{reg.update();}catch(e){}
+        function puxarVersao_(){
+          try{reg.update();}catch(e){}
+          if(reg.waiting){
+            try{reg.waiting.postMessage({type:'SKIP_WAITING'});}catch(e){}
+          }
+        }
+        puxarVersao_();
+        setInterval(puxarVersao_,60000);
+        document.addEventListener('visibilitychange',function(){
+          if(!document.hidden)puxarVersao_();
+        });
+        window.addEventListener('focus',puxarVersao_);
         if(reg.waiting){
           try{reg.waiting.postMessage({type:'SKIP_WAITING'});}catch(e){}
         }
