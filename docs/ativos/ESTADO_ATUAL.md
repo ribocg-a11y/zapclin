@@ -20,9 +20,9 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.36.3** (L1 Rede) | https://ribocg-a11y.github.io/zapclin/?force=v4.36.3 |
-| GAS arquivo | **3.56** no repo | Nova versão 3.56 ainda pode estar pendente |
-| GAS ping | **3.55** até colar 3.56 | ping abaixo |
+| Frontend / SW | **v4.36.4** | https://ribocg-a11y.github.io/zapclin/?force=v4.36.4 |
+| GAS arquivo | **3.57** no repo | Nova versão 3.57 pendente |
+| GAS ping | **3.55** até colar 3.57 | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **#30** RFC Rede MERGED · **#28** menu · **#26** login · **#22** Z.9 | — |
 
@@ -41,7 +41,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.3) |
+| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.4) |
 | Pacote Z | até Z.9 `zc-app.css` · próximo Z.10 `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` + token em `%USERPROFILE%\.config\google-api\` |

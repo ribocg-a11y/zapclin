@@ -76,6 +76,7 @@ function zcAuthGravarSessao_(data){
     unidadeId:String(data.unidadeId||'').toLowerCase(),
     unidadeNome:data.unidadeNome||'',
     turno:data.turno||'',
+    mustChangePin:!!data.mustChangePin,
     t:Date.now()
   };
   localStorage.setItem(ZC_AUTH_KEY,JSON.stringify(s));
@@ -95,6 +96,58 @@ function zcAuthHashPin_(usuario,pin){
   return Promise.resolve('');
 }
 
+function zcAuthMostrarTrocaPin_(){
+  var gate=document.getElementById('zcPinTrocaGate');
+  if(!gate)return;
+  gate.classList.add('show');
+  gate.setAttribute('aria-hidden','false');
+  var err=document.getElementById('zcPinTrocaErro');
+  if(err){err.textContent='';err.style.display='none';}
+  var a=document.getElementById('zcPinNovo');
+  var b=document.getElementById('zcPinNovo2');
+  if(a)a.value='';
+  if(b)b.value='';
+  if(a)setTimeout(function(){a.focus();},80);
+}
+function zcAuthEsconderTrocaPin_(){
+  var gate=document.getElementById('zcPinTrocaGate');
+  if(!gate)return;
+  gate.classList.remove('show');
+  gate.setAttribute('aria-hidden','true');
+}
+function zcAuthPrecisaTrocarPin_(){
+  var s=zcAuthSessao_();
+  return !!(s&&s.mustChangePin&&s.perfil!=='adm');
+}
+function zcAuthTrocarPinSubmit_(ev){
+  if(ev&&ev.preventDefault)ev.preventDefault();
+  var pin=(document.getElementById('zcPinNovo')||{}).value||'';
+  var pin2=(document.getElementById('zcPinNovo2')||{}).value||'';
+  var err=document.getElementById('zcPinTrocaErro');
+  var btn=document.getElementById('zcPinTrocaBtn');
+  function showErr(m){
+    if(err){err.textContent=m;err.style.display='block';}
+    if(btn){btn.disabled=false;btn.textContent='Salvar meu PIN';}
+  }
+  pin=String(pin).trim();
+  pin2=String(pin2).trim();
+  if(pin.length<4||pin.length>6||!/^\d+$/.test(pin)){showErr('PIN com 4 a 6 dígitos.');return;}
+  if(pin==='123456'){showErr('Não use 123456. Esse é só o PIN inicial.');return;}
+  if(pin!==pin2){showErr('Os dois PINs não são iguais.');return;}
+  if(btn){btn.disabled=true;btn.textContent='Salvando...';}
+  apiGet('trocarPinPrimeiroAcesso',{pin:pin},15000).then(function(r){
+    if(!r||!r.ok){
+      showErr((r&&r.error)||'Não consegui salvar. Cole o Apps Script 3.57 se o backend ainda for antigo.');
+      return;
+    }
+    var s=zcAuthSessao_()||{};
+    s.mustChangePin=false;
+    localStorage.setItem(ZC_AUTH_KEY,JSON.stringify(s));
+    zcAuthEsconderTrocaPin_();
+    zcAuthBoot_();
+    if(typeof showToast==='function')showToast('PIN salvo. Turno iniciado.','blue');
+  }).catch(function(){showErr('Sem conexão. Tente de novo.');});
+}
 function zcAuthMostrarLogin_(msg){
   var gate=document.getElementById('zcLoginGate');
   if(!gate)return;
@@ -268,6 +321,12 @@ function zcAuthEncerrarTurno_(){
 
 function zcAuthBoot_(){
   if(zcAuthSessao_()){
+    if(zcAuthPrecisaTrocarPin_()){
+      zcAuthEsconderLogin_();
+      zcAuthMostrarTrocaPin_();
+      return;
+    }
+    zcAuthEsconderTrocaPin_();
     if(zcAuthPerfil_()==='adm'){
       try{
         if(!sessionStorage.getItem(ZC_AUTH_UNIDADE_KEY))sessionStorage.setItem(ZC_AUTH_UNIDADE_KEY,'rede');
@@ -283,6 +342,7 @@ function zcAuthBoot_(){
     }
     return;
   }
+  zcAuthEsconderTrocaPin_();
   zcAuthMostrarLogin_();
 }
 
@@ -308,7 +368,7 @@ function zcAuthLoginSubmit_(ev){
   }).then(function(r){
     if(!r||!r.ok||!r.token){
       var msg=r&&r.error?String(r.error):'Usuário ou PIN inválido.';
-      if(r&&r.version&&parseFloat(r.version)<3.55)msg='Backend ainda v'+r.version+'. Peça Nova versão do Apps Script (3.55) no mesmo Deploy ID.';
+      if(r&&r.version&&parseFloat(r.version)<3.57)msg='Backend ainda v'+r.version+'. Cole Nova versão 3.57 no Apps Script (mesmo Deploy ID) para o primeiro acesso com troca de PIN.';
       showErr(msg);
       return;
     }
@@ -321,6 +381,10 @@ function zcAuthLoginSubmit_(ev){
       localStorage.removeItem('zapKpisAdminServer');
     }catch(e){}
     zcAuthEsconderLogin_();
+    if(r.mustChangePin){
+      zcAuthMostrarTrocaPin_();
+      return;
+    }
     zcAuthBoot_();
     if(typeof showToast==='function'){
       showToast('Turno de '+(r.nome||r.usuario)+' iniciado','blue');
@@ -344,7 +408,13 @@ function zcAuthCarregarUsuarios_(){
       var loja=u.perfil==='adm'?'Rede':(u.unidadeId==='anil'?'Rio Anil':'Golden');
       var ativo=u.ativo===false?' · inativo':'';
       var turno=u.turno?' · '+u.turno:'';
-      return '<div class="zc-user-row"><div><strong>'+escapeHtml_(u.nome||u.usuario)+'</strong><div class="zc-sessao-meta">'+escapeHtml_(u.usuario)+' · '+perfil+' · '+loja+turno+ativo+'</div></div><button class="logs-refresh" type="button" onclick="zcAuthEditarUsuario_(\''+jsStr_(u.usuario)+'\')">Editar</button></div>';
+      var pinTxt='';
+      if(u.perfil!=='adm'){
+        var pin=u.pinRecupera?String(u.pinRecupera):'(ainda sem PIN na planilha — cole GAS 3.57)';
+        pinTxt='<div class="zc-sessao-meta">PIN para recuperar: <strong>'+escapeHtml_(pin)+'</strong>'+(u.trocarPin?' · primeiro acesso pendente (123456)':'')+'</div>';
+      }
+      var reset=u.perfil==='adm'?'':'<button class="logs-refresh" type="button" onclick="zcAuthResetPinInicial_(\''+jsStr_(u.usuario)+'\')">Resetar 123456</button>';
+      return '<div class="zc-user-row"><div><strong>'+escapeHtml_(u.nome||u.usuario)+'</strong><div class="zc-sessao-meta">'+escapeHtml_(u.usuario)+' · '+perfil+' · '+loja+turno+ativo+'</div>'+pinTxt+'</div><div class="zc-user-actions">'+reset+'<button class="logs-refresh" type="button" onclick="zcAuthEditarUsuario_(\''+jsStr_(u.usuario)+'\')">Editar</button></div></div>';
     }).join('');
     window._zcUsersCache_=items;
   }).catch(function(){wrap.innerHTML='Falha ao listar equipe.';});
@@ -373,11 +443,26 @@ function zcAuthSalvarUsuario_(){
   usuario=String(usuario).trim().toLowerCase();
   if(!usuario||!nome){showToast('Preencha usuário e nome','error');return;}
   if(perfil!=='adm'&&!unidadeId){showToast('Operador e supervisor precisam da loja','orange');return;}
+  if(perfil!=='adm'&&!String(pin).trim())pin='123456';
   apiGet('salvarUsuario',{usuario:usuario,nome:nome,pin:pin,perfil:perfil,unidadeId:unidadeId,turno:turno,ativo:'SIM'},15000).then(function(r){
     if(r&&r.ok){
-      showToast('Pessoa salva: '+usuario,'blue');
+      var extra=perfil!=='adm'?' · PIN inicial 123456 até o primeiro login':'';
+      showToast('Pessoa salva: '+usuario+extra,'blue');
       document.getElementById('zcUserPin').value='';
       zcAuthCarregarUsuarios_();
     }else showToast((r&&r.error)||'Erro ao salvar','error');
   }).catch(function(){showToast('Falha ao salvar pessoa','error');});
+}
+function zcAuthResetPinInicial_(usuario){
+  usuario=String(usuario||'').trim().toLowerCase();
+  if(!usuario)return;
+  if(!confirm('Resetar o PIN de '+usuario+' para 123456?\nNo próximo login o app obriga a cadastrar um PIN novo.'))return;
+  var items=window._zcUsersCache_||[];
+  var u=null;
+  for(var i=0;i<items.length;i++){if(items[i].usuario===usuario){u=items[i];break;}}
+  if(!u){showToast('Pessoa não encontrada na lista','orange');return;}
+  apiGet('salvarUsuario',{usuario:u.usuario,nome:u.nome,perfil:u.perfil,unidadeId:u.unidadeId,turno:u.turno||'',ativo:'SIM',resetPinInicial:'1',pin:'123456'},15000).then(function(r){
+    if(r&&r.ok){showToast('PIN de '+usuario+' voltou a 123456','blue');zcAuthCarregarUsuarios_();}
+    else showToast((r&&r.error)||'Falha ao resetar','error');
+  }).catch(function(){showToast('Falha ao resetar PIN','error');});
 }
