@@ -10,6 +10,7 @@
 |------|--------|
 | FE/SW **v4.36.1** | ✅ PR **#27** MERGED |
 | FE/SW **v4.36.2** | ✅ PR **#28** MERGED |
+| FE/SW **v4.36.3** L1 Rede | ⏳ publicar |
 | GAS **3.55** arquivo + ping | ✅ |
 | Seed LANÇAMENTOS 01–25/08 | ✅ planilha |
 | OAuth Desktop `token.json` | ✅ re-auth 26/08 |
@@ -18,13 +19,28 @@
 
 ---
 
+## Freeze Rede (RFC 31/08)
+
+**L1 autorizado** 31/08. Fonte: [`RFC_REDE_GESTAO_MUDANCA.md`](RFC_REDE_GESTAO_MUDANCA.md) · PR **#30**.
+
+| Lote | O que | Status |
+|------|--------|--------|
+| L0 | RFC + canvas + congelar nova cara / microsserviço / aba por loja | ✅ |
+| L0 humano | Colar GAS **3.56** no mesmo Deploy ID | ⏳ ping ainda 3.55 |
+| L1 código | Equipe visível · Painel Rede = **soma** + breakdown | ✅ v4.36.3 |
+| L1 dados | Dry-run `UNIDADE` vazia = golden (sem gravar): 1604/349/88 | ✅ 31/08 |
+| L1 humano | Cadastrar operadores no Painel → Equipe (`USUARIOS`) | ⬜ |
+| L2 | Matriz nas demais telas · WA Anil · coluna `UNIDADE` em RELACIONAMENTO/ACEITES/LOGS | ⬜ |
+| L3 | Layout / responsivo / “nova cara” | ⬜ depois do contrato estável |
+
 ## P0 humano
 
 | # | Item | Status |
 |---|------|--------|
 | H0 | Merge **#24** + `git pull` no clone do C: | ✅ 31/08 |
 | H1 | GAS Nova versão **3.55** (login de turno) no Deploy ID atual | ✅ ping 3.55 |
-| H2 | Smoke loja `?force=v4.36.2` (após merge) + cadastrar operadores + aceite no WhatsApp | ⏳ |
+| H1b | GAS Nova versão **3.56** (mesmo Deploy ID) | ⏳ |
+| H2 | Smoke loja `?force=v4.36.3` + cadastrar operadores no atalho Equipe | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
 | H5 | Toast exato se erro rede | ⏳ |

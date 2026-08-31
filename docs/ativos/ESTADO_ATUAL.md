@@ -5,6 +5,7 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 **Prompt (agente no C:):** [`PROMPT_ABERTURA_NOVO_AGENTE.md`](PROMPT_ABERTURA_NOVO_AGENTE.md)  
 **Erros PWA:** [`ERROS_PWA_2026-07-14.md`](ERROS_PWA_2026-07-14.md)  
 **Erros/eventos:** [`MAPA_ERROS_FALHAS_EVENTOS_2026-08.md`](MAPA_ERROS_FALHAS_EVENTOS_2026-08.md)  
+**RFC Rede (L1 em curso):** [`RFC_REDE_GESTAO_MUDANCA.md`](RFC_REDE_GESTAO_MUDANCA.md)  
 **Auditoria WA/aceite (14/08):** [`AUDITORIA_WA_ACEITE_2026-08-14.md`](AUDITORIA_WA_ACEITE_2026-08-14.md)  
 **Prioridades:** [`PLANO_PRIORIDADES_2026-06.md`](PLANO_PRIORIDADES_2026-06.md)  
 **OAuth PC:** [`OAUTH_PLANILHA_DESKTOP.md`](OAUTH_PLANILHA_DESKTOP.md)  
@@ -19,11 +20,11 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.36.2** live (PR **#28**) | https://ribocg-a11y.github.io/zapclin/?force=v4.36.2 |
+| Frontend / SW | **v4.36.3** (L1 Rede) | https://ribocg-a11y.github.io/zapclin/?force=v4.36.3 |
 | GAS arquivo | **3.56** no repo | Nova versão 3.56 ainda pode estar pendente |
 | GAS ping | **3.55** até colar 3.56 | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
-| PRs GitHub | **#26** login MERGED · **#22** Z.9 · **#24** seed | — |
+| PRs GitHub | **#30** RFC Rede MERGED · **#28** menu · **#26** login · **#22** Z.9 | — |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
 **`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
@@ -40,7 +41,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.2) |
+| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.3) |
 | Pacote Z | até Z.9 `zc-app.css` · próximo Z.10 `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` + token em `%USERPROFILE%\.config\google-api\` |

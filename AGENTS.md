@@ -61,8 +61,8 @@ Fluxos: [`docs/FLUXOS_OPERACIONAIS.md`](docs/FLUXOS_OPERACIONAIS.md) · Índice:
 
 | Camada | Versão repo | Ping / live |
 |--------|-------------|-------------|
-| Frontend | **v4.36.2** live | GitHub Pages `?force=v4.36.2` |
-| Service Worker | **v4.36.2** live | `sw.js` |
+| Frontend | **v4.36.3** | GitHub Pages `?force=v4.36.3` |
+| Service Worker | **v4.36.3** | `sw.js` |
 | GAS (código repo) | **v3.56** (`AppsScript_v3.45_ATUAL.gs`) | arquivo — Nova versão 3.56 pendente se ping ainda 3.55 |
 | GAS (ping) | **3.55** até você implantar 3.56 | |
 | Site marketing | `zapclinslz` | https://www.zapclinslz.com/ ✅ |
@@ -95,14 +95,14 @@ Fonte de verdade: header do `.gs`, `APP_VERSION` em `zc-version.js`, `ZAPCLIN_SW
 
 ## Estado do projeto (31/08/2026)
 
-- **Produção live:** FE/SW **v4.36.2** (PR **#28**) · GAS ping **3.55** (arquivo **3.56** — Nova versão pendente)
+- **Produção live:** FE/SW **v4.36.3** (L1 Rede) · GAS ping **3.55** (arquivo **3.56** — Nova versão pendente)
 - **Menu:** balcão + cockpit Rede (chips Rede/Golden/Rio Anil); SW auto-update
 - **Incidente 14/07:** documentado — não repetir erros de SW/cache
 - **Pacote Z:** Z.9 ✅; login em `zc-auth.js`
 - **OAuth Desktop:** re-auth 26/08 ✅ (`token.json` no C:)
 - **Planilha:** seed LANÇAMENTOS **01–25/08** ✅ · UNIDADES/USUARIOS no primeiro login 3.55
-- **Próximo humano:** 1) se o tablet ainda estiver velho, uma vez `?force=v4.36.2` 2) cadastrar operadores 3) aceite WhatsApp · Golden
-- **Próximo agente:** NET-TIMEOUT só com pedido; não re-seed ago
+- **Próximo humano:** 1) `?force=v4.36.3` 2) cadastrar operadores no atalho Equipe 3) colar GAS 3.56 4) aceite WhatsApp · Golden
+- **Próximo agente:** L2 só com pedido; backfill UNIDADE só com pedido; NET-TIMEOUT só com pedido; não re-seed ago
 
 ## Ao encerrar sessão
 
