@@ -191,7 +191,7 @@ function zcAuthLoginSubmit_(ev){
     var params={usuario:usuario};
     if(pinHash)params.pinHash=pinHash;
     else params.pin=pin;
-    return apiGet('loginOperador',params,15000);
+    return apiGet('loginOperador',params,30000);
   }).then(function(r){
     if(!r||!r.ok||!r.token){
       var msg=r&&r.error?String(r.error):'Usuário ou PIN inválido.';
@@ -212,8 +212,10 @@ function zcAuthLoginSubmit_(ev){
     if(typeof showToast==='function'){
       showToast('Turno de '+(r.nome||r.usuario)+' iniciado','blue');
     }
-  }).catch(function(){
-    showErr('Sem conexão. O login precisa de internet.');
+  }).catch(function(err){
+    var motivo=String(err||'');
+    if(motivo==='timeout')showErr('O servidor demorou. Toque de novo em Entrar no turno.');
+    else showErr('Sem conexão com o Apps Script. Confira a internet e toque de novo.');
   });
 }
 
