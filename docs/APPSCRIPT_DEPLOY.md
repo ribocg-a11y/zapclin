@@ -44,4 +44,4 @@ https://script.google.com/macros/s/AKfycbx1MKIovW80bcjwRcqoGG88Oyh24N6UQdO9BjTco
 
 Esperado após Nova versão: `"version":"3.55"`  
 
-**Status 31/08/2026:** ping produção ainda **3.54**. Alvo: **3.55** (login de turno + UNIDADE/OPERADOR).
+**Status 31/08/2026:** ping produção **3.55** ✅ (login de turno + UNIDADE/OPERADOR).

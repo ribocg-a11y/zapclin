@@ -19,11 +19,10 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.36.0** (branch auth — Pages após merge) | https://ribocg-a11y.github.io/zapclin/?force=v4.36.0 |
-| GAS arquivo | **3.55** | Nova versão Web pendente |
-| GAS ping live | **3.54** | até implantar 3.55 |
+| Frontend / SW | **v4.36.0** (PR **#26**) | https://ribocg-a11y.github.io/zapclin/?force=v4.36.0 |
+| GAS arquivo + ping | **3.55** ✅ | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
-| PRs GitHub | **#22** Z.9 `zc-app.css` · **#24** MERGED | — |
+| PRs GitHub | **#26** login MERGED · **#22** Z.9 · **#24** seed | — |
 
 **Planilha:** https://docs.google.com/spreadsheets/d/1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug/edit  
 **`.gs` raw:** https://raw.githubusercontent.com/ribocg-a11y/zapclin/main/AppsScript_v3.45_ATUAL.gs  
@@ -63,7 +62,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 ## Próximo
 
-**Humano:** 1) Nova versão GAS 3.55 2) smoke `?force=v4.36.0` 3) cadastrar operadores 4) aceite WhatsApp · Golden.  
+**Humano:** smoke `?force=v4.36.0` · entrar `antonio` / 1321 e cadastrar operadores · aceite WhatsApp · Golden.  
 **Agente:** Z.10 `zc-boot.js` ou fila NET-TIMEOUT **só com pedido**. Seed 01–25 já na planilha.
 
 ---

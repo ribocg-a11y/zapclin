@@ -147,6 +147,6 @@ GAS: **Nova versão** no Deploy ID atual. FE bump (`v4.36+` sugerido) + `?force=
 
 ## 9. Diagnóstico agora
 
-Produção live ainda **uma unidade sem login** (v4.35.0 / GAS 3.54). Código de login/unidade está no branch `cursor/auth-turnos-v436`.
+Produção live: login de turno (v4.36.0 / GAS 3.55, PR **#26**).
 
 Mudança no AppScript deste arquivo: não (só doc).

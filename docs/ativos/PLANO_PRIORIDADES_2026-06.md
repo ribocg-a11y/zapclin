@@ -8,8 +8,8 @@
 
 | Item | Status |
 |------|--------|
-| FE/SW **v4.36.0** | ⏳ branch login de turno (live ainda v4.35.0) |
-| GAS **3.55** arquivo | ⏳ Nova versão Web pendente (ping live 3.54) |
+| FE/SW **v4.36.0** | ✅ PR **#26** MERGED |
+| GAS **3.55** arquivo + ping | ✅ |
 | Seed LANÇAMENTOS 01–25/08 | ✅ planilha |
 | OAuth Desktop `token.json` | ✅ re-auth 26/08 |
 | Environment `zapclin` refresh | ⏳ colado 26/08; Cloud Agent novo ainda não testou |
@@ -22,7 +22,7 @@
 | # | Item | Status |
 |---|------|--------|
 | H0 | Merge **#24** + `git pull` no clone do C: | ✅ 31/08 |
-| H1 | GAS Nova versão **3.55** (login de turno) no Deploy ID atual | ⏳ |
+| H1 | GAS Nova versão **3.55** (login de turno) no Deploy ID atual | ✅ ping 3.55 |
 | H2 | Smoke loja `?force=v4.36.0` + cadastrar operadores + aceite no WhatsApp | ⏳ |
 | H3 | Backlink Golden Shopping | ⬜ |
 | H4 | GSC bairros (não re-spam) | ⏳ |
