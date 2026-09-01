@@ -413,6 +413,7 @@ function zcAuthLoginSubmit_(ev){
       localStorage.removeItem('zapLanc');
       localStorage.removeItem('zapCustos');
       localStorage.removeItem('zapKpisAdminServer');
+      sessionStorage.removeItem('zapEquipeLista');
     }catch(e){}
     zcAuthEsconderLogin_();
     if(r.mustChangePin){
@@ -430,28 +431,82 @@ function zcAuthLoginSubmit_(ev){
   });
 }
 
+function zcAuthEquipeCacheLer_(){
+  try{
+    var raw=sessionStorage.getItem('zapEquipeLista');
+    var arr=raw?JSON.parse(raw):null;
+    return Array.isArray(arr)?arr:null;
+  }catch(e){return null;}
+}
+function zcAuthEquipeCacheGravar_(items){
+  try{sessionStorage.setItem('zapEquipeLista',JSON.stringify(items||[]));}catch(e){}
+}
+function zcAuthSessaoEquipeCaiu_(r){
+  if(!r)return true;
+  if(r.code==='NO_SESSION')return true;
+  var err=String(r.error||'').toLowerCase();
+  return err.indexOf('somente adm')>=0||err.indexOf('sessao')>=0||err.indexOf('sessão')>=0;
+}
+function zcAuthPedirLoginEquipe_(msg){
+  if(typeof zcAuthLimparSessao_==='function')zcAuthLimparSessao_();
+  if(typeof zcAuthMostrarLogin_==='function')zcAuthMostrarLogin_(msg||'Sessão expirada. Entre novamente para ver a equipe.');
+}
+function zcAuthHtmlListaUsuarios_(items){
+  return (items||[]).map(function(u){
+    var perfil=u.perfil==='adm'?'ADM':(u.perfil==='supervisor'?'Supervisor':'Operador');
+    var loja=u.perfil==='adm'?'Rede':(u.unidadeId==='anil'?'Rio Anil':'Golden');
+    var ativo=u.ativo===false?' · inativo':'';
+    var turno=u.turno?' · '+u.turno:'';
+    var pinTxt='';
+    if(u.perfil!=='adm'){
+      var pin=u.pinRecupera?String(u.pinRecupera):'(ainda sem PIN na planilha — cole GAS 3.58)';
+      pinTxt='<div class="zc-sessao-meta">PIN para recuperar: <strong>'+escapeHtml_(pin)+'</strong>'+(u.trocarPin?' · primeiro acesso pendente (123456)':'')+'</div>';
+    }
+    var reset=u.perfil==='adm'?'':'<button class="logs-refresh" type="button" onclick="zcAuthResetPinInicial_(\''+jsStr_(u.usuario)+'\')">Resetar 123456</button>';
+    return '<div class="zc-user-row"><div><strong>'+escapeHtml_(u.nome||u.usuario)+'</strong><div class="zc-sessao-meta">'+escapeHtml_(u.usuario)+' · '+perfil+' · '+loja+turno+ativo+'</div>'+pinTxt+'</div><div class="zc-user-actions">'+reset+'<button class="logs-refresh" type="button" onclick="zcAuthEditarUsuario_(\''+jsStr_(u.usuario)+'\')">Editar</button></div></div>';
+  }).join('');
+}
+function zcAuthPintarListaUsuarios_(items){
+  var wrap=document.getElementById('zcUsersLista');
+  if(!wrap)return;
+  window._zcUsersCache_=items||[];
+  if(!items||!items.length){
+    wrap.innerHTML='<div class="empty-text">Nenhuma pessoa cadastrada ainda.</div>';
+    return;
+  }
+  wrap.innerHTML=zcAuthHtmlListaUsuarios_(items);
+}
 function zcAuthCarregarUsuarios_(){
   var wrap=document.getElementById('zcUsersLista');
   if(!wrap||zcAuthPerfil_()!=='adm')return;
-  wrap.innerHTML='Carregando equipe...';
-  apiGet('listarUsuarios',{},12000).then(function(r){
-    var items=(r&&r.items)||[];
-    if(!items.length){wrap.innerHTML='<div class="empty-text">Nenhuma pessoa cadastrada ainda.</div>';return;}
-    wrap.innerHTML=items.map(function(u){
-      var perfil=u.perfil==='adm'?'ADM':(u.perfil==='supervisor'?'Supervisor':'Operador');
-      var loja=u.perfil==='adm'?'Rede':(u.unidadeId==='anil'?'Rio Anil':'Golden');
-      var ativo=u.ativo===false?' · inativo':'';
-      var turno=u.turno?' · '+u.turno:'';
-      var pinTxt='';
-      if(u.perfil!=='adm'){
-        var pin=u.pinRecupera?String(u.pinRecupera):'(ainda sem PIN na planilha — cole GAS 3.57)';
-        pinTxt='<div class="zc-sessao-meta">PIN para recuperar: <strong>'+escapeHtml_(pin)+'</strong>'+(u.trocarPin?' · primeiro acesso pendente (123456)':'')+'</div>';
+  var cached=zcAuthEquipeCacheLer_();
+  if(cached&&cached.length){
+    zcAuthPintarListaUsuarios_(cached);
+  }else{
+    wrap.innerHTML='Carregando equipe...';
+  }
+  apiGet('listarUsuarios',{},20000).then(function(r){
+    if(r&&r.code==='NO_SESSION')return;
+    if(!r||!r.ok){
+      if(zcAuthSessaoEquipeCaiu_(r)){
+        if(cached&&cached.length){
+          wrap.insertAdjacentHTML('afterbegin','<div class="empty-text">Sessão do turno expirou. Entre de novo para atualizar a lista.</div>');
+        }else{
+          wrap.innerHTML='<div class="empty-text">A equipe já está na planilha, mas a sessão do turno expirou. Entre de novo com usuário e PIN para ver os nomes.</div>';
+        }
+        zcAuthPedirLoginEquipe_('Sessão expirada. Entre novamente para ver a equipe.');
+        return;
       }
-      var reset=u.perfil==='adm'?'':'<button class="logs-refresh" type="button" onclick="zcAuthResetPinInicial_(\''+jsStr_(u.usuario)+'\')">Resetar 123456</button>';
-      return '<div class="zc-user-row"><div><strong>'+escapeHtml_(u.nome||u.usuario)+'</strong><div class="zc-sessao-meta">'+escapeHtml_(u.usuario)+' · '+perfil+' · '+loja+turno+ativo+'</div>'+pinTxt+'</div><div class="zc-user-actions">'+reset+'<button class="logs-refresh" type="button" onclick="zcAuthEditarUsuario_(\''+jsStr_(u.usuario)+'\')">Editar</button></div></div>';
-    }).join('');
-    window._zcUsersCache_=items;
-  }).catch(function(){wrap.innerHTML='Falha ao listar equipe.';});
+      wrap.innerHTML='<div class="empty-text">'+escapeHtml_((r&&r.error)||'Não consegui ler a equipe.')+' Toque de novo em Equipe.</div>';
+      return;
+    }
+    var items=Array.isArray(r.items)?r.items:[];
+    zcAuthEquipeCacheGravar_(items);
+    zcAuthPintarListaUsuarios_(items);
+  }).catch(function(){
+    if(cached&&cached.length)return;
+    wrap.innerHTML='<div class="empty-text">Falha ao listar equipe. Confira a internet e toque de novo em Equipe.</div>';
+  });
 }
 
 function zcAuthEditarUsuario_(usuario){
@@ -492,6 +547,11 @@ function zcAuthSalvarUsuario_(){
       document.getElementById('zcUserUsuario').value='';
       window._zcLoginManual_=false;
       zcAuthCarregarUsuarios_();
+    }else if(r&&r.code==='NO_SESSION'){
+      return;
+    }else if(zcAuthSessaoEquipeCaiu_(r)){
+      showToast('Sessão expirada. Entre de novo para salvar.','orange');
+      zcAuthPedirLoginEquipe_('Sessão expirada. Entre novamente para salvar a pessoa.');
     }else showToast((r&&r.error)||'Erro ao salvar','error');
   }).catch(function(){showToast('Falha ao salvar pessoa','error');});
 }

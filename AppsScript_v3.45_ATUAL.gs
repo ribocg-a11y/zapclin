@@ -1,6 +1,9 @@
 // ============================================================
 // ZAPCLIN â€” APPS SCRIPT
-// VersÃ£o: 3.57 | Data: 31/08/2026
+// VersÃ£o: 3.58 | Data: 01/09/2026
+// NOVO v3.58:
+//   - Sessao de turno tambem no PropertiesService (CacheService sozinho sumia e a Equipe ficava vazia)
+//   - listarUsuarios/salvarUsuario devolvem NO_SESSION quando o turno expirou
 // NOVO v3.57:
 //   - Primeiro acesso operador/supervisor: PIN inicial 123456, troca obrigatória, PIN_RECUPERA na aba USUARIOS (só ADM)
 // NOVO v3.56:
@@ -144,7 +147,7 @@ var SHEET_UNIDADES    = 'UNIDADES';
 var SHEET_USUARIOS    = 'USUARIOS';
 var SHEET_ID          = '1nL694BR_tkO5iHYHMoTpIelyMqXtktjIa87mWFeGmug';
 var FUSO              = 'America/Sao_Paulo';
-var VERSION           = '3.57';
+var VERSION           = '3.58';
 var PIN_INICIAL_AUTH  = '123456';
 var AUTH_PEPPER       = 'zapclin-auth-v1';
 var AUTH_SESS_TTL     = 21600;
@@ -211,16 +214,37 @@ function unidadeVisivel_(sess, unidadeRaw, unidadeFiltroParam) {
 }
 
 function gravarSessaoAuth_(sess) {
-  CacheService.getScriptCache().put('sess_' + sess.token, JSON.stringify(sess), AUTH_SESS_TTL);
+  var key = 'sess_' + sess.token;
+  var json = JSON.stringify(sess);
+  CacheService.getScriptCache().put(key, json, AUTH_SESS_TTL);
+  try {
+    PropertiesService.getScriptProperties().setProperty(key, json);
+  } catch (eProp) {}
+}
+
+function apagarSessaoAuth_(token) {
+  if (!token) return;
+  var key = 'sess_' + token;
+  try { CacheService.getScriptCache().remove(key); } catch (eCache) {}
+  try { PropertiesService.getScriptProperties().deleteProperty(key); } catch (eProp) {}
 }
 
 function resolverSessao_(p) {
   var token = String((p && (p.sess || p.token)) || '').trim();
   if (!token) return null;
-  var raw = CacheService.getScriptCache().get('sess_' + token);
+  var key = 'sess_' + token;
+  var raw = CacheService.getScriptCache().get(key);
+  if (!raw) {
+    try { raw = PropertiesService.getScriptProperties().getProperty(key); } catch (eGet) { raw = null; }
+  }
   if (!raw) return null;
   try {
     var sess = JSON.parse(raw);
+    var idade = new Date().getTime() - (parseInt(sess.t, 10) || 0);
+    if (idade > AUTH_SESS_TTL * 1000) {
+      apagarSessaoAuth_(token);
+      return null;
+    }
     gravarSessaoAuth_(sess);
     return sess;
   } catch (eSess) {
@@ -332,13 +356,20 @@ function loginOperador_(ss, p) {
 
 function logoutOperador_(p) {
   var token = String((p && (p.sess || p.token)) || '').trim();
-  if (token) CacheService.getScriptCache().remove('sess_' + token);
+  if (token) apagarSessaoAuth_(token);
   registrarLogSistema_('AUTH', 'logoutOperador', 'OK', 'Turno encerrado', {});
   return { ok: true, version: VERSION };
 }
 
+function exigirSessaoAdm_(sess) {
+  if (!sess) return { ok: false, code: 'NO_SESSION', error: 'Sessao expirada. Entre novamente.', version: VERSION };
+  if (String(sess.perfil || '').toLowerCase() !== 'adm') return { ok: false, error: 'Somente ADM.', version: VERSION };
+  return null;
+}
+
 function listarUsuarios_(ss, sess) {
-  if (!sess || sess.perfil !== 'adm') return { ok: false, error: 'Somente ADM.', version: VERSION };
+  var bloqueio = exigirSessaoAdm_(sess);
+  if (bloqueio) return bloqueio;
   var users = lerUsuarios_(ss).map(function(u) {
     return {
       usuario: u.usuario, nome: u.nome, perfil: u.perfil, unidadeId: u.unidadeId,
@@ -360,7 +391,8 @@ function listarUnidades_(ss) {
 }
 
 function salvarUsuario_(ss, sess, p) {
-  if (!sess || sess.perfil !== 'adm') return { ok: false, error: 'Somente ADM.', version: VERSION };
+  var bloqueio = exigirSessaoAdm_(sess);
+  if (bloqueio) return bloqueio;
   var usuario = String(p.usuario || '').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
   var nome = String(p.nome || usuario).trim();
   var perfil = String(p.perfil || 'operador').toLowerCase();

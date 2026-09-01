@@ -1,6 +1,8 @@
 // ============================================================
 // ZAPCLIN — SERVICE WORKER
-// Versão: 4.36.6 | Data: 31/08/2026
+// Versão: 4.36.7 | Data: 01/09/2026
+// [v4.36.7 CACHE]
+// Equipe: lista nao finge vazia quando a sessao do turno caiu.
 // [v4.36.6 CACHE]
 // Troca de loja: stats filtrados na hora; listar ADM em cache da rede; ignora fetch atrasado.
 // [v4.36.5 CACHE]
@@ -37,9 +39,9 @@
 // Rede primeiro para index.html e zc-*.js.
 // ============================================================
 
-const ZAPCLIN_SW_VERSION = 'v4.36.6';
-const STATIC_CACHE = 'zapclin-static-v4.36.6';
-const RUNTIME_CACHE = 'zapclin-runtime-v4.36.6';
+const ZAPCLIN_SW_VERSION = 'v4.36.7';
+const STATIC_CACHE = 'zapclin-static-v4.36.7';
+const RUNTIME_CACHE = 'zapclin-runtime-v4.36.7';
 
 const APP_SHELL = [
   './',
