@@ -41,6 +41,8 @@ node "$ZC\scripts\oauth-sheets\test-zapclin-write.js"
 | `seed-lancamentos-jul27-28.js` | Seed 27–28/07/2026 |
 | `seed-lancamentos-ago01-13.js` | Seed 01–13/08/2026 (histórico; 02/08=341.90 · 03/08=387.08) |
 | `seed-lancamentos-ago01-25.js` | Seed 01–25/08/2026 (OAuth ou `--via=gas`; preserva OS com clienteId) |
+| `seed-lancamentos-ago26-30.js` | Seed 26–30/08/2026 |
+| `fechar-os-abertas.js` | Dry-run da fila Operação; só grava Entregue com `--i-know-what-im-doing` (sem WhatsApp) |
 
 ### Exemplos de edição
 
