@@ -27,7 +27,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | **GAS-CLASP** | Novo Deploy ID / URL quebra app | `clasp deploy` ou “Novo implantar” | **Proibido.** Só “Gerenciar implantações → Nova versão” no ID canônico. |
 | **REPO-MIX** | Diff Movi × ZapClin | Pastas C: misturadas | `MAPA_PASTAS_LOCAL.md` — clones separados. |
 | **ENV-MISS** | Cloud Agent sem secrets Sheets | Run iniciada **antes** de linkar Environment | Novo agente: selecionar Environment **`zapclin`** ao criar. |
-| **LOJA-STALE** | Chip diz Rio Anil, Home ainda mostra números do Golden | `_calcStatsHome` sem filtro + `refreshDados` ignorava troca se já estava buscando + array vazio caía no `localStorage` da outra loja | v4.36.6: filtrar na hora; ADM lista a rede e recorta na tela; ignorar fetch atrasado |
+| **EQUIPE-EMPTY** | Equipe diz “nenhuma pessoa” com gente na aba USUARIOS | `listarUsuarios` sem sessão virava lista vazia; CacheService do GAS evicta o token | v4.36.7 mostra o erro e pede login; GAS 3.58 grava sessão também no PropertiesService |
 
 ---
 
@@ -44,7 +44,7 @@ Usar este arquivo no handoff de novo agente para não repetir falhas operacionai
 | 14/08/2026 | Seed LANÇAMENTOS 01–13/08 | 13 dias OK · PR #16 |
 | 26/08/2026 | Seed LANÇAMENTOS 01–25/08 | 25 dias OK · PR #24 · via GAS · OS 346/347 preservadas |
 | 26/08/2026 | Re-auth OAuth Desktop | `npm run auth` + `npm test` OK · `GOOGLE_REFRESH_TOKEN` colado no Environment |
-| 31/08/2026 | Chip Rio Anil com números do Golden na Home | Fix FE **v4.36.6** (filtro na hora + fetch com geração) |
+| 01/09/2026 | Equipe vazia na tela; USUARIOS tem Bruno/Edilton/Rodrigo | Fix FE **v4.36.7** + GAS **3.58** (sessão + não fingir lista vazia) |
 | 14/08/2026 | Environment Cloud `zapclin` | Secrets OAuth salvos |
 | 14/08/2026 | Handoff transição | Este pacote de docs |
 | 14/08/2026 | PR #18 Z.7 merged → **v4.34.0** | Operação/CRM módulos |

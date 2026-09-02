@@ -20,9 +20,9 @@ Referência repo × produção. **Handoff primeiro:** [`HANDOFF_NOVO_CHAT.md`](H
 
 | Camada | Versão | URL |
 |--------|--------|-----|
-| Frontend / SW | **v4.36.6** | https://ribocg-a11y.github.io/zapclin/?force=v4.36.6 |
-| GAS arquivo | **3.57** no repo | Nova versão 3.57 pendente |
-| GAS ping | **3.55** até colar 3.57 | ping abaixo |
+| Frontend / SW | **v4.36.7** | https://ribocg-a11y.github.io/zapclin/?force=v4.36.7 |
+| GAS arquivo | **3.58** no repo | Nova versão 3.58 pendente |
+| GAS ping | **3.57** até colar 3.58 | ping abaixo |
 | Site marketing | live | https://www.zapclinslz.com/ |
 | PRs GitHub | **#30** RFC Rede MERGED · **#28** menu · **#26** login · **#22** Z.9 | — |
 
@@ -41,7 +41,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 | Artefato | Caminho |
 |----------|---------|
 | GAS | `AppsScript_v3.45_ATUAL.gs` |
-| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.6) |
+| FE | `index.html` + `zc-*.js` + `zc-auth.js` + `zc-app.css` + `aceite.html` (`APP_VERSION` = v4.36.7) |
 | Pacote Z | até Z.9 `zc-app.css` · próximo Z.10 `zc-boot.js` |
 | PWA | `sw.js`, `manifest.json` |
 | OAuth | `scripts/oauth-sheets/` + token em `%USERPROFILE%\.config\google-api\` |
@@ -64,7 +64,7 @@ Clone: `C:\Users\riboc\Documents\Codex\zapclin-repo`
 
 ## Próximo
 
-**Humano:** `?force=v4.36.6` · chips Golden/Rio Anil devem mostrar números da loja na hora · cadastrar operadores · aceite WhatsApp · Golden.  
+**Humano:** colar GAS **3.58** · `?force=v4.36.7` · entrar no turno de novo → Equipe lista Bruno/Edilton/Rodrigo · aceite WhatsApp.  
 **Agente:** NET-TIMEOUT só com pedido. Seed 01–25 já na planilha.
 
 ---

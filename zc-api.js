@@ -11,7 +11,8 @@ function apiGet(action,params,timeout){
     var tok=typeof zcAuthSessToken_==='function'?zcAuthSessToken_():'';
     if(tok)params.sess=tok;
   }
-  if(action!=='loginOperador'&&action!=='trocarPinPrimeiroAcesso'&&!params.unidade&&typeof zcAuthUnidadeFiltro_==='function'){
+  var skipUnidade=['loginOperador','logoutOperador','trocarPinPrimeiroAcesso','listarUsuarios','salvarUsuario','listarUnidades'];
+  if(skipUnidade.indexOf(action)<0&&!params.unidade&&typeof zcAuthUnidadeFiltro_==='function'){
     var uni=zcAuthUnidadeFiltro_();
     if(uni)params.unidade=uni;
   }
